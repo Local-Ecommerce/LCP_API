@@ -1,0 +1,12 @@
+D:\FPTU_Files\Capstone Project\Local-4-You\DAL\obj\Debug\net5.0\DAL.csproj.AssemblyReference.cache
+D:\FPTU_Files\Capstone Project\Local-4-You\DAL\obj\Debug\net5.0\DAL.GeneratedMSBuildEditorConfig.editorconfig
+D:\FPTU_Files\Capstone Project\Local-4-You\DAL\obj\Debug\net5.0\DAL.AssemblyInfoInputs.cache
+D:\FPTU_Files\Capstone Project\Local-4-You\DAL\obj\Debug\net5.0\DAL.AssemblyInfo.cs
+D:\FPTU_Files\Capstone Project\Local-4-You\DAL\obj\Debug\net5.0\DAL.csproj.CoreCompileInputs.cache
+D:\FPTU_Files\Capstone Project\Local-4-You\DAL\bin\Debug\net5.0\DAL.deps.json
+D:\FPTU_Files\Capstone Project\Local-4-You\DAL\bin\Debug\net5.0\DAL.dll
+D:\FPTU_Files\Capstone Project\Local-4-You\DAL\bin\Debug\net5.0\ref\DAL.dll
+D:\FPTU_Files\Capstone Project\Local-4-You\DAL\bin\Debug\net5.0\DAL.pdb
+D:\FPTU_Files\Capstone Project\Local-4-You\DAL\obj\Debug\net5.0\DAL.dll
+D:\FPTU_Files\Capstone Project\Local-4-You\DAL\obj\Debug\net5.0\ref\DAL.dll
+D:\FPTU_Files\Capstone Project\Local-4-You\DAL\obj\Debug\net5.0\DAL.pdb
