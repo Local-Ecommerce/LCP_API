@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\FPTU_Files\\Capstone Project\\Local-4-You\\DAL\\DAL.csproj": {}
+    "D:\\FPTU_Files\\Capstone Project\\Loich.net\\DAL\\DAL.csproj": {}
   },
   "projects": {
-    "D:\\FPTU_Files\\Capstone Project\\Local-4-You\\DAL\\DAL.csproj": {
+    "D:\\FPTU_Files\\Capstone Project\\Loich.net\\DAL\\DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\FPTU_Files\\Capstone Project\\Local-4-You\\DAL\\DAL.csproj",
+        "projectUniqueName": "D:\\FPTU_Files\\Capstone Project\\Loich.net\\DAL\\DAL.csproj",
         "projectName": "DAL",
-        "projectPath": "D:\\FPTU_Files\\Capstone Project\\Local-4-You\\DAL\\DAL.csproj",
+        "projectPath": "D:\\FPTU_Files\\Capstone Project\\Loich.net\\DAL\\DAL.csproj",
         "packagesPath": "C:\\Users\\quang\\.nuget\\packages\\",
-        "outputPath": "D:\\FPTU_Files\\Capstone Project\\Local-4-You\\DAL\\obj\\",
+        "outputPath": "D:\\FPTU_Files\\Capstone Project\\Loich.net\\DAL\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\quang\\AppData\\Roaming\\NuGet\\NuGet.Config",

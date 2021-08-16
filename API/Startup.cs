@@ -39,7 +39,7 @@ namespace API
             //Add Swagger
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Local_4_You", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Loich.net ", Version = "v1" });
             });
 
             //Add Redis

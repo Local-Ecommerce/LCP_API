@@ -6191,11 +6191,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\FPTU_Files\\Capstone Project\\Local-4-You\\BLL\\BLL.csproj",
+      "projectUniqueName": "D:\\FPTU_Files\\Capstone Project\\Loich.net\\BLL\\BLL.csproj",
       "projectName": "BLL",
-      "projectPath": "D:\\FPTU_Files\\Capstone Project\\Local-4-You\\BLL\\BLL.csproj",
+      "projectPath": "D:\\FPTU_Files\\Capstone Project\\Loich.net\\BLL\\BLL.csproj",
       "packagesPath": "C:\\Users\\quang\\.nuget\\packages\\",
-      "outputPath": "D:\\FPTU_Files\\Capstone Project\\Local-4-You\\BLL\\obj\\",
+      "outputPath": "D:\\FPTU_Files\\Capstone Project\\Loich.net\\BLL\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\quang\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -6212,8 +6212,8 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "D:\\FPTU_Files\\Capstone Project\\Local-4-You\\DAL\\DAL.csproj": {
-              "projectPath": "D:\\FPTU_Files\\Capstone Project\\Local-4-You\\DAL\\DAL.csproj"
+            "D:\\FPTU_Files\\Capstone Project\\Loich.net\\DAL\\DAL.csproj": {
+              "projectPath": "D:\\FPTU_Files\\Capstone Project\\Loich.net\\DAL\\DAL.csproj"
             }
           }
         }

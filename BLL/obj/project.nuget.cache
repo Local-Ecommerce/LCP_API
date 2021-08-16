@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Q7zQ32ob49iBI262iNCTETXkDAr8QAy45J4inB9rFlQBAN4sJ/R3qk03JIPrkTQKFaGa8x+1JFEtpxaqWZQRvA==",
+  "dgSpecHash": "rsmoBBz+awYxbMzvmZt3PTxdgZqq0fH/SV1pLtDWfMR33T5ciy+D9U+chu3bqQkJzuE7SUahnXhnJoxyzpEvtg==",
   "success": true,
-  "projectFilePath": "D:\\FPTU_Files\\Capstone Project\\Local-4-You\\BLL\\BLL.csproj",
+  "projectFilePath": "D:\\FPTU_Files\\Capstone Project\\Loich.net\\BLL\\BLL.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\quang\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\quang\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",

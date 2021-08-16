@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "8ZgWRbFnbI13L9/YLxSP58qzQ0VfeG1JZ/BDJgQtOp3sxyvEsrvNzl7BpNaz9bgtYvjEXCOUamfqR/tD5nJwsQ==",
+  "dgSpecHash": "3PVgbQBQCE8yL72E3zzQ5XXLxN45NPfdUyrjN46GHaFQenVtHoSKd2qGqqPbVbC+jJHw7Jgp4SIJ91obE+W4hw==",
   "success": true,
-  "projectFilePath": "D:\\FPTU_Files\\Capstone Project\\Local-4-You\\API\\API.csproj",
+  "projectFilePath": "D:\\FPTU_Files\\Capstone Project\\Loich.net\\API\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\quang\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\quang\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",
