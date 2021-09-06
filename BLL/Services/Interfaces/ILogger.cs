@@ -1,4 +1,4 @@
-﻿namespace BLL.Services
+﻿namespace BLL.Services.Interfaces
 {
     public interface ILogger
     {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BLL.Services
+﻿namespace BLL.Services.Interfaces
 {
     public interface IUtilService
     {

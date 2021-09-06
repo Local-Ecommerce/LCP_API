@@ -1,5 +1,5 @@
 ﻿using BLL.Services;
-using BLL.Services.Impl;
+using BLL.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RepositoryLayer.UnitOfWork;

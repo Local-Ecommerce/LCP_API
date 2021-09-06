@@ -1,8 +1,8 @@
 ﻿using NLog;
 
-namespace BLL.Services.Impl
+namespace BLL.Services
 {
-    public class LogNLog : ILogger
+    public class LogNLog : Interfaces.ILogger
     {
         private static NLog.ILogger logger = LogManager.GetCurrentClassLogger();
 

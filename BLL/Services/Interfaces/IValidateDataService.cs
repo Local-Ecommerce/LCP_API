@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAL.Mappers
+namespace BLL.Services.Interfaces
 {
-    public class ExampleMapper
+    public interface IValidateDataService
     {
     }
 }

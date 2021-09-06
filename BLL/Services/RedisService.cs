@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
+using BLL.Services.Interfaces;
 
-namespace BLL.Services.Impl
+namespace BLL.Services
 {
     public class RedisService : IRedisService
     {

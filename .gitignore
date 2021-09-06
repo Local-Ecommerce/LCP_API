@@ -1,0 +1,5 @@
+logs/
+API/obj/
+BLL/obj/
+DAL/obj/
+.vs/

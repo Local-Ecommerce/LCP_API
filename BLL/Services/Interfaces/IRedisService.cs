@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BLL.Services
+namespace BLL.Services.Interfaces
 {
     public interface IRedisService
     {

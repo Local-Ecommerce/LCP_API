@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BLL.Services.Interfaces;
+
 
 namespace BLL.Services
 {
-    public interface IValidateDataService
+    public class UtilService : IUtilService
     {
     }
 }
