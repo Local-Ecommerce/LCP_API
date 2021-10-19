@@ -13,3 +13,17 @@ D:\FPTU_Files\Capstone Project\Local-4-You\BLL\obj\Debug\net5.0\BLL.csproj.CopyC
 D:\FPTU_Files\Capstone Project\Local-4-You\BLL\obj\Debug\net5.0\BLL.dll
 D:\FPTU_Files\Capstone Project\Local-4-You\BLL\obj\Debug\net5.0\ref\BLL.dll
 D:\FPTU_Files\Capstone Project\Local-4-You\BLL\obj\Debug\net5.0\BLL.pdb
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\bin\Debug\net5.0\BLL.deps.json
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\bin\Debug\net5.0\BLL.dll
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\bin\Debug\net5.0\ref\BLL.dll
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\bin\Debug\net5.0\BLL.pdb
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\bin\Debug\net5.0\DAL.dll
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\bin\Debug\net5.0\DAL.pdb
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\obj\Debug\net5.0\BLL.csproj.AssemblyReference.cache
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\obj\Debug\net5.0\BLL.GeneratedMSBuildEditorConfig.editorconfig
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\obj\Debug\net5.0\BLL.AssemblyInfoInputs.cache
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\obj\Debug\net5.0\BLL.AssemblyInfo.cs
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\obj\Debug\net5.0\BLL.csproj.CoreCompileInputs.cache
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\obj\Debug\net5.0\BLL.dll
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\obj\Debug\net5.0\ref\BLL.dll
+D:\FPTU_Files\Capstone Project\Loich.net\BLL\obj\Debug\net5.0\BLL.pdb
