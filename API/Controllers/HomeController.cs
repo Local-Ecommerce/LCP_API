@@ -1,6 +1,6 @@
 ﻿using BLL.Constants;
 using BLL.Dtos;
-using BLL.Services;
+using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
