@@ -1,37 +1,40 @@
-﻿using RepositoryLayer.Repositories;
+﻿using DAL.Models;
 using System;
+using DAL.Repositories;
 using System.Collections.Generic;
 
-namespace RepositoryLayer.UnitOfWork
+namespace DAL.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
-        //private readonly Local4YouContext _context;
+        private readonly LoichDBContext _context;
         private readonly Dictionary<Type, object> repositories = new Dictionary<Type, object>();
 
-        //public UnitOfWork(Local4YouContext context)
-        //{
-        //    _context = context;
-        //}
+        public UnitOfWork(LoichDBContext context)
+        {
+            _context = context;
+        }
 
-        /*
-         * [12/08/2021 - HanNQ] commit Unit of Work
-         */
+        /// <summary>
+        /// Commit Unit of Work
+        /// </summary>
+        /// <returns></returns>
         public int Commit()
         {
-            //return _context.SaveChanges();
-            return default;
+            return _context.SaveChanges();
         }
 
         public void Dispose()
         {
-            //_context.Dispose();
+            _context.Dispose();
             GC.SuppressFinalize(this);
         }
 
-        /*
-         * [12/08/2021 - HanNQ] get Repository
-         */
+        /// <summary>
+        /// Get Repository of T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public IRepository<T> Repository<T>() where T : class
         {
             var type = typeof(T);
@@ -40,9 +43,9 @@ namespace RepositoryLayer.UnitOfWork
             {
                 var repositoryType = typeof(Repository<>);
 
-                //var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)), _context);
+                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)), _context);
 
-                //repositories.Add(type, repositoryInstance);
+                repositories.Add(type, repositoryInstance);
             }
             return (IRepository<T>)repositories[type];
         }
