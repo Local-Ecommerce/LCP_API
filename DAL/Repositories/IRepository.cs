@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace RepositoryLayer.Repositories
+namespace DAL.Repositories
 {
     public interface IRepository<T> where T : class
     {

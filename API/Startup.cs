@@ -1,6 +1,8 @@
 using API.Extensions;
+using DAL.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -49,7 +51,9 @@ namespace API
                 ("CacheSettings:ConnectionString");
             });
 
-
+            //Add DB connection
+            services.AddDbContext<LoichDBContext>(opt => opt.UseSqlServer(
+                _configuration.GetConnectionString("DatabaseConnection")));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

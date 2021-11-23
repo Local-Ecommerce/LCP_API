@@ -1,18 +1,12 @@
-﻿using RepositoryLayer.Repositories;
+﻿using DAL.Repositories;
 using System;
 
-namespace RepositoryLayer.UnitOfWork
+namespace DAL.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
-        /*
-         * [12/08/2021 - HanNQ] get Repository
-         */
         IRepository<T> Repository<T>() where T : class;
 
-        /*
-         * [12/08/2021 - HanNQ] commit Unit of Work
-         */
         int Commit();
     }
 }

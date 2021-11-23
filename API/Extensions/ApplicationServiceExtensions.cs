@@ -1,8 +1,8 @@
 ﻿using BLL.Services;
 using BLL.Services.Interfaces;
+using DAL.UnitOfWork;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RepositoryLayer.UnitOfWork;
 using System;
 
 namespace API.Extensions
@@ -26,11 +26,9 @@ namespace API.Extensions
 
             //Add service
             services.AddScoped<IRedisService, RedisService>();
-
             services.AddScoped<IValidateDataService, ValidateDataService>();
-
             services.AddScoped<IUtilService, UtilService>();
-
+            services.AddScoped<IProductService, ProductService>();
 
             return services;
         }

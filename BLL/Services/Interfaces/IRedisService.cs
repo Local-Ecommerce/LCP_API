@@ -4,24 +4,37 @@ namespace BLL.Services.Interfaces
 {
     public interface IRedisService
     {
-        /*
-         * [12/08/2021 - HanNQ] store string to Redis
-         */
+        /// <summary>
+        /// Store string to Redis
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         void SetString(string key, string value);
 
-        /*
-         * [12/08/2021 - HanNQ] get string from Redis
-         */
+
+        /// <summary>
+        /// Get String by key
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>string or default</returns>
         string GetString(string key);
 
-        /*
-         * [12/08/2021 - HanNQ] store List to Redis
-         */
-        void StoreList<T>(string key, T value);
 
-        /*
-         * [12/08/2021 - HanNQ] get List from Redis
-         */
+        /// <summary>
+        /// Store list of <T> to Redis
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        void StoreList<T>(string key, List<T> value);
+
+
+        /// <summary>
+        /// Get List of <T> from Redis by key
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <returns>List of <T></returns>
         List<T> GetList<T>(string key);
 
     }

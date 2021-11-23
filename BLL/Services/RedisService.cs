@@ -11,16 +11,18 @@ namespace BLL.Services
         private readonly IDistributedCache _distributedCache;
         private readonly ILogger _logger;
 
-        //contructor
         public RedisService(IDistributedCache distributedCache, ILogger logger)
         {
             _distributedCache = distributedCache;
             _logger = logger;
         }
 
-        /*
-         * [12/08/2021 - HanNQ] get List from Redis
-         */
+        /// <summary>
+        /// Get List of <T> from Redis by key
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <returns>List of <T></returns>
         public List<T> GetList<T>(string key)
         {
             string cache = _distributedCache.GetString(key);
@@ -37,9 +39,11 @@ namespace BLL.Services
             return JsonSerializer.Deserialize<List<T>>(cache);
         }
 
-        /*
-         * [12/08/2021 - HanNQ] get string from Redis
-         */
+        /// <summary>
+        /// Get String by key
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>string or default</returns>
         public string GetString(string key)
         {
             string cache = _distributedCache.GetString(key);
@@ -55,9 +59,11 @@ namespace BLL.Services
             return default;
         }
 
-        /*
-         * [12/08/2021 - HanNQ] store string to Redis
-         */
+        /// <summary>
+        /// Store string to Redis
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         public void SetString(string key, string value)
         {
             _logger.Information($"[RedisService.SetString()] Set Data key '{key}': {value}");
@@ -65,10 +71,13 @@ namespace BLL.Services
             _distributedCache.SetString(key, value);
         }
 
-        /*
-         * [12/08/2021 - HanNQ] store List to Redis
-         */
-        public void StoreList<T>(string key, T value)
+        /// <summary>
+        /// Store list of <T> to Redis
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void StoreList<T>(string key, List<T> value)
         {
             //convert data to json string
             string cache = JsonSerializer.Serialize(value);
