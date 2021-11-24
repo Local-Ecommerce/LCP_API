@@ -119,8 +119,8 @@ namespace BLL.Services
                     throw new HttpStatusException(HttpStatusCode.OK,
                         new BaseResponse<MerchantResponse>
                         {
-                            ResultCode = (int)MerchantStatus.ERROR,
-                            ResultMessage = MerchantStatus.ERROR.ToString(),
+                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
                             Data = default
                         });
                 }
@@ -160,8 +160,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<MerchantResponse>
                     {
-                        ResultCode = (int)MerchantStatus.ERROR,
-                        ResultMessage = MerchantStatus.ERROR.ToString(),
+                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
                         Data = default
                     });
             }
@@ -227,8 +227,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<MerchantResponse>
                     {
-                        ResultCode = (int)MerchantStatus.ERROR,
-                        ResultMessage = MerchantStatus.ERROR.ToString(),
+                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
                         Data = default
                     });
             }
