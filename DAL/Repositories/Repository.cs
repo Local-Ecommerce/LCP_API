@@ -1,5 +1,10 @@
 ﻿using DAL.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using System.Linq;
 
 namespace DAL.Repositories
@@ -25,21 +30,18 @@ namespace DAL.Repositories
             _dbSet.Remove(entity);
         }
 
-        public T Get(string id)
+        public async Task<T> FindAsync(Expression<Func<T, bool>> expression)
         {
-            return _dbSet.Find(id);
+            List<T> list = await _dbSet.Where(expression).ToListAsync();
+
+            return list.FirstOrDefault();
         }
 
-        public T Get(int id)
+        public async Task<List<T>> FindListAsync(Expression<Func<T, bool>> expression)
         {
-            return _dbSet.Find(id);
+            return await _dbSet.Where(expression).ToListAsync();
         }
-
-        public IQueryable<T> GetAll()
-        {
-            return _dbSet;
-        }
-
+        
         public void Update(T entity)
         {
             _dbSet.Update(entity);

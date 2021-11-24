@@ -1,5 +1,6 @@
 ﻿using DAL.Repositories;
 using System;
+using System.Threading.Tasks;
 
 namespace DAL.UnitOfWork
 {
@@ -7,6 +8,6 @@ namespace DAL.UnitOfWork
     {
         IRepository<T> Repository<T>() where T : class;
 
-        int Commit();
+        Task SaveChangesAsync();
     }
 }

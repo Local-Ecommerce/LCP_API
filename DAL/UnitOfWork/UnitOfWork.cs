@@ -2,6 +2,7 @@
 using System;
 using DAL.Repositories;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DAL.UnitOfWork
 {
@@ -19,9 +20,9 @@ namespace DAL.UnitOfWork
         /// Commit Unit of Work
         /// </summary>
         /// <returns></returns>
-        public int Commit()
+        public Task SaveChangesAsync()
         {
-            return _context.SaveChanges();
+            return _context.SaveChangesAsync();
         }
 
         public void Dispose()

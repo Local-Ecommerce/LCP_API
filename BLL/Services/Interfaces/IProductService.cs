@@ -3,7 +3,7 @@ using BLL.Dtos.Product;
 using DAL.Models;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
 {
@@ -15,7 +15,7 @@ namespace BLL.Services.Interfaces
         /// <param name="productRequest"></param>
         /// <param name="image">list of product's image</param>
         /// <returns></returns>
-        BaseResponse<ProductResponse> CreateProduct(ProductRequest productRequest,
+        Task<BaseResponse<ProductResponse>> CreateProduct(ProductRequest productRequest,
             List<IFormFile> image);
 
 
@@ -26,7 +26,7 @@ namespace BLL.Services.Interfaces
         /// <param name="productRequest"></param>
         /// <param name="image">list of product's image</param>
         /// <returns></returns>
-        BaseResponse<ProductResponse> UpdateProduct(string id, 
+        Task<BaseResponse<ProductResponse>> UpdateProduct(string id, 
             ProductRequest productRequest, 
             List<IFormFile> image);
 
@@ -36,7 +36,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        BaseResponse<ProductResponse> GetProductById(string id);
+        Task<BaseResponse<ProductResponse>> GetProductById(string id);
 
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        BaseResponse<ProductResponse> DeleteProduct(string id);
+        Task<BaseResponse<ProductResponse>> DeleteProduct(string id);
 
         /// <summary>
         /// Store product to Redis
