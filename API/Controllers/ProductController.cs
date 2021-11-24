@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace API.Controllers
 {
@@ -33,7 +34,7 @@ namespace API.Controllers
         /// <param name="image"></param>
         /// <returns></returns>
         [HttpPost("create")]
-        public IActionResult CreateProduct([FromForm] ProductRequest productRequest,
+        public async Task<IActionResult> CreateProduct([FromForm] ProductRequest productRequest,
             [FromForm] List<IFormFile> image)
         {
             _logger.Information($"POST api/product/create START Request: " +
@@ -43,7 +44,7 @@ namespace API.Controllers
             watch.Start();
 
             //create product
-            BaseResponse<ProductResponse> response = _productService.CreateProduct(productRequest, image);
+            BaseResponse<ProductResponse> response = await _productService.CreateProduct(productRequest, image);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -63,7 +64,7 @@ namespace API.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
-        public IActionResult GetProductById(string id)
+        public async Task<IActionResult> GetProductById(string id)
         {
             _logger.Information($"GET api/product/{id} START");
 
@@ -71,7 +72,7 @@ namespace API.Controllers
             watch.Start();
 
             //get product
-            BaseResponse<ProductResponse> response = _productService.GetProductById(id);
+            BaseResponse<ProductResponse> response = await _productService.GetProductById(id);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -91,7 +92,7 @@ namespace API.Controllers
         /// <param name="image"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public IActionResult UpdateProduct(string id, 
+        public async Task<IActionResult> UpdateProduct(string id, 
             [FromForm] ProductRequest productRequest,
             [FromForm] List<IFormFile> image)
         {
@@ -102,7 +103,7 @@ namespace API.Controllers
             watch.Start();
 
             //update product
-            BaseResponse<ProductResponse> response = _productService.UpdateProduct(id, productRequest, image);
+            BaseResponse<ProductResponse> response = await _productService.UpdateProduct(id, productRequest, image);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -121,7 +122,7 @@ namespace API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPut("delete/{id}")]
-        public IActionResult DeleteProduct(string id)
+        public async Task<IActionResult> DeleteProduct(string id)
         {
             _logger.Information($"PUT api/product/delete/{id} START");
 
@@ -129,7 +130,7 @@ namespace API.Controllers
             watch.Start();
 
             //get product
-            BaseResponse<ProductResponse> response = _productService.DeleteProduct(id);
+            BaseResponse<ProductResponse> response = await _productService.DeleteProduct(id);
 
             string json = JsonSerializer.Serialize(response);
 
