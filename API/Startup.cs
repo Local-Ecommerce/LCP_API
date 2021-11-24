@@ -1,4 +1,5 @@
 using API.Extensions;
+using BLL.Filters;
 using DAL.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -54,6 +55,12 @@ namespace API
             //Add DB connection
             services.AddDbContext<LoichDBContext>(opt => opt.UseSqlServer(
                 _configuration.GetConnectionString("DatabaseConnection")));
+
+            //Add Error Handler
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(new ErrorHandlingFilter());
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
