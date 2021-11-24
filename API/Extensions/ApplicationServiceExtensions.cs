@@ -29,6 +29,7 @@ namespace API.Extensions
             services.AddScoped<IValidateDataService, ValidateDataService>();
             services.AddScoped<IUtilService, UtilService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IMerchantService, MerchantService>();
 
             return services;
         }
