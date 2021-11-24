@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BLL.Constants;
 using BLL.Dtos;
 using BLL.Dtos.Exception;
 using BLL.Dtos.Product;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace BLL.Services
 {
@@ -42,7 +42,7 @@ namespace BLL.Services
         /// <param name="productRequest"></param>
         /// <param name="image">list of product's image</param>
         /// <returns></returns>
-        public BaseResponse<ProductResponse> CreateProduct(ProductRequest productRequest,
+        public async Task<BaseResponse<ProductResponse>> CreateProduct(ProductRequest productRequest,
             List<IFormFile> image)
         {
             //biz rule
@@ -60,11 +60,11 @@ namespace BLL.Services
                 product.IsDeleted = false;
                 product.CreatedDate = DateTime.Now;
                 product.UpdatedDate = DateTime.Now;
-                product.UpdatedBy = "Hân đẹp trai";
+                product.UpdatedBy = "";
 
                 _unitOfWork.Repository<Product>().Add(product);
 
-                _unitOfWork.Commit();
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -73,8 +73,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<ProductResponse>
                     {
-                        ResultCode = ResultCode.ERROR_CODE,
-                        ResultMessage = ResultCode.ERROR_MESSAGE,
+                        ResultCode = (int)ProductStatus.ERROR,
+                        ResultMessage = ProductStatus.ERROR.ToString(),
                         Data = default
                     });
             }
@@ -87,8 +87,8 @@ namespace BLL.Services
 
             return new BaseResponse<ProductResponse>
             {
-                ResultCode = ResultCode.SUCCESS_CODE,
-                ResultMessage = ResultCode.SUCCESS_MESSAGE,
+                ResultCode = (int)ProductStatus.SUCCESS,
+                ResultMessage = ProductStatus.SUCCESS.ToString(),
                 Data = productResponse
             };
         }
@@ -99,7 +99,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public BaseResponse<ProductResponse> GetProductById(string id)
+        public async Task<BaseResponse<ProductResponse>> GetProductById(string id)
         {
             ProductResponse productResponse = null;
 
@@ -112,8 +112,10 @@ namespace BLL.Services
                 //get product from database
                 try
                 {
-                    Product product = _unitOfWork.Repository<Product>().Get(id);
+                    Product product = await _unitOfWork.Repository<Product>()
+                                                       .FindAsync(p => p.ProductId.Equals(id));
                     productResponse = _mapper.Map<ProductResponse>(product);
+
                 }
                 catch (Exception e)
                 {
@@ -122,8 +124,8 @@ namespace BLL.Services
                     throw new HttpStatusException(HttpStatusCode.OK,
                         new BaseResponse<ProductResponse>
                         {
-                            ResultCode = ResultCode.PRODUCT_NOT_FOUND_CODE,
-                            ResultMessage = ResultCode.PRODUCT_NOT_FOUND_MESSAGE,
+                            ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
+                            ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
                             Data = default
                         });
                 }
@@ -131,8 +133,8 @@ namespace BLL.Services
 
             return new BaseResponse<ProductResponse>
             {
-                ResultCode = ResultCode.SUCCESS_CODE,
-                ResultMessage = ResultCode.SUCCESS_MESSAGE,
+                ResultCode = (int)ProductStatus.SUCCESS,
+                ResultMessage = ProductStatus.SUCCESS.ToString(),
                 Data = productResponse
             };
         }
@@ -145,7 +147,7 @@ namespace BLL.Services
         /// <param name="productRequest"></param>
         /// <param name="image">list of product's image</param>
         /// <returns></returns>
-        public BaseResponse<ProductResponse> UpdateProduct(string id,
+        public async Task<BaseResponse<ProductResponse>> UpdateProduct(string id,
             ProductRequest productRequest,
             List<IFormFile> image)
         {
@@ -155,7 +157,8 @@ namespace BLL.Services
             Product product;
             try
             {
-                product = _unitOfWork.Repository<Product>().Get(id);
+                product = await _unitOfWork.Repository<Product>()
+                                           .FindAsync(p => p.ProductId.Equals(id));
             }
             catch (Exception e)
             {
@@ -164,8 +167,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<Product>
                     {
-                        ResultCode = ResultCode.PRODUCT_NOT_FOUND_CODE,
-                        ResultMessage = ResultCode.PRODUCT_NOT_FOUND_MESSAGE,
+                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
+                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
                         Data = default
                     });
             }
@@ -179,11 +182,11 @@ namespace BLL.Services
                 product = _mapper.Map(productRequest, product);
                 product.Image = imageUrl;
                 product.UpdatedDate = DateTime.Now;
-                product.UpdatedBy = "Hân đẹp trai";
+                product.UpdatedBy = "";
 
                 _unitOfWork.Repository<Product>().Update(product);
 
-                _unitOfWork.Commit();
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -192,8 +195,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<Product>
                     {
-                        ResultCode = ResultCode.ERROR_CODE,
-                        ResultMessage = ResultCode.ERROR_MESSAGE,
+                        ResultCode = (int)ProductStatus.ERROR,
+                        ResultMessage = ProductStatus.ERROR.ToString(),
                         Data = default
                     });
             }
@@ -206,8 +209,8 @@ namespace BLL.Services
 
             return new BaseResponse<ProductResponse>
             {
-                ResultCode = ResultCode.SUCCESS_CODE,
-                ResultMessage = ResultCode.SUCCESS_MESSAGE,
+                ResultCode = (int)ProductStatus.SUCCESS,
+                ResultMessage = ProductStatus.SUCCESS.ToString(),
                 Data = productResponse
             };
         }
@@ -218,7 +221,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public BaseResponse<ProductResponse> DeleteProduct(string id)
+        public async Task<BaseResponse<ProductResponse>> DeleteProduct(string id)
         {
             //biz rule
 
@@ -226,17 +229,18 @@ namespace BLL.Services
             Product product;
             try
             {
-                product = _unitOfWork.Repository<Product>().Get(id);
+                product = await _unitOfWork.Repository<Product>()
+                                           .FindAsync(p => p.ProductId.Equals(id));
             }
             catch (Exception e)
             {
-                _logger.Error("[ProductService.UpdateProduct()]" + e.Message);
+                _logger.Error("[ProductService.DeleteProduct()]" + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<Product>
                     {
-                        ResultCode = ResultCode.PRODUCT_NOT_FOUND_CODE,
-                        ResultMessage = ResultCode.PRODUCT_NOT_FOUND_MESSAGE,
+                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
+                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
                         Data = default
                     });
             }
@@ -246,11 +250,11 @@ namespace BLL.Services
             {
                 product.IsDeleted = true;
                 product.UpdatedDate = DateTime.Now;
-                product.UpdatedBy = "Hân đẹp trai";
+                product.UpdatedBy = "";
 
                 _unitOfWork.Repository<Product>().Update(product);
 
-                _unitOfWork.Commit();
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -259,8 +263,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<Product>
                     {
-                        ResultCode = ResultCode.ERROR_CODE,
-                        ResultMessage = ResultCode.ERROR_MESSAGE,
+                        ResultCode = (int)ProductStatus.ERROR,
+                        ResultMessage = ProductStatus.ERROR.ToString(),
                         Data = default
                     });
             }
@@ -273,8 +277,8 @@ namespace BLL.Services
 
             return new BaseResponse<ProductResponse>
             {
-                ResultCode = ResultCode.SUCCESS_CODE,
-                ResultMessage = ResultCode.SUCCESS_MESSAGE,
+                ResultCode = (int)ProductStatus.SUCCESS,
+                ResultMessage = ProductStatus.SUCCESS.ToString(),
                 Data = productResponse
             };
 
