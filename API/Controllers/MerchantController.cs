@@ -34,7 +34,7 @@ namespace API.Controllers
         /// <param name="image"></param>
         /// <returns></returns>
         [HttpPost("create")]
-        public async Task<IActionResult> CreateMerchant([FromForm] MerchantRequest merchantRequest)
+        public async Task<IActionResult> CreateMerchant([FromBody] MerchantRequest merchantRequest)
         {
             _logger.Information($"POST api/merchant/create START Request: " +
                 $"{JsonSerializer.Serialize(merchantRequest)}");
@@ -93,7 +93,7 @@ namespace API.Controllers
         /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMerchant(string id,
-                                                      [FromForm] MerchantRequest merchantRequest)
+                                                      [FromBody] MerchantRequest merchantRequest)
         {
             _logger.Information($"PUT api/merchant/{id} START Request: " +
                 $"{JsonSerializer.Serialize(merchantRequest)}");
