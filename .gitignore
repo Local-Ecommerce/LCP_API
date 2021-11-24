@@ -2,4 +2,7 @@ logs/
 API/obj/
 BLL/obj/
 DAL/obj/
+API/bin/
+BLL/bin/
+DAL/bin/
 .vs/
