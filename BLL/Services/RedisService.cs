@@ -31,7 +31,7 @@ namespace BLL.Services
             {
                 _logger.Information($"[RedisService.GetList()] No data for key '{key}'.");
 
-                return default;
+                return new List<T>();
             }
 
             _logger.Information($"[RedisService.GetList()] Data for key '{key}': {cache}");
