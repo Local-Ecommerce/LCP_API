@@ -3,9 +3,7 @@ using BLL.Dtos.Product;
 using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -34,17 +32,15 @@ namespace API.Controllers
         /// <param name="image"></param>
         /// <returns></returns>
         [HttpPost("create")]
-        public async Task<IActionResult> CreateProduct([FromForm] ProductRequest productRequest,
-            [FromForm] List<IFormFile> image)
+        public async Task<IActionResult> CreateProduct([FromForm] ProductRequest productRequest)
         {
-            _logger.Information($"POST api/product/create START Request: " +
-                $"{JsonSerializer.Serialize(productRequest)}, {JsonSerializer.Serialize(image)}");
+            _logger.Information($"POST api/product/create START Request: {JsonSerializer.Serialize(productRequest)}");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
             //create product
-            BaseResponse<ProductResponse> response = await _productService.CreateProduct(productRequest, image);
+            BaseResponse<ProductResponse> response = await _productService.CreateProduct(productRequest);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -93,17 +89,15 @@ namespace API.Controllers
         /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(string id, 
-            [FromForm] ProductRequest productRequest,
-            [FromForm] List<IFormFile> image)
+            [FromForm] ProductRequest productRequest)
         {
-            _logger.Information($"PUT api/product/{id} START Request: " +
-                $"{JsonSerializer.Serialize(productRequest)}, {JsonSerializer.Serialize(image)}");
+            _logger.Information($"PUT api/product/{id} START Request: {JsonSerializer.Serialize(productRequest)}");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
             //update product
-            BaseResponse<ProductResponse> response = await _productService.UpdateProduct(id, productRequest, image);
+            BaseResponse<ProductResponse> response = await _productService.UpdateProduct(id, productRequest);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -129,7 +123,7 @@ namespace API.Controllers
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
-            //get product
+            //delete product
             BaseResponse<ProductResponse> response = await _productService.DeleteProduct(id);
 
             string json = JsonSerializer.Serialize(response);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BLL.Services.Interfaces
 {
@@ -28,6 +29,14 @@ namespace BLL.Services.Interfaces
         /// <param name="value"></param>
         void StoreList<T>(string key, List<T> value);
 
+        /// <summary>
+        /// Store T to list
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="listKey"></param>
+        /// <param name="value"></param>
+        /// <param name="predicate"></param>
+        void StoreToList<T>(string listKey, T value, Predicate<T> predicate);
 
         /// <summary>
         /// Get List of <T> from Redis by key

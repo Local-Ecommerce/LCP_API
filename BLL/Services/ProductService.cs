@@ -5,9 +5,7 @@ using BLL.Dtos.Product;
 using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
-using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -42,13 +40,12 @@ namespace BLL.Services
         /// <param name="productRequest"></param>
         /// <param name="image">list of product's image</param>
         /// <returns></returns>
-        public async Task<BaseResponse<ProductResponse>> CreateProduct(ProductRequest productRequest,
-            List<IFormFile> image)
+        public async Task<BaseResponse<ProductResponse>> CreateProduct(ProductRequest productRequest)
         {
             //biz rule
 
             //upload image
-            string imageUrl = "";
+            string imageUrl = productRequest.Image.ToString();
 
             //store product to database
             Product product = _mapper.Map<Product>(productRequest);
@@ -83,7 +80,8 @@ namespace BLL.Services
             ProductResponse productResponse = _mapper.Map<ProductResponse>(product);
 
             //store product to Redis
-            StoreProductToRedis(productResponse);
+            _redisService.StoreToList(CACHE_KEY, productResponse,
+                    new Predicate<ProductResponse>(a => a.ProductId == productResponse.ProductId));
 
             return new BaseResponse<ProductResponse>
             {
@@ -148,8 +146,7 @@ namespace BLL.Services
         /// <param name="image">list of product's image</param>
         /// <returns></returns>
         public async Task<BaseResponse<ProductResponse>> UpdateProduct(string id,
-            ProductRequest productRequest,
-            List<IFormFile> image)
+            ProductRequest productRequest)
         {
             //biz rule
 
@@ -174,7 +171,7 @@ namespace BLL.Services
             }
 
             //upload image
-            string imageUrl = image.ToString();
+            string imageUrl = productRequest.Image.ToString();
 
             //update data
             try
@@ -205,7 +202,8 @@ namespace BLL.Services
             ProductResponse productResponse = _mapper.Map<ProductResponse>(product);
 
             //store product to Redis
-            StoreProductToRedis(productResponse);
+            _redisService.StoreToList(CACHE_KEY, productResponse,
+                    new Predicate<ProductResponse>(a => a.ProductId == productResponse.ProductId));
 
             return new BaseResponse<ProductResponse>
             {
@@ -273,7 +271,8 @@ namespace BLL.Services
             ProductResponse productResponse = _mapper.Map<ProductResponse>(product);
 
             //store product to Redis
-            StoreProductToRedis(productResponse);
+            _redisService.StoreToList(CACHE_KEY, productResponse,
+                new Predicate<ProductResponse>(a => a.ProductId == productResponse.ProductId));
 
             return new BaseResponse<ProductResponse>
             {
@@ -282,34 +281,6 @@ namespace BLL.Services
                 Data = productResponse
             };
 
-        }
-
-
-        /// <summary>
-        /// Store product to Redis
-        /// </summary>
-        /// <param name="product"></param>
-        public void StoreProductToRedis(ProductResponse product)
-        {
-            List<ProductResponse> products = _redisService.GetList<ProductResponse>(CACHE_KEY);
-
-            //check list of products is null or empty
-            if (_utilService.IsNullOrEmpty(products))
-            {
-                products = new List<ProductResponse>();
-            }
-
-            //check if the product exists or not
-            ProductResponse p = products.Find(p => p.ProductId.Equals(product.ProductId));
-
-            if (p != null)
-            {
-                products.Remove(p);
-            }
-
-            products.Add(product);
-
-            _redisService.StoreList(CACHE_KEY, products);
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace BLL.Dtos.Product
+﻿using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
+
+namespace BLL.Dtos.Product
 {
     public class ProductRequest
     {
@@ -9,6 +12,7 @@
         public string Size { get; set; }
         public string Color { get; set; }
         public double Weight { get; set; }
+        public List<IFormFile> Image { get; set; }
     }
 
     public enum ProductStatus
