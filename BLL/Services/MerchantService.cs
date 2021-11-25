@@ -5,7 +5,6 @@ using BLL.Dtos.Merchant;
 using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -278,13 +277,13 @@ namespace BLL.Services
         {
             List<MerchantResponse> merchants = _redisService.GetList<MerchantResponse>(CACHE_KEY);
 
-            //check list of products is null or empty
+            //check list of merchants is null or empty
             if (_utilService.IsNullOrEmpty(merchants))
             {
                 merchants = new List<MerchantResponse>();
             }
 
-            //check if the product exists or not
+            //check if the merchant exists or not
             MerchantResponse m = merchants.Find(m => m.MerchantId.Equals(merchant.MerchantId));
 
             if (m != null)

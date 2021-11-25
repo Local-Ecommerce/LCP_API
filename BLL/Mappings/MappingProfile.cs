@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BLL.Dtos.LocalZone;
 using BLL.Dtos.Merchant;
 using BLL.Dtos.Product;
 using DAL.Models;
@@ -16,6 +17,10 @@ namespace BLL.Mappings
             //Merchant Mapping
             CreateMap<MerchantRequest, Merchant>();
             CreateMap<Merchant, MerchantResponse>().ReverseMap();
+
+            //LocalZone Mapping
+            CreateMap<LocalZoneRequest, LocalZone>();
+            CreateMap<LocalZone, LocalZoneResponse>();
         }
     }
 }
