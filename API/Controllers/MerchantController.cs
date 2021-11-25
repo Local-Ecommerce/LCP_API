@@ -128,7 +128,7 @@ namespace API.Controllers
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
-            //get merchant
+            //delete merchant
             BaseResponse<MerchantResponse> response = await _merchantService.DeleteMerchant(id);
 
             string json = JsonSerializer.Serialize(response);

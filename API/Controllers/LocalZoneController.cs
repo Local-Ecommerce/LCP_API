@@ -129,7 +129,7 @@ namespace API.Controllers
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
-            //get LocalZone
+            //delete LocalZone
             BaseResponse<LocalZoneResponse> response = await _localZoneService.DeleteLocalZone(id);
 
             string json = JsonSerializer.Serialize(response);
