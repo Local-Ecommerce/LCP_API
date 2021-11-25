@@ -1,13 +1,22 @@
 using API.Extensions;
+using BLL.Dtos;
+using BLL.Dtos.Account;
 using BLL.Filters;
+using BLL.Services;
+using BLL.Services.Interfaces;
 using DAL.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
+using System.Text.Json;
 
 namespace API
 {
@@ -24,9 +33,6 @@ namespace API
         {
             //add Controllers
             services.AddControllers();
-
-            //add application service extensions
-            services.AddApplicationServices(_configuration);
 
             //add CORS
             services.AddCors(options =>
@@ -61,6 +67,51 @@ namespace API
             {
                 options.Filters.Add(new ErrorHandlingFilter());
             });
+
+            //Add JWT Authentication
+            var key = _configuration.GetValue<string>("SecretKey");
+
+            //Jwt Authentication
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+
+                x.Events = new JwtBearerEvents
+                {
+                    OnChallenge = async context =>
+                    {
+                        // Call this to skip the default logic and avoid using the default response
+                        context.HandleResponse();
+
+                        // Write to the response
+                        context.Response.StatusCode = 401;
+                        BaseResponse<string> response = new BaseResponse<string>
+                        {
+                            ResultCode = (int)AccountStatus.UNAUTHORIZED_ACCOUNT,
+                            ResultMessage = AccountStatus.UNAUTHORIZED_ACCOUNT.ToString()
+                        };
+                        await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+                    }
+                };
+            });
+
+            services.AddSingleton<IJwtAuthenticationManager>(
+                new JwtAuthenticationManager(key));
+
+            //add application service extensions
+            services.AddApplicationServices(_configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -31,6 +31,7 @@ namespace API.Extensions
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IMerchantService, MerchantService>();
             services.AddScoped<ILocalZoneService, LocalZoneService>();
+            services.AddScoped<IAccountService, AccountService>();
 
             return services;
         }

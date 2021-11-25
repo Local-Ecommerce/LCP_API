@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using BLL.Services.Interfaces;
+using System;
 
 namespace BLL.Services
 {
@@ -85,6 +86,27 @@ namespace BLL.Services
             _logger.Information($"[RedisService.StoreList()] Set Data key '{key}': {value}");
 
             _distributedCache.SetString(key, cache);
+        }
+
+        /// <summary>
+        /// Store T to list
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="listKey"></param>
+        /// <param name="value"></param>
+        /// <param name="predicate"></param>
+        public void StoreToList<T>(string listKey, T value, Predicate<T> predicate)
+        {
+            List<T> list = GetList<T>(listKey);
+            T t = list.Find(predicate);
+
+            if(t != null)
+            {
+                list.Remove(t);
+            }
+
+            list.Add(value);
+            StoreList(listKey, list);
         }
     }
 }
