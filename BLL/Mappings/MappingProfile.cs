@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BLL.Dtos.Account;
 using BLL.Dtos.LocalZone;
 using BLL.Dtos.Merchant;
 using BLL.Dtos.Product;
@@ -21,6 +22,11 @@ namespace BLL.Mappings
             //LocalZone Mapping
             CreateMap<LocalZoneRequest, LocalZone>();
             CreateMap<LocalZone, LocalZoneResponse>();
+
+            //Account Mapping
+            CreateMap<AccountLoginRequest, Account>();
+            CreateMap<AccountRegisterRequest, Account>();
+            CreateMap<AccountResponse, Account>().ReverseMap();
         }
     }
 }

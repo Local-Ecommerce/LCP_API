@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\FPTU_Files\\Capstone Project\\Loich.net\\DAL\\DAL.csproj": {}
+    "D:\\FPTU_Files\\Capstone Project\\Backend\\Loich_API\\DAL\\DAL.csproj": {}
   },
   "projects": {
-    "D:\\FPTU_Files\\Capstone Project\\Loich.net\\DAL\\DAL.csproj": {
+    "D:\\FPTU_Files\\Capstone Project\\Backend\\Loich_API\\DAL\\DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\FPTU_Files\\Capstone Project\\Loich.net\\DAL\\DAL.csproj",
+        "projectUniqueName": "D:\\FPTU_Files\\Capstone Project\\Backend\\Loich_API\\DAL\\DAL.csproj",
         "projectName": "DAL",
-        "projectPath": "D:\\FPTU_Files\\Capstone Project\\Loich.net\\DAL\\DAL.csproj",
+        "projectPath": "D:\\FPTU_Files\\Capstone Project\\Backend\\Loich_API\\DAL\\DAL.csproj",
         "packagesPath": "C:\\Users\\quang\\.nuget\\packages\\",
-        "outputPath": "D:\\FPTU_Files\\Capstone Project\\Loich.net\\DAL\\obj\\",
+        "outputPath": "D:\\FPTU_Files\\Capstone Project\\Backend\\Loich_API\\DAL\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\quang\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -70,7 +70,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
