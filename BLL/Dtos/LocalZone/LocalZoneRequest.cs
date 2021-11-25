@@ -17,7 +17,7 @@ namespace BLL.Dtos.LocalZone
     {
         ERROR = -1,
         SUCCESS = 0,
-        LOCALZONE_NOT_FONUND = 4001,
+        LOCALZONE_NOT_FOUND = 4001,
         DELETED_LOCALZONE = 4002,
         UNVERIFIED_CREATE_LOCALZONE = 4003,
         UNVERIFIED_UPDATE_LOCALZONE = 4004

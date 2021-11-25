@@ -109,8 +109,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<LocalZone>
                     {
-                        ResultCode = (int)LocalZoneStatus.LOCALZONE_NOT_FONUND,
-                        ResultMessage = LocalZoneStatus.LOCALZONE_NOT_FONUND.ToString(),
+                        ResultCode = (int)LocalZoneStatus.LOCALZONE_NOT_FOUND,
+                        ResultMessage = LocalZoneStatus.LOCALZONE_NOT_FOUND.ToString(),
                         Data = default
                     });
             }
@@ -185,8 +185,8 @@ namespace BLL.Services
                     throw new HttpStatusException(HttpStatusCode.OK,
                         new BaseResponse<LocalZoneResponse>
                         {
-                            ResultCode = (int)LocalZoneStatus.LOCALZONE_NOT_FONUND,
-                            ResultMessage = LocalZoneStatus.LOCALZONE_NOT_FONUND.ToString(),
+                            ResultCode = (int)LocalZoneStatus.LOCALZONE_NOT_FOUND,
+                            ResultMessage = LocalZoneStatus.LOCALZONE_NOT_FOUND.ToString(),
                             Data = default
                         });
                 }
@@ -224,8 +224,8 @@ namespace BLL.Services
 
                 throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<LocalZoneResponse>
                 {
-                    ResultCode = (int)LocalZoneStatus.LOCALZONE_NOT_FONUND,
-                    ResultMessage = LocalZoneStatus.LOCALZONE_NOT_FONUND.ToString(),
+                    ResultCode = (int)LocalZoneStatus.LOCALZONE_NOT_FOUND,
+                    ResultMessage = LocalZoneStatus.LOCALZONE_NOT_FOUND.ToString(),
                     Data = default
                 });
             }

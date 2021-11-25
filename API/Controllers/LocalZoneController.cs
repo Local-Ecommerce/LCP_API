@@ -122,7 +122,7 @@ namespace API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPut("delete/{id}")]
-        public async Task<IActionResult> DeletelocalZone(string id)
+        public async Task<IActionResult> DeleteLocalZone(string id)
         {
             _logger.Information($"PUT api/localZone/delete/{id} START");
 
