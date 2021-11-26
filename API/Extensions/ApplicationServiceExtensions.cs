@@ -10,9 +10,6 @@ namespace API.Extensions
     public static class ApplicationServiceExtensions
     {
 
-        /*
-         * [12/08/2021 - HanNQ] app application services
-         */
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
             //Add Mapper
@@ -32,6 +29,7 @@ namespace API.Extensions
             services.AddScoped<IMerchantService, MerchantService>();
             services.AddScoped<ILocalZoneService, LocalZoneService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<ISystemCategoryService, SystemCategoryService>();
 
             return services;
         }
