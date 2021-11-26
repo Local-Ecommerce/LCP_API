@@ -75,7 +75,8 @@ namespace BLL.Services
             MerchantResponse merchantResponse = _mapper.Map<MerchantResponse>(merchant);
 
             //Store Merchant To Redis
-            StoreMerchantToRedis(merchantResponse);
+            _redisService.StoreToList(CACHE_KEY, merchantResponse,
+                    new Predicate<MerchantResponse>(a => a.MerchantId == merchantResponse.MerchantId));
 
             return new BaseResponse<MerchantResponse>
             {
@@ -191,7 +192,8 @@ namespace BLL.Services
             MerchantResponse merchantResponse = _mapper.Map<MerchantResponse>(merchant);
 
             //Store Merchant To Redis
-            StoreMerchantToRedis(merchantResponse);
+            _redisService.StoreToList(CACHE_KEY, merchantResponse,
+                    new Predicate<MerchantResponse>(a => a.MerchantId == merchantResponse.MerchantId));
 
             return new BaseResponse<MerchantResponse>
             {
@@ -258,7 +260,8 @@ namespace BLL.Services
             MerchantResponse merchantResponse = _mapper.Map<MerchantResponse>(merchant);
 
             //Store Merchant To Redis
-            StoreMerchantToRedis(merchantResponse);
+            _redisService.StoreToList(CACHE_KEY, merchantResponse,
+                    new Predicate<MerchantResponse>(a => a.MerchantId == merchantResponse.MerchantId));
 
             return new BaseResponse<MerchantResponse>
             {
@@ -266,34 +269,6 @@ namespace BLL.Services
                 ResultMessage = MerchantStatus.SUCCESS.ToString(),
                 Data = merchantResponse
             };
-        }
-
-
-        /// <summary>
-        /// Store Merchant To Redis
-        /// </summary>
-        /// <param name="merchant"></param>
-        public void StoreMerchantToRedis(MerchantResponse merchant)
-        {
-            List<MerchantResponse> merchants = _redisService.GetList<MerchantResponse>(CACHE_KEY);
-
-            //check list of merchants is null or empty
-            if (_utilService.IsNullOrEmpty(merchants))
-            {
-                merchants = new List<MerchantResponse>();
-            }
-
-            //check if the merchant exists or not
-            MerchantResponse m = merchants.Find(m => m.MerchantId.Equals(merchant.MerchantId));
-
-            if (m != null)
-            {
-                merchants.Remove(m);
-            }
-
-            merchants.Add(merchant);
-
-            _redisService.StoreList(CACHE_KEY, merchants);
         }
     }
 }

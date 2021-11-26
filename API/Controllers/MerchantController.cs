@@ -3,9 +3,7 @@ using BLL.Dtos.Merchant;
 using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -30,8 +28,7 @@ namespace API.Controllers
         /// <summary>
         /// Create a Merchant
         /// </summary>
-        /// <param name="MerchantRequest"></param>
-        /// <param name="image"></param>
+        /// <param name="merchantRequest"></param>
         /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreateMerchant([FromBody] MerchantRequest merchantRequest)
