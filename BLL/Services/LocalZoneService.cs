@@ -74,7 +74,8 @@ namespace BLL.Services
             LocalZoneResponse localZoneResponse = _mapper.Map<LocalZoneResponse>(localZone);
 
             //Store LocalZone To Redis
-            StoreLocalZoneToRedis(localZoneResponse);
+            _redisService.StoreToList(CACHE_KEY, localZoneResponse,
+                    new Predicate<LocalZoneResponse>(a => a.LocalZoneId == localZoneResponse.LocalZoneId));
 
             return new BaseResponse<LocalZoneResponse>
             {
@@ -141,7 +142,8 @@ namespace BLL.Services
             LocalZoneResponse localZoneResponse = _mapper.Map<LocalZoneResponse>(localZone);
 
             //Store LocalZone To Redis
-            StoreLocalZoneToRedis(localZoneResponse);
+            _redisService.StoreToList(CACHE_KEY, localZoneResponse,
+                    new Predicate<LocalZoneResponse>(a => a.LocalZoneId == localZoneResponse.LocalZoneId));
 
             return new BaseResponse<LocalZoneResponse>
             {
@@ -255,7 +257,8 @@ namespace BLL.Services
             LocalZoneResponse localZoneResponse = _mapper.Map<LocalZoneResponse>(localZone);
 
             //Store Reponse To Redis
-            StoreLocalZoneToRedis(localZoneResponse);
+            _redisService.StoreToList(CACHE_KEY, localZoneResponse,
+                    new Predicate<LocalZoneResponse>(a => a.LocalZoneId == localZoneResponse.LocalZoneId));
 
             return new BaseResponse<LocalZoneResponse>
             {
@@ -263,35 +266,6 @@ namespace BLL.Services
                 ResultMessage = LocalZoneStatus.SUCCESS.ToString(),
                 Data = localZoneResponse
             };
-        }
-
-
-        /// <summary>
-        /// Store LocalZone To Redis
-        /// </summary>
-        /// <param name="localZone"></param>
-        public void StoreLocalZoneToRedis(LocalZoneResponse localZone)
-        {
-
-            List<LocalZoneResponse> localZones = _redisService.GetList<LocalZoneResponse>(CACHE_KEY);
-
-            //Check if localZones null or not
-            if (_utilService.IsNullOrEmpty(localZones))
-            {
-                localZones = new List<LocalZoneResponse>();
-            }
-
-            LocalZoneResponse local = localZones.Find(loc => loc.LocalZoneId.Equals(localZone.LocalZoneId));
-
-            //Check localZone exist or not
-            if (local != null)
-            {
-                localZones.Remove(local);
-            }
-
-            localZones.Add(localZone);
-
-            _redisService.StoreList(CACHE_KEY, localZones);
         }
     }
 }

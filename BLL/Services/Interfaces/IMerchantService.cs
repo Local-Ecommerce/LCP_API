@@ -38,11 +38,5 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<BaseResponse<MerchantResponse>> DeleteMerchant(string id);
 
-
-        /// <summary>
-        /// Store Merchant To Redis
-        /// </summary>
-        /// <param name="merchant"></param>
-        void StoreMerchantToRedis(MerchantResponse merchant);
     }
 }

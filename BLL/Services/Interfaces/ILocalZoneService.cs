@@ -43,12 +43,5 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<BaseResponse<LocalZoneResponse>> DeleteLocalZone(string id);
-
-
-        /// <summary>
-        /// Store LocalZone To Redis
-        /// </summary>
-        /// <param name="localZone"></param>
-        void StoreLocalZoneToRedis(LocalZoneResponse localZone);
     }
 }
