@@ -25,6 +25,10 @@ namespace DAL.UnitOfWork
             return _context.SaveChangesAsync();
         }
 
+
+        /// <summary>
+        /// Cancel the commit
+        /// </summary>
         public void Dispose()
         {
             _context.Dispose();

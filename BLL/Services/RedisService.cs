@@ -18,6 +18,19 @@ namespace BLL.Services
             _logger = logger;
         }
 
+        public void DeleteFromList<T>(string listKey, string id, Predicate<T> predicate)
+        {
+            List<T> list = GetList<T>(listKey);
+            T t = list.Find(predicate);
+
+            if (t != null)
+            {
+                list.Remove(t);
+            }
+
+            StoreList(listKey, list);
+        }
+
         /// <summary>
         /// Get List of <T> from Redis by key
         /// </summary>

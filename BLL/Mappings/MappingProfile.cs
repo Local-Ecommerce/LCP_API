@@ -4,6 +4,7 @@ using BLL.Dtos.LocalZone;
 using BLL.Dtos.Merchant;
 using BLL.Dtos.MerchantStore;
 using BLL.Dtos.Product;
+using BLL.Dtos.SystemCategory;
 using DAL.Models;
 
 namespace BLL.Mappings
@@ -28,6 +29,10 @@ namespace BLL.Mappings
             CreateMap<AccountLoginRequest, Account>();
             CreateMap<AccountRegisterRequest, Account>();
             CreateMap<AccountResponse, Account>().ReverseMap();
+
+            //SystemCategory Mapping
+            CreateMap<SystemCategoryRequest, SystemCategory>();
+            CreateMap<SystemCategory, SystemCategoryResponse>().ReverseMap();
 
             //MerchantStore Mapping
             CreateMap<MerchantStoreRequest, MerchantStore>();

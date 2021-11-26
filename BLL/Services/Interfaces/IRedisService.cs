@@ -46,5 +46,15 @@ namespace BLL.Services.Interfaces
         /// <returns>List of <T></returns>
         List<T> GetList<T>(string key);
 
+
+        /// <summary>
+        /// Delete from list by Id
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="listKey"></param>
+        /// <param name="id"></param>
+        /// <param name="predicate"></param>
+        void DeleteFromList<T>(string listKey, string id, Predicate<T> predicate);
+
     }
 }
