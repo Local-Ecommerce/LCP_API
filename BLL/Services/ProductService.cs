@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Dtos;
+using BLL.Constants;
 using BLL.Dtos.Exception;
 using BLL.Dtos.Product;
 using BLL.Services.Interfaces;
@@ -70,8 +71,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<ProductResponse>
                     {
-                        ResultCode = (int)ProductStatus.ERROR,
-                        ResultMessage = ProductStatus.ERROR.ToString(),
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
                         Data = default
                     });
             }
@@ -85,8 +86,8 @@ namespace BLL.Services
 
             return new BaseResponse<ProductResponse>
             {
-                ResultCode = (int)ProductStatus.SUCCESS,
-                ResultMessage = ProductStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = productResponse
             };
         }
@@ -131,8 +132,8 @@ namespace BLL.Services
 
             return new BaseResponse<ProductResponse>
             {
-                ResultCode = (int)ProductStatus.SUCCESS,
-                ResultMessage = ProductStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = productResponse
             };
         }
@@ -192,8 +193,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<Product>
                     {
-                        ResultCode = (int)ProductStatus.ERROR,
-                        ResultMessage = ProductStatus.ERROR.ToString(),
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
                         Data = default
                     });
             }
@@ -207,8 +208,8 @@ namespace BLL.Services
 
             return new BaseResponse<ProductResponse>
             {
-                ResultCode = (int)ProductStatus.SUCCESS,
-                ResultMessage = ProductStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = productResponse
             };
         }
@@ -261,8 +262,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<Product>
                     {
-                        ResultCode = (int)ProductStatus.ERROR,
-                        ResultMessage = ProductStatus.ERROR.ToString(),
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
                         Data = default
                     });
             }
@@ -276,8 +277,8 @@ namespace BLL.Services
 
             return new BaseResponse<ProductResponse>
             {
-                ResultCode = (int)ProductStatus.SUCCESS,
-                ResultMessage = ProductStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = productResponse
             };
 

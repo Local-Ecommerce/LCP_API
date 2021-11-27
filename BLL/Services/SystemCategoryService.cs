@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Dtos;
+using BLL.Constants;
 using BLL.Dtos.Exception;
 using BLL.Dtos.SystemCategory;
 using BLL.Services.Interfaces;
@@ -62,8 +63,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<SystemCategoryResponse>
                     {
-                        ResultCode = (int)SystemCategoryStatus.ERROR,
-                        ResultMessage = SystemCategoryStatus.ERROR.ToString(),
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
                         Data = default
                     });
             }
@@ -77,8 +78,8 @@ namespace BLL.Services
 
             return new BaseResponse<SystemCategoryResponse>
             {
-                ResultCode = (int)SystemCategoryStatus.SUCCESS,
-                ResultMessage = SystemCategoryStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = systemCategoryResponse
             };
         }
@@ -117,7 +118,7 @@ namespace BLL.Services
             //delete systemCategory
             try
             {
-                _unitOfWork.Repository<SystemCategory>().Delete(systemCategory);
+                _unitOfWork.Repository<SystemCategory>().Update(systemCategory);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -128,20 +129,23 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<SystemCategory>
                     {
-                        ResultCode = (int)SystemCategoryStatus.ERROR,
-                        ResultMessage = SystemCategoryStatus.ERROR.ToString(),
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
                         Data = default
                     });
             }
 
+            //create response
+            SystemCategoryResponse systemCategoryResponse = _mapper.Map<SystemCategoryResponse>(systemCategory);
+
             //delete systemCategory to Redis
-            _redisService.DeleteFromList<SystemCategoryResponse>(CACHE_KEY, id,
+            _redisService.StoreToList<SystemCategoryResponse>(CACHE_KEY, systemCategoryResponse,
                 new Predicate<SystemCategoryResponse>(sc => sc.SystemCategoryId == id));
 
             return new BaseResponse<SystemCategoryResponse>
             {
-                ResultCode = (int)SystemCategoryStatus.SUCCESS,
-                ResultMessage = SystemCategoryStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = default
             };
         }
@@ -184,8 +188,8 @@ namespace BLL.Services
 
             return new BaseResponse<List<SystemCategoryResponse>>
             {
-                ResultCode = (int)SystemCategoryStatus.SUCCESS,
-                ResultMessage = SystemCategoryStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = systemCategoryList
             };
         }
@@ -239,8 +243,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<SystemCategory>
                     {
-                        ResultCode = (int)SystemCategoryStatus.ERROR,
-                        ResultMessage = SystemCategoryStatus.ERROR.ToString(),
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
                         Data = default
                     });
             }
@@ -254,8 +258,8 @@ namespace BLL.Services
 
             return new BaseResponse<SystemCategoryResponse>
             {
-                ResultCode = (int)SystemCategoryStatus.SUCCESS,
-                ResultMessage = SystemCategoryStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = systemCategoryResponse
             };
         }
@@ -301,8 +305,8 @@ namespace BLL.Services
 
             return new BaseResponse<SystemCategoryResponse>
             {
-                ResultCode = (int)SystemCategoryStatus.SUCCESS,
-                ResultMessage = SystemCategoryStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = systemCategoryResponse
             };
         }
