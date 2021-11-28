@@ -66,4 +66,11 @@
         UNVERIFIED_UPDATE_MERCHANTSTORE = 6004
     }
 
+    public enum CustomerStatus
+    {
+        CUSTOMER_NOT_FOUND = 7001,
+        DELETED_CUSTOMER = 7002,
+        UNVERIFIED_CREATE_CUSTOMER = 7003,
+        UNVERIFIED_UPDATE_CUSTOMER = 7007
+    }
 }

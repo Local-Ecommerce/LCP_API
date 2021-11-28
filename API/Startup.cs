@@ -112,6 +112,7 @@ namespace API
 
             //add application service extensions
             services.AddApplicationServices(_configuration);
+            services.AddApplicationInsightsTelemetry();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

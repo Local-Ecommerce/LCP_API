@@ -33,6 +33,8 @@ namespace API.Extensions
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
 
             services.AddScoped<IMerchantStoreService, MerchantStoreService>();
+            services.AddScoped<ICustomerService, CustomerService>();
+
             return services;
         }
     }
