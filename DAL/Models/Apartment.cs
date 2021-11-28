@@ -5,19 +5,21 @@ using System.Collections.Generic;
 
 namespace DAL.Models
 {
-    public partial class LocalZone
+    public partial class Apartment
     {
-        public LocalZone()
+        public Apartment()
         {
+            MarketManagers = new HashSet<MarketManager>();
             MerchantStores = new HashSet<MerchantStore>();
         }
 
-        public string LocalZoneId { get; set; }
+        public string ApartmentId { get; set; }
         public string Address { get; set; }
         public double? Lat { get; set; }
         public double? Long { get; set; }
-        public bool? IsActive { get; set; }
+        public int? Status { get; set; }
 
+        public virtual ICollection<MarketManager> MarketManagers { get; set; }
         public virtual ICollection<MerchantStore> MerchantStores { get; set; }
     }
 }

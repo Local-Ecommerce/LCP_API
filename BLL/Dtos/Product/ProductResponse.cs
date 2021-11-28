@@ -10,11 +10,10 @@ namespace BLL.Dtos.Product
         public string ProductType { get; set; }
         public double DefaultPrice { get; set; }
         public string Image { get; set; }
-        public bool IsActive { get; set; }
-        public bool IsDeleted { get; set; }
+        public int Status { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
-        public string UpdatedBy { get; set; }
+        public string ApproveBy { get; set; }
         public string Size { get; set; }
         public string Color { get; set; }
         public double Weight { get; set; }

@@ -9,6 +9,7 @@ namespace DAL.Models
     {
         public MerchantStore()
         {
+            OrderDetails = new HashSet<OrderDetail>();
             Orders = new HashSet<Order>();
             StoreMenuDetails = new HashSet<StoreMenuDetail>();
         }
@@ -16,13 +17,13 @@ namespace DAL.Models
         public string MerchantStoreId { get; set; }
         public string StoreName { get; set; }
         public DateTime? CreatedDate { get; set; }
-        public bool? IsActive { get; set; }
-        public bool? IsBlock { get; set; }
+        public int? Status { get; set; }
         public string MerchantId { get; set; }
-        public string LocalZoneId { get; set; }
+        public string AparmentId { get; set; }
 
-        public virtual LocalZone LocalZone { get; set; }
+        public virtual Apartment Aparment { get; set; }
         public virtual Merchant Merchant { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<StoreMenuDetail> StoreMenuDetails { get; set; }
     }

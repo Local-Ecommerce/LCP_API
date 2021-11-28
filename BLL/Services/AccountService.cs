@@ -70,6 +70,7 @@ namespace BLL.Services
                 account.AvatarImage = avatarImageUrl;
                 account.CreatedDate = DateTime.Now;
                 account.UpdatedDate = DateTime.Now;
+                account.Status = (int)AccountStatus.ACTIVE_ACCOUNT;
 
                 _unitOfWork.Repository<Account>().Add(account);
 
@@ -111,6 +112,50 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<AccountResponse>> DeleteAccount(string id)
         {
+            //biz rule
+
+            //valid id
+            Account account;
+            try
+            {
+                account = await _unitOfWork.Repository<Account>()
+                                           .FindAsync(a => a.AccountId.Equals(id));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[AccountService.UpdateAccount()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<AccountResponse>
+                    {
+                        ResultCode = (int)AccountStatus.ACCOUNT_NOT_FOUND,
+                        ResultMessage = AccountStatus.ACCOUNT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            //delete account
+            try
+            {
+                account.UpdatedDate = DateTime.Now;
+                account.Status = (int)AccountStatus.DELETED_ACCOUNT;
+
+                _unitOfWork.Repository<Account>().Update(account);
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[AccountService.UpdateAccount()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<AccountResponse>
+                    {
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
+                        Data = default
+                    });
+            }
             return new BaseResponse<AccountResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -211,7 +256,13 @@ namespace BLL.Services
         }
 
 
-
+        /// <summary>
+        /// Update Account
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="accountImageForm"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<AccountResponse>> UpdateAccount(string id,
             AccountImageForm accountImageForm)
         {

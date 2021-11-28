@@ -14,6 +14,7 @@ namespace DAL.Models
 
         public string PaymentMethodId { get; set; }
         public string PaymentName { get; set; }
+        public int? Status { get; set; }
 
         public virtual ICollection<Payment> Payments { get; set; }
     }

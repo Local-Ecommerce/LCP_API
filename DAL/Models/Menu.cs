@@ -16,7 +16,7 @@ namespace DAL.Models
         public string MenuId { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
-        public bool? IsActive { get; set; }
+        public int? Status { get; set; }
         public string MerchantId { get; set; }
 
         public virtual Merchant Merchant { get; set; }

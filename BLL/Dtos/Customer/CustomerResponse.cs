@@ -9,8 +9,7 @@ namespace BLL.Dtos.Customer
         public string PhoneNumber { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string Gender { get; set; }
-        public bool? IsActive { get; set; }
-        public bool? IsBlock { get; set; }
+        public int? Status { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string AccountId { get; set; }

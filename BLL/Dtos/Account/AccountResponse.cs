@@ -10,6 +10,7 @@ namespace BLL.Dtos.Account
         public string AvatarImage { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
+        public int? Status { get; set; }
         public string Token { get; set; }
     }
 }
