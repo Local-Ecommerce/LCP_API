@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Dtos.Account;
+using BLL.Dtos.Customer;
 using BLL.Dtos.LocalZone;
 using BLL.Dtos.Merchant;
 using BLL.Dtos.MerchantStore;
@@ -32,6 +33,10 @@ namespace BLL.Mappings
             //MerchantStore Mapping
             CreateMap<MerchantStoreRequest, MerchantStore>();
             CreateMap<MerchantStore, MerchantStoreResponse>().ReverseMap();
+
+            //Customer Mapping
+            CreateMap<CustomerRequest, Customer>();
+            CreateMap<Customer, CustomerResponse>().ReverseMap();
         }
     }
 }
