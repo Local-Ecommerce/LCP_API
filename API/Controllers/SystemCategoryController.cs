@@ -1,7 +1,6 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.SystemCategory;
 using BLL.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -111,7 +110,6 @@ namespace API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="systemCategoryRequest"></param>
-        /// <param name="image"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateSystemCategory(string id,
@@ -141,7 +139,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteSystemCategory(string id)
         {
             _logger.Information($"PUT api/systemCategory/delete/{id} START");

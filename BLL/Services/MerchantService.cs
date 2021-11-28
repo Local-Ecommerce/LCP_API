@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using BLL.Dtos;
+using BLL.Constants;
 using BLL.Dtos.Exception;
 using BLL.Dtos.Merchant;
 using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -65,8 +65,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<MerchantResponse>
                     {
-                        ResultCode = (int)MerchantStatus.ERROR,
-                        ResultMessage = MerchantStatus.ERROR.ToString(),
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
                         Data = default
                     });
             }
@@ -80,8 +80,8 @@ namespace BLL.Services
 
             return new BaseResponse<MerchantResponse>
             {
-                ResultCode = (int)MerchantStatus.SUCCESS,
-                ResultMessage = MerchantStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = merchantResponse
             };
         }
@@ -128,8 +128,8 @@ namespace BLL.Services
 
             return new BaseResponse<MerchantResponse>
             {
-                ResultCode = (int)MerchantStatus.SUCCESS,
-                ResultMessage = MerchantStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = merchantResponse
             };
 
@@ -182,8 +182,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<MerchantResponse>
                     {
-                        ResultCode = (int)MerchantStatus.ERROR,
-                        ResultMessage = MerchantStatus.ERROR.ToString(),
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
                         Data = default
                     });
             }
@@ -197,8 +197,8 @@ namespace BLL.Services
 
             return new BaseResponse<MerchantResponse>
             {
-                ResultCode = (int)MerchantStatus.SUCCESS,
-                ResultMessage = MerchantStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = merchantResponse
             };
         }
@@ -250,8 +250,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<MerchantResponse>
                     {
-                        ResultCode = (int)MerchantStatus.ERROR,
-                        ResultMessage = MerchantStatus.ERROR.ToString(),
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
                         Data = default
                     });
             }
@@ -265,8 +265,8 @@ namespace BLL.Services
 
             return new BaseResponse<MerchantResponse>
             {
-                ResultCode = (int)MerchantStatus.SUCCESS,
-                ResultMessage = MerchantStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = merchantResponse
             };
         }

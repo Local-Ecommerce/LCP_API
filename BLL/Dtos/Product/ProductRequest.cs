@@ -14,14 +14,4 @@ namespace BLL.Dtos.Product
         public double Weight { get; set; }
         public List<IFormFile> Image { get; set; }
     }
-
-    public enum ProductStatus
-    {
-        ERROR = -1,
-        SUCCESS = 0,
-        PRODUCT_NOT_FOUND = 1001,
-        DELETED_PRODUCT = 1002,
-        UNVERIFIED_CREATE_PRODUCT = 1003,
-        UNVERIFIED_UPDATE_PRODUCT = 1004
-    }
 }
