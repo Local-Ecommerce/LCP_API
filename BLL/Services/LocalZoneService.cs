@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Dtos;
+using BLL.Constants;
 using BLL.Dtos.Exception;
 using BLL.Dtos.LocalZone;
 using BLL.Services.Interfaces;
@@ -63,8 +64,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<LocalZoneResponse>
                     {
-                        ResultCode = (int)LocalZoneStatus.ERROR,
-                        ResultMessage = LocalZoneStatus.ERROR.ToString(),
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
                         Data = default
                     });
             }
@@ -78,8 +79,8 @@ namespace BLL.Services
 
             return new BaseResponse<LocalZoneResponse>
             {
-                ResultCode = (int)LocalZoneStatus.SUCCESS,
-                ResultMessage = LocalZoneStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = localZoneResponse
             };
 
@@ -131,8 +132,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<LocalZone>
                     {
-                        ResultCode = (int)LocalZoneStatus.ERROR,
-                        ResultMessage = LocalZoneStatus.ERROR.ToString(),
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
                         Data = default
                     });
             }
@@ -146,8 +147,8 @@ namespace BLL.Services
 
             return new BaseResponse<LocalZoneResponse>
             {
-                ResultCode = (int)LocalZoneStatus.SUCCESS,
-                ResultMessage = LocalZoneStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = localZoneResponse
             };
 
@@ -195,8 +196,8 @@ namespace BLL.Services
 
             return new BaseResponse<LocalZoneResponse>
             {
-                ResultCode = (int)LocalZoneStatus.SUCCESS,
-                ResultMessage = LocalZoneStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = localZoneResponse
             };
         }
@@ -246,8 +247,8 @@ namespace BLL.Services
 
                 throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<LocalZoneResponse>
                 {
-                    ResultCode = (int)LocalZoneStatus.ERROR,
-                    ResultMessage = LocalZoneStatus.ERROR.ToString(),
+                    ResultCode = (int)CommonResponse.ERROR,
+                    ResultMessage = CommonResponse.ERROR.ToString(),
                     Data = default
                 });
             }
@@ -261,8 +262,8 @@ namespace BLL.Services
 
             return new BaseResponse<LocalZoneResponse>
             {
-                ResultCode = (int)LocalZoneStatus.SUCCESS,
-                ResultMessage = LocalZoneStatus.SUCCESS.ToString(),
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = localZoneResponse
             };
         }

@@ -15,14 +15,6 @@ namespace BLL.Dtos.Customer
         public string AccountId { get; set; }
 
 
-        public enum CustomerStatus
-        {
-            ERROR = -1,
-            SUCCESS = 0,
-            CUSTOMER_NOT_FOUND = 8001,
-            DELETED_CUSTOMER = 8002,
-            UNVERIFIED_CREATE_CUSTOMER = 8003,
-            UNVERIFIED_UPDATE_CUSTOMER = 8008
-        }
+
     }
 }
