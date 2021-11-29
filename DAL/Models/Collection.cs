@@ -16,7 +16,7 @@ namespace DAL.Models
         public string CollectionName { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
-        public bool? IsDeleted { get; set; }
+        public int? Status { get; set; }
         public string MerchantId { get; set; }
 
         public virtual Merchant Merchant { get; set; }

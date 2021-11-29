@@ -9,7 +9,10 @@ namespace DAL.Models
     {
         public Account()
         {
+            AccountTokens = new HashSet<AccountToken>();
+            Admins = new HashSet<Admin>();
             Customers = new HashSet<Customer>();
+            MarketManagers = new HashSet<MarketManager>();
             Merchants = new HashSet<Merchant>();
         }
 
@@ -20,8 +23,12 @@ namespace DAL.Models
         public string AvatarImage { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
+        public int? Status { get; set; }
 
+        public virtual ICollection<AccountToken> AccountTokens { get; set; }
+        public virtual ICollection<Admin> Admins { get; set; }
         public virtual ICollection<Customer> Customers { get; set; }
+        public virtual ICollection<MarketManager> MarketManagers { get; set; }
         public virtual ICollection<Merchant> Merchants { get; set; }
     }
 }

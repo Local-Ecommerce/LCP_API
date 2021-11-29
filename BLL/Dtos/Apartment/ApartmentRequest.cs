@@ -1,6 +1,6 @@
-﻿namespace BLL.Dtos.LocalZone
+﻿namespace BLL.Dtos.Apartment
 {
-    public class LocalZoneRequest
+    public class ApartmentRequest
     {
         public string Address { get; set; }
         public double? Lat { get; set; }

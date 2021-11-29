@@ -50,7 +50,8 @@ namespace BLL.Services
             try
             {
                 systemCategory.SystemCategoryId = _utilService.Create16Alphanumeric();
-                systemCategory.UpdatedBy = "";
+                systemCategory.Status = (int)SystemCategoryStatus.ACTIVE_SYSTEM_CATEGORY;
+                systemCategory.ApproveBy = "";
 
                 _unitOfWork.Repository<SystemCategory>().Add(systemCategory);
 
@@ -118,6 +119,9 @@ namespace BLL.Services
             //delete systemCategory
             try
             {
+                systemCategory.Status = (int)SystemCategoryStatus.DELETED_SYSTEM_CATEGORY;
+                systemCategory.ApproveBy = "";
+
                 _unitOfWork.Repository<SystemCategory>().Update(systemCategory);
 
                 await _unitOfWork.SaveChangesAsync();
@@ -230,7 +234,7 @@ namespace BLL.Services
             try
             {
                 systemCategory = _mapper.Map(request, systemCategory);
-                systemCategory.UpdatedBy = "";
+                systemCategory.ApproveBy = "";
 
                 _unitOfWork.Repository<SystemCategory>().Update(systemCategory);
 

@@ -50,8 +50,7 @@ namespace BLL.Services
             try
             {
                 merchant.MerchantId = _utilService.Create16Alphanumeric();
-                merchant.IsBlock = false;
-                merchant.IsActive = false;
+                merchant.Status = (int)MerchantStatus.UNVERIFIED_CREATE_MERCHANT;
                 merchant.LevelId = "1";
 
                 _unitOfWork.Repository<Merchant>().Add(merchant);
@@ -132,7 +131,6 @@ namespace BLL.Services
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = merchantResponse
             };
-
         }
 
 
@@ -170,6 +168,7 @@ namespace BLL.Services
             try
             {
                 merchant = _mapper.Map(merchantRequest, merchant);
+                merchant.Status = (int)MerchantStatus.UNVERIFIED_UPDATE_MERCHANT;
 
                 _unitOfWork.Repository<Merchant>().Update(merchant);
 
@@ -237,7 +236,7 @@ namespace BLL.Services
             //Delete Merchant
             try
             {
-                merchant.IsBlock = true;
+                merchant.Status = (int)MerchantStatus.DELETED_MERCHANT;
 
                 _unitOfWork.Repository<Merchant>().Update(merchant);
 

@@ -11,7 +11,7 @@ namespace DAL.Models
         public DateTime? TimeStart { get; set; }
         public DateTime? TimeEnd { get; set; }
         public DateTime? CreatedDate { get; set; }
-        public bool? IsActive { get; set; }
+        public int? Status { get; set; }
         public string MenuId { get; set; }
         public string MerchantStoreId { get; set; }
 

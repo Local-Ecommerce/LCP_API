@@ -51,9 +51,9 @@ namespace BLL.Services
             try
             {
                 customer.CustomerId = _utilService.Create16Alphanumeric();
-                customer.IsActive = true;
                 customer.CreatedDate = DateTime.Now;
                 customer.UpdatedDate = DateTime.Now;
+                customer.Status = (int)CustomerStatus.UNVERIFIED_CREATE_CUSTOMER;
 
                 _unitOfWork.Repository<Customer>().Add(customer);
 
@@ -121,7 +121,7 @@ namespace BLL.Services
             //Delete Customer
             try
             {
-                customer.IsBlock = false;
+                customer.Status = (int)CustomerStatus.DELETED_CUSTOMER;
 
                 _unitOfWork.Repository<Customer>().Update(customer);
 
@@ -237,6 +237,8 @@ namespace BLL.Services
             try
             {
                 customer = _mapper.Map(customerRequest, customer);
+                customer.Status = (int)CustomerStatus.UNVERIFIED_UPDATE_CUSTOMER;
+                customer.UpdatedDate = DateTime.Now;
 
                 _unitOfWork.Repository<Customer>().Update(customer);
 

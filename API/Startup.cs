@@ -1,6 +1,6 @@
 using API.Extensions;
 using BLL.Dtos;
-using BLL.Dtos.Account;
+using BLL.Constants;
 using BLL.Filters;
 using BLL.Services;
 using BLL.Services.Interfaces;
@@ -48,7 +48,7 @@ namespace API
             //Add Swagger
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Loich.net ", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Local Commerce Platform", Version = "v1" });
             });
 
             //Add Redis
@@ -112,7 +112,6 @@ namespace API
 
             //add application service extensions
             services.AddApplicationServices(_configuration);
-            services.AddApplicationInsightsTelemetry();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -121,7 +120,7 @@ namespace API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Loich.net v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LCP v1"));
             }
 
             app.UseHttpsRedirection();
