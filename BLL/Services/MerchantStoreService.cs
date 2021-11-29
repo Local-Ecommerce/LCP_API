@@ -50,8 +50,7 @@ namespace BLL.Services
             try
             {
                 merchantStore.MerchantStoreId = _utilService.Create16Alphanumeric();
-                merchantStore.IsBlock = false;
-                merchantStore.IsActive = false;
+                merchantStore.Status = (int)MerchantStoreStatus.UNVERIFIED_CREATE_MERCHANT_STORE;
                 merchantStore.CreatedDate = DateTime.Now;
 
                 _unitOfWork.Repository<MerchantStore>().Add(merchantStore);
@@ -110,8 +109,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<MerchantStoreResponse>
                     {
-                        ResultCode = (int)MerchantStoreStatus.MERCHANTSTORE_NOT_FOUND,
-                        ResultMessage = MerchantStoreStatus.MERCHANTSTORE_NOT_FOUND.ToString(),
+                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
+                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
                         Data = default
                     });
             }
@@ -119,7 +118,7 @@ namespace BLL.Services
             //Delete MerchantStore
             try
             {
-                merchantStore.IsBlock = true;
+                merchantStore.Status = (int)MerchantStoreStatus.DELETED_MERCHANT_STORE;
 
                 _unitOfWork.Repository<MerchantStore>().Update(merchantStore);
 
@@ -185,8 +184,8 @@ namespace BLL.Services
                     throw new HttpStatusException(HttpStatusCode.OK,
                         new BaseResponse<MerchantStoreResponse>
                         {
-                            ResultCode = (int)MerchantStoreStatus.MERCHANTSTORE_NOT_FOUND,
-                            ResultMessage = MerchantStoreStatus.MERCHANTSTORE_NOT_FOUND.ToString(),
+                            ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
+                            ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
                             Data = default
                         });
                 }
@@ -207,7 +206,8 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="merchantStoreRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<MerchantStoreResponse>> UpdateMerchantStoreById(string id, MerchantStoreRequest merchantStoreRequest)
+        public async Task<BaseResponse<MerchantStoreResponse>> UpdateMerchantStoreById(string id, 
+            MerchantStoreRequest merchantStoreRequest)
         {
             MerchantStore merchantStore;
 
@@ -224,8 +224,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<MerchantStoreResponse>
                     {
-                        ResultCode = (int)MerchantStoreStatus.MERCHANTSTORE_NOT_FOUND,
-                        ResultMessage = MerchantStoreStatus.MERCHANTSTORE_NOT_FOUND.ToString(),
+                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
+                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
                         Data = default
                     });
             }
@@ -234,6 +234,7 @@ namespace BLL.Services
             try
             {
                 merchantStore = _mapper.Map(merchantStoreRequest, merchantStore);
+                merchantStore.Status = (int)MerchantStoreStatus.UNVERIFIED_UPDATE_MERCHANT_STORE;
 
                 _unitOfWork.Repository<MerchantStore>().Update(merchantStore);
 

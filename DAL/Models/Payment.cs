@@ -12,6 +12,7 @@ namespace DAL.Models
         public DateTime? DateTime { get; set; }
         public string OrderId { get; set; }
         public string PaymentMethodId { get; set; }
+        public int? Status { get; set; }
 
         public virtual Order Order { get; set; }
         public virtual PaymentMethod PaymentMethod { get; set; }

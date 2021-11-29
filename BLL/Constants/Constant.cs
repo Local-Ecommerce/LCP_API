@@ -19,6 +19,7 @@
         INVALID_USERNAME_PASSWORD = 4,
         INVALID_CONFIRM_PASSWORD = 5,
         DELETED_ACCOUNT = 6,
+        ACTIVE_ACCOUNT = 7,
     }
 
     public enum ProductStatus
@@ -39,15 +40,16 @@
 
     public enum SystemCategoryStatus
     {
-        SYSTEM_CATEGORY_NOT_FOUND = 3001
+        SYSTEM_CATEGORY_NOT_FOUND = 3001,
+        ACTIVE_SYSTEM_CATEGORY = 3002,
+        DELETED_SYSTEM_CATEGORY = 3003
     }
 
-    public enum LocalZoneStatus
+    public enum ApartmentStatus
     {
-        LOCALZONE_NOT_FOUND = 4001,
-        DELETED_LOCALZONE = 4002,
-        UNVERIFIED_CREATE_LOCALZONE = 4003,
-        UNVERIFIED_UPDATE_LOCALZONE = 4004
+        APARTMENT_NOT_FOUND = 4001,
+        DELETED_APARTMENT = 4002,
+        ACTIVE_APARTMENT = 4003
     }
 
     public enum ProductCategoryStatus
@@ -60,10 +62,10 @@
 
     public enum MerchantStoreStatus
     {
-        MERCHANTSTORE_NOT_FOUND = 6001,
-        DELETED_MERCHANTSTORE = 6006,
-        UNVERIFIED_CREATE_MERCHANTSTORE = 6003,
-        UNVERIFIED_UPDATE_MERCHANTSTORE = 6004
+        MERCHANT_STORE_NOT_FOUND = 6001,
+        DELETED_MERCHANT_STORE = 6006,
+        UNVERIFIED_CREATE_MERCHANT_STORE = 6003,
+        UNVERIFIED_UPDATE_MERCHANT_STORE = 6004
     }
 
     public enum CustomerStatus
@@ -71,6 +73,6 @@
         CUSTOMER_NOT_FOUND = 7001,
         DELETED_CUSTOMER = 7002,
         UNVERIFIED_CREATE_CUSTOMER = 7003,
-        UNVERIFIED_UPDATE_CUSTOMER = 7007
+        UNVERIFIED_UPDATE_CUSTOMER = 7004
     }
 }

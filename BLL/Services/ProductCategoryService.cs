@@ -51,7 +51,7 @@ namespace BLL.Services
             try
             {
                 productCategory.ProductCategoryId = _utilService.Create16Alphanumeric();
-                productCategory.ApproveStatus = (int)ProductCategoryStatus.UNVERIFIED_CREATE_PRODUCT_CATEGORY;
+                productCategory.Status = (int)ProductCategoryStatus.UNVERIFIED_CREATE_PRODUCT_CATEGORY;
                 productCategory.CreatedDate = DateTime.Now;
                 productCategory.UpdatedDate = DateTime.Now;
 
@@ -121,7 +121,7 @@ namespace BLL.Services
             //delete productCategory
             try
             {
-                productCategory.ApproveStatus = (int)ProductCategoryStatus.DELETED_PRODUCT_CATEGORY;
+                productCategory.Status = (int)ProductCategoryStatus.DELETED_PRODUCT_CATEGORY;
                 _unitOfWork.Repository<ProductCategory>().Update(productCategory);
 
                 await _unitOfWork.SaveChangesAsync();
@@ -237,7 +237,7 @@ namespace BLL.Services
             try
             {
                 productCategory = _mapper.Map(request, productCategory);
-                productCategory.ApproveStatus = (int)ProductCategoryStatus.UNVERIFIED_UPDATE_PRODUCT_CATEGORY;
+                productCategory.Status = (int)ProductCategoryStatus.UNVERIFIED_UPDATE_PRODUCT_CATEGORY;
                 productCategory.UpdatedDate = DateTime.Now;
 
                 _unitOfWork.Repository<ProductCategory>().Update(productCategory);

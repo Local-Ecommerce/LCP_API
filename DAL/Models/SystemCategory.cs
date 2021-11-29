@@ -14,7 +14,8 @@ namespace DAL.Models
 
         public string SystemCategoryId { get; set; }
         public string SysCategoryName { get; set; }
-        public string UpdatedBy { get; set; }
+        public string ApproveBy { get; set; }
+        public int? Status { get; set; }
 
         public virtual ICollection<ProductCategory> ProductCategories { get; set; }
     }

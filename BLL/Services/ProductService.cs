@@ -54,11 +54,10 @@ namespace BLL.Services
             {
                 product.ProductId = _utilService.Create16Alphanumeric();
                 product.Image = imageUrl;
-                product.IsActive = false;
-                product.IsDeleted = false;
+                product.Status = (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT;
                 product.CreatedDate = DateTime.Now;
                 product.UpdatedDate = DateTime.Now;
-                product.UpdatedBy = "";
+                product.ApproveBy = "";
 
                 _unitOfWork.Repository<Product>().Add(product);
 
@@ -180,7 +179,8 @@ namespace BLL.Services
                 product = _mapper.Map(productRequest, product);
                 product.Image = imageUrl;
                 product.UpdatedDate = DateTime.Now;
-                product.UpdatedBy = "";
+                product.Status = (int)ProductStatus.UNVERIFIED_UPDATE_PRODUCT;
+                product.ApproveBy = "";
 
                 _unitOfWork.Repository<Product>().Update(product);
 
@@ -247,9 +247,9 @@ namespace BLL.Services
             //delete product
             try
             {
-                product.IsDeleted = true;
+                product.Status = (int)ProductStatus.DELETED_PRODUCT;
                 product.UpdatedDate = DateTime.Now;
-                product.UpdatedBy = "";
+                product.ApproveBy = "";
 
                 _unitOfWork.Repository<Product>().Update(product);
 
