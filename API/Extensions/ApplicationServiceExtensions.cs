@@ -27,11 +27,11 @@ namespace API.Extensions
             services.AddScoped<IUtilService, UtilService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IMerchantService, MerchantService>();
-            services.AddScoped<ILocalZoneService, LocalZoneService>();
+            services.AddScoped<IApartmentService, ApartmentService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ISystemCategoryService, SystemCategoryService>();
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
-
+            services.AddScoped<IApartmentService, ApartmentService>();
             services.AddScoped<IMerchantStoreService, MerchantStoreService>();
             services.AddScoped<ICustomerService, CustomerService>();
 
