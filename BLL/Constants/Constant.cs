@@ -75,4 +75,18 @@
         UNVERIFIED_CREATE_CUSTOMER = 7003,
         UNVERIFIED_UPDATE_CUSTOMER = 7004
     }
+
+    public enum CollectionStatus
+    {
+        COLLECTION_NOT_FOUND = 8001,
+        DELETED_COLLECTION = 8002,
+        ACTIVE_COLLECTION = 8003
+    }
+
+    public enum CollectionMappingStatus
+    {
+        PRODUCT_NOT_FOUND = 9001,
+        ACTIVE_PRODUCT = 9002,
+        INACTIVE_PRODUCT = 9003
+    }
 }

@@ -18,7 +18,7 @@ namespace BLL.Services
             _logger = logger;
         }
 
-        public void DeleteFromList<T>(string listKey, string id, Predicate<T> predicate)
+        public void DeleteFromList<T>(string listKey, Predicate<T> predicate)
         {
             List<T> list = GetList<T>(listKey);
             T t = list.Find(predicate);

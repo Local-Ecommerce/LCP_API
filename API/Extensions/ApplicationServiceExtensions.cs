@@ -34,6 +34,7 @@ namespace API.Extensions
             services.AddScoped<IApartmentService, ApartmentService>();
             services.AddScoped<IMerchantStoreService, MerchantStoreService>();
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<ICollectionService, CollectionService>();
 
             return services;
         }

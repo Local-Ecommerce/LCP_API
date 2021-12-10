@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BLL.Dtos.Account;
 using BLL.Dtos.Apartment;
+using BLL.Dtos.Collection;
+using BLL.Dtos.CollectionMapping;
 using BLL.Dtos.Customer;
 using BLL.Dtos.Merchant;
 using BLL.Dtos.MerchantStore;
@@ -47,6 +49,13 @@ namespace BLL.Mappings
             //Customer Mapping
             CreateMap<CustomerRequest, Customer>();
             CreateMap<Customer, CustomerResponse>().ReverseMap();
+
+            //Collection Mapping
+            CreateMap<CollectionRequest, Collection>();
+            CreateMap<Collection, CollectionResponse>().ReverseMap();
+
+            //CollectionMapping Mapping
+            CreateMap<CollectionMapping, CollectionMappingResponse>();
         }
     }
 }
