@@ -89,4 +89,11 @@
         ACTIVE_PRODUCT = 9002,
         INACTIVE_PRODUCT = 9003
     }
+
+    public enum DeliveryAddressStatus
+    {
+        DELIVERYADDRESS_NOT_FOUND = 4001,
+        DELETED_DELIVERYADDRESS = 4002,
+        ACTIVE_DELIVERYADDRESS = 4003
+    }
 }
