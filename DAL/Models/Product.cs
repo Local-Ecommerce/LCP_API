@@ -10,6 +10,7 @@ namespace DAL.Models
         public Product()
         {
             CollectionMappings = new HashSet<CollectionMapping>();
+            InverseBelongToNavigation = new HashSet<Product>();
             ProductCategories = new HashSet<ProductCategory>();
             ProductCombinationBaseProducts = new HashSet<ProductCombination>();
             ProductCombinationProducts = new HashSet<ProductCombination>();
@@ -29,8 +30,11 @@ namespace DAL.Models
         public string Size { get; set; }
         public string Color { get; set; }
         public double? Weight { get; set; }
+        public string BelongTo { get; set; }
 
+        public virtual Product BelongToNavigation { get; set; }
         public virtual ICollection<CollectionMapping> CollectionMappings { get; set; }
+        public virtual ICollection<Product> InverseBelongToNavigation { get; set; }
         public virtual ICollection<ProductCategory> ProductCategories { get; set; }
         public virtual ICollection<ProductCombination> ProductCombinationBaseProducts { get; set; }
         public virtual ICollection<ProductCombination> ProductCombinationProducts { get; set; }

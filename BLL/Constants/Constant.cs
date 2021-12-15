@@ -89,4 +89,17 @@
         ACTIVE_PRODUCT = 9002,
         INACTIVE_PRODUCT = 9003
     }
+
+    public enum DeliveryAddressStatus
+    {
+        DELIVERYADDRESS_NOT_FOUND = 10001,
+        DELETED_DELIVERYADDRESS = 10002,
+        ACTIVE_DELIVERYADDRESS = 10003
+    }
+    public enum MarketManagerStatus
+    {
+        MARKETMANAGER_NOT_FOUND = 11001,
+        DELETED_MARKETMANAGER = 11002,
+        ACTIVE_MARKETMANAGER = 11003
+    }
 }

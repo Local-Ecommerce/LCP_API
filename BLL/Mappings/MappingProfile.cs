@@ -4,6 +4,8 @@ using BLL.Dtos.Apartment;
 using BLL.Dtos.Collection;
 using BLL.Dtos.CollectionMapping;
 using BLL.Dtos.Customer;
+using BLL.Dtos.DeliveryAddress;
+using BLL.Dtos.MarketManager;
 using BLL.Dtos.Merchant;
 using BLL.Dtos.MerchantStore;
 using BLL.Dtos.Product;
@@ -56,6 +58,14 @@ namespace BLL.Mappings
 
             //CollectionMapping Mapping
             CreateMap<CollectionMapping, CollectionMappingResponse>();
+
+            //DeliveryAddress Mapping
+            CreateMap<DeliveryAddressRequest, DeliveryAddress>();
+            CreateMap<DeliveryAddress, DeliveryAddressResponse>().ReverseMap();
+
+            //MarketManager Mapping
+            CreateMap<MarketManagerRequest, MarketManager>();
+            CreateMap<MarketManager, MarketManagerResponse>();
         }
     }
 }
