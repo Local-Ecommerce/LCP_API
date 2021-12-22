@@ -119,7 +119,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("delete/{id}")]
+        [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteMarketManager(string id)
         {
             _logger.Information($"PUT api/MarketManager/delete/{id} START");
