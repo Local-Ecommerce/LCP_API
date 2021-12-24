@@ -11,6 +11,7 @@ using BLL.Dtos.MerchantStore;
 using BLL.Dtos.Product;
 using BLL.Dtos.ProductCategory;
 using BLL.Dtos.SystemCategory;
+using BLL.Dtos.New;
 using DAL.Models;
 
 namespace BLL.Mappings
@@ -66,6 +67,10 @@ namespace BLL.Mappings
             //MarketManager Mapping
             CreateMap<MarketManagerRequest, MarketManager>();
             CreateMap<MarketManager, MarketManagerResponse>();
+
+            //News Mapping
+            CreateMap<NewsRequest, News>();
+            CreateMap<News, NewsResponse>();
         }
     }
 }

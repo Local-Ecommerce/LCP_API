@@ -102,4 +102,11 @@
         DELETED_MARKETMANAGER = 11002,
         ACTIVE_MARKETMANAGER = 11003
     }
+
+    public enum NewsStatus
+    {
+        ACTIVE_NEWS = 12001,
+        DEACTIVE_NEWS = 12002,
+        NEWS_NOT_FOUND = 12003
+    }
 }
