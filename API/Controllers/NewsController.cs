@@ -27,7 +27,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create news
         /// </summary>
         /// <param name="newsRequest"></param>
         /// <returns></returns>
@@ -52,7 +52,7 @@ namespace API.Controllers
         }
         
         /// <summary>
-        /// 
+        /// Get news by id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -78,7 +78,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Update news
         /// </summary>
         /// <param name="id"></param>
         /// <param name="newsRequest"></param>
@@ -104,7 +104,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Delete news
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -129,7 +129,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Get news by apartmentid
         /// </summary>
         /// <param name="apartmentId"></param>
         /// <returns></returns>
@@ -155,7 +155,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Get news by marketmanagerId
         /// </summary>
         /// <param name="marketManagerId"></param>
         /// <returns></returns>
@@ -181,7 +181,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Not working as intended, fix later
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>

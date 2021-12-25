@@ -38,7 +38,7 @@ namespace BLL.Services
         }
 
         /// <summary>
-        /// //Create news
+        /// Create news
         /// </summary>
         /// <param name="newsRequest"></param>
         /// <returns></returns>
@@ -82,7 +82,7 @@ namespace BLL.Services
         }
 
         /// <summary>
-        /// 
+        /// GetNewsById
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -123,7 +123,7 @@ namespace BLL.Services
         }
 
         /// <summary>
-        /// //Not work as intended
+        /// Not work as intended, Fix later
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
@@ -165,7 +165,7 @@ namespace BLL.Services
         }
 
         /// <summary>
-        /// 
+        /// GetNewsByApartmentId
         /// </summary>
         /// <param name="apatrmentId"></param>
         /// <returns></returns>
@@ -207,7 +207,7 @@ namespace BLL.Services
         }
 
         /// <summary>
-        /// 
+        /// GetNewsByMarketManagerId
         /// </summary>
         /// <param name="MarketManagerId"></param>
         /// <returns></returns>
@@ -249,7 +249,7 @@ namespace BLL.Services
         }
 
         /// <summary>
-        /// 
+        ///  UpdateNewsById
         /// </summary>
         /// <param name="id"></param>
         /// <param name="newsRequest"></param>
@@ -309,7 +309,7 @@ namespace BLL.Services
         }
 
         /// <summary>
-        /// //Delete News
+        /// Delete News
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
