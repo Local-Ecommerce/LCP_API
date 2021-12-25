@@ -1,5 +1,6 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.New;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -26,7 +27,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<NewsResponse>>> GetNewsByReleaseDate(string date);
+        Task<BaseResponse<List<NewsResponse>>> GetNewsByReleaseDate(DateTime date);
 
         /// <summary>
         /// 

@@ -106,7 +106,7 @@
     public enum NewsStatus
     {
         ACTIVE_NEWS = 12001,
-        DEACTIVE_NEWS = 12002,
+        INACTIVE_NEWS = 12002,
         NEWS_NOT_FOUND = 12003
     }
 }

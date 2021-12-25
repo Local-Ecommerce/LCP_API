@@ -4,6 +4,7 @@ using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
@@ -179,9 +180,14 @@ namespace API.Controllers
             return Ok(json);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("bydate/{date}")]
-        public async Task<IActionResult> GetNewsByReleaseDate(string date)
+        public async Task<IActionResult> GetNewsByReleaseDate(DateTime date)
         {
             _logger.Information($"GET api/news/{date} START");
 

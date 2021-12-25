@@ -27,8 +27,8 @@ namespace BLL.Services
             ILogger logger,
             IMapper mapper,
             IRedisService redisService,
-            IUtilService utilService,
-            IProductService productService)
+            IUtilService utilService
+            )
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -127,7 +127,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<NewsResponse>>> GetNewsByReleaseDate(string date)
+        public async Task<BaseResponse<List<NewsResponse>>> GetNewsByReleaseDate(DateTime date)
         {
             List<NewsResponse> newsResponses = null;
 
@@ -336,7 +336,7 @@ namespace BLL.Services
             //Delete News
             try
             {
-                news.Status = (int)NewsStatus.DEACTIVE_NEWS;
+                news.Status = (int)NewsStatus.INACTIVE_NEWS;
 
                 _unitOfWork.Repository<News>().Update(news);
 
