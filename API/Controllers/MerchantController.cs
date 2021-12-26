@@ -4,6 +4,7 @@ using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -133,6 +134,118 @@ namespace API.Controllers
             watch.Stop();
 
             _logger.Information($"PUT api/merchant/delete/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get Merchant By Name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("name/{name}")]
+        public async Task<IActionResult> GetMerchantByName(string name)
+        {
+            _logger.Information($"GET api/merchant/name/{name} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get merchant
+            BaseResponse<MerchantResponse> response = await _merchantService.GetMerchantByName(name);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/merchant/{name} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get Merchant By Address
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("address/{address}")]
+        public async Task<IActionResult> GetMerchantByAddress(string address)
+        {
+            _logger.Information($"GET api/merchant/address/{address} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get merchant
+            BaseResponse<MerchantResponse> response = await _merchantService.GetMerchantByAddress(address);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/merchant/address/{address} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get Merchant By Phone Number
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("number/{number}")]
+        public async Task<IActionResult> GetMerchantByPhoneNumber(string number)
+        {
+            _logger.Information($"GET api/merchant/number/{number} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get merchant
+            BaseResponse<MerchantResponse> response = await _merchantService.GetMerchantByPhoneNumber(number);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/merchant/number/{number} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get Merchant By AccountId
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("account/{accountId}")]
+        public async Task<IActionResult> GetMerchantByAccountId(string accountId)
+        {
+            _logger.Information($"GET api/merchant/account/{accountId} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get merchant
+            BaseResponse<List<MerchantResponse>> response = await _merchantService.GetMerchantByAccountId(accountId);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/merchant/account/{accountId} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

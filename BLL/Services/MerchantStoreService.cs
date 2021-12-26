@@ -9,6 +9,8 @@ using DAL.UnitOfWork;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BLL.Services
 {
@@ -179,7 +181,7 @@ namespace BLL.Services
                 }
                 catch (Exception e)
                 {
-                    _logger.Error("[MerchantService.GetMerchantById()]: " + e.Message);
+                    _logger.Error("[MerchantStoreService.GetMerchantById()]: " + e.Message);
 
                     throw new HttpStatusException(HttpStatusCode.OK,
                         new BaseResponse<MerchantStoreResponse>
@@ -242,7 +244,7 @@ namespace BLL.Services
             }
             catch (Exception e)
             {
-                _logger.Error("[MerchantService.UpdateMerchantById()]: " + e.Message);
+                _logger.Error("[MerchantStoreService.UpdateMerchantById()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<MerchantStoreResponse>
@@ -265,6 +267,152 @@ namespace BLL.Services
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = merchantStoreResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Merchant Store By Store Name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<MerchantStoreResponse>> GetMerchantStoreByStoreName(string name)
+        {
+            //biz rule
+
+            MerchantStoreResponse merchantStoreResponse = null;
+
+            //Get MerchantStore From Redis
+            merchantStoreResponse = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY)
+                .Find(merchant => merchant.StoreName.Equals(name));
+
+            if (merchantStoreResponse is null)
+            {
+                //Get MerchantStore From Database
+                try
+                {
+                    MerchantStore merchantStore = await _unitOfWork.Repository<MerchantStore>()
+                                                       .FindAsync(m => m.StoreName.Equals(name));
+                    merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error("[MerchantStoreService.GetMerchantStoreByStoreName()]: " + e.Message);
+
+                    throw new HttpStatusException(HttpStatusCode.OK,
+                        new BaseResponse<MerchantStoreResponse>
+                        {
+                            ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
+                            ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
+                            Data = default
+                        });
+                }
+            }
+
+            return new BaseResponse<MerchantStoreResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantStoreResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Merchant Store By Merchant Id
+        /// </summary>
+        /// <param name="merchantId"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByMerchantId(string merchantId)
+        {
+            List<MerchantStoreResponse> merchantStoreResponses = null;
+
+            //Get MerchantStore From Redis
+            merchantStoreResponses = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY)
+                                            .Where(store => store.MerchantId.Equals(merchantId))
+                                            .ToList();
+
+            //Get MerchantStore From Database
+            if (_utilService.IsNullOrEmpty(merchantStoreResponses))
+            {
+                try
+                {
+                    List<MerchantStore> merchantStores = await _unitOfWork.Repository<MerchantStore>().
+                                                            FindListAsync
+                                                            (store => store.MerchantId.Equals(merchantId));
+
+                    merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error("[MerchantStoreService.GetMerchantStoreByMerchantId()]: " + e.Message);
+
+                    throw new HttpStatusException(HttpStatusCode.OK,
+                        new BaseResponse<MerchantStoreResponse>
+                        {
+                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
+                            Data = default
+                        });
+                }
+            }
+
+            return new BaseResponse<List<MerchantStoreResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantStoreResponses
+            };
+        }
+
+
+        /// <summary>
+        /// Get Merchant Store By Appartment Id
+        /// </summary>
+        /// <param name="appartmentId"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByAppartmentId(string appartmentId)
+        {
+            List<MerchantStoreResponse> merchantStoreResponses = null;
+
+            //Get MerchantStore From Redis
+            merchantStoreResponses = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY)
+                                            .Where(store => store.AparmentId.Equals(appartmentId))
+                                            .ToList();
+
+            //Get MerchantStore From Database
+            if (_utilService.IsNullOrEmpty(merchantStoreResponses))
+            {
+                try
+                {
+                    List<MerchantStore> merchantStores = await _unitOfWork.Repository<MerchantStore>().
+                                                            FindListAsync
+                                                            (store => store.AparmentId.Equals(appartmentId));
+
+                    merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error("[MerchantStoreService.GetMerchantStoreByAppartmentId()]: " + e.Message);
+
+                    throw new HttpStatusException(HttpStatusCode.OK,
+                        new BaseResponse<MerchantStoreResponse>
+                        {
+                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
+                            Data = default
+                        });
+                }
+            }
+
+            return new BaseResponse<List<MerchantStoreResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantStoreResponses
             };
         }
     }
