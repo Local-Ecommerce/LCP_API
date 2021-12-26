@@ -57,7 +57,7 @@ namespace BLL.Services
 
                 await _unitOfWork.SaveChangesAsync();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.Error("[PoiService.CreatePoi()]: " + e.Message);
 
@@ -102,7 +102,7 @@ namespace BLL.Services
 
                     poiResponse = _mapper.Map<PoiResponse>(poi);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     _logger.Error("[PoiService.GetPoiById()]: " + e.Message);
 
@@ -124,6 +124,50 @@ namespace BLL.Services
         }
 
         /// <summary>
+        /// Get POI By Release Date
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<List<PoiResponse>>> GetPoiByReleaseDate(DateTime date)
+        {
+            List<PoiResponse> poiResponses = null;
+
+            //Get News from Redis
+            poiResponses = _redisService.GetList<PoiResponse>(CACHE_KEY)
+                .Where(poi => _utilService.CompareDateTimes(poi.RealeaseDate, date))
+                .ToList();
+
+            //Get ApartmentId from DB
+            if (_utilService.IsNullOrEmpty(poiResponses))
+            {
+                try
+                {
+                    List<Poi> poi = await _unitOfWork.Repository<Poi>().FindListAsync(poi => poi.RealeaseDate.Equals(date));
+
+                    poiResponses = _mapper.Map<List<PoiResponse>>(poi);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error("[PoiService.GetPoiByReleasedDate()]: " + e.Message);
+
+                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<News>
+                    {
+                        ResultCode = (int)PoiStatus.POI_NOT_FOUND,
+                        ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+                }
+            }
+
+            return new BaseResponse<List<PoiResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = poiResponses
+            };
+        }
+
+        /// <summary>
         /// Get Poi by Apartment Id
         /// </summary>
         /// <param name="apartmentId"></param>
@@ -133,7 +177,9 @@ namespace BLL.Services
             List<PoiResponse> poiResponses = null;
 
             //Get Poi from Redis
-            poiResponses = _redisService.GetList<PoiResponse>(CACHE_KEY).Where(poi => poi.AparmentId.Equals(apartmentId)).ToList();
+            poiResponses = _redisService.GetList<PoiResponse>(CACHE_KEY)
+                .Where(poi => poi.AparmentId.Equals(apartmentId))
+                .ToList();
 
             //Get ApartmentId from DB
             if (_utilService.IsNullOrEmpty(poiResponses))
@@ -144,7 +190,7 @@ namespace BLL.Services
 
                     poiResponses = _mapper.Map<List<PoiResponse>>(poi);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     _logger.Error("[PoiService.GetPoiByApartmentId()]: " + e.Message);
 
@@ -162,6 +208,176 @@ namespace BLL.Services
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = poiResponses
+            };
+        }
+
+        /// <summary>
+        /// Get POI by Market Manager Id
+        /// </summary>
+        /// <param name="marketManagerId"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<List<PoiResponse>>> GetPoiByMarketManagerId(string marketManagerId)
+        {
+            List<PoiResponse> poiResponses = null;
+
+            //Get Poi from Redis
+            poiResponses = _redisService.GetList<PoiResponse>(CACHE_KEY)
+                .Where(poi => poi.MarketManagerId.Equals(marketManagerId))
+                .ToList();
+
+            //Get apartment id from DB
+            if (_utilService.IsNullOrEmpty(poiResponses))
+            {
+                try
+                {
+                    List<Poi> poi = await _unitOfWork.Repository<Poi>()
+                        .FindListAsync(poi => poi.MarketManagerId.Equals(marketManagerId));
+
+                    poiResponses = _mapper.Map<List<PoiResponse>>(poi);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error("[PoiService.GetPoiByMarketManagerId()]: " + e.Message);
+
+                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
+                    {
+                        ResultCode = (int)PoiStatus.POI_NOT_FOUND,
+                        ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+                }
+            }
+
+            return new BaseResponse<List<PoiResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = poiResponses
+            };
+        }
+
+        /// <summary>
+        /// Update Poi by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <param name="poiRequest"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<PoiResponse>> UpdatePoiById(string id, int status, PoiRequest poiRequest)
+        {
+            Poi poi;
+            //Find Poi
+            try
+            {
+                poi = await _unitOfWork.Repository<Poi>().FindAsync(local => local.PoiId.Equals(id));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[PoiService.UpdatePoiById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
+                {
+                    ResultCode = (int)PoiStatus.POI_NOT_FOUND,
+                    ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
+                    Data = default
+                });
+            }
+
+            //Update Poi to DB
+            try
+            {
+                poi = _mapper.Map(poiRequest, poi);
+                poi.Status = status;
+
+                _unitOfWork.Repository<Poi>().Update(poi);
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[PoiService.UpdatePoiById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
+                {
+                    ResultCode = (int)CommonResponse.ERROR,
+                    ResultMessage = CommonResponse.ERROR.ToString(),
+                    Data = default
+                });
+            }
+
+            //Create response
+            PoiResponse poiResponse = _mapper.Map<PoiResponse>(poi);
+
+            //Store to Redis
+            _redisService.StoreToList(CACHE_KEY, poiResponse, new Predicate<PoiResponse>(a => a.PoiId.Equals(id)));
+
+            return new BaseResponse<PoiResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = poiResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Delete POI by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<PoiResponse>> DeletePoiById(string id)
+        {
+            //Check id
+            Poi poi;
+            try
+            {
+                poi = await _unitOfWork.Repository<Poi>().FindAsync(local => local.PoiId.Equals(id));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[PoiService.DeletePoiById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
+                {
+                    ResultCode = (int)PoiStatus.POI_NOT_FOUND,
+                    ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
+                    Data = default
+                });
+            }
+
+            //Delete Poi
+            try
+            {
+                poi.Status = (int)PoiStatus.INACTIVE_POI;
+
+                _unitOfWork.Repository<Poi>().Update(poi);
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[PoiService.DeletePoiById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
+                {
+                    ResultCode = (int)CommonResponse.ERROR,
+                    ResultMessage = CommonResponse.ERROR.ToString(),
+                    Data = default
+                });
+            }
+
+            //Create response
+            PoiResponse poiResponse = _mapper.Map<PoiResponse>(poi);
+
+            //Store Poi to redis
+            _redisService.StoreToList<PoiResponse>(CACHE_KEY, poiResponse,
+                new Predicate<PoiResponse>(a => a.PoiId == poiResponse.PoiId));
+
+            return new BaseResponse<PoiResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = poiResponse
             };
         }
     }

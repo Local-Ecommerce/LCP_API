@@ -25,6 +25,13 @@ namespace BLL.Services.Interfaces
         Task<BaseResponse<PoiResponse>> GetPoiById(string id);
 
         /// <summary>
+        /// Get POI by ReleaseDate
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        Task<BaseResponse<List<PoiResponse>>> GetPoiByReleaseDate(DateTime date);
+
+        /// <summary>
         /// Get POI by apartmentId
         /// </summary>
         /// <param name="apartmentId"></param>
@@ -44,7 +51,7 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="poiRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<PoiResponse>> UpdatePoiById(string id, PoiRequest poiRequest);
+        Task<BaseResponse<PoiResponse>> UpdatePoiById(string id, int status, PoiRequest poiRequest);
 
         /// <summary>
         /// Delte POI by Id
