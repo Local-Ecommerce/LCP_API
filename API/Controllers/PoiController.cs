@@ -89,7 +89,7 @@ namespace API.Controllers
         /// <param name="status"></param>
         /// <returns></returns>
         [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdatePoiById(string id, [FromBody] PoiRequest poiRequest, [FromBody] int status)
+        public async Task<IActionResult> UpdatePoiById(string id, [FromBody] PoiRequest poiRequest)
         {
             _logger.Information($"PUT api/poi/update/{id} START Request: " +
                 $"{JsonSerializer.Serialize(poiRequest)}");
@@ -98,7 +98,7 @@ namespace API.Controllers
             watch.Start();
 
             //Update Poi
-            BaseResponse<PoiResponse> response = await _poiService.UpdatePoiById(id, status, poiRequest);
+            BaseResponse<PoiResponse> response = await _poiService.UpdatePoiById(id, poiRequest);
 
             string json = JsonSerializer.Serialize(response);
 

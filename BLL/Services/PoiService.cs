@@ -263,7 +263,7 @@ namespace BLL.Services
         /// <param name="status"></param>
         /// <param name="poiRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<PoiResponse>> UpdatePoiById(string id, int status, PoiRequest poiRequest)
+        public async Task<BaseResponse<PoiResponse>> UpdatePoiById(string id, PoiRequest poiRequest)
         {
             Poi poi;
             //Find Poi
@@ -287,7 +287,7 @@ namespace BLL.Services
             try
             {
                 poi = _mapper.Map(poiRequest, poi);
-                poi.Status = status;
+                poi.Status = (int)PoiStatus.ACTIVE_POI;
 
                 _unitOfWork.Repository<Poi>().Update(poi);
 
