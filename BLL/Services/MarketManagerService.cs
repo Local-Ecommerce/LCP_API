@@ -170,7 +170,7 @@ namespace BLL.Services
                                             .ToList();
 
             //Get MarketManager From Database
-            if (marketManagerResponses is null)
+            if (_utilService.IsNullOrEmpty(marketManagerResponses))
             {
                 try
                 {
@@ -201,51 +201,6 @@ namespace BLL.Services
             };
         }
 
-        /// <summary>
-        /// Get Market Manager By Appartment Id
-        /// </summary>
-        /// <param name="appartmentId"></param>
-        /// <returns></returns>
-        public async Task<BaseResponse<List<MarketManagerResponse>>> GetMarketManagerByAppartmentId(string appartmentId)
-        {
-            List<MarketManagerResponse> marketManagerResponses = null;
-
-            //Get MarketManager From Redis
-            marketManagerResponses = _redisService.GetList<MarketManagerResponse>(CACHE_KEY)
-                                            .Where(MarketManager => MarketManager.AparmentId.Equals(appartmentId))
-                                            .ToList();
-
-            //Get MarketManager From Database
-            if (marketManagerResponses is null)
-            {
-                try
-                {
-                    List<MarketManager> marketManagers = await _unitOfWork.Repository<MarketManager>().
-                                                            FindListAsync(marketManager => marketManager.AparmentId.Equals(appartmentId));
-
-                    marketManagerResponses = _mapper.Map<List<MarketManagerResponse>>(marketManagers);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[MarketManagerService.GetMarketManagerByAppartmentId()]: " + e.Message);
-
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<MarketManagerResponse>
-                        {
-                            ResultCode = (int)MarketManagerStatus.MARKETMANAGER_NOT_FOUND,
-                            ResultMessage = MarketManagerStatus.MARKETMANAGER_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
-            }
-
-            return new BaseResponse<List<MarketManagerResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = marketManagerResponses
-            };
-        }
 
         /// <summary>
         /// Get MarketManager By Id

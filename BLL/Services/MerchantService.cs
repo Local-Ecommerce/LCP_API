@@ -9,6 +9,8 @@ using DAL.UnitOfWork;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BLL.Services
 {
@@ -51,7 +53,7 @@ namespace BLL.Services
             {
                 merchant.MerchantId = _utilService.Create16Alphanumeric();
                 merchant.Status = (int)MerchantStatus.UNVERIFIED_CREATE_MERCHANT;
-                merchant.LevelId = "1";
+                merchant.LevelId = "L001";
 
                 _unitOfWork.Repository<Merchant>().Add(merchant);
 
@@ -267,6 +269,195 @@ namespace BLL.Services
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = merchantResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Merchant By Name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<MerchantResponse>> GetMerchantByName(string name)
+        {
+            //biz rule
+
+            MerchantResponse merchantResponse = null;
+
+            //Get Merchant From Redis
+            merchantResponse = _redisService.GetList<MerchantResponse>(CACHE_KEY)
+                .Find(merchant => merchant.MerchantName.Equals(name));
+
+            if (merchantResponse is null)
+            {
+                //Get Merchant From Database
+                try
+                {
+                    Merchant merchant = await _unitOfWork.Repository<Merchant>()
+                                                       .FindAsync(m => m.MerchantId.Equals(name));
+                    merchantResponse = _mapper.Map<MerchantResponse>(merchant);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error("[MerchantService.GetMerchantByName()]: " + e.Message);
+
+                    throw new HttpStatusException(HttpStatusCode.OK,
+                        new BaseResponse<MerchantResponse>
+                        {
+                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
+                            Data = default
+                        });
+                }
+            }
+
+            return new BaseResponse<MerchantResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Merchant By Address
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<MerchantResponse>> GetMerchantByAddress(string address)
+        {
+            //biz rule
+
+            MerchantResponse merchantResponse = null;
+
+            //Get Merchant From Redis
+            merchantResponse = _redisService.GetList<MerchantResponse>(CACHE_KEY)
+                .Find(merchant => merchant.Address.Equals(address));
+
+            if (merchantResponse is null)
+            {
+                //Get Merchant From Database
+                try
+                {
+                    Merchant merchant = await _unitOfWork.Repository<Merchant>()
+                                                       .FindAsync(m => m.MerchantId.Equals(address));
+                    merchantResponse = _mapper.Map<MerchantResponse>(merchant);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error("[MerchantService.GetMerchantByAddress()]: " + e.Message);
+
+                    throw new HttpStatusException(HttpStatusCode.OK,
+                        new BaseResponse<MerchantResponse>
+                        {
+                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
+                            Data = default
+                        });
+                }
+            }
+
+            return new BaseResponse<MerchantResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Merchant By Phone Number
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<MerchantResponse>> GetMerchantByPhoneNumber(string number)
+        {
+            //biz rule
+
+            MerchantResponse merchantResponse = null;
+
+            //Get Merchant From Redis
+            merchantResponse = _redisService.GetList<MerchantResponse>(CACHE_KEY)
+                .Find(merchant => merchant.PhoneNumber.Equals(number));
+
+            if (merchantResponse is null)
+            {
+                //Get Merchant From Database
+                try
+                {
+                    Merchant merchant = await _unitOfWork.Repository<Merchant>()
+                                                       .FindAsync(m => m.MerchantId.Equals(number));
+                    merchantResponse = _mapper.Map<MerchantResponse>(merchant);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error("[MerchantService.GetMerchantByPhoneNumber()]: " + e.Message);
+
+                    throw new HttpStatusException(HttpStatusCode.OK,
+                        new BaseResponse<MerchantResponse>
+                        {
+                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
+                            Data = default
+                        });
+                }
+            }
+
+            return new BaseResponse<MerchantResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Merchant By Account Id
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<List<MerchantResponse>>> GetMerchantByAccountId(string accountId)
+        {
+            List<MerchantResponse> merchantResponses = null;
+
+            //Get Merchant From Redis
+            merchantResponses = _redisService.GetList<MerchantResponse>(CACHE_KEY)
+                                            .Where(merchant => merchant.AccountId.Equals(accountId))
+                                            .ToList();
+
+            //Get Merchant From Database
+            if (_utilService.IsNullOrEmpty(merchantResponses))
+            {
+                try
+                {
+                    List<Merchant> merchants = await _unitOfWork.Repository<Merchant>().
+                                                            FindListAsync
+                                                            (merchant => merchant.AccountId.Equals(accountId));
+
+                    merchantResponses = _mapper.Map<List<MerchantResponse>>(merchants);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error("[MarketManagerService.GetMerchantByAccountId()]: " + e.Message);
+
+                    throw new HttpStatusException(HttpStatusCode.OK,
+                        new BaseResponse<MerchantResponse>
+                        {
+                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
+                            Data = default
+                        });
+                }
+            }
+
+            return new BaseResponse<List<MerchantResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantResponses
             };
         }
     }

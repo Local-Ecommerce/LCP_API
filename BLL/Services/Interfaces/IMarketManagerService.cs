@@ -46,11 +46,5 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<BaseResponse<List<MarketManagerResponse>>> GetMarketManagerByAccountId(string accountId);
 
-        /// <summary>
-        /// Get MarketManager By Appartment Id
-        /// </summary>
-        /// <param name="appartmentId"></param>
-        /// <returns></returns>
-        Task<BaseResponse<List<MarketManagerResponse>>> GetMarketManagerByAppartmentId(string appartmentId);
     }
 }
