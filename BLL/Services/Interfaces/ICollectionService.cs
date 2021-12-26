@@ -79,6 +79,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="collectionId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ProductResponse>>> GetProductsByCollectionId(string collectionId);
+        Task<BaseResponse<List<BaseProductResponse>>> GetProductsByCollectionId(string collectionId);
     }
 }
