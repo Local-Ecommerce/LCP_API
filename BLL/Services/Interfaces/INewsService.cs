@@ -1,5 +1,5 @@
 ﻿using BLL.Dtos;
-using BLL.Dtos.New;
+using BLL.Dtos.News;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -8,6 +8,13 @@ namespace BLL.Services
 {
     public class UtilService : IUtilService
     {
+        public bool CompareDateTimes(DateTime firstDate, DateTime secondDate)
+        {
+            return firstDate.Day == secondDate.Day 
+                && firstDate.Month == secondDate.Month 
+                && firstDate.Year == secondDate.Year;
+        }
+
         /// <summary>
         /// Create 16 Alphanumeric for Id
         /// </summary>
