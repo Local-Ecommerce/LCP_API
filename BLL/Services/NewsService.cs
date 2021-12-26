@@ -2,7 +2,7 @@
 using BLL.Constants;
 using BLL.Dtos;
 using BLL.Dtos.Exception;
-using BLL.Dtos.New;
+using BLL.Dtos.News;
 using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
@@ -82,7 +82,7 @@ namespace BLL.Services
         }
 
         /// <summary>
-        /// GetNewsById
+        /// Get News By Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -123,7 +123,7 @@ namespace BLL.Services
         }
 
         /// <summary>
-        /// Not work as intended, Fix later
+        /// Get News By Release Date
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
@@ -132,7 +132,9 @@ namespace BLL.Services
             List<NewsResponse> newsResponses = null;
 
             //Get News from Redis
-            newsResponses = _redisService.GetList<NewsResponse>(CACHE_KEY).Where(news => news.ReleaseDate.Equals(date)).ToList();
+            newsResponses = _redisService.GetList<NewsResponse>(CACHE_KEY)
+                .Where(news => _utilService.CompareDateTimes(news.ReleaseDate, date))
+                .ToList();
 
             //Get ApartmentId from DB
             if (_utilService.IsNullOrEmpty(newsResponses))
@@ -216,14 +218,17 @@ namespace BLL.Services
             List<NewsResponse> newsResponses = null;
 
             //Get News from Redis
-            newsResponses = _redisService.GetList<NewsResponse>(CACHE_KEY).Where(news => news.MarketManagerId.Equals(MarketManagerId)).ToList();
+            newsResponses = _redisService.GetList<NewsResponse>(CACHE_KEY)
+                .Where(news => news.MarketManagerId.Equals(MarketManagerId))
+                .ToList();
 
             //Get ApartmentId from DB
             if (_utilService.IsNullOrEmpty(newsResponses))
             {
                 try
                 {
-                    List<News> news = await _unitOfWork.Repository<News>().FindListAsync(news => news.MarketManagerId.Equals(MarketManagerId));
+                    List<News> news = await _unitOfWork.Repository<News>()
+                        .FindListAsync(news => news.MarketManagerId.Equals(MarketManagerId));
 
                     newsResponses = _mapper.Map<List<NewsResponse>>(news);
                 }

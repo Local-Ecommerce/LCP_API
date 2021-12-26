@@ -30,10 +30,12 @@ namespace DAL.Models
         public virtual DbSet<Merchant> Merchants { get; set; }
         public virtual DbSet<MerchantLevel> MerchantLevels { get; set; }
         public virtual DbSet<MerchantStore> MerchantStores { get; set; }
+        public virtual DbSet<News> News { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<OrderDetail> OrderDetails { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
+        public virtual DbSet<Poi> Pois { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
         public virtual DbSet<ProductCombination> ProductCombinations { get; set; }
@@ -236,8 +238,6 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("CustomerID");
 
-                entity.Property(e => e.DeliveryAddress1).HasColumnName("DeliveryAddress");
-
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.DeliveryAddresses)
                     .HasForeignKey(d => d.CustomerId)
@@ -258,11 +258,6 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("AccountID");
 
-                entity.Property(e => e.AparmentId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("AparmentID");
-
                 entity.Property(e => e.MarketManagerName).HasMaxLength(250);
 
                 entity.Property(e => e.PhoneNumber)
@@ -273,11 +268,6 @@ namespace DAL.Models
                     .WithMany(p => p.MarketManagers)
                     .HasForeignKey(d => d.AccountId)
                     .HasConstraintName("FK_MarketManager_Account");
-
-                entity.HasOne(d => d.Aparment)
-                    .WithMany(p => p.MarketManagers)
-                    .HasForeignKey(d => d.AparmentId)
-                    .HasConstraintName("FK_MarketManager_Aparments");
             });
 
             modelBuilder.Entity<Menu>(entity =>
@@ -383,6 +373,34 @@ namespace DAL.Models
                     .WithMany(p => p.MerchantStores)
                     .HasForeignKey(d => d.MerchantId)
                     .HasConstraintName("FK_tblMerchantStore_tblMerchant");
+            });
+
+            modelBuilder.Entity<News>(entity =>
+            {
+                entity.Property(e => e.NewsId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("NewsID");
+
+                entity.Property(e => e.ApartmentId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("ApartmentID");
+
+                entity.Property(e => e.MarketManagerId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("MarketManagerID");
+
+                entity.HasOne(d => d.Apartment)
+                    .WithMany(p => p.News)
+                    .HasForeignKey(d => d.ApartmentId)
+                    .HasConstraintName("FK_News_Apartment");
+
+                entity.HasOne(d => d.MarketManager)
+                    .WithMany(p => p.News)
+                    .HasForeignKey(d => d.MarketManagerId)
+                    .HasConstraintName("FK_News_MarketManager");
             });
 
             modelBuilder.Entity<Order>(entity =>
@@ -497,6 +515,36 @@ namespace DAL.Models
                 entity.Property(e => e.PaymentName).HasMaxLength(250);
             });
 
+            modelBuilder.Entity<Poi>(entity =>
+            {
+                entity.ToTable("POI");
+
+                entity.Property(e => e.PoiId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("PoiID");
+
+                entity.Property(e => e.AparmentId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("AparmentID");
+
+                entity.Property(e => e.MarketManagerId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("MarketManagerID");
+
+                entity.HasOne(d => d.Aparment)
+                    .WithMany(p => p.Pois)
+                    .HasForeignKey(d => d.AparmentId)
+                    .HasConstraintName("FK_POI_Apartment");
+
+                entity.HasOne(d => d.MarketManager)
+                    .WithMany(p => p.Pois)
+                    .HasForeignKey(d => d.MarketManagerId)
+                    .HasConstraintName("FK_POI_MarketManager");
+            });
+
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.ToTable("Product");
@@ -507,6 +555,10 @@ namespace DAL.Models
                     .HasColumnName("ProductID");
 
                 entity.Property(e => e.ApproveBy).HasMaxLength(250);
+
+                entity.Property(e => e.BelongTo)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Color).HasMaxLength(250);
 
@@ -521,6 +573,11 @@ namespace DAL.Models
                 entity.Property(e => e.ProductType).HasMaxLength(250);
 
                 entity.Property(e => e.Size).HasMaxLength(250);
+
+                entity.HasOne(d => d.BelongToNavigation)
+                    .WithMany(p => p.InverseBelongToNavigation)
+                    .HasForeignKey(d => d.BelongTo)
+                    .HasConstraintName("FK_Product_Product1");
             });
 
             modelBuilder.Entity<ProductCategory>(entity =>

@@ -1,5 +1,5 @@
 ﻿using BLL.Dtos;
-using BLL.Dtos.New;
+using BLL.Dtos.News;
 using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -34,7 +34,8 @@ namespace API.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateNews([FromBody] NewsRequest newsRequest)
         {
-            _logger.Information($"POST api/news/create START Request: " + $"{JsonSerializer.Serialize(newsRequest)}");
+            _logger.Information($"POST api/news/create START Request: " + 
+                $"{JsonSerializer.Serialize(newsRequest)}");
 
             Stopwatch watch = new();
             watch.Start();
@@ -46,7 +47,8 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/news/create END duration: " + $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+            _logger.Information("POST api/news/create END duration: " + 
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
@@ -72,7 +74,8 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/news/{id} END duration: " + $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+            _logger.Information($"GET api/news/{id} END duration: " + 
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
@@ -86,7 +89,8 @@ namespace API.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateNewsById(string id, [FromBody] NewsRequest newsRequest)
         {
-            _logger.Information($"PUT api/news/update/{id} START Request: " + $"{JsonSerializer.Serialize(newsRequest)}");
+            _logger.Information($"PUT api/news/update/{id} START Request: " + 
+                $"{JsonSerializer.Serialize(newsRequest)}");
 
             Stopwatch watch = new();
             watch.Start();
@@ -98,7 +102,8 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/news/update/{id} END duration: " + $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+            _logger.Information($"PUT api/news/update/{id} END duration: " + 
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
@@ -123,13 +128,14 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/news/delete/{id} END duration: " + $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+            _logger.Information($"PUT api/news/delete/{id} END duration: " + 
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
 
         /// <summary>
-        /// Get news by apartmentid
+        /// Get news by apartment id
         /// </summary>
         /// <param name="apartmentId"></param>
         /// <returns></returns>
@@ -149,13 +155,14 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/news/apartment/{apartmentId} END duration: " + $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+            _logger.Information($"GET api/news/apartment/{apartmentId} END duration: " + 
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
 
         /// <summary>
-        /// Get news by marketmanagerId
+        /// Get news by market manager Id
         /// </summary>
         /// <param name="marketManagerId"></param>
         /// <returns></returns>
@@ -175,13 +182,14 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/news/marketmanager/{marketManagerId} END duration: " + $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+            _logger.Information($"GET api/news/marketmanager/{marketManagerId} END duration: " + 
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
 
         /// <summary>
-        /// Not working as intended, fix later
+        /// Get News By Release Date
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
@@ -201,7 +209,8 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/news/{date} END duration: " + $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+            _logger.Information($"GET api/news/{date} END duration: " + 
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }

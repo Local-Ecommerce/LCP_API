@@ -11,7 +11,7 @@ using BLL.Dtos.MerchantStore;
 using BLL.Dtos.Product;
 using BLL.Dtos.ProductCategory;
 using BLL.Dtos.SystemCategory;
-using BLL.Dtos.New;
+using BLL.Dtos.News;
 using DAL.Models;
 
 namespace BLL.Mappings
@@ -22,7 +22,9 @@ namespace BLL.Mappings
         {
             //Product Mapping
             CreateMap<ProductRequest, Product>();
+            CreateMap<Product, BaseProductResponse>().ReverseMap();
             CreateMap<Product, ProductResponse>().ReverseMap();
+            CreateMap<ProductResponse, BaseProductResponse>().ReverseMap();
 
             //Merchant Mapping
             CreateMap<MerchantRequest, Merchant>();

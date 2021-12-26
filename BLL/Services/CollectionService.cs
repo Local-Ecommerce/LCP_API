@@ -541,7 +541,7 @@ namespace BLL.Services
         /// <param name="collectionId"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ProductResponse>>> GetProductsByCollectionId(string collectionId)
+        public async Task<BaseResponse<List<BaseProductResponse>>> GetProductsByCollectionId(string collectionId)
         {
             List<CollectionMappingResponse> collectionMappingResponses = null;
 
@@ -576,16 +576,16 @@ namespace BLL.Services
             }
 
             //Get Products
-            List<ProductResponse> productResponses = new List<ProductResponse>();
+            List<BaseProductResponse> productResponses = new List<BaseProductResponse>();
 
             foreach (CollectionMappingResponse cm in collectionMappingResponses)
             {
-                ProductResponse productResponse = _productService.GetProductById(cm.ProductId).Result.Data;
+                BaseProductResponse productResponse = _productService.GetBaseProductById(cm.ProductId).Result.Data;
 
                 productResponses.Add(productResponse);
             }
 
-            return new BaseResponse<List<ProductResponse>>
+            return new BaseResponse<List<BaseProductResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
