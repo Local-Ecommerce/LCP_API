@@ -167,33 +167,5 @@ namespace API.Controllers
 
             return Ok(json);
         }
-
-
-        /// <summary>
-        /// Get MarketManager By Appartment Id
-        /// </summary>
-        /// <param name="appartmentId"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [HttpGet("appartment/{appartmentId}")]
-        public async Task<IActionResult> GetMarketManagerByAppartmentId(string appartmentId)
-        {
-            _logger.Information($"GET api/MarketManager/account/{appartmentId} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get MarketManager
-            BaseResponse<List<MarketManagerResponse>> response = await _marketManagerService.GetMarketManagerByAppartmentId(appartmentId);
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information($"GET api/MarketManager/merchant/{appartmentId} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
     }
 }

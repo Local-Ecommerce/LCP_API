@@ -1,5 +1,6 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.MerchantStore;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -37,5 +38,29 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<BaseResponse<MerchantStoreResponse>> DeleteMerchantStore(string id);
+
+
+        /// <summary>
+        /// Get Merchant Store By Store Name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        Task<BaseResponse<MerchantStoreResponse>> GetMerchantStoreByStoreName(string name);
+
+
+        /// <summary>
+        /// Get Merchant By Account Id
+        /// </summary>
+        /// <param name="merchantId"></param>
+        /// <returns></returns>
+        Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByMerchantId(string merchantId);
+
+
+        /// <summary>
+        /// Get Merchant By Account Id
+        /// </summary>
+        /// <param name="appartmentId"></param>
+        /// <returns></returns>
+        Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByAppartmentId(string appartmentId);
     }
 }

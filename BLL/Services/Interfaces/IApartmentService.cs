@@ -38,5 +38,13 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<BaseResponse<ApartmentResponse>> DeleteApartment(string id);
+
+
+        /// <summary>
+        /// Get Apartment By Addess
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        Task<BaseResponse<ApartmentResponse>> GetApartmentByAddress(string address);
     }
 }

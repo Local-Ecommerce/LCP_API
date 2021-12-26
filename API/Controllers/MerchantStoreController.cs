@@ -139,5 +139,91 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Get Merchant Store By Store Name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("storename/{name}")]
+        public async Task<IActionResult> GetMerchantStoreByStoreName(string name)
+        {
+            _logger.Information($"GET api/merchantStore/storename/{name} START");
+
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
+            //get MerchantStore
+            BaseResponse<MerchantStoreResponse> response = await _merchantStoreService.GetMerchantStoreByStoreName(name);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/merchantStore/storename/{name} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get Merchant Store By Merchant Id
+        /// </summary>
+        /// <param name="merchantId"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("merchant/{merchantId}")]
+        public async Task<IActionResult> GetMerchantStoreByStoreMerchantId(string merchantId)
+        {
+            _logger.Information($"GET api/merchantStore/merchant/{merchantId} START");
+
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
+            //get MerchantStore
+            BaseResponse<List<MerchantStoreResponse>> response = 
+                await _merchantStoreService.GetMerchantStoreByMerchantId(merchantId);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/merchantStore/merchant/{merchantId} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get Merchant Store By Appartment Id
+        /// </summary>
+        /// <param name="appatmentId"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("appartment/{appatmentId}")]
+        public async Task<IActionResult> GetMerchantStoreByStoreAppartmentId(string appatmentId)
+        {
+            _logger.Information($"GET api/merchantStore/appartment/{appatmentId} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get MerchantStore
+            BaseResponse<List<MerchantStoreResponse>> response =
+                await _merchantStoreService.GetMerchantStoreByAppartmentId(appatmentId);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/merchantStore/appartment/{appatmentId} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }

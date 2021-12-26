@@ -138,5 +138,32 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+        /// <summary>
+        /// Get Apartment By Address
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("address/{address}")]
+        public async Task<IActionResult> GetApartmentByAddress(string address)
+        {
+            _logger.Information($"GET api/apartment/address/{address} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get Apartment
+            BaseResponse<ApartmentResponse> response = await _apartmentService.GetApartmentByAddress(address);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/apartment/address/{address} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }
