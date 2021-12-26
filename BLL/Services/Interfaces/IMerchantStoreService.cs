@@ -61,6 +61,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="appartmentId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByAppartmentId(string appartmentId);
+        Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByApartmentId(string apartmentId);
     }
 }
