@@ -37,6 +37,7 @@ namespace API.Extensions
             services.AddScoped<ICollectionService, CollectionService>();
             services.AddScoped<IDeliveryAddressService, DeliveryAddressService>();
             services.AddScoped<IMarketManagerService, MarketManagerService>();
+            services.AddScoped<INewsService, NewsService>();
             return services;
         }
     }

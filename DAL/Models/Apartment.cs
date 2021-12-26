@@ -9,8 +9,9 @@ namespace DAL.Models
     {
         public Apartment()
         {
-            MarketManagers = new HashSet<MarketManager>();
             MerchantStores = new HashSet<MerchantStore>();
+            News = new HashSet<News>();
+            Pois = new HashSet<Poi>();
         }
 
         public string ApartmentId { get; set; }
@@ -19,7 +20,8 @@ namespace DAL.Models
         public double? Long { get; set; }
         public int? Status { get; set; }
 
-        public virtual ICollection<MarketManager> MarketManagers { get; set; }
         public virtual ICollection<MerchantStore> MerchantStores { get; set; }
+        public virtual ICollection<News> News { get; set; }
+        public virtual ICollection<Poi> Pois { get; set; }
     }
 }
