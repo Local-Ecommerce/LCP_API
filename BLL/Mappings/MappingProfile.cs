@@ -13,6 +13,7 @@ using BLL.Dtos.ProductCategory;
 using BLL.Dtos.SystemCategory;
 using BLL.Dtos.New;
 using DAL.Models;
+using BLL.Dtos.POI;
 
 namespace BLL.Mappings
 {
@@ -71,6 +72,10 @@ namespace BLL.Mappings
             //News Mapping
             CreateMap<NewsRequest, News>();
             CreateMap<News, NewsResponse>();
+
+            //POI Mapping
+            CreateMap<PoiRequest, Poi>();
+            CreateMap<Poi, PoiResponse>();
         }
     }
 }

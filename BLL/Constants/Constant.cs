@@ -109,4 +109,11 @@
         INACTIVE_NEWS = 12002,
         NEWS_NOT_FOUND = 12003
     }
+
+    public enum PoiStatus
+    {
+        ACTIVE_POI = 13001,
+        INACTIVE_POI = 13002,
+        POI_NOT_FOUND = 13003
+    }
 }
