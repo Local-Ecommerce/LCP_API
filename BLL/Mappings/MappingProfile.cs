@@ -11,7 +11,7 @@ using BLL.Dtos.MerchantStore;
 using BLL.Dtos.Product;
 using BLL.Dtos.ProductCategory;
 using BLL.Dtos.SystemCategory;
-using BLL.Dtos.New;
+using BLL.Dtos.News;
 using DAL.Models;
 
 namespace BLL.Mappings
