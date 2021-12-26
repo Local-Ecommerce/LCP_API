@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BLL.Dtos.Product
 {
-    public class ProductResponse
+    public class BaseProductResponse
     {
         public string ProductId { get; set; }
         public string ProductCode { get; set; }
@@ -17,7 +18,6 @@ namespace BLL.Dtos.Product
         public string Size { get; set; }
         public string Color { get; set; }
         public double Weight { get; set; }
-        public string BelongTo { get; set; }
+        public List<ProductResponse> RelatedProducts { get; set; }
     }
 }
-   

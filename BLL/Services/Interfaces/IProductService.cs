@@ -1,5 +1,6 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.Product;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -7,39 +8,79 @@ namespace BLL.Services.Interfaces
     public interface IProductService
     {
         /// <summary>
-        /// Create a product
+        /// Create a Base Product
         /// </summary>
         /// <param name="productRequest"></param>
-        /// <param name="image">list of product's image</param>
         /// <returns></returns>
-        Task<BaseResponse<ProductResponse>> CreateProduct(ProductRequest productRequest);
+        Task<BaseResponse<BaseProductResponse>> CreateBaseProduct(ProductRequest productRequest);
 
 
         /// <summary>
-        /// Update a product by id
+        /// Create Related Product
         /// </summary>
-        /// <param name="id">id of product</param>
-        /// <param name="productRequest"></param>
-        /// <param name="image">list of product's image</param>
+        /// <param name="productRequests"></param>
         /// <returns></returns>
-        Task<BaseResponse<ProductResponse>> UpdateProduct(string id, 
+        Task<BaseResponse<BaseProductResponse>> CreateRelatedProduct(string baseProductId, 
+            List<ProductRequest> productRequests);
+
+
+        /// <summary>
+        /// Update Base Product
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="productRequest"></param>
+        /// <returns></returns>
+        Task<BaseResponse<BaseProductResponse>> UpdateBaseProduct(string id, 
             ProductRequest productRequest);
 
 
         /// <summary>
-        /// Get Product by Id
+        /// Update Related Product
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="productRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<ProductResponse>> GetProductById(string id);
+        Task<BaseResponse<ProductResponse>> UpdateRelatedProduct(string id,
+            ProductRequest productRequest);
 
 
         /// <summary>
-        /// DeleteProduct by id
+        /// Get Base Product by Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ProductResponse>> DeleteProduct(string id);
+        Task<BaseResponse<BaseProductResponse>> GetBaseProductById(string id);
 
+
+        /// <summary>
+        /// Get Related Product by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<BaseResponse<ProductResponse>> GetRelatedProductById(string id);
+
+
+        /// <summary>
+        /// Delete Base Product by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<BaseResponse<BaseProductResponse>> DeleteBaseProduct(string id);
+
+
+        /// <summary>
+        /// Delete Related Product
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<BaseResponse<ProductResponse>> DeleteRelatedProduct(string id);
+
+
+        /// <summary>
+        /// Get Related Products By Base Product Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<BaseResponse<List<ProductResponse>>> GetRelatedProductsByBaseProductId(string id);
     }
 }

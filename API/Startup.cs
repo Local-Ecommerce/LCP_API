@@ -41,7 +41,7 @@ namespace API
                 {
                     builder.WithOrigins(_configuration.GetValue<string>("ServerLink"))
                            .AllowAnyHeader()
-                           .AllowAnyMethod(); ;
+                           .AllowAnyMethod();
                 });
             });
 
@@ -120,7 +120,11 @@ namespace API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LCP v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.RoutePrefix = "";
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "LCP v1");
+                });
             }
 
             app.UseHttpsRedirection();

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BLL.Services.Interfaces
 {
@@ -10,6 +11,7 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         string Create16Alphanumeric();
 
+
         /// <summary>
         /// Check list is null or emply
         /// </summary>
@@ -17,5 +19,14 @@ namespace BLL.Services.Interfaces
         /// <param name="list"></param>
         /// <returns></returns>
         bool IsNullOrEmpty<T>(IEnumerable<T> list);
+
+
+        /// <summary>
+        /// Compare Datetime
+        /// </summary>
+        /// <param name="firstDate"></param>
+        /// <param name="secondDate"></param>
+        /// <returns></returns>
+        bool CompareDateTimes(DateTime firstDate, DateTime secondDate);
     }
 }
