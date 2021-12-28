@@ -340,7 +340,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<MerchantResponse>> GetMerchantByPhoneNumber(string number)
         {
             //biz rule
@@ -382,7 +381,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<List<MerchantResponse>>> GetMerchantByAccountId(string accountId)
         {
             List<MerchantResponse> merchantResponses;

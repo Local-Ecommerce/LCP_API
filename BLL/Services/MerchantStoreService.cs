@@ -257,7 +257,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<MerchantStoreResponse>> GetMerchantStoreByStoreName(string name)
         {
             //biz rule
@@ -299,7 +298,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="merchantId"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByMerchantId(string merchantId)
         {
             List<MerchantStoreResponse> merchantStoreResponses;
@@ -337,12 +335,11 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Merchant Store By Appartment Id
+        /// Get Merchant Store By Apartment Id
         /// </summary>
-        /// <param name="appartmentId"></param>
+        /// <param name="apartmentId"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByAppartmentId(string appartmentId)
+        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByApartmentId(string apartmentId)
         {
             List<MerchantStoreResponse> merchantStoreResponses;
 
@@ -352,7 +349,7 @@ namespace BLL.Services
                 {
                     List<MerchantStore> merchantStores = await _unitOfWork.Repository<MerchantStore>().
                                                             FindListAsync
-                                                            (store => store.AparmentId.Equals(appartmentId));
+                                                            (store => store.AparmentId.Equals(apartmentId));
 
                     merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
                 }

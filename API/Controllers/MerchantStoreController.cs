@@ -199,28 +199,28 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Merchant Store By Appartment Id
+        /// Get Merchant Store By Apartment Id
         /// </summary>
-        /// <param name="appatmentId"></param>
+        /// <param name="apartmentId"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpGet("appartment/{appatmentId}")]
-        public async Task<IActionResult> GetMerchantStoreByStoreAppartmentId(string appatmentId)
+        [HttpGet("apartment/{apartmentId}")]
+        public async Task<IActionResult> GetMerchantStoreByStoreApartmentId(string apartmentId)
         {
-            _logger.Information($"GET api/merchantStore/appartment/{appatmentId} START");
+            _logger.Information($"GET api/merchantStore/apartment/{apartmentId} START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //get MerchantStore
             BaseResponse<List<MerchantStoreResponse>> response =
-                await _merchantStoreService.GetMerchantStoreByAppartmentId(appatmentId);
+                await _merchantStoreService.GetMerchantStoreByApartmentId(apartmentId);
 
             string json = JsonSerializer.Serialize(response);
 
             watch.Stop();
 
-            _logger.Information($"GET api/merchantStore/appartment/{appatmentId} END duration: " +
+            _logger.Information($"GET api/merchantStore/apartment/{apartmentId} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
