@@ -70,9 +70,6 @@ namespace BLL.Services
             //Create Response
             NewsResponse newsResponse = _mapper.Map<NewsResponse>(news);
 
-            //Store News to Redis
-            _redisService.StoreToList(CACHE_KEY, newsResponse, new Predicate<NewsResponse>(a => a.NewsId == newsResponse.NewsId));
-
             return new BaseResponse<NewsResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -88,13 +85,10 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<NewsResponse>> GetNewsById(string id)
         {
-            NewsResponse newsReponse = null;
-            //Get News from Redis
-            newsReponse = _redisService.GetList<NewsResponse>(CACHE_KEY).Find(local => local.NewsId.Equals(id));
+            NewsResponse newsReponse;
 
             //Get News from DB
-            if(newsReponse is null)
-            {
+
                 try
                 {
                     News news = await _unitOfWork.Repository<News>().FindAsync(local => local.NewsId.Equals(id));
@@ -112,7 +106,6 @@ namespace BLL.Services
                         Data = default
                     });
                 }
-            }
 
             return new BaseResponse<NewsResponse>
             {
@@ -129,16 +122,10 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<List<NewsResponse>>> GetNewsByReleaseDate(DateTime date)
         {
-            List<NewsResponse> newsResponses = null;
-
-            //Get News from Redis
-            newsResponses = _redisService.GetList<NewsResponse>(CACHE_KEY)
-                .Where(news => _utilService.CompareDateTimes(news.ReleaseDate, date))
-                .ToList();
+            List<NewsResponse> newsResponses;
 
             //Get ApartmentId from DB
-            if (_utilService.IsNullOrEmpty(newsResponses))
-            {
+
                 try
                 {
                     List<News> news = await _unitOfWork.Repository<News>().FindListAsync(news => news.ReleaseDate.Equals(date));
@@ -156,7 +143,6 @@ namespace BLL.Services
                         Data = default
                     });
                 }
-            }
 
             return new BaseResponse<List<NewsResponse>>
             {
@@ -173,14 +159,10 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<List<NewsResponse>>> GetNewsByAparmentId(string apatrmentId)
         {
-            List<NewsResponse> newsResponses = null;
-
-            //Get News from Redis
-            newsResponses = _redisService.GetList<NewsResponse>(CACHE_KEY).Where(news => news.ApartmentId.Equals(apatrmentId)).ToList();
+            List<NewsResponse> newsResponses;
 
             //Get ApartmentId from DB
-            if(_utilService.IsNullOrEmpty(newsResponses))
-            {
+
                 try
                 {
                     List<News> news = await _unitOfWork.Repository<News>().FindListAsync(news => news.ApartmentId.Equals(apatrmentId));
@@ -198,7 +180,6 @@ namespace BLL.Services
                         Data = default
                     });
                 }
-            }
 
             return new BaseResponse<List<NewsResponse>>
             {
@@ -215,16 +196,10 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<List<NewsResponse>>> GetNewsByMarketManagerId(string MarketManagerId)
         {
-            List<NewsResponse> newsResponses = null;
-
-            //Get News from Redis
-            newsResponses = _redisService.GetList<NewsResponse>(CACHE_KEY)
-                .Where(news => news.MarketManagerId.Equals(MarketManagerId))
-                .ToList();
+            List<NewsResponse> newsResponses;
 
             //Get ApartmentId from DB
-            if (_utilService.IsNullOrEmpty(newsResponses))
-            {
+
                 try
                 {
                     List<News> news = await _unitOfWork.Repository<News>()
@@ -243,7 +218,6 @@ namespace BLL.Services
                         Data = default
                     });
                 }
-            }
 
             return new BaseResponse<List<NewsResponse>>
             {
@@ -302,9 +276,6 @@ namespace BLL.Services
             //Create Response
             NewsResponse newsResponse = _mapper.Map<NewsResponse>(news);
 
-            //Store to Redis
-            _redisService.StoreToList(CACHE_KEY, newsResponse, new Predicate<NewsResponse>(a => a.NewsId == newsResponse.NewsId));
-
             return new BaseResponse<NewsResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -361,10 +332,6 @@ namespace BLL.Services
 
             //Create Response
             NewsResponse newsResponse = _mapper.Map<NewsResponse>(news);
-
-            //Store News to Redis
-            _redisService.StoreToList<NewsResponse>(CACHE_KEY, newsResponse,
-                new Predicate<NewsResponse>(a => a.NewsId == newsResponse.NewsId));
 
             return new BaseResponse<NewsResponse>
             {

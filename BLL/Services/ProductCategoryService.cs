@@ -75,10 +75,6 @@ namespace BLL.Services
             //create response
             ProductCategoryResponse productCategoryResponse = _mapper.Map<ProductCategoryResponse>(productCategory);
 
-            //store productCategory to Redis
-            _redisService.StoreToList(CACHE_KEY, productCategoryResponse,
-                    new Predicate<ProductCategoryResponse>(a => a.ProductCategoryId == productCategoryResponse.ProductCategoryId));
-
             return new BaseResponse<ProductCategoryResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -142,10 +138,6 @@ namespace BLL.Services
             //create response
             ProductCategoryResponse productCategoryResponse = _mapper.Map<ProductCategoryResponse>(productCategory);
 
-            //update productCategory to Redis
-            _redisService.StoreToList<ProductCategoryResponse>(CACHE_KEY, productCategoryResponse,
-                new Predicate<ProductCategoryResponse>(sc => sc.ProductCategoryId == id));
-
             return new BaseResponse<ProductCategoryResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -164,11 +156,6 @@ namespace BLL.Services
         public async Task<BaseResponse<List<ProductCategoryResponse>>> GetProCategoryByMerchantId(string merchantId)
         {
             List<ProductCategoryResponse> productCategoryList = null;
-
-            //get productCategory from Redis
-            productCategoryList = _redisService.GetList<ProductCategoryResponse>(CACHE_KEY)
-                .Where(pc => pc.MerchantId.Equals(merchantId))
-                .ToList();
 
             if (_utilService.IsNullOrEmpty(productCategoryList))
             {
@@ -260,10 +247,6 @@ namespace BLL.Services
             //create response
             ProductCategoryResponse productCategoryResponse = _mapper.Map<ProductCategoryResponse>(productCategory);
 
-            //store productCategory to Redis
-            _redisService.StoreToList(CACHE_KEY, productCategoryResponse,
-                    new Predicate<ProductCategoryResponse>(a => a.ProductCategoryId == productCategoryResponse.ProductCategoryId));
-
             return new BaseResponse<ProductCategoryResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -281,14 +264,8 @@ namespace BLL.Services
         /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<ProductCategoryResponse>> GetProCategoryById(string id)
         {
-            ProductCategoryResponse productCategoryResponse = null;
+            ProductCategoryResponse productCategoryResponse;
 
-            //get productCategory from Redis
-            productCategoryResponse = _redisService.GetList<ProductCategoryResponse>(CACHE_KEY)
-                .Find(productCategory => productCategory.ProductCategoryId.Equals(id));
-
-            if (productCategoryResponse is null)
-            {
                 //get productCategory from database
                 try
                 {
@@ -309,7 +286,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<ProductCategoryResponse>
             {

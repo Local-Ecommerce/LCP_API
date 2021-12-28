@@ -73,10 +73,6 @@ namespace BLL.Services
             //create response
             SystemCategoryResponse systemCategoryResponse = _mapper.Map<SystemCategoryResponse>(systemCategory);
 
-            //store systemCategory to Redis
-            _redisService.StoreToList(CACHE_KEY, systemCategoryResponse,
-                    new Predicate<SystemCategoryResponse>(a => a.SystemCategoryId == systemCategoryResponse.SystemCategoryId));
-
             return new BaseResponse<SystemCategoryResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -142,10 +138,6 @@ namespace BLL.Services
             //create response
             SystemCategoryResponse systemCategoryResponse = _mapper.Map<SystemCategoryResponse>(systemCategory);
 
-            //delete systemCategory to Redis
-            _redisService.StoreToList<SystemCategoryResponse>(CACHE_KEY, systemCategoryResponse,
-                new Predicate<SystemCategoryResponse>(sc => sc.SystemCategoryId == id));
-
             return new BaseResponse<SystemCategoryResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -164,11 +156,6 @@ namespace BLL.Services
         {
             List<SystemCategoryResponse> systemCategoryList = null;
 
-            //get systemCategory from Redis
-            systemCategoryList = _redisService.GetList<SystemCategoryResponse>(CACHE_KEY);
-
-            if (_utilService.IsNullOrEmpty(systemCategoryList))
-            {
                 //get systemCategory from database
                 try
                 {
@@ -188,7 +175,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<List<SystemCategoryResponse>>
             {
@@ -256,10 +242,6 @@ namespace BLL.Services
             //create response
             SystemCategoryResponse systemCategoryResponse = _mapper.Map<SystemCategoryResponse>(systemCategory);
 
-            //store systemCategory to Redis
-            _redisService.StoreToList(CACHE_KEY, systemCategoryResponse,
-                    new Predicate<SystemCategoryResponse>(a => a.SystemCategoryId == systemCategoryResponse.SystemCategoryId));
-
             return new BaseResponse<SystemCategoryResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -277,14 +259,8 @@ namespace BLL.Services
         /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<SystemCategoryResponse>> GetSystemCategoryById(string id)
         {
-            SystemCategoryResponse systemCategoryResponse = null;
+            SystemCategoryResponse systemCategoryResponse;
 
-            //get systemCategory from Redis
-            systemCategoryResponse = _redisService.GetList<SystemCategoryResponse>(CACHE_KEY)
-                .Find(systemCategory => systemCategory.SystemCategoryId.Equals(id));
-
-            if (systemCategoryResponse is null)
-            {
                 //get systemCategory from database
                 try
                 {
@@ -305,7 +281,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<SystemCategoryResponse>
             {

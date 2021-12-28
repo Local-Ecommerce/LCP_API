@@ -75,10 +75,6 @@ namespace BLL.Services
             //Create Response
             MarketManagerResponse marketManagerResponse = _mapper.Map<MarketManagerResponse>(marketManager);
 
-            //Store MarketManager To Redis
-            _redisService.StoreToList(CACHE_KEY, marketManagerResponse,
-                    new Predicate<MarketManagerResponse>(a => a.MarketManagerId == marketManagerResponse.MarketManagerId));
-
             return new BaseResponse<MarketManagerResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -142,10 +138,6 @@ namespace BLL.Services
             //Create Response
             MarketManagerResponse marketManagerResponse = _mapper.Map<MarketManagerResponse>(marketManager);
 
-            //Store MarketManager To Redis
-            _redisService.StoreToList(CACHE_KEY, marketManagerResponse,
-                    new Predicate<MarketManagerResponse>(a => a.MarketManagerId == marketManagerResponse.MarketManagerId));
-
             return new BaseResponse<MarketManagerResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -162,16 +154,10 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<List<MarketManagerResponse>>> GetMarketManagerByAccountId(string accountId)
         {
-            List<MarketManagerResponse> marketManagerResponses = null;
-
-            //Get MarketManager From Redis
-            marketManagerResponses = _redisService.GetList<MarketManagerResponse>(CACHE_KEY)
-                                            .Where(MarketManager => MarketManager.AccountId.Equals(accountId))
-                                            .ToList();
+            List<MarketManagerResponse> marketManagerResponses;
 
             //Get MarketManager From Database
-            if (_utilService.IsNullOrEmpty(marketManagerResponses))
-            {
+            
                 try
                 {
                     List<MarketManager> marketManagers = await _unitOfWork.Repository<MarketManager>().
@@ -191,7 +177,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<List<MarketManagerResponse>>
             {
@@ -212,14 +197,10 @@ namespace BLL.Services
             //biz rule
 
 
-            MarketManagerResponse marketManagerResponse = null;
-            //Get MarketManager From Redis
-            marketManagerResponse = _redisService.GetList<MarketManagerResponse>(CACHE_KEY)
-                                            .Find(local => local.MarketManagerId.Equals(id));
+            MarketManagerResponse marketManagerResponse;
 
             //Get MarketManager From Database
-            if (marketManagerResponse is null)
-            {
+
                 try
                 {
                     MarketManager marketManager = await _unitOfWork.Repository<MarketManager>().
@@ -239,7 +220,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<MarketManagerResponse>
             {
@@ -301,10 +281,6 @@ namespace BLL.Services
 
             //Create Response
             MarketManagerResponse marketManagerResponse = _mapper.Map<MarketManagerResponse>(marketManager);
-
-            //Store Reponse To Redis
-            _redisService.StoreToList(CACHE_KEY, marketManagerResponse,
-                    new Predicate<MarketManagerResponse>(a => a.MarketManagerId == marketManagerResponse.MarketManagerId));
 
             return new BaseResponse<MarketManagerResponse>
             {

@@ -75,10 +75,6 @@ namespace BLL.Services
             //Create response
             MerchantStoreResponse merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
 
-            //Store MerchantStore To Redis
-            _redisService.StoreToList(CACHE_KEY, merchantStoreResponse,
-                    new Predicate<MerchantStoreResponse>(a => a.MerchantStoreId == merchantStoreResponse.MerchantStoreId));
-
             return new BaseResponse<MerchantStoreResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -142,10 +138,6 @@ namespace BLL.Services
             //Create Response
             MerchantStoreResponse merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
 
-            //Store MerchantStore To Redis
-            _redisService.StoreToList(CACHE_KEY, merchantStoreResponse,
-                    new Predicate<MerchantStoreResponse>(a => a.MerchantStoreId == merchantStoreResponse.MerchantStoreId));
-
             return new BaseResponse<MerchantStoreResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -164,14 +156,8 @@ namespace BLL.Services
         {
             //biz rule
 
-            MerchantStoreResponse merchantStoreResponse = null;
+            MerchantStoreResponse merchantStoreResponse;
 
-            //Get MerchantStore From Redis
-            merchantStoreResponse = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY)
-                .Find(merchant => merchant.MerchantStoreId.Equals(id));
-
-            if (merchantStoreResponse is null)
-            {
                 //Get MerchantStore From Database
                 try
                 {
@@ -191,7 +177,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<MerchantStoreResponse>
             {
@@ -258,10 +243,6 @@ namespace BLL.Services
             //Create Response
             MerchantStoreResponse merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
 
-            //Store Merchant To Redis
-            _redisService.StoreToList(CACHE_KEY, merchantStoreResponse,
-                    new Predicate<MerchantStoreResponse>(a => a.MerchantStoreId == merchantStoreResponse.MerchantStoreId));
-
             return new BaseResponse<MerchantStoreResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -281,15 +262,10 @@ namespace BLL.Services
         {
             //biz rule
 
-            MerchantStoreResponse merchantStoreResponse = null;
+            MerchantStoreResponse merchantStoreResponse;
 
-            //Get MerchantStore From Redis
-            merchantStoreResponse = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY)
-                .Find(merchant => merchant.StoreName.Equals(name));
-
-            if (merchantStoreResponse is null)
-            {
                 //Get MerchantStore From Database
+
                 try
                 {
                     MerchantStore merchantStore = await _unitOfWork.Repository<MerchantStore>()
@@ -308,7 +284,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<MerchantStoreResponse>
             {
@@ -327,16 +302,10 @@ namespace BLL.Services
         /// <exception cref="NotImplementedException"></exception>
         public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByMerchantId(string merchantId)
         {
-            List<MerchantStoreResponse> merchantStoreResponses = null;
-
-            //Get MerchantStore From Redis
-            merchantStoreResponses = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY)
-                                            .Where(store => store.MerchantId.Equals(merchantId))
-                                            .ToList();
+            List<MerchantStoreResponse> merchantStoreResponses;
 
             //Get MerchantStore From Database
-            if (_utilService.IsNullOrEmpty(merchantStoreResponses))
-            {
+
                 try
                 {
                     List<MerchantStore> merchantStores = await _unitOfWork.Repository<MerchantStore>().
@@ -357,7 +326,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<List<MerchantStoreResponse>>
             {
@@ -376,16 +344,10 @@ namespace BLL.Services
         /// <exception cref="NotImplementedException"></exception>
         public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByAppartmentId(string appartmentId)
         {
-            List<MerchantStoreResponse> merchantStoreResponses = null;
-
-            //Get MerchantStore From Redis
-            merchantStoreResponses = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY)
-                                            .Where(store => store.AparmentId.Equals(appartmentId))
-                                            .ToList();
+            List<MerchantStoreResponse> merchantStoreResponses;
 
             //Get MerchantStore From Database
-            if (_utilService.IsNullOrEmpty(merchantStoreResponses))
-            {
+
                 try
                 {
                     List<MerchantStore> merchantStores = await _unitOfWork.Repository<MerchantStore>().
@@ -406,7 +368,7 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
+            
 
             return new BaseResponse<List<MerchantStoreResponse>>
             {

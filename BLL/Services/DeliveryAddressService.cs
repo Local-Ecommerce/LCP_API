@@ -73,10 +73,6 @@ namespace BLL.Services
             //Create Response
             DeliveryAddressResponse deliveryAddressResponse = _mapper.Map<DeliveryAddressResponse>(deliveryAddress);
 
-            //Store DeliveryAddress To Redis
-            _redisService.StoreToList(CACHE_KEY, deliveryAddressResponse,
-                    new Predicate<DeliveryAddressResponse>(a => a.DeliveryAddressId == deliveryAddressResponse.DeliveryAddressId));
-
             return new BaseResponse<DeliveryAddressResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -139,10 +135,6 @@ namespace BLL.Services
             //Create Response
             DeliveryAddressResponse deliveryAddressResponse = _mapper.Map<DeliveryAddressResponse>(deliveryAddress);
 
-            //Store DeliveryAddress To Redis
-            _redisService.DeleteFromList(CACHE_KEY, new Predicate<DeliveryAddressResponse>(
-                d => d.DeliveryAddressId.Equals(id)));
-
             return new BaseResponse<DeliveryAddressResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -163,14 +155,10 @@ namespace BLL.Services
             //biz rule
 
 
-            DeliveryAddressResponse deliveryAddressResponse = null;
-            //Get DeliveryAddress From Redis
-            deliveryAddressResponse = _redisService.GetList<DeliveryAddressResponse>(CACHE_KEY)
-                                            .Find(local => local.DeliveryAddressId.Equals(id));
+            DeliveryAddressResponse deliveryAddressResponse;
 
             //Get DeliveryAddress From Database
-            if (deliveryAddressResponse is null)
-            {
+
                 try
                 {
                     DeliveryAddress deliveryAddress = await _unitOfWork.Repository<DeliveryAddress>().
@@ -190,7 +178,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<DeliveryAddressResponse>
             {
@@ -253,10 +240,6 @@ namespace BLL.Services
 
             //Create Response
             DeliveryAddressResponse DeliveryAddressResponse = _mapper.Map<DeliveryAddressResponse>(deliveryAddress);
-
-            //Store Reponse To Redis
-            _redisService.StoreToList(CACHE_KEY, DeliveryAddressResponse,
-                    new Predicate<DeliveryAddressResponse>(a => a.DeliveryAddressId == DeliveryAddressResponse.DeliveryAddressId));
 
             return new BaseResponse<DeliveryAddressResponse>
             {
