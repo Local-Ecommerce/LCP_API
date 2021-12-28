@@ -346,7 +346,6 @@ namespace BLL.Services
 
             MerchantResponse merchantResponse;
 
-            
                 //Get Merchant From Database
                 try
                 {

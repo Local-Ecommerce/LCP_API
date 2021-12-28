@@ -365,7 +365,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            
 
             return new BaseResponse<List<MerchantStoreResponse>>
             {

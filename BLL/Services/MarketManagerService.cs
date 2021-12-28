@@ -157,7 +157,7 @@ namespace BLL.Services
             List<MarketManagerResponse> marketManagerResponses;
 
             //Get MarketManager From Database
-            
+
                 try
                 {
                     List<MarketManager> marketManagers = await _unitOfWork.Repository<MarketManager>().
