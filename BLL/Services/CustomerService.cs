@@ -75,10 +75,6 @@ namespace BLL.Services
             //Create Response
             CustomerResponse CustomerResponse = _mapper.Map<CustomerResponse>(customer);
 
-            //Store Customer To Redis
-            _redisService.StoreToList(CACHE_KEY, CustomerResponse,
-                    new Predicate<CustomerResponse>(a => a.CustomerId == CustomerResponse.CustomerId));
-
             return new BaseResponse<CustomerResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -143,10 +139,6 @@ namespace BLL.Services
             //Create Response
             CustomerResponse customerResponse = _mapper.Map<CustomerResponse>(customer);
 
-            //Store Customer To Redis
-            _redisService.StoreToList(CACHE_KEY, customerResponse,
-                    new Predicate<CustomerResponse>(a => a.CustomerId == customerResponse.CustomerId));
-
             return new BaseResponse<CustomerResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -166,14 +158,10 @@ namespace BLL.Services
             //biz rule
 
 
-            CustomerResponse customerResponse = null;
-            //Get Customer From Redis
-            customerResponse = _redisService.GetList<CustomerResponse>(CACHE_KEY)
-                                            .Find(local => local.CustomerId.Equals(id));
+            CustomerResponse customerResponse;
 
             //Get Customer From Database
-            if (customerResponse is null)
-            {
+
                 try
                 {
                     Customer customer = await _unitOfWork.Repository<Customer>().
@@ -193,7 +181,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<CustomerResponse>
             {
@@ -258,10 +245,6 @@ namespace BLL.Services
 
             //Create Response
             CustomerResponse customerResponse = _mapper.Map<CustomerResponse>(customer);
-
-            //Store Reponse To Redis
-            _redisService.StoreToList(CACHE_KEY, customerResponse,
-                    new Predicate<CustomerResponse>(a => a.CustomerId == customerResponse.CustomerId));
 
             return new BaseResponse<CustomerResponse>
             {
