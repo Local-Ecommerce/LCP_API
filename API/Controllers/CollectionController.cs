@@ -177,16 +177,17 @@ namespace API.Controllers
         /// <param name="collectionMappingRequest"></param>
         /// <returns></returns>
         [HttpPost("{collectionId}/add")]
-        public async Task<IActionResult> AddProductToCollection(string collectionId, [FromBody] string productId)
+        public async Task<IActionResult> AddProductToCollection(string collectionId, [FromBody] string[] productIds)
         {
             _logger.Information($"POST api/collection/{collectionId}/add START Request: " +
-                $"{JsonSerializer.Serialize(productId)}");
+                $"{JsonSerializer.Serialize(productIds)}");
 
             Stopwatch watch = new();
             watch.Start();
 
             //add product to Collection
-            BaseResponse<CollectionMappingResponse> response = await _collectionService.AddProductToCollection(collectionId, productId);
+            BaseResponse<List<CollectionMappingResponse>> response = await _collectionService
+                .AddProductsToCollection(collectionId, productIds);
 
             string json = JsonSerializer.Serialize(response);
 

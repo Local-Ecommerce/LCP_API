@@ -1,9 +1,9 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.MerchantStore;
+using BLL.Dtos.StoreMenuDetail;
 using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,7 +14,7 @@ namespace API.Controllers
 {
     [EnableCors("MyPolicy")]
     [ApiController]
-    [Route("api/merchantStore")]
+    [Route("api/store")]
     public class MerchantStoreController : ControllerBase
     {
         private readonly ILogger _logger;
@@ -35,7 +35,7 @@ namespace API.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateMerchantStore([FromBody] MerchantStoreRequest merchantStoreRequest)
         {
-            _logger.Information($"POST api/merchantStore/create START Request: " +
+            _logger.Information($"POST api/store/create START Request: " +
                 $"{JsonSerializer.Serialize(merchantStoreRequest)}");
 
             Stopwatch watch = new();
@@ -48,7 +48,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/merchantStore/create END duration: " +
+            _logger.Information("POST api/store/create END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -65,7 +65,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMerchantStoreById(string id)
         {
-            _logger.Information($"GET api/merchantStore/{id} START");
+            _logger.Information($"GET api/store/{id} START");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -77,7 +77,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/merchantStore/{id} END duration: " +
+            _logger.Information($"GET api/store/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -94,7 +94,7 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateMerchantStore(string id,
                                                       [FromBody] MerchantStoreRequest merchantStoreRequest)
         {
-            _logger.Information($"PUT api/merchantStore/{id} START Request: " +
+            _logger.Information($"PUT api/store/{id} START Request: " +
                 $"{JsonSerializer.Serialize(merchantStoreRequest)}");
 
             Stopwatch watch = new();
@@ -107,7 +107,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/merchantStore/{id} END duration: " +
+            _logger.Information($"PUT api/store/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -122,7 +122,7 @@ namespace API.Controllers
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteMerchantStore(string id)
         {
-            _logger.Information($"PUT api/merchantStore/delete/{id} START");
+            _logger.Information($"PUT api/store/delete/{id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -134,7 +134,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/merchantStore/delete/{id} END duration: " +
+            _logger.Information($"PUT api/store/delete/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -147,10 +147,10 @@ namespace API.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpGet("storename/{name}")]
+        [HttpGet("name/{name}")]
         public async Task<IActionResult> GetMerchantStoreByStoreName(string name)
         {
-            _logger.Information($"GET api/merchantStore/storename/{name} START");
+            _logger.Information($"GET api/store/name/{name} START");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -162,7 +162,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/merchantStore/storename/{name} END duration: " +
+            _logger.Information($"GET api/store/name/{name} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -178,20 +178,20 @@ namespace API.Controllers
         [HttpGet("merchant/{merchantId}")]
         public async Task<IActionResult> GetMerchantStoreByStoreMerchantId(string merchantId)
         {
-            _logger.Information($"GET api/merchantStore/merchant/{merchantId} START");
+            _logger.Information($"GET api/store/merchant/{merchantId} START");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
             //get MerchantStore
-            BaseResponse<List<MerchantStoreResponse>> response = 
+            BaseResponse<List<MerchantStoreResponse>> response =
                 await _merchantStoreService.GetMerchantStoreByMerchantId(merchantId);
 
             string json = JsonSerializer.Serialize(response);
 
             watch.Stop();
 
-            _logger.Information($"GET api/merchantStore/merchant/{merchantId} END duration: " +
+            _logger.Information($"GET api/store/merchant/{merchantId} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -207,7 +207,7 @@ namespace API.Controllers
         [HttpGet("apartment/{apartmentId}")]
         public async Task<IActionResult> GetMerchantStoreByStoreApartmentId(string apartmentId)
         {
-            _logger.Information($"GET api/merchantStore/apartment/{apartmentId} START");
+            _logger.Information($"GET api/store/apartment/{apartmentId} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -220,7 +220,150 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/merchantStore/apartment/{apartmentId} END duration: " +
+            _logger.Information($"GET api/store/apartment/{apartmentId} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Add Store Menu Details To Merchant Store
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="storeMenuDetailRequest"></param>
+        /// <returns></returns>
+        [HttpPost("{id}/menu")]
+        public async Task<IActionResult> AddStoreMenuDetailsToMerchantStore(string id,
+            List<StoreMenuDetailRequest> storeMenuDetailRequest)
+        {
+            _logger.Information($"POST api/store/{id}/menu START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get MerchantStore
+            BaseResponse<List<StoreMenuDetailResponse>> response =
+                await _merchantStoreService.AddStoreMenuDetailsToMerchantStore(id, storeMenuDetailRequest);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"POST api/store/{id}/menu END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get Store Menu Details By Merchant Store Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/menu")]
+        public async Task<IActionResult> GetStoreMenuDetailsByMerchantStoreId(string id)
+        {
+            _logger.Information($"GET api/store/{id}/menu START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get MerchantStore
+            BaseResponse<List<StoreMenuDetailResponse>> response =
+                await _merchantStoreService.GetStoreMenuDetailsByMerchantStoreId(id);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/store/{id}/menu END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get Store Menu Detail By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("menu/{id}")]
+        public async Task<IActionResult> GetStoreMenuDetailById(string id)
+        {
+            _logger.Information($"GET api/store/menu/{id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get MerchantStore
+            BaseResponse<StoreMenuDetailResponse> response =
+                await _merchantStoreService.GetStoreMenuDetailById(id);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/store/menu/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Update Store Menu Detail By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPut("menu/{id}")]
+        public async Task<IActionResult> UpdateStoreMenuDetailById(string id,
+            StoreMenuDetailUpdateRequest storeMenuDetailUpdateRequest)
+        {
+            _logger.Information($"PUT api/store/menu/{id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get MerchantStore
+            BaseResponse<StoreMenuDetailResponse> response =
+                await _merchantStoreService.UpdateStoreMenuDetailById(id, storeMenuDetailUpdateRequest);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"PUT api/store/menu/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Delete Store Menu Detail By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPut("menu/delete/{id}")]
+        public async Task<IActionResult> DeleteStoreMenuDetailById(string id)
+        {
+            _logger.Information($"PUT api/store/menu/delete/{id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get MerchantStore
+            BaseResponse<StoreMenuDetailResponse> response =
+                await _merchantStoreService.DeleteStoreMenuDetailById(id);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"PUT api/store/menu/delete/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

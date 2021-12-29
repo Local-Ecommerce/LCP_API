@@ -51,11 +51,11 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Add Product To Collection
+        /// Add Products To Collection
         /// </summary>
         /// <param name="collectionMappingRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<CollectionMappingResponse>> AddProductToCollection(string collectionId, string productId);
+        Task<BaseResponse<List<CollectionMappingResponse>>> AddProductsToCollection(string collectionId, string[] productIds);
 
 
         /// <summary>

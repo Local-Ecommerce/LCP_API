@@ -287,47 +287,5 @@ namespace BLL.Services
                 Data = apartmentResponse
             };
         }
-
-        public async Task<BaseResponse<ApartmentResponse>> GetApartmentByAddress(string address)
-        {
-            //biz rule
-
-
-            ApartmentResponse apartmentResponse = null;
-            //Get Apartment From Redis
-            apartmentResponse = _redisService.GetList<ApartmentResponse>(CACHE_KEY)
-                                            .Find(local => local.Address.Equals(address));
-
-            //Get Apartment From Database
-            if (apartmentResponse is null)
-            {
-                try
-                {
-                    Apartment apartment = await _unitOfWork.Repository<Apartment>().
-                                                            FindAsync(local => local.Address.Equals(address));
-
-                    apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[ApartmentService.GetApartmentByAddress()]: " + e.Message);
-
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<ApartmentResponse>
-                        {
-                            ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
-                            ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
-            }
-
-            return new BaseResponse<ApartmentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = apartmentResponse
-            };
-        }
     }
 }

@@ -119,7 +119,7 @@ namespace BLL.Services
             }
             catch (Exception e)
             {
-                _logger.Error("[AccountService.UpdateAccount()]: " + e.Message);
+                _logger.Error("[AccountService.DeleteAccount()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<AccountResponse>
@@ -142,7 +142,7 @@ namespace BLL.Services
             }
             catch (Exception e)
             {
-                _logger.Error("[AccountService.UpdateAccount()]: " + e.Message);
+                _logger.Error("[AccountService.DeleteAccount()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<AccountResponse>

@@ -1,5 +1,6 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.MerchantStore;
+using BLL.Dtos.StoreMenuDetail;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -62,5 +63,48 @@ namespace BLL.Services.Interfaces
         /// <param name="appartmentId"></param>
         /// <returns></returns>
         Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByApartmentId(string apartmentId);
+
+
+        /// <summary>
+        /// Add Store Menu Details To Merchant Store
+        /// </summary>
+        /// <param name="storeMenuDetailRequest"></param>
+        /// <returns></returns>
+        Task<BaseResponse<List<StoreMenuDetailResponse>>> AddStoreMenuDetailsToMerchantStore(string merchantStoreId, 
+            List<StoreMenuDetailRequest> storeMenuDetailRequest);
+
+
+        /// <summary>
+        /// Get Store Menu Details By Merchant Store Id
+        /// </summary>
+        /// <param name="merchantStoreId"></param>
+        /// <returns></returns>
+        Task<BaseResponse<List<StoreMenuDetailResponse>>> GetStoreMenuDetailsByMerchantStoreId(string merchantStoreId);
+
+
+        /// <summary>
+        /// Get Store Menu Detail By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<BaseResponse<StoreMenuDetailResponse>> GetStoreMenuDetailById(string storeMenuDetailId);
+
+
+        /// <summary>
+        /// Update Store Menu Detail By Id
+        /// </summary>
+        /// <param name="storeMenuDetailId"></param>
+        /// <returns></returns>
+        Task<BaseResponse<StoreMenuDetailResponse>> UpdateStoreMenuDetailById(string storeMenuDetailId, 
+            StoreMenuDetailUpdateRequest storeMenuDetailUpdateRequest);
+
+
+        /// <summary>
+        /// Delete Store Menu Detail By Id
+        /// </summary>
+        /// <param name="storeMenuDetailId"></param>
+        /// <returns></returns>
+        Task<BaseResponse<StoreMenuDetailResponse>> DeleteStoreMenuDetailById(string storeMenuDetailId);
     }
+
 }
