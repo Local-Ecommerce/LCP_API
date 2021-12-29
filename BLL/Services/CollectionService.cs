@@ -310,28 +310,31 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Add Product To Collection
+        /// Add Products To Collection
         /// </summary>
         /// <param name="collectionMappingRequest"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public async Task<BaseResponse<CollectionMappingResponse>> AddProductToCollection(
-            string collectionId, string productId)
+        public async Task<BaseResponse<List<CollectionMappingResponse>>> AddProductsToCollection(
+            string collectionId, string[] productIds)
         {
             //biz rule
 
             //Store CollectionMapping To Dabatabase
-            CollectionMapping collectionMapping;
+            List<CollectionMapping> collectionMappings = new List<CollectionMapping>();
             try
             {
-                collectionMapping = new CollectionMapping 
-                { 
-                    CollectionId = collectionId, 
-                    ProductId = productId,
-                    Status = (int)CollectionMappingStatus.ACTIVE_PRODUCT
-                }; 
+                foreach (string productId in productIds)
+                {
+                    CollectionMapping collectionMapping = new CollectionMapping
+                    {
+                        CollectionId = collectionId,
+                        ProductId = productId,
+                        Status = (int)CollectionMappingStatus.ACTIVE_PRODUCT
+                    };
 
-                _unitOfWork.Repository<CollectionMapping>().Add(collectionMapping);
+                    collectionMappings.Add(collectionMapping);
+                    _unitOfWork.Repository<CollectionMapping>().Add(collectionMapping);
+                }
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -349,13 +352,13 @@ namespace BLL.Services
             }
 
             //Create Response
-            CollectionMappingResponse collectionMappingResponse = _mapper.Map<CollectionMappingResponse>(collectionMapping);
+            List<CollectionMappingResponse> collectionMappingResponses = _mapper.Map<List<CollectionMappingResponse>>(collectionMappings);
 
-            return new BaseResponse<CollectionMappingResponse>
+            return new BaseResponse<List<CollectionMappingResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = collectionMappingResponse
+                Data = collectionMappingResponses
             };
 
         }

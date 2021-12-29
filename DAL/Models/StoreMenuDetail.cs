@@ -7,7 +7,7 @@ namespace DAL.Models
 {
     public partial class StoreMenuDetail
     {
-        public string PriceMenuDetailId { get; set; }
+        public string StoreMenuDetailId { get; set; }
         public DateTime? TimeStart { get; set; }
         public DateTime? TimeEnd { get; set; }
         public DateTime? CreatedDate { get; set; }
