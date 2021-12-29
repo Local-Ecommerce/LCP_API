@@ -116,4 +116,27 @@
         INACTIVE_POI = 13002,
         POI_NOT_FOUND = 13003
     }
+
+    public enum MenuStatus
+    {
+        ACTIVE_MENU = 14001,
+        INACTIVE_MENU = 14002,
+        MENU_NOT_FOUND = 14003,
+        DELETED_MENU = 14004
+    }
+
+    public enum ProductInMenuStatus
+    {
+        ACTIVE_PRODUCT_IN_MENU = 15001,
+        INACTIVE_PRODUCT_IN_MENU = 15002,
+        PRODUCT_IN_MENU_NOT_FOUND = 15003
+    }
+
+    public enum StoreMenuDetailStatus
+    {
+        ACTIVE_STORE_MENU_DETAIL = 16001,
+        INACTIVE_STORE_MENU_DETAIL = 16002,
+        STORE_MENU_DETAIL_NOT_FOUND = 16003,
+        DELETED_STORE_MENU_DETAIL = 16004
+    }
 }
