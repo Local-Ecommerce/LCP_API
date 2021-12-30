@@ -97,7 +97,7 @@ namespace API
 
                         // Write to the response
                         context.Response.StatusCode = 401;
-                        BaseResponse<string> response = new BaseResponse<string>
+                        BaseResponse<string> response = new()
                         {
                             ResultCode = (int)AccountStatus.UNAUTHORIZED_ACCOUNT,
                             ResultMessage = AccountStatus.UNAUTHORIZED_ACCOUNT.ToString()
