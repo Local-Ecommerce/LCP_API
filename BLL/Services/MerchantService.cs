@@ -270,7 +270,7 @@ namespace BLL.Services
                 try
                 {
                     Merchant merchant = await _unitOfWork.Repository<Merchant>()
-                                                       .FindAsync(m => m.MerchantId.Equals(name));
+                                                       .FindAsync(m => m.MerchantName.Equals(name));
                     merchantResponse = _mapper.Map<MerchantResponse>(merchant);
                 }
                 catch (Exception e)
@@ -310,7 +310,7 @@ namespace BLL.Services
                 try
                 {
                     Merchant merchant = await _unitOfWork.Repository<Merchant>()
-                                                       .FindAsync(m => m.MerchantId.Equals(address));
+                                                       .FindAsync(m => m.Address.Equals(address));
                     merchantResponse = _mapper.Map<MerchantResponse>(merchant);
                 }
                 catch (Exception e)
@@ -350,7 +350,7 @@ namespace BLL.Services
                 try
                 {
                     Merchant merchant = await _unitOfWork.Repository<Merchant>()
-                                                       .FindAsync(m => m.MerchantId.Equals(number));
+                                                       .FindAsync(m => m.PhoneNumber.Equals(number));
                     merchantResponse = _mapper.Map<MerchantResponse>(merchant);
                 }
                 catch (Exception e)

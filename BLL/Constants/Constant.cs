@@ -139,4 +139,20 @@
         STORE_MENU_DETAIL_NOT_FOUND = 16003,
         DELETED_STORE_MENU_DETAIL = 16004
     }
+
+    public enum PaymentStatus
+    {
+        ACTIVE_PAYMENT = 17001,
+        INACTIVE_PAYMENT = 17002,
+        PAYMENT_NOT_FOUND = 17003,
+        DELETED_PAYMENT = 17004
+    }
+
+    public enum PaymentMethodStatus
+    {
+        ACTIVE_PAYMENT_METHOD = 18001,
+        INACTIVE_PAYMENT_METHOD = 18002,
+        PAYMENT_METHOD_NOT_FOUND = 18003,
+        DELETED_PAYMENT_METHOD = 18004
+    }
 }

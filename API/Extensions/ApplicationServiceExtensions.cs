@@ -40,6 +40,7 @@ namespace API.Extensions
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IPoiService, PoiService>();
             services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<IPaymentService, PaymentService>();
 
 
             return services;

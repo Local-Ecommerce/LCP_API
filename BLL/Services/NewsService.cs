@@ -8,7 +8,6 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -124,7 +123,7 @@ namespace BLL.Services
         {
             List<NewsResponse> newsResponses;
 
-            //Get ApartmentId from DB
+            //Get News from DB
 
                 try
                 {

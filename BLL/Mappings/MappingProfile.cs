@@ -17,6 +17,8 @@ using BLL.Dtos.POI;
 using BLL.Dtos.Menu;
 using BLL.Dtos.ProductInMenu;
 using BLL.Dtos.StoreMenuDetail;
+using BLL.Dtos.Payment;
+using BLL.Dtos.PaymentMethod;
 
 namespace BLL.Mappings
 {
@@ -94,6 +96,14 @@ namespace BLL.Mappings
             //Store Menu Detail Mapping
             CreateMap<StoreMenuDetailRequest, StoreMenuDetail>();
             CreateMap<StoreMenuDetail, StoreMenuDetailResponse>();
+
+            //Payment Mapping
+            CreateMap<PaymentRequest, Payment>();
+            CreateMap<Payment, PaymentResponse>();
+
+            //Payment Method Mapping
+            CreateMap<PaymentMethodRequest, PaymentMethod>();
+            CreateMap<PaymentMethod, PaymentMethodResponse>();
         }
     }
 }
