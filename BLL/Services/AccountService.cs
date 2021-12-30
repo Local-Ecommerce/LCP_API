@@ -92,10 +92,6 @@ namespace BLL.Services
             //create response
             AccountResponse accountResponse = _mapper.Map<AccountResponse>(account);
 
-            //store Account to Redis
-            _redisService.StoreToList(CACHE_KEY, accountResponse,
-                new Predicate<AccountResponse>(a => a.AccountId == accountResponse.AccountId));
-
             return new BaseResponse<AccountResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -123,7 +119,7 @@ namespace BLL.Services
             }
             catch (Exception e)
             {
-                _logger.Error("[AccountService.UpdateAccount()]: " + e.Message);
+                _logger.Error("[AccountService.DeleteAccount()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<AccountResponse>
@@ -146,7 +142,7 @@ namespace BLL.Services
             }
             catch (Exception e)
             {
-                _logger.Error("[AccountService.UpdateAccount()]: " + e.Message);
+                _logger.Error("[AccountService.DeleteAccount()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<AccountResponse>
@@ -172,14 +168,8 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<AccountResponse>> GetAccountById(string id)
         {
-            AccountResponse accountResponse = null;
+            AccountResponse accountResponse;
 
-            //get account from Redis
-            accountResponse = _redisService.GetList<AccountResponse>(CACHE_KEY)
-                .Find(account => account.AccountId.Equals(id));
-
-            if (accountResponse is null)
-            {
                 //get account from database
                 try
                 {
@@ -200,7 +190,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<AccountResponse>
             {
@@ -242,10 +231,6 @@ namespace BLL.Services
             //create response
             AccountResponse accountResponse = _mapper.Map<AccountResponse>(account);
             accountResponse.Token = _jwtAuthenticationManager.Authenticate(account);
-
-            //store Account to Redis
-            _redisService.StoreToList(CACHE_KEY, accountResponse,
-                    new Predicate<AccountResponse>(a => a.AccountId == accountResponse.AccountId));
 
             return new BaseResponse<AccountResponse>
             {
@@ -318,10 +303,6 @@ namespace BLL.Services
 
             //create response
             AccountResponse accountResponse = _mapper.Map<AccountResponse>(account);
-
-            //store Account to Redis
-            _redisService.StoreToList(CACHE_KEY, accountResponse,
-                new Predicate<AccountResponse>(a => a.AccountId == accountResponse.AccountId));
 
             return new BaseResponse<AccountResponse>
             {

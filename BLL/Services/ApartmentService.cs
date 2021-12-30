@@ -73,10 +73,6 @@ namespace BLL.Services
             //Create Response
             ApartmentResponse apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
 
-            //Store Apartment To Redis
-            _redisService.StoreToList(CACHE_KEY, apartmentResponse,
-                    new Predicate<ApartmentResponse>(a => a.ApartmentId == apartmentResponse.ApartmentId));
-
             return new BaseResponse<ApartmentResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -141,10 +137,6 @@ namespace BLL.Services
             //Create Response
             ApartmentResponse apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
 
-            //Store Apartment To Redis
-            _redisService.StoreToList(CACHE_KEY, apartmentResponse,
-                    new Predicate<ApartmentResponse>(a => a.ApartmentId == apartmentResponse.ApartmentId));
-
             return new BaseResponse<ApartmentResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -165,14 +157,10 @@ namespace BLL.Services
             //biz rule
 
 
-            ApartmentResponse apartmentResponse = null;
-            //Get Apartment From Redis
-            apartmentResponse = _redisService.GetList<ApartmentResponse>(CACHE_KEY)
-                                            .Find(local => local.ApartmentId.Equals(id));
+            ApartmentResponse apartmentResponse;
 
             //Get Apartment From Database
-            if(apartmentResponse is null)
-            {
+            
                 try
                 {
                     Apartment apartment = await _unitOfWork.Repository<Apartment>().
@@ -192,7 +180,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<ApartmentResponse>
             {
@@ -256,10 +243,6 @@ namespace BLL.Services
             //Create Response
             ApartmentResponse apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
 
-            //Store Reponse To Redis
-            _redisService.StoreToList(CACHE_KEY, apartmentResponse,
-                    new Predicate<ApartmentResponse>(a => a.ApartmentId == apartmentResponse.ApartmentId));
-
             return new BaseResponse<ApartmentResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -273,14 +256,10 @@ namespace BLL.Services
             //biz rule
 
 
-            ApartmentResponse apartmentResponse = null;
-            //Get Apartment From Redis
-            apartmentResponse = _redisService.GetList<ApartmentResponse>(CACHE_KEY)
-                                            .Find(local => local.Address.Equals(address));
+            ApartmentResponse apartmentResponse;
 
             //Get Apartment From Database
-            if (apartmentResponse is null)
-            {
+
                 try
                 {
                     Apartment apartment = await _unitOfWork.Repository<Apartment>().
@@ -300,7 +279,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<ApartmentResponse>
             {

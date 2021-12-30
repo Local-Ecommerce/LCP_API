@@ -84,10 +84,6 @@ namespace BLL.Services
             //Create Response
             CollectionResponse collectionResponse = _mapper.Map<CollectionResponse>(collection);
 
-            //Store Collection To Redis
-            _redisService.StoreToList(CACHE_KEY, collectionResponse,
-                    new Predicate<CollectionResponse>(c => c.CollectionId == collectionResponse.CollectionId));
-
             return new BaseResponse<CollectionResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -154,10 +150,6 @@ namespace BLL.Services
             //Create Response
             CollectionResponse collectionResponse = _mapper.Map<CollectionResponse>(collection);
 
-            //Store Collection To Redis
-            _redisService.StoreToList(CACHE_KEY, collectionResponse,
-                    new Predicate<CollectionResponse>(a => a.CollectionId == collectionResponse.CollectionId));
-
             return new BaseResponse<CollectionResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -179,14 +171,10 @@ namespace BLL.Services
             //biz rule
 
 
-            CollectionResponse collectionResponse = null;
-            //Get Collection From Redis
-            collectionResponse = _redisService.GetList<CollectionResponse>(CACHE_KEY)
-                                            .Find(collection => collection.CollectionId.Equals(id));
+            CollectionResponse collectionResponse;
 
             //Get Collection From Database
-            if (collectionResponse is null)
-            {
+            
                 try
                 {
                     Collection collection = await _unitOfWork.Repository<Collection>().
@@ -206,7 +194,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<CollectionResponse>
             {
@@ -225,16 +212,10 @@ namespace BLL.Services
         /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<List<CollectionResponse>>> GetCollectionByMerchantId(string merchantId)
         {
-            List<CollectionResponse> collectionResponses = null;
-
-            //Get Collection From Redis
-            collectionResponses = _redisService.GetList<CollectionResponse>(CACHE_KEY)
-                                            .Where(collection => collection.MerchantId.Equals(merchantId))
-                                            .ToList();
+            List<CollectionResponse> collectionResponses;
 
             //Get Collection From Database
-            if (collectionResponses is null)
-            {
+            
                 try
                 {
                     List<Collection> collections = await _unitOfWork.Repository<Collection>().
@@ -254,7 +235,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<List<CollectionResponse>>
             {
@@ -320,10 +300,6 @@ namespace BLL.Services
             //Create Response
             CollectionResponse collectionResponse = _mapper.Map<CollectionResponse>(collection);
 
-            //Store Reponse To Redis
-            _redisService.StoreToList(CACHE_KEY, collectionResponse,
-                    new Predicate<CollectionResponse>(a => a.CollectionId == collectionResponse.CollectionId));
-
             return new BaseResponse<CollectionResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -334,28 +310,31 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Add Product To Collection
+        /// Add Products To Collection
         /// </summary>
         /// <param name="collectionMappingRequest"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public async Task<BaseResponse<CollectionMappingResponse>> AddProductToCollection(
-            string collectionId, string productId)
+        public async Task<BaseResponse<List<CollectionMappingResponse>>> AddProductsToCollection(
+            string collectionId, string[] productIds)
         {
             //biz rule
 
             //Store CollectionMapping To Dabatabase
-            CollectionMapping collectionMapping;
+            List<CollectionMapping> collectionMappings = new List<CollectionMapping>();
             try
             {
-                collectionMapping = new CollectionMapping 
-                { 
-                    CollectionId = collectionId, 
-                    ProductId = productId,
-                    Status = (int)CollectionMappingStatus.ACTIVE_PRODUCT
-                }; 
+                foreach (string productId in productIds)
+                {
+                    CollectionMapping collectionMapping = new CollectionMapping
+                    {
+                        CollectionId = collectionId,
+                        ProductId = productId,
+                        Status = (int)CollectionMappingStatus.ACTIVE_PRODUCT
+                    };
 
-                _unitOfWork.Repository<CollectionMapping>().Add(collectionMapping);
+                    collectionMappings.Add(collectionMapping);
+                    _unitOfWork.Repository<CollectionMapping>().Add(collectionMapping);
+                }
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -373,19 +352,13 @@ namespace BLL.Services
             }
 
             //Create Response
-            CollectionMappingResponse collectionMappingResponse = _mapper.Map<CollectionMappingResponse>(collectionMapping);
+            List<CollectionMappingResponse> collectionMappingResponses = _mapper.Map<List<CollectionMappingResponse>>(collectionMappings);
 
-            //Store CollectionMapping To Redis
-            _redisService.StoreToList(SUB_CACHE_KEY, collectionMappingResponse,
-                    new Predicate<CollectionMappingResponse>(c =>
-                    c.CollectionId.Equals(collectionMappingResponse.CollectionId) ||
-                    c.ProductId.Equals(collectionMappingResponse.ProductId)));
-
-            return new BaseResponse<CollectionMappingResponse>
+            return new BaseResponse<List<CollectionMappingResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = collectionMappingResponse
+                Data = collectionMappingResponses
             };
 
         }
@@ -444,11 +417,6 @@ namespace BLL.Services
                         Data = default
                     });
             }
-
-            //Remove CollectionMapping From Redis
-            _redisService.DeleteFromList(SUB_CACHE_KEY, new Predicate<CollectionMappingResponse>(
-                c => c.CollectionId.Equals(collectionId) ||
-                c.ProductId.Equals(productId)));
 
             return new BaseResponse<CollectionMappingResponse>
             {
@@ -520,12 +488,6 @@ namespace BLL.Services
             //Create Response
             CollectionMappingResponse collectionMappingResponse = _mapper.Map<CollectionMappingResponse>(collectionMapping);
 
-            //Store CollectionMapping To Redis
-            _redisService.StoreToList(SUB_CACHE_KEY, collectionMappingResponse,
-                    new Predicate<CollectionMappingResponse>(c =>
-                    c.CollectionId.Equals(collectionMappingResponse.CollectionId) ||
-                    c.ProductId.Equals(collectionMappingResponse.ProductId)));
-
             return new BaseResponse<CollectionMappingResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -543,16 +505,11 @@ namespace BLL.Services
         /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<List<BaseProductResponse>>> GetProductsByCollectionId(string collectionId)
         {
-            List<CollectionMappingResponse> collectionMappingResponses = null;
+            List<CollectionMappingResponse> collectionMappingResponses;
 
-            //Get CollectionMapping from Redis
-            collectionMappingResponses = _redisService.GetList<CollectionMappingResponse>(SUB_CACHE_KEY)
-                                            .Where(cm => cm.CollectionId.Equals(collectionId))
-                                            .ToList();
 
             //Get CollectionMapping from database
-            if (collectionMappingResponses == null)
-            {
+            
                 List<CollectionMapping> collectionMappings;
                 try
                 {
@@ -573,7 +530,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             //Get Products
             List<BaseProductResponse> productResponses = new List<BaseProductResponse>();

@@ -11,6 +11,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using BLL.Dtos.StoreMenuDetail;
 
 namespace BLL.Services
 {
@@ -75,10 +76,6 @@ namespace BLL.Services
             //Create response
             MerchantStoreResponse merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
 
-            //Store MerchantStore To Redis
-            _redisService.StoreToList(CACHE_KEY, merchantStoreResponse,
-                    new Predicate<MerchantStoreResponse>(a => a.MerchantStoreId == merchantStoreResponse.MerchantStoreId));
-
             return new BaseResponse<MerchantStoreResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -142,10 +139,6 @@ namespace BLL.Services
             //Create Response
             MerchantStoreResponse merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
 
-            //Store MerchantStore To Redis
-            _redisService.StoreToList(CACHE_KEY, merchantStoreResponse,
-                    new Predicate<MerchantStoreResponse>(a => a.MerchantStoreId == merchantStoreResponse.MerchantStoreId));
-
             return new BaseResponse<MerchantStoreResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -164,33 +157,26 @@ namespace BLL.Services
         {
             //biz rule
 
-            MerchantStoreResponse merchantStoreResponse = null;
+            MerchantStoreResponse merchantStoreResponse;
 
-            //Get MerchantStore From Redis
-            merchantStoreResponse = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY)
-                .Find(merchant => merchant.MerchantStoreId.Equals(id));
-
-            if (merchantStoreResponse is null)
+            //Get MerchantStore From Database
+            try
             {
-                //Get MerchantStore From Database
-                try
-                {
-                    MerchantStore merchantStore = await _unitOfWork.Repository<MerchantStore>()
-                                                       .FindAsync(m => m.MerchantStoreId.Equals(id));
-                    merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[MerchantStoreService.GetMerchantById()]: " + e.Message);
+                MerchantStore merchantStore = await _unitOfWork.Repository<MerchantStore>()
+                                                   .FindAsync(m => m.MerchantStoreId.Equals(id));
+                merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.GetMerchantById()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<MerchantStoreResponse>
-                        {
-                            ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
-                            ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantStoreResponse>
+                    {
+                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
+                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
+                        Data = default
+                    });
             }
 
             return new BaseResponse<MerchantStoreResponse>
@@ -208,7 +194,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="merchantStoreRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<MerchantStoreResponse>> UpdateMerchantStoreById(string id, 
+        public async Task<BaseResponse<MerchantStoreResponse>> UpdateMerchantStoreById(string id,
             MerchantStoreRequest merchantStoreRequest)
         {
             MerchantStore merchantStore;
@@ -258,10 +244,6 @@ namespace BLL.Services
             //Create Response
             MerchantStoreResponse merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
 
-            //Store Merchant To Redis
-            _redisService.StoreToList(CACHE_KEY, merchantStoreResponse,
-                    new Predicate<MerchantStoreResponse>(a => a.MerchantStoreId == merchantStoreResponse.MerchantStoreId));
-
             return new BaseResponse<MerchantStoreResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -276,38 +258,31 @@ namespace BLL.Services
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<MerchantStoreResponse>> GetMerchantStoreByStoreName(string name)
         {
             //biz rule
 
-            MerchantStoreResponse merchantStoreResponse = null;
+            MerchantStoreResponse merchantStoreResponse;
 
-            //Get MerchantStore From Redis
-            merchantStoreResponse = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY)
-                .Find(merchant => merchant.StoreName.Equals(name));
+            //Get MerchantStore From Database
 
-            if (merchantStoreResponse is null)
+            try
             {
-                //Get MerchantStore From Database
-                try
-                {
-                    MerchantStore merchantStore = await _unitOfWork.Repository<MerchantStore>()
-                                                       .FindAsync(m => m.StoreName.Equals(name));
-                    merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[MerchantStoreService.GetMerchantStoreByStoreName()]: " + e.Message);
+                MerchantStore merchantStore = await _unitOfWork.Repository<MerchantStore>()
+                                                   .FindAsync(m => m.StoreName.Equals(name));
+                merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.GetMerchantStoreByStoreName()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<MerchantStoreResponse>
-                        {
-                            ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
-                            ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantStoreResponse>
+                    {
+                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
+                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
+                        Data = default
+                    });
             }
 
             return new BaseResponse<MerchantStoreResponse>
@@ -324,39 +299,31 @@ namespace BLL.Services
         /// </summary>
         /// <param name="merchantId"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByMerchantId(string merchantId)
         {
-            List<MerchantStoreResponse> merchantStoreResponses = null;
-
-            //Get MerchantStore From Redis
-            merchantStoreResponses = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY)
-                                            .Where(store => store.MerchantId.Equals(merchantId))
-                                            .ToList();
+            List<MerchantStoreResponse> merchantStoreResponses;
 
             //Get MerchantStore From Database
-            if (_utilService.IsNullOrEmpty(merchantStoreResponses))
+
+            try
             {
-                try
-                {
-                    List<MerchantStore> merchantStores = await _unitOfWork.Repository<MerchantStore>().
-                                                            FindListAsync
-                                                            (store => store.MerchantId.Equals(merchantId));
+                List<MerchantStore> merchantStores = await _unitOfWork.Repository<MerchantStore>().
+                                                        FindListAsync
+                                                        (store => store.MerchantId.Equals(merchantId));
 
-                    merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[MerchantStoreService.GetMerchantStoreByMerchantId()]: " + e.Message);
+                merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.GetMerchantStoreByMerchantId()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<MerchantStoreResponse>
-                        {
-                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
-                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantStoreResponse>
+                    {
+                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
             }
 
             return new BaseResponse<List<MerchantStoreResponse>>
@@ -369,43 +336,35 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Merchant Store By Appartment Id
+        /// Get Merchant Store By Apartment Id
         /// </summary>
-        /// <param name="appartmentId"></param>
+        /// <param name="apartmentId"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByAppartmentId(string appartmentId)
+        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByApartmentId(string apartmentId)
         {
-            List<MerchantStoreResponse> merchantStoreResponses = null;
-
-            //Get MerchantStore From Redis
-            merchantStoreResponses = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY)
-                                            .Where(store => store.AparmentId.Equals(appartmentId))
-                                            .ToList();
+            List<MerchantStoreResponse> merchantStoreResponses;
 
             //Get MerchantStore From Database
-            if (_utilService.IsNullOrEmpty(merchantStoreResponses))
+
+            try
             {
-                try
-                {
-                    List<MerchantStore> merchantStores = await _unitOfWork.Repository<MerchantStore>().
-                                                            FindListAsync
-                                                            (store => store.AparmentId.Equals(appartmentId));
+                List<MerchantStore> merchantStores = await _unitOfWork.Repository<MerchantStore>().
+                                                        FindListAsync
+                                                        (store => store.AparmentId.Equals(apartmentId));
 
-                    merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[MerchantStoreService.GetMerchantStoreByAppartmentId()]: " + e.Message);
+                merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.GetMerchantStoreByAppartmentId()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<MerchantStoreResponse>
-                        {
-                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
-                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantStoreResponse>
+                    {
+                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
             }
 
             return new BaseResponse<List<MerchantStoreResponse>>
@@ -413,6 +372,220 @@ namespace BLL.Services
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = merchantStoreResponses
+            };
+        }
+
+
+        /// <summary>
+        /// Add Store Menu Details To Merchant Store
+        /// </summary>
+        /// <param name="merchantStoreId"></param>
+        /// <param name="storeMenuDetailRequest"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<List<StoreMenuDetailResponse>>> AddStoreMenuDetailsToMerchantStore(string merchantStoreId,
+            List<StoreMenuDetailRequest> storeMenuDetailRequest)
+        {
+            List<StoreMenuDetail> storeMenuDetails = _mapper.Map<List<StoreMenuDetail>>(storeMenuDetailRequest);
+            try
+            {
+                storeMenuDetails.ForEach(storeMenuDetail =>
+                {
+                    storeMenuDetail.StoreMenuDetailId = _utilService.Create16Alphanumeric();
+                    storeMenuDetail.CreatedDate = DateTime.Now;
+                    storeMenuDetail.MerchantStoreId = merchantStoreId;
+                    storeMenuDetail.Status = (int)StoreMenuDetailStatus.ACTIVE_STORE_MENU_DETAIL;
+
+                    _unitOfWork.Repository<StoreMenuDetail>().Add(storeMenuDetail);
+
+                });
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.AddStoreMenuDetailsToMerchantStore()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<StoreMenuDetailResponse>
+                    {
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
+                        Data = default
+                    });
+            }
+
+            //Create response
+            List<StoreMenuDetailResponse> storeMenuDetailResponses = _mapper.Map<List<StoreMenuDetailResponse>>(storeMenuDetails);
+
+            return new BaseResponse<List<StoreMenuDetailResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = storeMenuDetailResponses
+            };
+        }
+
+
+        /// <summary>
+        /// Get Store Menu Details By Merchant Store Id
+        /// </summary>
+        /// <param name="merchantStoreId"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<List<StoreMenuDetailResponse>>> GetStoreMenuDetailsByMerchantStoreId(string merchantStoreId)
+        {
+            List<StoreMenuDetail> storeMenuDetails;
+            try
+            {
+                storeMenuDetails = await _unitOfWork.Repository<StoreMenuDetail>()
+                    .FindListAsync(smd => smd.MerchantStoreId == merchantStoreId);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.GetStoreMenuDetailsByMerchantStoreId()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<StoreMenuDetailResponse>
+                    {
+                        ResultCode = (int)StoreMenuDetailStatus.STORE_MENU_DETAIL_NOT_FOUND,
+                        ResultMessage = StoreMenuDetailStatus.STORE_MENU_DETAIL_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            //Create response
+            List<StoreMenuDetailResponse> storeMenuDetailResponses = _mapper.Map<List<StoreMenuDetailResponse>>(storeMenuDetails);
+
+            return new BaseResponse<List<StoreMenuDetailResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = storeMenuDetailResponses
+            };
+        }
+
+
+        /// <summary>
+        /// Get Store Menu Detail By Id
+        /// </summary>
+        /// <param name="storeMenuDetailId"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<StoreMenuDetailResponse>> GetStoreMenuDetailById(string storeMenuDetailId)
+        {
+            StoreMenuDetail storeMenuDetail;
+            try
+            {
+                storeMenuDetail = await _unitOfWork.Repository<StoreMenuDetail>()
+                    .FindAsync(smd => smd.StoreMenuDetailId == storeMenuDetailId);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.GetStoreMenuDetailById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<StoreMenuDetailResponse>
+                    {
+                        ResultCode = (int)StoreMenuDetailStatus.STORE_MENU_DETAIL_NOT_FOUND,
+                        ResultMessage = StoreMenuDetailStatus.STORE_MENU_DETAIL_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            //Create response
+            StoreMenuDetailResponse storeMenuDetailResponse = _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
+
+            return new BaseResponse<StoreMenuDetailResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = storeMenuDetailResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Update Store Menu Detail By Id
+        /// </summary>
+        /// <param name="storeMenuDetailId"></param>
+        /// <param name="storeMenuDetailUpdateRequest"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<StoreMenuDetailResponse>> UpdateStoreMenuDetailById(string storeMenuDetailId,
+            StoreMenuDetailUpdateRequest storeMenuDetailUpdateRequest)
+        {
+            StoreMenuDetail storeMenuDetail;
+            try
+            {
+                storeMenuDetail = await _unitOfWork.Repository<StoreMenuDetail>()
+                    .FindAsync(smd => smd.StoreMenuDetailId == storeMenuDetailId);
+
+                storeMenuDetail.Status = storeMenuDetailUpdateRequest.Status;
+                storeMenuDetail.TimeStart = storeMenuDetailUpdateRequest.TimeStart;
+                storeMenuDetail.TimeEnd = storeMenuDetailUpdateRequest.TimeEnd;
+
+                _unitOfWork.Repository<StoreMenuDetail>().Update(storeMenuDetail);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.UpdateStoreMenuDetailById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<StoreMenuDetailResponse>
+                    {
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
+                        Data = default
+                    });
+            }
+
+            //Create response
+            StoreMenuDetailResponse storeMenuDetailResponse = _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
+
+            return new BaseResponse<StoreMenuDetailResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = storeMenuDetailResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Delete Store Menu Detail By Id
+        /// </summary>
+        /// <param name="storeMenuDetailId"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<StoreMenuDetailResponse>> DeleteStoreMenuDetailById(string storeMenuDetailId)
+        {
+            StoreMenuDetail storeMenuDetail;
+            try
+            {
+                storeMenuDetail = await _unitOfWork.Repository<StoreMenuDetail>()
+                    .FindAsync(smd => smd.StoreMenuDetailId == storeMenuDetailId);
+
+                storeMenuDetail.Status = (int)StoreMenuDetailStatus.DELETED_STORE_MENU_DETAIL;
+
+                _unitOfWork.Repository<StoreMenuDetail>().Update(storeMenuDetail);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.DeleteStoreMenuDetailById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<StoreMenuDetailResponse>
+                    {
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
+                        Data = default
+                    });
+            }
+
+            //Create response
+            StoreMenuDetailResponse storeMenuDetailResponse = _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
+
+            return new BaseResponse<StoreMenuDetailResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = storeMenuDetailResponse
             };
         }
     }

@@ -75,10 +75,6 @@ namespace BLL.Services
             //Create response
             MerchantResponse merchantResponse = _mapper.Map<MerchantResponse>(merchant);
 
-            //Store Merchant To Redis
-            _redisService.StoreToList(CACHE_KEY, merchantResponse,
-                    new Predicate<MerchantResponse>(a => a.MerchantId == merchantResponse.MerchantId));
-
             return new BaseResponse<MerchantResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -98,14 +94,8 @@ namespace BLL.Services
 
             //biz rule
 
-            MerchantResponse merchantResponse = null;
-
-            //Get Merchant From Redis
-            merchantResponse = _redisService.GetList<MerchantResponse>(CACHE_KEY)
-                .Find(merchant => merchant.MerchantId.Equals(id));
-
-            if(merchantResponse is null)
-            {
+            MerchantResponse merchantResponse;
+            
                 //Get Merchant From Database
                 try
                 {
@@ -125,7 +115,7 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
+            
 
             return new BaseResponse<MerchantResponse>
             {
@@ -192,10 +182,6 @@ namespace BLL.Services
             //Create Response
             MerchantResponse merchantResponse = _mapper.Map<MerchantResponse>(merchant);
 
-            //Store Merchant To Redis
-            _redisService.StoreToList(CACHE_KEY, merchantResponse,
-                    new Predicate<MerchantResponse>(a => a.MerchantId == merchantResponse.MerchantId));
-
             return new BaseResponse<MerchantResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -260,10 +246,6 @@ namespace BLL.Services
             //Create Response
             MerchantResponse merchantResponse = _mapper.Map<MerchantResponse>(merchant);
 
-            //Store Merchant To Redis
-            _redisService.StoreToList(CACHE_KEY, merchantResponse,
-                    new Predicate<MerchantResponse>(a => a.MerchantId == merchantResponse.MerchantId));
-
             return new BaseResponse<MerchantResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -282,14 +264,8 @@ namespace BLL.Services
         {
             //biz rule
 
-            MerchantResponse merchantResponse = null;
+            MerchantResponse merchantResponse;
 
-            //Get Merchant From Redis
-            merchantResponse = _redisService.GetList<MerchantResponse>(CACHE_KEY)
-                .Find(merchant => merchant.MerchantName.Equals(name));
-
-            if (merchantResponse is null)
-            {
                 //Get Merchant From Database
                 try
                 {
@@ -309,7 +285,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<MerchantResponse>
             {
@@ -329,14 +304,8 @@ namespace BLL.Services
         {
             //biz rule
 
-            MerchantResponse merchantResponse = null;
-
-            //Get Merchant From Redis
-            merchantResponse = _redisService.GetList<MerchantResponse>(CACHE_KEY)
-                .Find(merchant => merchant.Address.Equals(address));
-
-            if (merchantResponse is null)
-            {
+            MerchantResponse merchantResponse;
+            
                 //Get Merchant From Database
                 try
                 {
@@ -356,7 +325,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<MerchantResponse>
             {
@@ -372,19 +340,12 @@ namespace BLL.Services
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<MerchantResponse>> GetMerchantByPhoneNumber(string number)
         {
             //biz rule
 
-            MerchantResponse merchantResponse = null;
+            MerchantResponse merchantResponse;
 
-            //Get Merchant From Redis
-            merchantResponse = _redisService.GetList<MerchantResponse>(CACHE_KEY)
-                .Find(merchant => merchant.PhoneNumber.Equals(number));
-
-            if (merchantResponse is null)
-            {
                 //Get Merchant From Database
                 try
                 {
@@ -404,7 +365,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<MerchantResponse>
             {
@@ -420,19 +380,12 @@ namespace BLL.Services
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<List<MerchantResponse>>> GetMerchantByAccountId(string accountId)
         {
-            List<MerchantResponse> merchantResponses = null;
-
-            //Get Merchant From Redis
-            merchantResponses = _redisService.GetList<MerchantResponse>(CACHE_KEY)
-                                            .Where(merchant => merchant.AccountId.Equals(accountId))
-                                            .ToList();
+            List<MerchantResponse> merchantResponses;
 
             //Get Merchant From Database
-            if (_utilService.IsNullOrEmpty(merchantResponses))
-            {
+            
                 try
                 {
                     List<Merchant> merchants = await _unitOfWork.Repository<Merchant>().
@@ -453,7 +406,6 @@ namespace BLL.Services
                             Data = default
                         });
                 }
-            }
 
             return new BaseResponse<List<MerchantResponse>>
             {

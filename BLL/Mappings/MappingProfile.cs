@@ -13,6 +13,10 @@ using BLL.Dtos.ProductCategory;
 using BLL.Dtos.SystemCategory;
 using BLL.Dtos.News;
 using DAL.Models;
+using BLL.Dtos.POI;
+using BLL.Dtos.Menu;
+using BLL.Dtos.ProductInMenu;
+using BLL.Dtos.StoreMenuDetail;
 
 namespace BLL.Mappings
 {
@@ -73,6 +77,23 @@ namespace BLL.Mappings
             //News Mapping
             CreateMap<NewsRequest, News>();
             CreateMap<News, NewsResponse>();
+
+            //POI Mapping
+            CreateMap<PoiRequest, Poi>();
+            CreateMap<Poi, PoiResponse>();
+
+            //Menu Mapping
+            CreateMap<MenuRequest, Menu>();
+            CreateMap<Menu, MenuResponse>();
+            CreateMap<MenuUpdateRequest, Menu>();
+
+            //Product In Menu Mapping
+            CreateMap<ProductInMenuRequest, ProductInMenu>();
+            CreateMap<ProductInMenu, ProductInMenuResponse>();
+
+            //Store Menu Detail Mapping
+            CreateMap<StoreMenuDetailRequest, StoreMenuDetail>();
+            CreateMap<StoreMenuDetail, StoreMenuDetailResponse>();
         }
     }
 }
