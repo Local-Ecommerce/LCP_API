@@ -4,6 +4,7 @@ using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -138,27 +139,26 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Payment Method By Name
+        /// Get All Payment Method
         /// </summary>
-        /// <param name="name"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpGet("name/{name}")]
-        public async Task<IActionResult> GetPaymentMethodByName(string name)
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllPaymentMethod()
         {
-            _logger.Information($"GET api/paymentMethod/{name} START");
+            _logger.Information($"GET api/paymentMethod/all START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //Get PaymentMethod
-            BaseResponse<PaymentMethodResponse> response = await _paymentMethodService.GetPaymentMethodByName(name);
+            BaseResponse<List<PaymentMethodResponse>> responses = await _paymentMethodService.GetAllPaymentMethod();
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(responses);
 
             watch.Stop();
 
-            _logger.Information($"GET api/paymentMethod/{name} END duration: " +
+            _logger.Information($"GET api/paymentMethod/all END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

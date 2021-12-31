@@ -199,25 +199,24 @@ namespace BLL.Services
         /// <param name="name"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<PaymentMethodResponse>> GetPaymentMethodByName(string name)
+        public async Task<BaseResponse<List<PaymentMethodResponse>>> GetAllPaymentMethod()
         {
             //biz rule
 
 
-            PaymentMethodResponse paymentMethodResponse;
+            List<PaymentMethodResponse> paymentMethodResponses;
 
-            //Get PaymentMethod From Database
+            //Get All PaymentMethod From Database
 
             try
             {
-                PaymentMethod paymentMethod = await _unitOfWork.Repository<PaymentMethod>().
-                                                        FindAsync(local => local.PaymentName.Equals(name));
-
-                paymentMethodResponse = _mapper.Map<PaymentMethodResponse>(paymentMethod);
+                paymentMethodResponses = _mapper.Map<List<PaymentMethodResponse>>(
+                    await _unitOfWork.Repository<PaymentMethod>()
+                                     .FindListAsync(pm => pm.PaymentMethodId != null));
             }
             catch (Exception e)
             {
-                _logger.Error("[PaymentMethodService.GetPaymentMethodByName()]: " + e.Message);
+                _logger.Error("[PaymentMethodService.GetAllPaymentMethod()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<PaymentMethodResponse>
@@ -228,11 +227,11 @@ namespace BLL.Services
                     });
             }
 
-            return new BaseResponse<PaymentMethodResponse>
+            return new BaseResponse<List<PaymentMethodResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = paymentMethodResponse
+                Data = paymentMethodResponses
             };
         }
 

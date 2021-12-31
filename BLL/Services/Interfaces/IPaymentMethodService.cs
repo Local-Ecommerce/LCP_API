@@ -1,5 +1,6 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.PaymentMethod;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -44,6 +45,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        Task<BaseResponse<PaymentMethodResponse>> GetPaymentMethodByName(string name);
+        Task<BaseResponse<List<PaymentMethodResponse>>> GetAllPaymentMethod();
     }
 }
