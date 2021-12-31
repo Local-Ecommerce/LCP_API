@@ -41,7 +41,7 @@ namespace API.Extensions
             services.AddScoped<IPoiService, PoiService>();
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IPaymentService, PaymentService>();
-
+            services.AddScoped<IPaymentMethodService, PaymentMethodService>();
 
             return services;
         }
