@@ -1,7 +1,6 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.Payment;
 using BLL.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -60,7 +59,6 @@ namespace API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPaymentById(string id)
         {
@@ -144,7 +142,6 @@ namespace API.Controllers
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpGet("order/{orderId}")]
         public async Task<IActionResult> GetPaymentByOrderId(string orderId)
         {
@@ -171,7 +168,6 @@ namespace API.Controllers
         /// </summary>
         /// <param name="paymentMethodId"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpGet("paymentMethod/{paymentMethodId}")]
         public async Task<IActionResult> GetPaymentByPaymentMethodId(string paymentMethodId)
         {
@@ -198,7 +194,6 @@ namespace API.Controllers
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpGet("bydate/{date}")]
         public async Task<IActionResult> GetPaymentByDate(DateTime date)
         {

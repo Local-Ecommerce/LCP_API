@@ -2,5 +2,6 @@
 {
     public class PaymentMethodRequest
     {
+        public string PaymentName { get; set; }
     }
 }
