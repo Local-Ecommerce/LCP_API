@@ -43,11 +43,18 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Collection By Merchant Id
+        /// CollectionResponse
         /// </summary>
         /// <param name="merchantId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<CollectionResponse>>> GetCollectionByMerchantId(string merchantId);
+        Task<BaseResponse<List<CollectionResponse>>> GetCollectionsByMerchantId(string merchantId);
+
+
+        /// <summary>
+        /// Get All Collections
+        /// </summary>
+        /// <returns></returns>
+        Task<BaseResponse<List<CollectionResponse>>> GetAllCollections();
 
 
         /// <summary>

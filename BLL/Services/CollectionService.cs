@@ -205,12 +205,12 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Collection By Merchant Id
+        /// Get Collections By Merchant Id
         /// </summary>
         /// <param name="merchantId"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<CollectionResponse>>> GetCollectionByMerchantId(string merchantId)
+        public async Task<BaseResponse<List<CollectionResponse>>> GetCollectionsByMerchantId(string merchantId)
         {
             List<CollectionResponse> collectionResponses;
 
@@ -550,5 +550,44 @@ namespace BLL.Services
 
         }
 
+
+        /// <summary>
+        /// Get All Collections
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<CollectionResponse>>> GetAllCollections()
+        {
+            List<CollectionResponse> collectionResponses;
+
+            //Get Collection From Database
+
+            try
+            {
+                List<Collection> collections = await _unitOfWork.Repository<Collection>().
+                                                        FindListAsync(collection => collection.CollectionId != null);
+
+                collectionResponses = _mapper.Map<List<CollectionResponse>>(collections);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[CollectionService.GetAllCollections()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<CollectionResponse>
+                    {
+                        ResultCode = (int)CollectionStatus.COLLECTION_NOT_FOUND,
+                        ResultMessage = CollectionStatus.COLLECTION_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<CollectionResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = collectionResponses
+            };
+        }
     }
 }
