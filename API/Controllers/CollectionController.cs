@@ -87,13 +87,41 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Collection By Merchant Id
+        /// Get All Collections
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllCollections()
+        {
+            _logger.Information($"GET api/collection/all START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get Collection
+            BaseResponse<List<CollectionResponse>> response = await _collectionService.GetAllCollections();
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/collection/all END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get Collections By Merchant Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("merchant/{merchantId}")]
-        public async Task<IActionResult> GetCollectionByMerchantId(string merchantId)
+        public async Task<IActionResult> GetCollectionsByMerchantId(string merchantId)
         {
             _logger.Information($"GET api/collection/merchant/{merchantId} START");
 
@@ -101,7 +129,7 @@ namespace API.Controllers
             watch.Start();
 
             //get Collection
-            BaseResponse<List<CollectionResponse>> response = await _collectionService.GetCollectionByMerchantId(merchantId);
+            BaseResponse<List<CollectionResponse>> response = await _collectionService.GetCollectionsByMerchantId(merchantId);
 
             string json = JsonSerializer.Serialize(response);
 
