@@ -97,7 +97,7 @@ namespace BLL.Services
             try
             {
                 apartment = await _unitOfWork.Repository<Apartment>()
-                                       .FindAsync(local => local.ApartmentId.Equals(id));
+                                       .FindAsync(ap => ap.ApartmentId.Equals(id));
             }
             catch (Exception e)
             {
@@ -164,7 +164,7 @@ namespace BLL.Services
                 try
                 {
                     Apartment apartment = await _unitOfWork.Repository<Apartment>().
-                                                            FindAsync(local => local.ApartmentId.Equals(id));
+                                                            FindAsync(ap => ap.ApartmentId.Equals(id));
 
                     apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
                 }
@@ -205,7 +205,7 @@ namespace BLL.Services
             try
             {
                 apartment = await _unitOfWork.Repository<Apartment>()
-                                       .FindAsync(local => local.ApartmentId.Equals(id));
+                                       .FindAsync(ap => ap.ApartmentId.Equals(id));
             }
             catch (Exception e)
             {
@@ -263,7 +263,7 @@ namespace BLL.Services
                 try
                 {
                     Apartment apartment = await _unitOfWork.Repository<Apartment>().
-                                                            FindAsync(local => local.Address.Equals(address));
+                                                            FindAsync(ap => ap.Address.Equals(address));
 
                     apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
                 }

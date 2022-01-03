@@ -588,5 +588,44 @@ namespace BLL.Services
                 Data = storeMenuDetailResponse
             };
         }
+
+
+        /// <summary>
+        /// Get Verified Merchant Stores
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetVerifiedMerchantStores()
+        {
+            List<MerchantStoreResponse> merchantStoreList = null;
+
+            //get systemCategory from database
+            try
+            {
+                merchantStoreList = _mapper.Map<List<MerchantStoreResponse>>(
+                    await _unitOfWork.Repository<MerchantStore>()
+                                     .FindListAsync(ms => ms.MerchantStoreId != null 
+                                     && ms.Status == (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.GetVerifiedMerchantStores()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantStoreResponse>
+                    {
+                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
+                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<MerchantStoreResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantStoreList
+            };
+        }
     }
 }
