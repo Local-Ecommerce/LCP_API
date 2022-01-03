@@ -72,7 +72,6 @@ namespace BLL.Services
             PoiResponse poiResponse = _mapper.Map<PoiResponse>(poi);
 
             //Store Poi to Redis
-            _redisService.StoreToList(CACHE_KEY, poiResponse, new Predicate<PoiResponse>(a => a.PoiId == poiResponse.PoiId));
 
             return new BaseResponse<PoiResponse>
             {
@@ -91,7 +90,6 @@ namespace BLL.Services
         {
             PoiResponse poiResponse = null;
             //Get poi from Redis
-            poiResponse = _redisService.GetList<PoiResponse>(CACHE_KEY).Find(local => local.PoiId.Equals(id));
 
             //Get poi from DB
             if(poiResponse is null)
@@ -133,9 +131,7 @@ namespace BLL.Services
             List<PoiResponse> poiResponses = null;
 
             //Get News from Redis
-            poiResponses = _redisService.GetList<PoiResponse>(CACHE_KEY)
-                .Where(poi => _utilService.CompareDateTimes(poi.RealeaseDate, date))
-                .ToList();
+
 
             //Get ApartmentId from DB
             if (_utilService.IsNullOrEmpty(poiResponses))
@@ -177,9 +173,6 @@ namespace BLL.Services
             List<PoiResponse> poiResponses = null;
 
             //Get Poi from Redis
-            poiResponses = _redisService.GetList<PoiResponse>(CACHE_KEY)
-                .Where(poi => poi.AparmentId.Equals(apartmentId))
-                .ToList();
 
             //Get ApartmentId from DB
             if (_utilService.IsNullOrEmpty(poiResponses))
@@ -221,9 +214,6 @@ namespace BLL.Services
             List<PoiResponse> poiResponses = null;
 
             //Get Poi from Redis
-            poiResponses = _redisService.GetList<PoiResponse>(CACHE_KEY)
-                .Where(poi => poi.MarketManagerId.Equals(marketManagerId))
-                .ToList();
 
             //Get apartment id from DB
             if (_utilService.IsNullOrEmpty(poiResponses))
@@ -309,7 +299,6 @@ namespace BLL.Services
             PoiResponse poiResponse = _mapper.Map<PoiResponse>(poi);
 
             //Store to Redis
-            _redisService.StoreToList(CACHE_KEY, poiResponse, new Predicate<PoiResponse>(a => a.PoiId.Equals(id)));
 
             return new BaseResponse<PoiResponse>
             {
@@ -370,8 +359,6 @@ namespace BLL.Services
             PoiResponse poiResponse = _mapper.Map<PoiResponse>(poi);
 
             //Store Poi to redis
-            _redisService.StoreToList<PoiResponse>(CACHE_KEY, poiResponse,
-                new Predicate<PoiResponse>(a => a.PoiId == poiResponse.PoiId));
 
             return new BaseResponse<PoiResponse>
             {
