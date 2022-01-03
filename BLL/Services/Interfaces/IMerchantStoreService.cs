@@ -60,7 +60,7 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Get Merchant By Account Id
         /// </summary>
-        /// <param name="appartmentId"></param>
+        /// <param name="apartmentId"></param>
         /// <returns></returns>
         Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByApartmentId(string apartmentId);
 
@@ -105,6 +105,13 @@ namespace BLL.Services.Interfaces
         /// <param name="storeMenuDetailId"></param>
         /// <returns></returns>
         Task<BaseResponse<StoreMenuDetailResponse>> DeleteStoreMenuDetailById(string storeMenuDetailId);
+
+
+        /// <summary>
+        /// Get Verified Merchant Stores
+        /// </summary>
+        /// <returns></returns>
+        Task<BaseResponse<List<MerchantStoreResponse>>> GetVerifiedMerchantStores();
     }
 
 }
