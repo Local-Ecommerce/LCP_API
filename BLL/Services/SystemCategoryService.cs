@@ -18,20 +18,17 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
-        private const string CACHE_KEY = "SystemCategory";
+        private const string PREFIX = "SC_";
 
         public SystemCategoryService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IRedisService redisService,
             IUtilService utilService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _redisService = redisService;
             _utilService = utilService;
         }
 
@@ -49,7 +46,7 @@ namespace BLL.Services
             SystemCategory systemCategory = _mapper.Map<SystemCategory>(request);
             try
             {
-                systemCategory.SystemCategoryId = _utilService.Create16Alphanumeric();
+                systemCategory.SystemCategoryId = _utilService.CreateId(PREFIX);
                 systemCategory.Status = (int)SystemCategoryStatus.ACTIVE_SYSTEM_CATEGORY;
                 systemCategory.ApproveBy = "";
 

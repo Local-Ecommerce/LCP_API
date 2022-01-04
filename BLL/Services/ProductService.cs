@@ -21,7 +21,9 @@ namespace BLL.Services
         private readonly IMapper _mapper;
         private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
+        private const string PREFIX = "PD_";
         private const string CACHE_KEY = "Product";
+
 
         public ProductService(IUnitOfWork unitOfWork,
             ILogger logger,
@@ -53,7 +55,7 @@ namespace BLL.Services
             Product product = _mapper.Map<Product>(productRequest);
             try
             {
-                product.ProductId = _utilService.Create16Alphanumeric();
+                product.ProductId = _utilService.CreateId(PREFIX);
                 product.Image = imageUrl;
                 product.Status = (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT;
                 product.CreatedDate = DateTime.Now;
@@ -117,7 +119,7 @@ namespace BLL.Services
             {
                 products.ForEach(product =>
                 {
-                    product.ProductId = _utilService.Create16Alphanumeric();
+                    product.ProductId = _utilService.CreateId(PREFIX);
                     product.Image = "";
                     product.Status = (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT;
                     product.CreatedDate = DateTime.Now;

@@ -17,20 +17,17 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
-        private const string CACHE_KEY = "Apartment";
+        private const string PREFIX = "APM_";
 
         public ApartmentService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IRedisService redisService,
             IUtilService utilService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _redisService = redisService;
             _utilService = utilService;
         }
 
@@ -50,7 +47,7 @@ namespace BLL.Services
 
             try
             {
-                apartment.ApartmentId = _utilService.Create16Alphanumeric();
+                apartment.ApartmentId = _utilService.CreateId(PREFIX);
                 apartment.Status = (int)ApartmentStatus.ACTIVE_APARTMENT;
 
                 _unitOfWork.Repository<Apartment>().Add(apartment);
