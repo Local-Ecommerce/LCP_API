@@ -9,6 +9,7 @@ using DAL.UnitOfWork;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace BLL.Services
 {
@@ -96,7 +97,7 @@ namespace BLL.Services
             try
             {
                 customer = await _unitOfWork.Repository<Customer>()
-                                       .FindAsync(local => local.CustomerId.Equals(id));
+                                       .FindAsync(cus => cus.CustomerId.Equals(id));
             }
             catch (Exception e)
             {
@@ -162,7 +163,7 @@ namespace BLL.Services
                 try
                 {
                     Customer customer = await _unitOfWork.Repository<Customer>().
-                                                            FindAsync(local => local.CustomerId.Equals(id));
+                                                            FindAsync(cus => cus.CustomerId.Equals(id));
 
                     customerResponse = _mapper.Map<CustomerResponse>(customer);
                 }
@@ -203,7 +204,7 @@ namespace BLL.Services
             try
             {
                 customer = await _unitOfWork.Repository<Customer>()
-                                       .FindAsync(local => local.CustomerId.Equals(id));
+                                       .FindAsync(cus => cus.CustomerId.Equals(id));
             }
             catch (Exception e)
             {
@@ -248,6 +249,314 @@ namespace BLL.Services
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = customerResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Customer By Name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<CustomerResponse>> GetCustomerByName(string name)
+        {
+            //biz rule
+
+
+            CustomerResponse customerResponse;
+
+            //Get Customer From Database
+
+            try
+            {
+                Customer customer = await _unitOfWork.Repository<Customer>().
+                                                        FindAsync(cus => cus.CustomerName.Equals(name));
+
+                customerResponse = _mapper.Map<CustomerResponse>(customer);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[CustomerService.GetCustomerByName()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<CustomerResponse>
+                    {
+                        ResultCode = (int)CustomerStatus.CUSTOMER_NOT_FOUND,
+                        ResultMessage = CustomerStatus.CUSTOMER_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<CustomerResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = customerResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Customer By Phone Number
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<CustomerResponse>> GetCustomerByPhoneNumber(string phone)
+        {
+            //biz rule
+
+
+            CustomerResponse customerResponse;
+
+            //Get Customer From Database
+
+            try
+            {
+                Customer customer = await _unitOfWork.Repository<Customer>().
+                                                        FindAsync(cus => cus.PhoneNumber.Equals(phone));
+
+                customerResponse = _mapper.Map<CustomerResponse>(customer);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[CustomerService.GetCustomerByPhoneNumber()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<CustomerResponse>
+                    {
+                        ResultCode = (int)CustomerStatus.CUSTOMER_NOT_FOUND,
+                        ResultMessage = CustomerStatus.CUSTOMER_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<CustomerResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = customerResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Customer By Date Of Birth
+        /// </summary>
+        /// <param name="dob"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<CustomerResponse>> GetCustomerByDateOfBirth(DateTime dob)
+        {
+            //biz rule
+
+
+            CustomerResponse customerResponse;
+
+            //Get Customer From Database
+
+            try
+            {
+                Customer customer = await _unitOfWork.Repository<Customer>().
+                                                        FindAsync(cus => cus.DateOfBirth.Value.Date == dob.Date);
+
+                customerResponse = _mapper.Map<CustomerResponse>(customer);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[CustomerService.GetCustomerByPhoneNumber()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<CustomerResponse>
+                    {
+                        ResultCode = (int)CustomerStatus.CUSTOMER_NOT_FOUND,
+                        ResultMessage = CustomerStatus.CUSTOMER_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<CustomerResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = customerResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Customers By Gender
+        /// </summary>
+        /// <param name="gender"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<CustomerResponse>>> GetCustomersByGender(string gender)
+        {
+            //biz rule
+
+
+            List<CustomerResponse> customerResponses;
+
+            //Get Customer From Database
+
+            try
+            {
+                List<Customer> customers = await _unitOfWork.Repository<Customer>().
+                                                        FindListAsync(cus => cus.Gender.Equals(gender));
+
+                customerResponses = _mapper.Map<List<CustomerResponse>>(customers);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[CustomerService.GetCustomerByGender()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<CustomerResponse>
+                    {
+                        ResultCode = (int)CustomerStatus.CUSTOMER_NOT_FOUND,
+                        ResultMessage = CustomerStatus.CUSTOMER_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<CustomerResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = customerResponses
+            };
+        }
+
+
+        /// <summary>
+        /// Get Customers By Created Date
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<CustomerResponse>>> GetCustomersByCreatedDate(DateTime date)
+        {
+            //biz rule
+
+
+            List<CustomerResponse> customerResponses;
+
+            //Get Customer From Database
+
+            try
+            {
+                List<Customer> customers = await _unitOfWork.Repository<Customer>().
+                                                        FindListAsync(cus => cus.CreatedDate.Value.Date == date.Date);
+
+                customerResponses = _mapper.Map<List<CustomerResponse>>(customers);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[CustomerService.GetCustomerByCreatedDate()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<CustomerResponse>
+                    {
+                        ResultCode = (int)CustomerStatus.CUSTOMER_NOT_FOUND,
+                        ResultMessage = CustomerStatus.CUSTOMER_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<CustomerResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = customerResponses
+            };
+        }
+
+
+        /// <summary>
+        /// Get Customer By Update Date
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<CustomerResponse>>> GetCustomersByUpdateDate(DateTime date)
+        {
+            //biz rule
+
+
+            List<CustomerResponse> customerResponses;
+
+            //Get Customer From Database
+
+            try
+            {
+                List<Customer> customers = await _unitOfWork.Repository<Customer>().
+                                                        FindListAsync(cus => cus.UpdatedDate.Value.Date == date.Date);
+
+                customerResponses = _mapper.Map<List<CustomerResponse>>(customers);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[CustomerService.GetCustomerByUpdateDate()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<CustomerResponse>
+                    {
+                        ResultCode = (int)CustomerStatus.CUSTOMER_NOT_FOUND,
+                        ResultMessage = CustomerStatus.CUSTOMER_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<CustomerResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = customerResponses
+            };
+        }
+
+
+        /// <summary>
+        /// Get Customer By Account Id
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<CustomerResponse>>> GetCustomersByAccountId(string accountId)
+        {
+            //biz rule
+
+
+            List<CustomerResponse> customerResponses;
+
+            //Get Customer From Database
+
+            try
+            {
+                List<Customer> customers = await _unitOfWork.Repository<Customer>().
+                                                        FindListAsync(cus => cus.AccountId.Equals(accountId));
+
+                customerResponses = _mapper.Map<List<CustomerResponse>>(customers);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[CustomerService.GetCustomerByAccountId()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<CustomerResponse>
+                    {
+                        ResultCode = (int)CustomerStatus.CUSTOMER_NOT_FOUND,
+                        ResultMessage = CustomerStatus.CUSTOMER_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<CustomerResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = customerResponses
             };
         }
     }
