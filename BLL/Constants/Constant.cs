@@ -2,7 +2,15 @@
 {
     public enum TimeUnit
     {
-        THIRTY_DAYS = 30
+        THIRTY_DAYS = 30,
+        ONE_HOUR = 1
+    }
+
+    public enum CategoryLevel
+    {
+        ONE = 1,
+        TWO = 2,
+        THREE = 3
     }
 
     public enum CommonResponse

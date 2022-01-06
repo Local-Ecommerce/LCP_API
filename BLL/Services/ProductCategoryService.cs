@@ -19,20 +19,17 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
-        private const string CACHE_KEY = "ProductCategory";
+        private const string PREFIX = "PC_";
 
         public ProductCategoryService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IRedisService redisService,
             IUtilService utilService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _redisService = redisService;
             _utilService = utilService;
         }
 
@@ -50,7 +47,7 @@ namespace BLL.Services
             ProductCategory productCategory = _mapper.Map<ProductCategory>(request);
             try
             {
-                productCategory.ProductCategoryId = _utilService.Create16Alphanumeric();
+                productCategory.ProductCategoryId = _utilService.CreateId(PREFIX);
                 productCategory.Status = (int)ProductCategoryStatus.UNVERIFIED_CREATE_PRODUCT_CATEGORY;
                 productCategory.CreatedDate = DateTime.Now;
                 productCategory.UpdatedDate = DateTime.Now;

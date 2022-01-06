@@ -6,10 +6,10 @@ namespace BLL.Services.Interfaces
     public interface IUtilService
     {
         /// <summary>
-        /// Create 16 Alphanumeric for Id
+        /// Create Id with prefix
         /// </summary>
         /// <returns></returns>
-        string Create16Alphanumeric();
+        string CreateId(string prefix);
 
 
         /// <summary>

@@ -18,20 +18,17 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
-        private const string CACHE_KEY = "DeliveryAddress";
+        private const string PREFIX = "DA_";
 
         public DeliveryAddressService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IRedisService redisService,
             IUtilService utilService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _redisService = redisService;
             _utilService = utilService;
         }
 
@@ -51,7 +48,7 @@ namespace BLL.Services
 
             try
             {
-                deliveryAddress.DeliveryAddressId = _utilService.Create16Alphanumeric();
+                deliveryAddress.DeliveryAddressId = _utilService.CreateId(PREFIX);
                 deliveryAddress.IsPrimaryAddress = false;
                 _unitOfWork.Repository<DeliveryAddress>().Add(deliveryAddress);
 

@@ -30,8 +30,6 @@ namespace API.Controllers
         /// <summary>
         /// Create a Merchant Store
         /// </summary>
-        /// <param name="merchantStoreRequest"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreateMerchantStore([FromBody] MerchantStoreRequest merchantStoreRequest)
         {
@@ -59,8 +57,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Merchant Store By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMerchantStoreById(string id)
@@ -87,9 +83,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Merchant Store
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="MerchantStoreRequest"></param>
-        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMerchantStore(string id,
                                                       [FromBody] MerchantStoreRequest merchantStoreRequest)
@@ -117,8 +110,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete Merchant Store
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteMerchantStore(string id)
         {
@@ -144,8 +135,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Merchant Store By Store Name
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetMerchantStoreByStoreName(string name)
@@ -172,8 +161,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Merchant Store By Merchant Id
         /// </summary>
-        /// <param name="merchantId"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("merchant/{merchantId}")]
         public async Task<IActionResult> GetMerchantStoreByStoreMerchantId(string merchantId)
@@ -201,8 +188,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Merchant Store By Apartment Id
         /// </summary>
-        /// <param name="apartmentId"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("apartment/{apartmentId}")]
         public async Task<IActionResult> GetMerchantStoreByStoreApartmentId(string apartmentId)
@@ -230,9 +215,6 @@ namespace API.Controllers
         /// <summary>
         /// Add Store Menu Details To Merchant Store
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="storeMenuDetailRequest"></param>
-        /// <returns></returns>
         [HttpPost("{id}/menu")]
         public async Task<IActionResult> AddStoreMenuDetailsToMerchantStore(string id,
             List<StoreMenuDetailRequest> storeMenuDetailRequest)
@@ -260,8 +242,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Store Menu Details By Merchant Store Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet("{id}/menu")]
         public async Task<IActionResult> GetStoreMenuDetailsByMerchantStoreId(string id)
         {
@@ -288,8 +268,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Store Menu Detail By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet("menu/{id}")]
         public async Task<IActionResult> GetStoreMenuDetailById(string id)
         {
@@ -316,8 +294,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Store Menu Detail By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("menu/{id}")]
         public async Task<IActionResult> UpdateStoreMenuDetailById(string id,
             StoreMenuDetailUpdateRequest storeMenuDetailUpdateRequest)
@@ -345,8 +321,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete Store Menu Detail By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("menu/delete/{id}")]
         public async Task<IActionResult> DeleteStoreMenuDetailById(string id)
         {

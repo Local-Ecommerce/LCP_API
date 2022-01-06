@@ -29,8 +29,6 @@ namespace API.Controllers
         /// <summary>
         /// Create a Merchant
         /// </summary>
-        /// <param name="merchantRequest"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreateMerchant([FromBody] MerchantRequest merchantRequest)
         {
@@ -58,8 +56,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Merchant By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMerchantById(string id)
@@ -86,9 +82,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Merchant
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="merchantRequest"></param>
-        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMerchant(string id,
                                                       [FromBody] MerchantRequest merchantRequest)
@@ -116,8 +109,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete Merchant
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteMerchant(string id)
         {
@@ -143,8 +134,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Merchant By Name
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetMerchantByName(string name)
@@ -171,8 +160,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Merchant By Address
         /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("address/{address}")]
         public async Task<IActionResult> GetMerchantByAddress(string address)
@@ -199,8 +186,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Merchant By Phone Number
         /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("number/{number}")]
         public async Task<IActionResult> GetMerchantByPhoneNumber(string number)
@@ -227,8 +212,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Merchant By AccountId
         /// </summary>
-        /// <param name="accountId"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("account/{accountId}")]
         public async Task<IActionResult> GetMerchantByAccountId(string accountId)

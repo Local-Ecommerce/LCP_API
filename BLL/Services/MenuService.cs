@@ -9,7 +9,6 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -20,21 +19,18 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
-        private const string CACHE_KEY = "Menu";
+        private const string PREFIX = "MENU_";
 
         public MenuService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IRedisService redisService,
             IUtilService utilService
             )
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _redisService = redisService;
             _utilService = utilService;
         }
 
@@ -49,7 +45,7 @@ namespace BLL.Services
 
             try
             {
-                menu.MenuId = _utilService.Create16Alphanumeric();
+                menu.MenuId = _utilService.CreateId(PREFIX);
                 menu.CreatedDate = DateTime.Now;
                 menu.UpdatedDate = DateTime.Now;
                 menu.Status = (int)MenuStatus.ACTIVE_MENU;
@@ -72,10 +68,6 @@ namespace BLL.Services
             //Create Response
             MenuResponse menuResponse = _mapper.Map<MenuResponse>(menu);
 
-            //Store Menu to Redis
-            _redisService.StoreToList(CACHE_KEY, menuResponse,
-                new Predicate<MenuResponse>(menu => menu.MenuId == menuResponse.MenuId));
-
             return new BaseResponse<MenuResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -93,8 +85,6 @@ namespace BLL.Services
         public async Task<BaseResponse<MenuResponse>> GetMenuById(string id)
         {
             MenuResponse menuReponse = null;
-            //Get Menu from Redis
-            //menuReponse = _redisService.GetList<MenuResponse>(CACHE_KEY).Find(menu => menu.MenuId.Equals(id));
 
             //Get Menu from DB
             if (menuReponse is null)
@@ -135,11 +125,6 @@ namespace BLL.Services
         public async Task<BaseResponse<List<MenuResponse>>> GetMenusByMerchantId(string merchantId)
         {
             List<MenuResponse> menuResponses = null;
-
-            //Get Menu from Redis
-            menuResponses = _redisService.GetList<MenuResponse>(CACHE_KEY)
-                .Where(menu => menu.MerchantId.Equals(merchantId))
-                .ToList();
 
             //Get ApartmentId from DB
             if (_utilService.IsNullOrEmpty(menuResponses))
@@ -222,9 +207,6 @@ namespace BLL.Services
             //Create Response
             MenuResponse menuResponse = _mapper.Map<MenuResponse>(menu);
 
-            //Store to Redis
-            _redisService.StoreToList(CACHE_KEY, menuResponse, new Predicate<MenuResponse>(m => m.MenuId == menuResponse.MenuId));
-
             return new BaseResponse<MenuResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -284,10 +266,6 @@ namespace BLL.Services
             //Create Response
             MenuResponse menuResponse = _mapper.Map<MenuResponse>(menu);
 
-            //Store Menu to Redis
-            _redisService.StoreToList<MenuResponse>(CACHE_KEY, menuResponse,
-                new Predicate<MenuResponse>(m => m.MenuId == menuResponse.MenuId));
-
             return new BaseResponse<MenuResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
@@ -313,7 +291,7 @@ namespace BLL.Services
             {
                 productInMenus.ForEach(productInMenu =>
                 {
-                    productInMenu.ProductInMenuId = _utilService.Create16Alphanumeric();
+                    productInMenu.ProductInMenuId = _utilService.CreateId(PREFIX);
                     productInMenu.MenuId = menuId;
                     productInMenu.CreatedDate = DateTime.Now;
                     productInMenu.Status = (int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU;

@@ -8,7 +8,6 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -19,21 +18,17 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
-        private const string CACHE_KEY = "MarketManager";
+        private const string PREFIX = "MM_";
 
         public MarketManagerService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IRedisService redisService,
-            IUtilService utilService,
-            IProductService productService)
+            IUtilService utilService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _redisService = redisService;
             _utilService = utilService;
         }
 
@@ -52,7 +47,7 @@ namespace BLL.Services
 
             try
             {
-                marketManager.MarketManagerId = _utilService.Create16Alphanumeric();
+                marketManager.MarketManagerId = _utilService.CreateId(PREFIX);
                 marketManager.Status = (int)MarketManagerStatus.ACTIVE_MARKETMANAGER;
 
                 _unitOfWork.Repository<MarketManager>().Add(marketManager);

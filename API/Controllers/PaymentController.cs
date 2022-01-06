@@ -29,8 +29,6 @@ namespace API.Controllers
         /// <summary>
         /// Create payment
         /// </summary>
-        /// <param name="paymentRequest"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreatePayment([FromBody] PaymentRequest paymentRequest)
         {
@@ -57,8 +55,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Payment By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPaymentById(string id)
         {
@@ -84,9 +80,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Payment By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="paymentRequest"></param>
-        /// <returns></returns>
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdatePaymentById(string id, [FromBody] PaymentRequest paymentRequest)
         {
@@ -113,8 +106,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete Payment By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeletePaymentById(string id)
         {
@@ -140,8 +131,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Payment By Order Id
         /// </summary>
-        /// <param name="orderId"></param>
-        /// <returns></returns>
         [HttpGet("order/{orderId}")]
         public async Task<IActionResult> GetPaymentByOrderId(string orderId)
         {
@@ -166,8 +155,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Payment By Payment Method Id
         /// </summary>
-        /// <param name="paymentMethodId"></param>
-        /// <returns></returns>
         [HttpGet("paymentMethod/{paymentMethodId}")]
         public async Task<IActionResult> GetPaymentByPaymentMethodId(string paymentMethodId)
         {
@@ -192,8 +179,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Payment By Date
         /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
         [HttpGet("bydate/{date}")]
         public async Task<IActionResult> GetPaymentByDate(DateTime date)
         {

@@ -29,8 +29,6 @@ namespace API.Controllers
         /// <summary>
         /// Create Payment Method
         /// </summary>
-        /// <param name="paymentMethodRequest"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreatePaymentMethod([FromBody] PaymentMethodRequest paymentMethodRequest)
         {
@@ -57,8 +55,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Payment Method By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPaymentMethodById(string id)
@@ -85,9 +81,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Payment Method By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="paymentMethodRequest"></param>
-        /// <returns></returns>
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdatePaymentMethodById(string id, [FromBody] PaymentMethodRequest paymentMethodRequest)
         {
@@ -114,8 +107,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete Payment Method By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeletePaymentMethodById(string id)
         {
@@ -141,7 +132,6 @@ namespace API.Controllers
         /// <summary>
         /// Get All Payment Method
         /// </summary>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllPaymentMethod()

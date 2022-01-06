@@ -29,8 +29,6 @@ namespace API.Controllers
         /// <summary>
         /// Register
         /// </summary>
-        /// <param name="accountRegisterRequest"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromForm] AccountRegisterRequest accountRegisterRequest)
@@ -58,8 +56,6 @@ namespace API.Controllers
         /// <summary>
         /// Login
         /// </summary>
-        /// <param name="accountLoginRequest"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AccountLoginRequest accountLoginRequest)
@@ -109,6 +105,9 @@ namespace API.Controllers
         }
 
 
+        /// <summary>
+        /// Update Account
+        /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAccount(string id, [FromForm] AccountImageForm accountImageForm)
         {
@@ -131,6 +130,10 @@ namespace API.Controllers
             return Ok(json);
         }
 
+
+        /// <summary>
+        /// Delete Account
+        /// </summary>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteAccount(string id)
         {

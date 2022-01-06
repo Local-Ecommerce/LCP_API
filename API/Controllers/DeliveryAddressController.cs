@@ -29,8 +29,6 @@ namespace API.Controllers
         /// <summary>
         /// Create DeliveryAddress
         /// </summary>
-        /// <param name="deliveryAddressRequest"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreateDeliveryAddress([FromBody] DeliveryAddressRequest deliveryAddressRequest)
         {
@@ -58,8 +56,6 @@ namespace API.Controllers
         /// <summary>
         /// Get DeliveryAddress By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDeliveryAddressById(string id)
@@ -86,9 +82,6 @@ namespace API.Controllers
         /// <summary>
         /// Update DeliveryAddress
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="deliveryAddressRequest"></param>
-        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateDeliveryAddressById(string id,
                                               [FromBody] DeliveryAddressRequest deliveryAddressRequest)
@@ -116,8 +109,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete DeliveryAddress
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteDeliveryAddress(string id)
         {
