@@ -30,8 +30,6 @@ namespace API.Controllers
         /// <summary>
         /// Create poi
         /// </summary>
-        /// <param name="poiRequest"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreatePoi([FromBody] PoiRequest poiRequest)
         {
@@ -57,8 +55,6 @@ namespace API.Controllers
         /// <summary>
         /// Get poi by id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPoiById(string id)
@@ -84,10 +80,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Poi
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="newsRequest"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdatePoiById(string id, [FromBody] PoiRequest poiRequest)
         {
@@ -113,8 +105,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete poi
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeletePoisById(string id)
         {
@@ -139,8 +129,6 @@ namespace API.Controllers
         /// <summary>
         /// Get poi by apartment id
         /// </summary>
-        /// <param name="apartmentId"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("apartment/{apartmentId}")]
         public async Task<IActionResult> GetPoiByApartmentId(string apartmentId)
@@ -166,8 +154,6 @@ namespace API.Controllers
         /// <summary>
         /// Get poi by market manager Id
         /// </summary>
-        /// <param name="marketManagerId"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("marketmanager/{marketManagerId}")]
         public async Task<IActionResult> GetPoiByMarketManagerId(string marketManagerId)
@@ -193,8 +179,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Poi By Release Date
         /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("bydate/{date}")]
         public async Task<IActionResult> GetPoiByReleaseDate(DateTime date)

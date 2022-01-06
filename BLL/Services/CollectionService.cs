@@ -10,9 +10,7 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BLL.Services
@@ -22,23 +20,19 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
         private readonly IProductService _productService;
-        private const string CACHE_KEY = "Collection";
-        private const string SUB_CACHE_KEY = "CollectionMapping";
+        private const string PREFIX = "CLT_";
 
         public CollectionService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IRedisService redisService,
             IUtilService utilService,
             IProductService productService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _redisService = redisService;
             _utilService = utilService;
             _productService = productService;
         }
@@ -59,7 +53,7 @@ namespace BLL.Services
 
             try
             {
-                collection.CollectionId = _utilService.Create16Alphanumeric();
+                collection.CollectionId = _utilService.CreateId(PREFIX);
                 collection.Status = (int)CollectionStatus.ACTIVE_COLLECTION;
                 collection.CreatedDate = DateTime.Now;
                 collection.UpdatedDate = DateTime.Now;

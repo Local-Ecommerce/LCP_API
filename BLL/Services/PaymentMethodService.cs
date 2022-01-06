@@ -20,20 +20,17 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
-        private const string CACHE_KEY = "PaymentMethod";
+        private const string PREFIX = "PMM_";
 
         public PaymentMethodService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IRedisService redisService,
             IUtilService utilService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _redisService = redisService;
             _utilService = utilService;
         }
 
@@ -53,7 +50,7 @@ namespace BLL.Services
 
             try
             {
-                paymentMethod.PaymentMethodId = _utilService.Create16Alphanumeric();
+                paymentMethod.PaymentMethodId = _utilService.CreateId(PREFIX);
                 paymentMethod.Status = (int)PaymentMethodStatus.ACTIVE_PAYMENT_METHOD;
 
                 _unitOfWork.Repository<PaymentMethod>().Add(paymentMethod);

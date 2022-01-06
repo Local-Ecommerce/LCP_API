@@ -29,8 +29,6 @@ namespace API.Controllers
         /// <summary>
         /// Create Base Product
         /// </summary>
-        /// <param name="productRequest"></param>
-        /// <returns></returns>
         [HttpPost("create-base")]
         public async Task<IActionResult> CreateBaseProduct([FromForm] ProductRequest productRequest)
         {
@@ -56,9 +54,6 @@ namespace API.Controllers
         /// <summary>
         /// Create Related Product
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="productRequests"></param>
-        /// <returns></returns>
         [HttpPost("create-related/{id}")]
         public async Task<IActionResult> CreateRelatedProduct(string id, [FromForm] RelatedProductRequest relatedProductRequest)
         {
@@ -84,8 +79,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Base Product By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns>Ok(json)</returns>
         [AllowAnonymous]
         [HttpGet("base/{id}")]
         public async Task<IActionResult> GetBaseProductById(string id)
@@ -112,8 +105,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Related Product By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns>Ok(json)</returns>
         [AllowAnonymous]
         [HttpGet("related/{id}")]
         public async Task<IActionResult> GetRelatedProductById(string id)
@@ -140,8 +131,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Related Product By Base Product Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns>Ok(json)</returns>
         [AllowAnonymous]
         [HttpGet("related/base={id}")]
         public async Task<IActionResult> GetRelatedProductsByBaseProductId(string id)
@@ -167,9 +156,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Base Product
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="productRequest"></param>
-        /// <returns>Ok(json)</returns>
         [HttpPut("base/{id}")]
         public async Task<IActionResult> UpdateBaseProduct(string id,
             [FromForm] ProductRequest productRequest)
@@ -196,9 +182,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Related Product
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="productRequest"></param>
-        /// <returns>Ok(json)</returns>
         [HttpPut("related/{id}")]
         public async Task<IActionResult> UpdateRelatedProduct(string id,
             [FromForm] ProductRequest productRequest)
@@ -224,8 +207,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete Base Product by Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/base/{id}")]
         public async Task<IActionResult> DeleteBaseProduct(string id)
         {
@@ -250,8 +231,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete Related Product by Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/related/{id}")]
         public async Task<IActionResult> DeleteRelatedProduct(string id)
         {

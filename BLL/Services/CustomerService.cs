@@ -18,20 +18,17 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
-        private const string CACHE_KEY = "Customer";
+        private const string PREFIX = "CTM_";
 
         public CustomerService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IRedisService redisService,
             IUtilService utilService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _redisService = redisService;
             _utilService = utilService;
         }
 
@@ -50,7 +47,7 @@ namespace BLL.Services
 
             try
             {
-                customer.CustomerId = _utilService.Create16Alphanumeric();
+                customer.CustomerId = _utilService.CreateId(PREFIX);
                 customer.CreatedDate = DateTime.Now;
                 customer.UpdatedDate = DateTime.Now;
                 customer.Status = (int)CustomerStatus.UNVERIFIED_CREATE_CUSTOMER;

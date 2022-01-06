@@ -10,7 +10,6 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BLL.Services
 {
@@ -19,20 +18,17 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
-        private const string CACHE_KEY = "Merchant";
+        private const string PREFIX = "MC_";
 
         public MerchantService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IRedisService redisService,
             IUtilService utilService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _redisService = redisService;
             _utilService = utilService;
         }
 
@@ -51,7 +47,7 @@ namespace BLL.Services
             Merchant merchant = _mapper.Map<Merchant>(merchantRequest);
             try
             {
-                merchant.MerchantId = _utilService.Create16Alphanumeric();
+                merchant.MerchantId = _utilService.CreateId(PREFIX);
                 merchant.Status = (int)MerchantStatus.UNVERIFIED_CREATE_MERCHANT;
                 merchant.LevelId = "L001";
 

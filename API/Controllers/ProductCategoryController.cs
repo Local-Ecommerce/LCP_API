@@ -28,9 +28,6 @@ namespace API.Controllers
         /// <summary>
         /// Create a Product Category
         /// </summary>
-        /// <param name="productCategoryRequest"></param>
-        /// <param name="image"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreateProductCategory([FromBody] ProductCategoryRequest productCategoryRequest)
         {
@@ -56,8 +53,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Product Category By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductCategoryById(string id)
         {
@@ -82,8 +77,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Product Category By Merchant Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet("merchant/{id}")]
         public async Task<IActionResult> GetProductCategoryByMerchantId(string id)
         {
@@ -108,9 +101,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Product Category
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="productCategoryRequest"></param>
-        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProductCategory(string id,
             [FromBody] ProductCategoryRequest productCategoryRequest)
@@ -137,8 +127,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete ProductCategory by Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteProductCategory(string id)
         {

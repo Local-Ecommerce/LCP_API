@@ -16,10 +16,10 @@ namespace BLL.Services
         }
 
         /// <summary>
-        /// Create 16 Alphanumeric for Id
+        /// Create Id with prefix
         /// </summary>
         /// <returns></returns>
-        public string Create16Alphanumeric()
+        public string CreateId(string prefix)
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var stringChars = new char[16];
@@ -30,7 +30,7 @@ namespace BLL.Services
                 stringChars[i] = chars[random.Next(chars.Length)];
             }
 
-            return new String(stringChars);
+            return string.Concat(prefix, new String(stringChars));
         }
 
 

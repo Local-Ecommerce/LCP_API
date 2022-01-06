@@ -30,8 +30,6 @@ namespace API.Controllers
         /// <summary>
         /// Create MarketManager
         /// </summary>
-        /// <param name="marketManagerRequest"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreateMarketManager([FromBody] MarketManagerRequest marketManagerRequest)
         {
@@ -59,8 +57,6 @@ namespace API.Controllers
         /// <summary>
         /// Get MarketManager By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMarketManagerById(string id)
@@ -87,9 +83,6 @@ namespace API.Controllers
         /// <summary>
         /// Update MarketManager
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="marketManagerRequest"></param>
-        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMarketManagerById(string id,
                                               [FromBody] MarketManagerRequest marketManagerRequest)
@@ -117,8 +110,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete MarketManager
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteMarketManager(string id)
         {
@@ -144,8 +135,6 @@ namespace API.Controllers
         /// <summary>
         /// Get MarketManager By Account Id
         /// </summary>
-        /// <param name="accountId"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("account/{accountId}")]
         public async Task<IActionResult> GetMarketManagerByAccountId(string accountId)

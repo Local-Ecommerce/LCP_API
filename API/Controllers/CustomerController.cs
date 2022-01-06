@@ -29,8 +29,6 @@ namespace API.Controllers
         /// <summary>
         /// Create Customer
         /// </summary>
-        /// <param name="customerRequest"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreateCustomer([FromBody] CustomerRequest customerRequest)
         {
@@ -58,8 +56,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Customer By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCustomerById(string id)
@@ -86,9 +82,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Customer
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="customerRequest"></param>
-        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCustomerById(string id,
                                               [FromBody] CustomerRequest customerRequest)
@@ -116,8 +109,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete Customer
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteCustomer(string id)
         {

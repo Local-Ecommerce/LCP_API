@@ -20,21 +20,18 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
-        private const string CACHE_KEY = "Poi";
+        private const string PREFIX = "POI_";
 
         public PoiService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IRedisService redisService,
             IUtilService utilService
             )
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _redisService = redisService;
             _utilService = utilService;
         }
 
@@ -49,7 +46,7 @@ namespace BLL.Services
 
             try
             {
-                poi.PoiId = _utilService.Create16Alphanumeric();
+                poi.PoiId = _utilService.CreateId(PREFIX);
                 poi.RealeaseDate = DateTime.Now;
                 poi.Status = (int)PoiStatus.ACTIVE_POI;
 

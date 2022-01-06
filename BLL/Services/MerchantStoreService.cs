@@ -10,7 +10,6 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
 using BLL.Dtos.StoreMenuDetail;
 
 namespace BLL.Services
@@ -21,20 +20,19 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
-        private const string CACHE_KEY = "MerchantStore";
+        private const string PREFIX = "MS_";
+        private const string SUB_PREFIX = "SMD_";
+
 
         public MerchantStoreService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IRedisService redisService,
             IUtilService utilService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _redisService = redisService;
             _utilService = utilService;
         }
 
@@ -52,7 +50,7 @@ namespace BLL.Services
             MerchantStore merchantStore = _mapper.Map<MerchantStore>(merchantStoreRequest);
             try
             {
-                merchantStore.MerchantStoreId = _utilService.Create16Alphanumeric();
+                merchantStore.MerchantStoreId = _utilService.CreateId(PREFIX);
                 merchantStore.Status = (int)MerchantStoreStatus.UNVERIFIED_CREATE_MERCHANT_STORE;
                 merchantStore.CreatedDate = DateTime.Now;
 
@@ -390,7 +388,7 @@ namespace BLL.Services
             {
                 storeMenuDetails.ForEach(storeMenuDetail =>
                 {
-                    storeMenuDetail.StoreMenuDetailId = _utilService.Create16Alphanumeric();
+                    storeMenuDetail.StoreMenuDetailId = _utilService.CreateId(SUB_PREFIX);
                     storeMenuDetail.CreatedDate = DateTime.Now;
                     storeMenuDetail.MerchantStoreId = merchantStoreId;
                     storeMenuDetail.Status = (int)StoreMenuDetailStatus.ACTIVE_STORE_MENU_DETAIL;

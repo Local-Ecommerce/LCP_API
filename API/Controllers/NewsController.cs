@@ -29,8 +29,6 @@ namespace API.Controllers
         /// <summary>
         /// Create news
         /// </summary>
-        /// <param name="newsRequest"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreateNews([FromBody] NewsRequest newsRequest)
         {
@@ -56,8 +54,6 @@ namespace API.Controllers
         /// <summary>
         /// Get news by id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetNewsById(string id)
@@ -83,9 +79,6 @@ namespace API.Controllers
         /// <summary>
         /// Update news
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="newsRequest"></param>
-        /// <returns></returns>
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateNewsById(string id, [FromBody] NewsRequest newsRequest)
         {
@@ -111,8 +104,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete news
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteNewsById(string id)
         {
@@ -137,8 +128,6 @@ namespace API.Controllers
         /// <summary>
         /// Get news by apartment id
         /// </summary>
-        /// <param name="apartmentId"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("apartment/{apartmentId}")]
         public async Task<IActionResult> GetNewsByApartmentId(string apartmentId)
@@ -164,8 +153,6 @@ namespace API.Controllers
         /// <summary>
         /// Get news by market manager Id
         /// </summary>
-        /// <param name="marketManagerId"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("marketmanager/{marketManagerId}")]
         public async Task<IActionResult> GetNewsByMarketManagerId(string marketManagerId)
@@ -191,8 +178,6 @@ namespace API.Controllers
         /// <summary>
         /// Get News By Release Date
         /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("bydate/{date}")]
         public async Task<IActionResult> GetNewsByReleaseDate(DateTime date)
