@@ -727,6 +727,10 @@ namespace DAL.Models
 
                 entity.Property(e => e.ApproveBy).HasMaxLength(250);
 
+                entity.Property(e => e.BelongTo)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.SysCategoryName).HasMaxLength(250);
             });
 

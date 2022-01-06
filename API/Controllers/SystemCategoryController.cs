@@ -28,9 +28,6 @@ namespace API.Controllers
         /// <summary>
         /// Create a System Category
         /// </summary>
-        /// <param name="systemCategoryRequest"></param>
-        /// <param name="image"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreateSystemCategory([FromBody] SystemCategoryRequest systemCategoryRequest)
         {
@@ -56,8 +53,6 @@ namespace API.Controllers
         /// <summary>
         /// Get System Category By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSystemCategoryById(string id)
         {
@@ -82,8 +77,6 @@ namespace API.Controllers
         /// <summary>
         /// Get All System Category
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet("all")]
         public async Task<IActionResult> GetAllSystemCategory()
         {
@@ -108,9 +101,6 @@ namespace API.Controllers
         /// <summary>
         /// Update SystemCategory By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="systemCategoryRequest"></param>
-        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateSystemCategory(string id,
             [FromBody] SystemCategoryRequest systemCategoryRequest)
@@ -137,8 +127,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete SystemCategory by Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteSystemCategory(string id)
         {

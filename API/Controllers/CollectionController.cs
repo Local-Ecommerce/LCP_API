@@ -6,7 +6,6 @@ using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
@@ -32,8 +31,6 @@ namespace API.Controllers
         /// <summary>
         /// Create Collection
         /// </summary>
-        /// <param name="collectionRequest"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreateCollection([FromBody] CollectionRequest collectionRequest)
         {
@@ -61,8 +58,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Collection By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCollectionById(string id)
@@ -89,8 +84,6 @@ namespace API.Controllers
         /// <summary>
         /// Get All Collections
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllCollections()
@@ -117,8 +110,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Collections By Merchant Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("merchant/{merchantId}")]
         public async Task<IActionResult> GetCollectionsByMerchantId(string merchantId)
@@ -145,9 +136,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Collection
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="collectionRequest"></param>
-        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCollectionById(string id,
                                               [FromBody] CollectionRequest collectionRequest)
@@ -175,8 +163,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete collection
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteCollection(string id)
         {
@@ -202,8 +188,6 @@ namespace API.Controllers
         /// <summary>
         /// Add Product To Collection
         /// </summary>
-        /// <param name="collectionMappingRequest"></param>
-        /// <returns></returns>
         [HttpPost("{collectionId}/add")]
         public async Task<IActionResult> AddProductToCollection(string collectionId, [FromBody] string[] productIds)
         {
@@ -231,8 +215,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Products By Collection Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}/products")]
         public async Task<IActionResult> GetProductsByCollectionId(string id)
@@ -259,10 +241,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Product Status In Collection
         /// </summary>
-        /// <param name="collectionId"></param>
-        /// <param name="productId"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
         [HttpPut("{collectionId}/update/{productId}/{status}")]
         public async Task<IActionResult> UpdateProductStatusInCollection(
             string collectionId, string productId, int status)
@@ -291,9 +269,6 @@ namespace API.Controllers
         /// <summary>
         /// Remove Product From Collection
         /// </summary>
-        /// <param name="collectionId"></param>
-        /// <param name="productId"></param>
-        /// <returns></returns>
         [HttpDelete("{collectionId}/delete/{productId}")]
         public async Task<IActionResult> RemoveProductFromCollection(string collectionId, string productId)
         {

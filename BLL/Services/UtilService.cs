@@ -30,7 +30,7 @@ namespace BLL.Services
                 stringChars[i] = chars[random.Next(chars.Length)];
             }
 
-            return prefix + stringChars.ToString();
+            return string.Concat(prefix, new String(stringChars));
         }
 
 

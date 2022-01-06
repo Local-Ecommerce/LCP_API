@@ -29,8 +29,6 @@ namespace API.Controllers
         /// <summary>
         /// Create menu
         /// </summary>
-        /// <param name="menuRequest"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreateMenu([FromBody] MenuRequest menuRequest)
         {
@@ -56,8 +54,6 @@ namespace API.Controllers
         /// <summary>
         /// Get menu by id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMenuById(string id)
@@ -83,9 +79,6 @@ namespace API.Controllers
         /// <summary>
         /// Update menu
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="menuUpdateRequest"></param>
-        /// <returns></returns>
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateMenuById(string id, [FromBody] MenuUpdateRequest menuUpdateRequest)
         {
@@ -111,8 +104,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete menu
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteMenuById(string id)
         {
@@ -138,8 +129,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Menus By Merchant Id
         /// </summary>
-        /// <param name="merchantId"></param>
-        /// <returns></returns>
         [HttpGet("merchant/{merchantId}")]
         public async Task<IActionResult> GetMenusByMerchantId(string merchantId)
         {
@@ -165,9 +154,6 @@ namespace API.Controllers
         /// <summary>
         /// Add Products To Menu
         /// </summary>
-        /// <param name="menuId"></param>
-        /// <param name="productInMenuRequests"></param>
-        /// <returns></returns>
         [HttpPost("{menuId}/add")]
         public async Task<IActionResult> AddProductsToMenu(string menuId,
             [FromBody] List<ProductInMenuRequest> productInMenuRequests)
@@ -194,8 +180,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Products In Menu By Menu Id
         /// </summary>
-        /// <param name="menuId"></param>
-        /// <returns></returns>
         [HttpGet("{menuId}/product")]
         public async Task<IActionResult> GetProductsInMenuByMenuId(string menuId)
         {
@@ -221,8 +205,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Product In Menu By Id
         /// </summary>
-        /// <param name="productInMenuId"></param>
-        /// <returns></returns>
         [HttpGet("product/{productInMenuId}")]
         public async Task<IActionResult> GetProductInMenuById(string productInMenuId)
         {
@@ -248,9 +230,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Product In Menu By Id
         /// </summary>
-        /// <param name="productInMenuId"></param>
-        /// <param name="productInMenuUpdateRequest"></param>
-        /// <returns></returns>
         [HttpPut("product/{productInMenuId}")]
         public async Task<IActionResult> UpdateProductInMenuById(string productInMenuId,
             [FromBody] ProductInMenuUpdateRequest productInMenuUpdateRequest)
@@ -278,8 +257,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete Product In Menu By Id
         /// </summary>
-        /// <param name="productInMenuId"></param>
-        /// <returns></returns>
         [HttpDelete("product/{productInMenuId}")]
         public async Task<IActionResult> DeleteProductInMenuById(string productInMenuId)
         {

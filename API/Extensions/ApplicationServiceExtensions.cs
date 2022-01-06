@@ -42,6 +42,7 @@ namespace API.Extensions
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IPaymentMethodService, PaymentMethodService>();
+            services.AddScoped<IUploadFirebaseService, UploadFirebaseService>();
 
             return services;
         }

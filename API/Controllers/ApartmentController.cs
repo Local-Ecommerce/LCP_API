@@ -29,8 +29,6 @@ namespace API.Controllers
         /// <summary>
         /// Create Apartment
         /// </summary>
-        /// <param name="apartmentRequest"></param>
-        /// <returns></returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreateApartment([FromBody] ApartmentRequest apartmentRequest)
         {
@@ -58,8 +56,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Apartment By Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetApartmentById(string id)
@@ -86,9 +82,6 @@ namespace API.Controllers
         /// <summary>
         /// Update Apartment
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="apartmentRequest"></param>
-        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateApartmentById(string id,
                                               [FromBody] ApartmentRequest apartmentRequest)
@@ -116,8 +109,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete apartment
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteApartment(string id)
         {
@@ -142,8 +133,6 @@ namespace API.Controllers
         /// <summary>
         /// Get Apartment By Address
         /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("address/{address}")]
         public async Task<IActionResult> GetApartmentByAddress(string address)
