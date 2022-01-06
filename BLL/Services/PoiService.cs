@@ -138,7 +138,7 @@ namespace BLL.Services
             {
                 try
                 {
-                    List<Poi> poi = await _unitOfWork.Repository<Poi>().FindListAsync(poi => poi.RealeaseDate.Equals(date));
+                    List<Poi> poi = await _unitOfWork.Repository<Poi>().FindListAsync(poi => poi.RealeaseDate.Value.Date == date.Date);
 
                     poiResponses = _mapper.Map<List<PoiResponse>>(poi);
                 }

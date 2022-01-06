@@ -155,7 +155,7 @@ namespace BLL.Services
 
             try
             {
-                List<Payment> Payment = await _unitOfWork.Repository<Payment>().FindListAsync(Payment => Payment.DateTime.Equals(date));
+                List<Payment> Payment = await _unitOfWork.Repository<Payment>().FindListAsync(payment => payment.DateTime.Date == date.Date);
 
                 paymentResponses = _mapper.Map<List<PaymentResponse>>(Payment);
             }
