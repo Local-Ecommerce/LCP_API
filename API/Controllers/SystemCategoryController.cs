@@ -1,6 +1,7 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.SystemCategory;
 using BLL.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -53,6 +54,7 @@ namespace API.Controllers
         /// <summary>
         /// Get System Category By Id
         /// </summary>
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSystemCategoryById(string id)
         {
@@ -77,6 +79,7 @@ namespace API.Controllers
         /// <summary>
         /// Get All System Category
         /// </summary>
+        [AllowAnonymous]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllSystemCategory()
         {
