@@ -162,7 +162,7 @@ namespace API.Controllers
         /// </summary>
         [AllowAnonymous]
         [HttpGet("status/{status}")]
-        public async Task<IActionResult> GetActiveApartments(int status)
+        public async Task<IActionResult> GetApartments(int status)
         {
             _logger.Information($"GET api/apartment/status/{status} START");
 
