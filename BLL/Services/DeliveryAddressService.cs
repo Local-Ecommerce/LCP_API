@@ -7,6 +7,7 @@ using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -94,7 +95,7 @@ namespace BLL.Services
             try
             {
                 deliveryAddress = await _unitOfWork.Repository<DeliveryAddress>()
-                                       .FindAsync(local => local.DeliveryAddressId.Equals(id));
+                                       .FindAsync(deli => deli.DeliveryAddressId.Equals(id));
             }
             catch (Exception e)
             {
@@ -159,7 +160,7 @@ namespace BLL.Services
                 try
                 {
                     DeliveryAddress deliveryAddress = await _unitOfWork.Repository<DeliveryAddress>().
-                                                            FindAsync(local => local.DeliveryAddressId.Equals(id));
+                                                            FindAsync(deli => deli.DeliveryAddressId.Equals(id));
 
                     deliveryAddressResponse = _mapper.Map<DeliveryAddressResponse>(deliveryAddress);
                 }
@@ -200,7 +201,7 @@ namespace BLL.Services
             try
             {
                 deliveryAddress = await _unitOfWork.Repository<DeliveryAddress>()
-                                       .FindAsync(local => local.DeliveryAddressId.Equals(id));
+                                       .FindAsync(deli => deli.DeliveryAddressId.Equals(id));
             }
             catch (Exception e)
             {
@@ -243,6 +244,50 @@ namespace BLL.Services
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = DeliveryAddressResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Delivery Address By Customer Id
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<DeliveryAddressResponse>>> GetDeliveryAddressByCustomerId(string customerId)
+        {
+            //biz rule
+
+
+            List<DeliveryAddressResponse> deliveryAddressResponses;
+
+            //Get DeliveryAddress From Database
+
+            try
+            {
+                List<DeliveryAddress> deliveryAddress = await _unitOfWork.Repository<DeliveryAddress>().
+                                                        FindListAsync(deli => deli.CustomerId.Equals(customerId));
+
+                deliveryAddressResponses = _mapper.Map<List<DeliveryAddressResponse>>(deliveryAddress);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[DeliveryAddressService.GetDeliveryAddressByCustomerId()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<DeliveryAddressResponse>
+                    {
+                        ResultCode = (int)DeliveryAddressStatus.DELIVERYADDRESS_NOT_FOUND,
+                        ResultMessage = DeliveryAddressStatus.DELIVERYADDRESS_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<DeliveryAddressResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = deliveryAddressResponses
             };
         }
     }

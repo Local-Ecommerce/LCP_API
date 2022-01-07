@@ -1,5 +1,6 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.Apartment;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -10,7 +11,7 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Create Apartment
         /// </summary>
-        /// <param name="ApartmentRequest"></param>
+        /// <param name="apartmentRequest"></param>
         /// <returns></returns>
         Task<BaseResponse<ApartmentResponse>> CreateApartment(ApartmentRequest apartmentRequest);
 
@@ -46,5 +47,12 @@ namespace BLL.Services.Interfaces
         /// <param name="address"></param>
         /// <returns></returns>
         Task<BaseResponse<ApartmentResponse>> GetApartmentByAddress(string address);
+
+
+        /// <summary>
+        /// Get Apartment By Status
+        /// </summary>
+        /// <returns></returns>
+        Task<BaseResponse<List<ApartmentResponse>>> GetApartmentsByStatus(int status);
     }
 }

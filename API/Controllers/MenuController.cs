@@ -277,5 +277,32 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Get Menu By Status
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("status/{status}")]
+        public async Task<IActionResult> GetMenuByStatus(int status)
+        {
+            _logger.Information($"GET api/menu/status/{status} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get Menu
+            BaseResponse<List<MenuResponse>> response =
+                await _menuService.GetMenusByStatus(status);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/menu/status/{status} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }

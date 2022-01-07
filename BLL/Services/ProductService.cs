@@ -19,19 +19,24 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
+        private readonly IUploadFirebaseService _uploadFirebaseService;
         private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
         private const string PREFIX = "PD_";
+        private const string TYPE = "Product";
         private const string CACHE_KEY = "Product";
+
 
 
         public ProductService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
             IRedisService redisService,
-            IUtilService utilService)
+            IUtilService utilService,
+            IUploadFirebaseService uploadFirebaseService)
         {
             _unitOfWork = unitOfWork;
+            _uploadFirebaseService = uploadFirebaseService;
             _logger = logger;
             _mapper = mapper;
             _redisService = redisService;
@@ -46,16 +51,22 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<BaseProductResponse>> CreateBaseProduct(ProductRequest productRequest)
         {
+            string productId = _utilService.CreateId(PREFIX);
+
             //biz rule
 
+
+
             //upload image
-            string imageUrl = productRequest.Image.ToString();
+
+            string imageUrl = _uploadFirebaseService
+                .UploadFilesToFirebase(productRequest.Image, TYPE, productId, "Image").Result;
 
             //store product to database
             Product product = _mapper.Map<Product>(productRequest);
             try
             {
-                product.ProductId = _utilService.CreateId(PREFIX);
+                product.ProductId = productId;
                 product.Image = imageUrl;
                 product.Status = (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT;
                 product.CreatedDate = DateTime.Now;
@@ -186,9 +197,9 @@ namespace BLL.Services
             {
                 baseProductResponse = _mapper.Map<BaseProductResponse>(productResponse);
 
-                    baseProductResponse.RelatedProducts = _redisService.GetList<ProductResponse>(CACHE_KEY)
-                        .Where(p => p.BelongTo != null && p.BelongTo.Equals(id))
-                        .ToList();
+                baseProductResponse.RelatedProducts = _redisService.GetList<ProductResponse>(CACHE_KEY)
+                    .Where(p => p.BelongTo != null && p.BelongTo.Equals(id))
+                    .ToList();
             }
             else
             {
@@ -629,6 +640,94 @@ namespace BLL.Services
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = productResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Products By Status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<ProductResponse>>> GetProductsByStatus(int status)
+        {
+            //biz rule
+
+
+            List<ProductResponse> productResponses;
+
+            //Get Product From Database
+
+            try
+            {
+                List<Product> products = await _unitOfWork.Repository<Product>().
+                                                        FindListAsync(ap => ap.Status == status);
+
+                productResponses = _mapper.Map<List<ProductResponse>>(products);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductService.GetProductsByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ProductResponse>
+                    {
+                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
+                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<ProductResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = productResponses
+            };
+        }
+
+
+        /// <summary>
+        /// Get Products By Product
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<ProductResponse>>> GetProductsByProductType(string type)
+        {
+            //biz rule
+
+
+            List<ProductResponse> productResponses;
+
+            //Get Product From Database
+
+            try
+            {
+                List<Product> products = await _unitOfWork.Repository<Product>().
+                                                        FindListAsync(ap => ap.ProductType.Equals(type));
+
+                productResponses = _mapper.Map<List<ProductResponse>>(products);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductService.GetProductsByProductType()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ProductResponse>
+                    {
+                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
+                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<ProductResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = productResponses
             };
         }
     }

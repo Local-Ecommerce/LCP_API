@@ -82,5 +82,21 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<BaseResponse<List<ProductResponse>>> GetRelatedProductsByBaseProductId(string id);
+
+
+        /// <summary>
+        /// Get Products By Status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        Task<BaseResponse<List<ProductResponse>>> GetProductsByStatus(int status);
+
+
+        /// <summary>
+        /// Get Products By Product Type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        Task<BaseResponse<List<ProductResponse>>> GetProductsByProductType(string type);
     }
 }

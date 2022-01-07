@@ -90,5 +90,13 @@ namespace BLL.Services.Interfaces
         /// <param name="productInMenuId"></param>
         /// <returns></returns>
         Task<BaseResponse<string>> DeleteProductInMenuById(string productInMenuId);
+
+
+        /// <summary>
+        /// Get Menus By Status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        Task<BaseResponse<List<MenuResponse>>> GetMenusByStatus(int status);
     }
 }

@@ -233,5 +233,32 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Get Merchant By Status
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("status/{status}")]
+        public async Task<IActionResult> GetMerchantByStatus(int status)
+        {
+            _logger.Information($"GET api/merchant/status/{status} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get Merchant
+            BaseResponse<List<MerchantResponse>> response =
+                await _merchantService.GetMerchantsByStatus(status);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/merchant/status/{status} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }

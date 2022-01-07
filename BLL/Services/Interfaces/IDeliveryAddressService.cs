@@ -1,5 +1,6 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.DeliveryAddress;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -37,5 +38,13 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<BaseResponse<DeliveryAddressResponse>> DeleteDeliveryAddress(string id);
+
+
+        /// <summary>
+        /// Get Delivery Address By Customer Id
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        Task<BaseResponse<List<DeliveryAddressResponse>>> GetDeliveryAddressByCustomerId(string customerId);
     }
 }

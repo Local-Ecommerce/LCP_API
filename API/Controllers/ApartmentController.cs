@@ -4,6 +4,7 @@ using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -150,6 +151,32 @@ namespace API.Controllers
             watch.Stop();
 
             _logger.Information($"GET api/apartment/address/{address} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get Apartments By Status
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("status/{status}")]
+        public async Task<IActionResult> GetApartments(int status)
+        {
+            _logger.Information($"GET api/apartment/status/{status} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get Apartment
+            BaseResponse<List<ApartmentResponse>> responses = await _apartmentService.GetApartmentsByStatus(status);
+
+            string json = JsonSerializer.Serialize(responses);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/apartment/status/{status} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

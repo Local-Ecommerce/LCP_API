@@ -496,5 +496,44 @@ namespace BLL.Services
                 Data = productInMenuResponses
             };
         }
+
+
+        /// <summary>
+        /// Get Menus By Status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<MenuResponse>>> GetMenusByStatus(int status)
+        {
+            List<MenuResponse> menuList = null;
+
+            //get Menu from database
+            try
+            {
+                menuList = _mapper.Map<List<MenuResponse>>(
+                    await _unitOfWork.Repository<Menu>()
+                                     .FindListAsync(me => me.Status == status));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MenuService.GetMenusByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MenuResponse>
+                    {
+                        ResultCode = (int)MenuStatus.MENU_NOT_FOUND,
+                        ResultMessage = MenuStatus.MENU_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<MenuResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = menuList
+            };
+        }
     }
 }

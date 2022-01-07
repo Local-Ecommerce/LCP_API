@@ -589,11 +589,49 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Verified Merchant Stores
+        /// Get Merchant Stores By Status
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetVerifiedMerchantStores()
+        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoresByStatus(int status)
+        {
+            List<MerchantStoreResponse> merchantStoreList = null;
+
+            //get merchantStore from database
+            try
+            {
+                merchantStoreList = _mapper.Map<List<MerchantStoreResponse>>(
+                    await _unitOfWork.Repository<MerchantStore>()
+                                     .FindListAsync(ms => ms.Status == status));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.GetMerchantStoresByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantStoreResponse>
+                    {
+                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
+                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<MerchantStoreResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantStoreList
+            };
+        }
+
+
+        /// <summary>
+        /// Get All Merchant Stores
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetAllMerchantStores()
         {
             List<MerchantStoreResponse> merchantStoreList = null;
 
@@ -602,8 +640,7 @@ namespace BLL.Services
             {
                 merchantStoreList = _mapper.Map<List<MerchantStoreResponse>>(
                     await _unitOfWork.Repository<MerchantStore>()
-                                     .FindListAsync(ms => ms.MerchantStoreId != null 
-                                     && ms.Status == (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE));
+                                     .FindListAsync(ms => ms.MerchantStoreId != null));
             }
             catch (Exception e)
             {

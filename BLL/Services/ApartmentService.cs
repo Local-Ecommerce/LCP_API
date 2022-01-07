@@ -9,6 +9,7 @@ using DAL.UnitOfWork;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace BLL.Services
 {
@@ -282,6 +283,49 @@ namespace BLL.Services
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = apartmentResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Apartments By Status
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<ApartmentResponse>>> GetApartmentsByStatus(int status)
+        {
+            //biz rule
+
+
+            List<ApartmentResponse> apartmentResponses;
+
+            //Get Apartment From Database
+
+            try
+            {
+                List<Apartment> apartments = await _unitOfWork.Repository<Apartment>().
+                                                        FindListAsync(ap => ap.Status == status);
+
+                apartmentResponses = _mapper.Map<List<ApartmentResponse>>(apartments);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ApartmentService.GetApartmentsByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ApartmentResponse>
+                    {
+                        ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
+                        ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<ApartmentResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = apartmentResponses
             };
         }
     }

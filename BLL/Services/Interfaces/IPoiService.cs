@@ -59,5 +59,13 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<BaseResponse<PoiResponse>> DeletePoiById(string id);
+
+
+        /// <summary>
+        /// Get Pois By Status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        Task<BaseResponse<List<PoiResponse>>> GetPoisByStatus(int status);
     }
 }

@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using System.Linq;
+using BLL.Dtos.Merchant;
 
 namespace BLL.Services
 {
@@ -168,26 +170,48 @@ namespace BLL.Services
             CollectionResponse collectionResponse;
 
             //Get Collection From Database
-            
-                try
-                {
-                    Collection collection = await _unitOfWork.Repository<Collection>().
-                                                            FindAsync(collection => collection.CollectionId.Equals(id));
 
-                    collectionResponse = _mapper.Map<CollectionResponse>(collection);
-                }
-                catch (Exception e)
+            try
+            {
+                await using (var context = new LoichDBContext())
                 {
-                    _logger.Error("[CollectionService.GetCollectionById()]: " + e.Message);
-
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<CollectionResponse>
-                        {
-                            ResultCode = (int)CollectionStatus.COLLECTION_NOT_FOUND,
-                            ResultMessage = CollectionStatus.COLLECTION_NOT_FOUND.ToString(),
-                            Data = default
-                        });
+                    collectionResponse = (from clt in context.Collections
+                                          join mc in context.Merchants
+                                          on clt.MerchantId equals mc.MerchantId
+                                          where clt.CollectionId == id
+                                          select new CollectionResponse
+                                          {
+                                              CollectionId = clt.CollectionId,
+                                              CollectionName = clt.CollectionName,
+                                              CreatedDate = clt.CreatedDate,
+                                              UpdatedDate = clt.UpdatedDate,
+                                              Status = clt.Status,
+                                              Merchant = new MerchantResponse
+                                              {
+                                                  AccountId = mc.AccountId,
+                                                  Address = mc.Address,
+                                                  ApproveBy = mc.ApproveBy,
+                                                  LevelId = mc.LevelId,
+                                                  MerchantId = mc.MerchantId,
+                                                  MerchantName = mc.MerchantName,
+                                                  PhoneNumber = mc.PhoneNumber,
+                                                  Status = mc.Status
+                                              }
+                                          }).First();
                 }
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[CollectionService.GetCollectionById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<CollectionResponse>
+                    {
+                        ResultCode = (int)CollectionStatus.COLLECTION_NOT_FOUND,
+                        ResultMessage = CollectionStatus.COLLECTION_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             return new BaseResponse<CollectionResponse>
             {
@@ -209,26 +233,48 @@ namespace BLL.Services
             List<CollectionResponse> collectionResponses;
 
             //Get Collection From Database
-            
-                try
-                {
-                    List<Collection> collections = await _unitOfWork.Repository<Collection>().
-                                                            FindListAsync(collection => collection.MerchantId.Equals(merchantId));
 
-                    collectionResponses = _mapper.Map<List<CollectionResponse>>(collections);
-                }
-                catch (Exception e)
+            try
+            {
+                await using (var context = new LoichDBContext())
                 {
-                    _logger.Error("[CollectionService.GetCollectionByMerchantId()]: " + e.Message);
-
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<CollectionResponse>
-                        {
-                            ResultCode = (int)CollectionStatus.COLLECTION_NOT_FOUND,
-                            ResultMessage = CollectionStatus.COLLECTION_NOT_FOUND.ToString(),
-                            Data = default
-                        });
+                    collectionResponses = (from clt in context.Collections
+                                           join mc in context.Merchants
+                                           on clt.MerchantId equals mc.MerchantId
+                                           where clt.MerchantId == merchantId
+                                           select new CollectionResponse
+                                           {
+                                               CollectionId = clt.CollectionId,
+                                               CollectionName = clt.CollectionName,
+                                               CreatedDate = clt.CreatedDate,
+                                               UpdatedDate = clt.UpdatedDate,
+                                               Status = clt.Status,
+                                               Merchant = new MerchantResponse
+                                               {
+                                                   AccountId = mc.AccountId,
+                                                   Address = mc.Address,
+                                                   ApproveBy = mc.ApproveBy,
+                                                   LevelId = mc.LevelId,
+                                                   MerchantId = mc.MerchantId,
+                                                   MerchantName = mc.MerchantName,
+                                                   PhoneNumber = mc.PhoneNumber,
+                                                   Status = mc.Status
+                                               }
+                                           }).ToList();
                 }
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[CollectionService.GetCollectionByMerchantId()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<CollectionResponse>
+                    {
+                        ResultCode = (int)CollectionStatus.COLLECTION_NOT_FOUND,
+                        ResultMessage = CollectionStatus.COLLECTION_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             return new BaseResponse<List<CollectionResponse>>
             {
@@ -503,27 +549,27 @@ namespace BLL.Services
 
 
             //Get CollectionMapping from database
-            
-                List<CollectionMapping> collectionMappings;
-                try
-                {
-                    collectionMappings = await _unitOfWork.Repository<CollectionMapping>()
-                                                           .FindListAsync(cm => cm.CollectionId.Equals(collectionId));
 
-                    collectionMappingResponses = _mapper.Map<List<CollectionMappingResponse>>(collectionMappings);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[CollectionService.GetProductsByCollectionId()]: " + e.Message);
+            List<CollectionMapping> collectionMappings;
+            try
+            {
+                collectionMappings = await _unitOfWork.Repository<CollectionMapping>()
+                                                       .FindListAsync(cm => cm.CollectionId.Equals(collectionId));
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<CollectionResponse>
-                        {
-                            ResultCode = (int)CollectionMappingStatus.PRODUCT_NOT_FOUND,
-                            ResultMessage = CollectionMappingStatus.PRODUCT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                collectionMappingResponses = _mapper.Map<List<CollectionMappingResponse>>(collectionMappings);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[CollectionService.GetProductsByCollectionId()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<CollectionResponse>
+                    {
+                        ResultCode = (int)CollectionMappingStatus.PRODUCT_NOT_FOUND,
+                        ResultMessage = CollectionMappingStatus.PRODUCT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             //Get Products
             List<BaseProductResponse> productResponses = new List<BaseProductResponse>();
@@ -558,10 +604,31 @@ namespace BLL.Services
 
             try
             {
-                List<Collection> collections = await _unitOfWork.Repository<Collection>().
-                                                        FindListAsync(collection => collection.CollectionId != null);
-
-                collectionResponses = _mapper.Map<List<CollectionResponse>>(collections);
+                await using (var context = new LoichDBContext())
+                {
+                    collectionResponses = (from clt in context.Collections
+                                           join mc in context.Merchants
+                                           on clt.MerchantId equals mc.MerchantId
+                                           select new CollectionResponse
+                                           {
+                                               CollectionId = clt.CollectionId,
+                                               CollectionName = clt.CollectionName,
+                                               CreatedDate = clt.CreatedDate,
+                                               UpdatedDate = clt.UpdatedDate,
+                                               Status = clt.Status,
+                                               Merchant = new MerchantResponse
+                                               {
+                                                   AccountId = mc.AccountId,
+                                                   Address = mc.Address,
+                                                   ApproveBy = mc.ApproveBy,
+                                                   LevelId = mc.LevelId,
+                                                   MerchantId = mc.MerchantId,
+                                                   MerchantName = mc.MerchantName,
+                                                   PhoneNumber = mc.PhoneNumber,
+                                                   Status = mc.Status
+                                               }
+                                           }).ToList();
+                }
             }
             catch (Exception e)
             {

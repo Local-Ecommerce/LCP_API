@@ -199,5 +199,32 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Get News By Status
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("status/{status}")]
+        public async Task<IActionResult> GetNewsByStatus(int status)
+        {
+            _logger.Information($"GET api/news/status/{status} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get News
+            BaseResponse<List<NewsResponse>> response =
+                await _newsService.GetNewsByStatus(status);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/news/status/{status} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }

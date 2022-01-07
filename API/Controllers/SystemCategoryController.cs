@@ -1,5 +1,4 @@
-﻿using BLL.Constants;
-using BLL.Dtos;
+﻿using BLL.Dtos;
 using BLL.Dtos.SystemCategory;
 using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -147,6 +146,33 @@ namespace API.Controllers
             watch.Stop();
 
             _logger.Information($"PUT api/systemCategory/delete/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get System Categories By Status
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("status/{status}")]
+        public async Task<IActionResult> GetSystemCategoriesByStatus(int status)
+        {
+            _logger.Information($"GET api/SystemCategory/status/{status} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get SystemCategory
+            BaseResponse<List<SystemCategoryResponse>> response =
+                await _systemCategoryService.GetSystemCategoriesByStatus(status);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/SystemCategory/status/{status} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

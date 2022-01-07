@@ -8,9 +8,7 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BLL.Services
@@ -152,7 +150,7 @@ namespace BLL.Services
 
             try
             {
-                List<Payment> Payment = await _unitOfWork.Repository<Payment>().FindListAsync(Payment => Payment.DateTime.Equals(date));
+                List<Payment> Payment = await _unitOfWork.Repository<Payment>().FindListAsync(payment => payment.DateTime.Value.Date == date.Date);
 
                 paymentResponses = _mapper.Map<List<PaymentResponse>>(Payment);
             }
