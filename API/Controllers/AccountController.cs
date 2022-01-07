@@ -1,4 +1,5 @@
-﻿using BLL.Dtos;
+﻿using BLL.Constants;
+using BLL.Dtos;
 using BLL.Dtos.Account;
 using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -150,6 +151,32 @@ namespace API.Controllers
             watch.Stop();
 
             _logger.Information($"PUT api/account/delete/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Change Role By Account Id
+        /// </summary>
+        [Authorize(Roles = Role.Admin)]
+        [HttpPut("{id}/role/{role}")]
+        public async Task<IActionResult> ChangeRoleByAccountId(string id, string role)
+        {
+            _logger.Information($"PUT api/account/{id}/role/{role} START");
+
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
+            //change Role By Account
+            BaseResponse<AccountResponse> response = await _accountService.ChangeRoleByAccountId(id, role);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"PUT api/account/{id}/role/{role} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
