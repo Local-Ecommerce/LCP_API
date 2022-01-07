@@ -342,5 +342,59 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Get Merchant Stores By Status
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("status/{status}")]
+        public async Task<IActionResult> GetMerchantStoreByStatus(int status)
+        {
+            _logger.Information($"GET api/store/status/{status} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get MerchantStore
+            BaseResponse<List<MerchantStoreResponse>> response =
+                await _merchantStoreService.GetMerchantStoresByStatus(status);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/store/status/{status} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get All Merchant Stores
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllMerchantStore()
+        {
+            _logger.Information($"GET api/store/all START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get MerchantStore
+            BaseResponse<List<MerchantStoreResponse>> response =
+                await _merchantStoreService.GetAllMerchantStores();
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/store/all END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }

@@ -147,5 +147,31 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Get Product Categories By Status
+        /// </summary>
+        [HttpGet("status/{status}")]
+        public async Task<IActionResult> GetProductCategoriesByStatus(int status)
+        {
+            _logger.Information($"GET api/productCategory/status/{status} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get Product
+            BaseResponse<List<ProductCategoryResponse>> response =
+                await _productCategoryService.GetProductCategoriesByStatus(status);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/productCategory/status/{status} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }

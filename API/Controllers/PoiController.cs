@@ -200,5 +200,32 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Get Poi By Status
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("status/{status}")]
+        public async Task<IActionResult> GetPoiByStatus(int status)
+        {
+            _logger.Information($"GET api/poi/status/{status} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get Poi
+            BaseResponse<List<PoiResponse>> response =
+                await _poiService.GetPoisByStatus(status);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/poi/status/{status} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }

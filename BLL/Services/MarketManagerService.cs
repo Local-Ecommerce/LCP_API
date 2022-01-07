@@ -93,7 +93,7 @@ namespace BLL.Services
             try
             {
                 marketManager = await _unitOfWork.Repository<MarketManager>()
-                                       .FindAsync(local => local.MarketManagerId.Equals(id));
+                                       .FindAsync(mar => mar.MarketManagerId.Equals(id));
             }
             catch (Exception e)
             {
@@ -199,7 +199,7 @@ namespace BLL.Services
                 try
                 {
                     MarketManager marketManager = await _unitOfWork.Repository<MarketManager>().
-                                                            FindAsync(local => local.MarketManagerId.Equals(id));
+                                                            FindAsync(mar => mar.MarketManagerId.Equals(id));
 
                     marketManagerResponse = _mapper.Map<MarketManagerResponse>(marketManager);
                 }
@@ -239,7 +239,7 @@ namespace BLL.Services
             try
             {
                 marketManager = await _unitOfWork.Repository<MarketManager>()
-                                       .FindAsync(local => local.MarketManagerId.Equals(id));
+                                       .FindAsync(mar => mar.MarketManagerId.Equals(id));
             }
             catch (Exception e)
             {
@@ -282,6 +282,45 @@ namespace BLL.Services
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = marketManagerResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Market Manager By Status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<MarketManagerResponse>>> GetMarketManagerByStatus(int status)
+        {
+            List<MarketManagerResponse> marketManagerList = null;
+
+            //get marketManager from database
+            try
+            {
+                marketManagerList = _mapper.Map<List<MarketManagerResponse>>(
+                    await _unitOfWork.Repository<MarketManager>()
+                                     .FindListAsync(mar => mar.Status == status));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MarketManagerService.GetMarketManagersByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MarketManagerResponse>
+                    {
+                        ResultCode = (int)MarketManagerStatus.MARKETMANAGER_NOT_FOUND,
+                        ResultMessage = MarketManagerStatus.MARKETMANAGER_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<MarketManagerResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = marketManagerList
             };
         }
     }

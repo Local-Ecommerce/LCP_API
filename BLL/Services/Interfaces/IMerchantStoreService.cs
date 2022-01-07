@@ -108,10 +108,17 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Verified Merchant Stores
+        /// Get Merchant Stores By Status
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<MerchantStoreResponse>>> GetVerifiedMerchantStores();
+        Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoresByStatus(int status);
+
+
+        /// <summary>
+        /// Get All Merchant Stores
+        /// </summary>
+        /// <returns></returns>
+        Task<BaseResponse<List<MerchantStoreResponse>>> GetAllMerchantStores();
     }
 
 }

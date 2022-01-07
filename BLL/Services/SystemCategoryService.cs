@@ -359,5 +359,44 @@ namespace BLL.Services
                 Data = systemCategoryResponse
             };
         }
+
+
+        /// <summary>
+        /// Get System Categories By Status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<SystemCategoryResponse>>> GetSystemCategoriesByStatus(int status)
+        {
+            List<SystemCategoryResponse> systemCategoryList = null;
+
+            //get SystemCategory from database
+            try
+            {
+                systemCategoryList = _mapper.Map<List<SystemCategoryResponse>>(
+                    await _unitOfWork.Repository<SystemCategory>()
+                                     .FindListAsync(SystemCategory => SystemCategory.Status == status));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[SystemCategoryService.GetSystemCategorysByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<SystemCategoryResponse>
+                    {
+                        ResultCode = (int)SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND,
+                        ResultMessage = SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<SystemCategoryResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = systemCategoryList
+            };
+        }
     }
 }

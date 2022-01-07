@@ -4,6 +4,7 @@ using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -125,6 +126,32 @@ namespace API.Controllers
             watch.Stop();
 
             _logger.Information($"PUT api/deliveryAddress/delete/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get Delivery Address By Customer Id
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("customer/{customerId}")]
+        public async Task<IActionResult> GetDeliveryAddressByCustomerId(string customerId)
+        {
+            _logger.Information($"GET api/deliveryAddress/customer/{customerId} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get DeliveryAddress
+            BaseResponse<List<DeliveryAddressResponse>> responses = await _deliveryAddressService.GetDeliveryAddressByCustomerId(customerId);
+
+            string json = JsonSerializer.Serialize(responses);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/deliveryAddress/customer/{customerId} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

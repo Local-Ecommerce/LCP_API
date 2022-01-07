@@ -631,5 +631,93 @@ namespace BLL.Services
                 Data = productResponse
             };
         }
+
+
+        /// <summary>
+        /// Get Products By Status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<ProductResponse>>> GetProductsByStatus(int status)
+        {
+            //biz rule
+
+
+            List<ProductResponse> productResponses;
+
+            //Get Product From Database
+
+            try
+            {
+                List<Product> products = await _unitOfWork.Repository<Product>().
+                                                        FindListAsync(ap => ap.Status == status);
+
+                productResponses = _mapper.Map<List<ProductResponse>>(products);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductService.GetProductsByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ProductResponse>
+                    {
+                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
+                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<ProductResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = productResponses
+            };
+        }
+
+
+        /// <summary>
+        /// Get Products By Product
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<ProductResponse>>> GetProductsByProductType(string type)
+        {
+            //biz rule
+
+
+            List<ProductResponse> productResponses;
+
+            //Get Product From Database
+
+            try
+            {
+                List<Product> products = await _unitOfWork.Repository<Product>().
+                                                        FindListAsync(ap => ap.ProductType.Equals(type));
+
+                productResponses = _mapper.Map<List<ProductResponse>>(products);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductService.GetProductsByProductType()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ProductResponse>
+                    {
+                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
+                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<ProductResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = productResponses
+            };
+        }
     }
 }

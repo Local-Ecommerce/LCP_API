@@ -188,18 +188,18 @@ namespace BLL.Services
         /// <summary>
         /// GetNewsByMarketManagerId
         /// </summary>
-        /// <param name="MarketManagerId"></param>
+        /// <param name="marketmanagerId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<NewsResponse>>> GetNewsByMarketManagerId(string MarketManagerId)
+        public async Task<BaseResponse<List<NewsResponse>>> GetNewsByMarketManagerId(string marketmanagerId)
         {
             List<NewsResponse> newsResponses;
 
-            //Get ApartmentId from DB
+            //Get News from DB
 
                 try
                 {
                     List<News> news = await _unitOfWork.Repository<News>()
-                        .FindListAsync(news => news.MarketManagerId.Equals(MarketManagerId));
+                        .FindListAsync(news => news.MarketManagerId.Equals(marketmanagerId));
 
                     newsResponses = _mapper.Map<List<NewsResponse>>(news);
                 }
@@ -224,7 +224,7 @@ namespace BLL.Services
         }
 
         /// <summary>
-        ///  UpdateNewsById
+        ///  Update News By Id
         /// </summary>
         /// <param name="id"></param>
         /// <param name="newsRequest"></param>
@@ -334,6 +334,45 @@ namespace BLL.Services
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = newsResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get News By Status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<NewsResponse>>> GetNewsByStatus(int status)
+        {
+            List<NewsResponse> newsList = null;
+
+            //get News from database
+            try
+            {
+                newsList = _mapper.Map<List<NewsResponse>>(
+                    await _unitOfWork.Repository<News>()
+                                     .FindListAsync(mar => mar.Status == status));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[NewsService.GetNewsByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<NewsResponse>
+                    {
+                        ResultCode = (int)NewsStatus.NEWS_NOT_FOUND,
+                        ResultMessage = NewsStatus.NEWS_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<NewsResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = newsList
             };
         }
     }

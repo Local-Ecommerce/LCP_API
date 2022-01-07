@@ -125,8 +125,6 @@ namespace BLL.Services
         {
             List<PoiResponse> poiResponses = null;
 
-            //Get News from Redis
-
 
             //Get ApartmentId from DB
             if (_utilService.IsNullOrEmpty(poiResponses))
@@ -141,7 +139,7 @@ namespace BLL.Services
                 {
                     _logger.Error("[PoiService.GetPoiByReleasedDate()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<News>
+                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
                     {
                         ResultCode = (int)PoiStatus.POI_NOT_FOUND,
                         ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
@@ -360,6 +358,45 @@ namespace BLL.Services
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = poiResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get Pois By Status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<PoiResponse>>> GetPoisByStatus(int status)
+        {
+            List<PoiResponse> poiList = null;
+
+            //get Poi from database
+            try
+            {
+                poiList = _mapper.Map<List<PoiResponse>>(
+                    await _unitOfWork.Repository<Poi>()
+                                     .FindListAsync(Poi => Poi.Status == status));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[PoiService.GetPoisByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<PoiResponse>
+                    {
+                        ResultCode = (int)PoiStatus.POI_NOT_FOUND,
+                        ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<PoiResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = poiList
             };
         }
     }

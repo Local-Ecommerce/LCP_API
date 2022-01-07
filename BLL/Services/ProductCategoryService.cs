@@ -291,5 +291,44 @@ namespace BLL.Services
                 Data = productCategoryResponse
             };
         }
+
+
+        /// <summary>
+        /// Get Product Categories By Status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<ProductCategoryResponse>>> GetProductCategoriesByStatus(int status)
+        {
+            List<ProductCategoryResponse> productCategoryList = null;
+
+            //get ProductCategory from database
+            try
+            {
+                productCategoryList = _mapper.Map<List<ProductCategoryResponse>>(
+                    await _unitOfWork.Repository<ProductCategory>()
+                                     .FindListAsync(ms => ms.Status == status));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductCategoryService.GetProductCategorysByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ProductCategoryResponse>
+                    {
+                        ResultCode = (int)ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND,
+                        ResultMessage = ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<ProductCategoryResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = productCategoryList
+            };
+        }
     }
 }
