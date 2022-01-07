@@ -17,17 +17,23 @@ namespace BLL.Services
             _key = key;
         }
 
-        public string Authenticate(Account account)
+        public string Authenticate(Account account, string role)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.ASCII.GetBytes(_key);
+
+            DateTime expires = role.Equals(Role.Admin) || role.Equals(Role.MarketManager)
+                                ? DateTime.UtcNow.AddHours((double)TimeUnit.ONE_HOUR) 
+                                : DateTime.UtcNow.AddDays((double)TimeUnit.THIRTY_DAYS);
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, account.AccountId)
+                    new Claim(ClaimTypes.Name, account.AccountId),
+                    new Claim(ClaimTypes.Role, role)
                 }),
-                Expires = DateTime.UtcNow.AddDays((double)TimeUnit.THIRTY_DAYS),
+                Expires = expires,
 
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(tokenKey),
