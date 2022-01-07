@@ -140,6 +140,9 @@ namespace API
             services.AddSingleton<IJwtAuthenticationManager>(
                 new JwtAuthenticationManager(key));
 
+            //add middleware
+            services.AddTransient<CheckBlacklistTokenMiddleware>();
+
             //add application service extensions
             services.AddApplicationServices(_configuration);
         }
@@ -164,7 +167,11 @@ namespace API
             //add CORS
             app.UseCors("MyPolicy");
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
+
+            app.UseMiddleware<CheckBlacklistTokenMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
