@@ -20,6 +20,7 @@ using System.Text.Json;
 using System;
 using System.Reflection;
 using System.IO;
+using API.Middleware;
 
 namespace API
 {
