@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BLL.Services.Interfaces
 {
@@ -19,6 +18,22 @@ namespace BLL.Services.Interfaces
         /// <param name="list"></param>
         /// <returns></returns>
         bool IsNullOrEmpty<T>(IEnumerable<T> list);
+
+
+        /// <summary>
+        /// Change To International Phone Number
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <returns></returns>
+        string ChangeToInternationalPhoneNumber(string phone);
+
+
+        /// <summary>
+        /// Change To Vietnam Phone Number
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <returns></returns>
+        string ChangeToVietnamPhoneNumber(string phone);
 
     }
 }
