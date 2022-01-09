@@ -124,7 +124,7 @@ namespace BLL.Services
 
                 try
                 {
-                    List<News> news = await _unitOfWork.Repository<News>().FindListAsync(news => news.ReleaseDate.Equals(date));
+                    List<News> news = await _unitOfWork.Repository<News>().FindListAsync(news => news.ReleaseDate.Value.Date == date.Date);
 
                     newsResponses = _mapper.Map<List<NewsResponse>>(news);
                 }
