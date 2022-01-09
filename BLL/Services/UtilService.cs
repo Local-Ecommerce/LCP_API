@@ -37,5 +37,27 @@ namespace BLL.Services
         {
             return !(list?.Any()).GetValueOrDefault();
         }
+
+
+        /// <summary>
+        /// Change To International Phone Number
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <returns></returns>
+        public string ChangeToInternationalPhoneNumber(string phone)
+        {
+            return phone.StartsWith("0") ? "+84" + phone.Substring(1) : phone;
+        }
+
+
+        /// <summary>
+        /// Change To Vietnam Phone Number
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <returns></returns>
+        public string ChangeToVietnamPhoneNumber(string phone)
+        {
+            return phone.StartsWith("+84") ? "0" + phone.Substring(3) : phone;
+        }
     }
 }
