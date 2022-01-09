@@ -50,7 +50,7 @@ namespace API.Controllers
 
             return Ok(json);
         }
-        
+
         /// <summary>
         /// Get news by id
         /// </summary>
@@ -71,6 +71,31 @@ namespace API.Controllers
             watch.Stop();
 
             _logger.Information($"GET api/news/{id} END duration: " + 
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+        /// <summary>
+        /// Get all news
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllNews()
+        {
+            _logger.Information($"GET api/news/all START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get News
+            BaseResponse<List<NewsResponse>> response = await _newsService.GetAllNews();
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/news/all END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

@@ -77,6 +77,32 @@ namespace API.Controllers
         }
 
         /// <summary>
+        /// Get all poi
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllPoi()
+        {
+            _logger.Information($"GET api/poi/all START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //Get Poi
+            BaseResponse<List<PoiResponse>> response = await _poiService.GetAllPoi();
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/poi/getall END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+        /// <summary>
         /// Update Poi
         /// </summary>
         [HttpPut("update/{id}")]

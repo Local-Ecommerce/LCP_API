@@ -45,7 +45,7 @@ namespace BLL.Services
             try
             {
                 poi.PoiId = _utilService.CreateId(PREFIX);
-                poi.RealeaseDate = DateTime.Now;
+                poi.ReleaseDate = DateTime.Now;
                 poi.Status = (int)PoiStatus.ACTIVE_POI;
 
                 _unitOfWork.Repository<Poi>().Add(poi);
@@ -131,7 +131,7 @@ namespace BLL.Services
             {
                 try
                 {
-                    List<Poi> poi = await _unitOfWork.Repository<Poi>().FindListAsync(poi => poi.RealeaseDate.Value.Date == date.Date);
+                    List<Poi> poi = await _unitOfWork.Repository<Poi>().FindListAsync(poi => poi.ReleaseDate.Value.Date == date.Date);
 
                     poiResponses = _mapper.Map<List<PoiResponse>>(poi);
                 }
@@ -382,6 +382,41 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[PoiService.GetPoisByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<PoiResponse>
+                    {
+                        ResultCode = (int)PoiStatus.POI_NOT_FOUND,
+                        ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<PoiResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = poiList
+            };
+        }
+
+        /// <summary>
+        /// Get All Poi
+        /// </summary>
+        /// <returns></returns>
+        public async Task<BaseResponse<List<PoiResponse>>> GetAllPoi()
+        {
+            List<PoiResponse> poiList = null;
+
+            try
+            {
+                poiList = _mapper.Map<List<PoiResponse>>(
+                    await _unitOfWork.Repository<Poi>()
+                                     .FindListAsync(poi => poi.PoiId != null));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[PoiService.GetAllPoi()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<PoiResponse>

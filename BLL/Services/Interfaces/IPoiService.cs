@@ -67,5 +67,11 @@ namespace BLL.Services.Interfaces
         /// <param name="status"></param>
         /// <returns></returns>
         Task<BaseResponse<List<PoiResponse>>> GetPoisByStatus(int status);
+
+        /// <summary>
+        /// Get All POI
+        /// </summary>
+        /// <returns></returns>
+        Task<BaseResponse<List<PoiResponse>>> GetAllPoi();
     }
 }

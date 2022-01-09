@@ -19,7 +19,7 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
-        private const string PREFIX = "NEWS_";
+        private const string PREFIX = "NS_";
 
         public NewsService(IUnitOfWork unitOfWork,
             ILogger logger,
@@ -358,6 +358,41 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[NewsService.GetNewsByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<NewsResponse>
+                    {
+                        ResultCode = (int)NewsStatus.NEWS_NOT_FOUND,
+                        ResultMessage = NewsStatus.NEWS_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<NewsResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = newsList
+            };
+        }
+
+        /// <summary>
+        /// Get All News
+        /// </summary>
+        /// <returns></returns>
+        public async Task<BaseResponse<List<NewsResponse>>> GetAllNews()
+        {
+            List<NewsResponse> newsList = null;
+
+            try
+            {
+                newsList = _mapper.Map<List<NewsResponse>>(
+                    await _unitOfWork.Repository<News>()
+                                     .FindListAsync(news => news.NewsId != null));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[NewsService.GetAllNews()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<NewsResponse>
