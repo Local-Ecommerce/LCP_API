@@ -65,5 +65,11 @@ namespace BLL.Services.Interfaces
         /// <param name="status"></param>
         /// <returns></returns>
         Task<BaseResponse<List<NewsResponse>>> GetNewsByStatus(int status);
+
+        /// <summary>
+        /// Get All News
+        /// </summary>
+        /// <returns></returns>
+        Task<BaseResponse<List<NewsResponse>>> GetAllNews();
     }
 }

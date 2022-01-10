@@ -20,7 +20,7 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
-        private const string PREFIX = "MENU_";
+        private const string PREFIX = "MN_";
 
         public MenuService(IUnitOfWork unitOfWork,
             ILogger logger,
