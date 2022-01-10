@@ -13,9 +13,9 @@ namespace DAL.Models
         public string Text { get; set; }
         public int? Status { get; set; }
         public string MarketManagerId { get; set; }
-        public string AparmentId { get; set; }
+        public string ApartmentId { get; set; }
 
-        public virtual Apartment Aparment { get; set; }
+        public virtual Apartment Apartment { get; set; }
         public virtual MarketManager MarketManager { get; set; }
     }
 }
