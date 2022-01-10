@@ -172,7 +172,7 @@ namespace BLL.Services
             {
                 try
                 {
-                    List<Poi> poi = await _unitOfWork.Repository<Poi>().FindListAsync(poi => poi.AparmentId.Equals(apartmentId));
+                    List<Poi> poi = await _unitOfWork.Repository<Poi>().FindListAsync(poi => poi.ApartmentId.Equals(apartmentId));
 
                     poiResponses = _mapper.Map<List<PoiResponse>>(poi);
                 }
