@@ -9,6 +9,7 @@ namespace DAL.Models
     {
         public SystemCategory()
         {
+            InverseBelongToNavigation = new HashSet<SystemCategory>();
             ProductCategories = new HashSet<ProductCategory>();
         }
 
@@ -16,9 +17,11 @@ namespace DAL.Models
         public string SysCategoryName { get; set; }
         public string ApproveBy { get; set; }
         public int? Status { get; set; }
-        public int CategoryLevel { get; set; }
+        public int? CategoryLevel { get; set; }
         public string BelongTo { get; set; }
 
+        public virtual SystemCategory BelongToNavigation { get; set; }
+        public virtual ICollection<SystemCategory> InverseBelongToNavigation { get; set; }
         public virtual ICollection<ProductCategory> ProductCategories { get; set; }
     }
 }
