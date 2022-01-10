@@ -47,7 +47,7 @@ namespace DAL.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=SE140019;Database=LoichDB;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=localhost;Database=LoichDB;Trusted_Connection=True;");
             }
         }
 
