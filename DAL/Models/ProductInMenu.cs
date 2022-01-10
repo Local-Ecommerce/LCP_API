@@ -14,6 +14,7 @@ namespace DAL.Models
 
         public string ProductInMenuId { get; set; }
         public double? Price { get; set; }
+        public double? UnitCost { get; set; }
         public DateTime? CreatedDate { get; set; }
         public int? Status { get; set; }
         public string ProductId { get; set; }

@@ -47,7 +47,6 @@ namespace DAL.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=localhost;Database=LoichDB;Trusted_Connection=True;");
             }
         }
@@ -394,6 +393,8 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("MarketManagerID");
 
+                entity.Property(e => e.Title).HasMaxLength(250);
+
                 entity.HasOne(d => d.Apartment)
                     .WithMany(p => p.News)
                     .HasForeignKey(d => d.ApartmentId)
@@ -535,6 +536,8 @@ namespace DAL.Models
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("MarketManagerID");
+
+                entity.Property(e => e.Title).HasMaxLength(250);
 
                 entity.HasOne(d => d.Aparment)
                     .WithMany(p => p.Pois)
@@ -732,6 +735,11 @@ namespace DAL.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.SysCategoryName).HasMaxLength(250);
+
+                entity.HasOne(d => d.BelongToNavigation)
+                    .WithMany(p => p.InverseBelongToNavigation)
+                    .HasForeignKey(d => d.BelongTo)
+                    .HasConstraintName("FK_SystemCategory_SystemCategory");
             });
 
             OnModelCreatingPartial(modelBuilder);
