@@ -54,7 +54,7 @@ namespace BLL.Services
                 systemCategory.Status = (int)SystemCategoryStatus.ACTIVE_SYSTEM_CATEGORY;
                 systemCategory.ApproveBy = "";
 
-                int level;
+                int? level;
 
                 if (systemCategory.BelongTo != null)
                     level = (await _unitOfWork.Repository<SystemCategory>().FindAsync(sc =>
@@ -229,12 +229,12 @@ namespace BLL.Services
             //add category level 2 to list in category level 1
             foreach (SystemCategoryResponse c in levelTwos)
             {
-                    SystemCategoryResponse levelOne = systemCategoryList.Find(sc => sc.SystemCategoryId == c.BelongTo);
-                    systemCategoryList.Remove(levelOne);
-                    if (_utilService.IsNullOrEmpty(levelOne.Child))
-                        levelOne.Child = new List<SystemCategoryResponse>();
-                    levelOne.Child.Add(c);
-                    systemCategoryList.Add(levelOne);
+                SystemCategoryResponse levelOne = systemCategoryList.Find(sc => sc.SystemCategoryId == c.BelongTo);
+                systemCategoryList.Remove(levelOne);
+                if (_utilService.IsNullOrEmpty(levelOne.Child))
+                    levelOne.Child = new List<SystemCategoryResponse>();
+                levelOne.Child.Add(c);
+                systemCategoryList.Add(levelOne);
             };
 
             return new BaseResponse<List<SystemCategoryResponse>>
@@ -304,7 +304,7 @@ namespace BLL.Services
             SystemCategoryResponse systemCategoryResponse = _mapper.Map<SystemCategoryResponse>(systemCategory);
 
             //update from Redis
-            _redisService.StoreToList<SystemCategoryResponse>(CACHE_KEY, systemCategoryResponse, 
+            _redisService.StoreToList<SystemCategoryResponse>(CACHE_KEY, systemCategoryResponse,
                 new Predicate<SystemCategoryResponse>(sc => sc.SystemCategoryId == systemCategoryResponse.SystemCategoryId));
 
             return new BaseResponse<SystemCategoryResponse>
@@ -328,7 +328,7 @@ namespace BLL.Services
             SystemCategoryResponse systemCategoryResponse = _redisService.GetList<SystemCategoryResponse>(CACHE_KEY)
                 .Find(sc => sc.SystemCategoryId.Equals(id));
 
-            if(systemCategoryResponse == null)
+            if (systemCategoryResponse == null)
             {
                 //get systemCategory from database
                 try
