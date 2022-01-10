@@ -527,10 +527,10 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("PoiID");
 
-                entity.Property(e => e.AparmentId)
+                entity.Property(e => e.ApartmentId)
                     .HasMaxLength(20)
                     .IsUnicode(false)
-                    .HasColumnName("AparmentID");
+                    .HasColumnName("ApartmentID");
 
                 entity.Property(e => e.MarketManagerId)
                     .HasMaxLength(20)
@@ -539,9 +539,9 @@ namespace DAL.Models
 
                 entity.Property(e => e.Title).HasMaxLength(250);
 
-                entity.HasOne(d => d.Aparment)
+                entity.HasOne(d => d.Apartment)
                     .WithMany(p => p.Pois)
-                    .HasForeignKey(d => d.AparmentId)
+                    .HasForeignKey(d => d.ApartmentId)
                     .HasConstraintName("FK_POI_Apartment");
 
                 entity.HasOne(d => d.MarketManager)
