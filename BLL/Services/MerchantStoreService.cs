@@ -351,7 +351,7 @@ namespace BLL.Services
             {
                 List<MerchantStore> merchantStores = await _unitOfWork.Repository<MerchantStore>().
                                                         FindListAsync
-                                                        (store => store.AparmentId.Equals(apartmentId));
+                                                        (store => store.ApartmentId.Equals(apartmentId));
 
                 merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
             }
