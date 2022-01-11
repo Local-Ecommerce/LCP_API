@@ -222,7 +222,7 @@ namespace API.Controllers
             watch.Start();
 
             //get merchant
-            BaseResponse<List<MerchantResponse>> response = await _merchantService.GetMerchantByAccountId(accountId);
+            BaseResponse<MerchantResponse> response = await _merchantService.GetMerchantByAccountId(accountId);
 
             string json = JsonSerializer.Serialize(response);
 

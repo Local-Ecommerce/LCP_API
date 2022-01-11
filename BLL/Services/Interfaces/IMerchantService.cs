@@ -69,7 +69,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<MerchantResponse>>> GetMerchantByAccountId(string accountId);
+        Task<BaseResponse<MerchantResponse>> GetMerchantByAccountId(string accountId);
 
 
         /// <summary>
