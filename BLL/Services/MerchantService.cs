@@ -91,27 +91,27 @@ namespace BLL.Services
             //biz rule
 
             MerchantResponse merchantResponse;
-            
-                //Get Merchant From Database
-                try
-                {
-                    Merchant merchant = await _unitOfWork.Repository<Merchant>()
-                                                       .FindAsync(merchant => merchant.MerchantId.Equals(id));
-                    merchantResponse = _mapper.Map<MerchantResponse>(merchant);
-                }
-                catch(Exception e)
-                {
-                    _logger.Error("[MerchantService.GetMerchantById()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<MerchantResponse>
-                        {
-                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
-                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
-            
+            //Get Merchant From Database
+            try
+            {
+                Merchant merchant = await _unitOfWork.Repository<Merchant>()
+                                                   .FindAsync(merchant => merchant.MerchantId.Equals(id));
+                merchantResponse = _mapper.Map<MerchantResponse>(merchant);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantService.GetMerchantById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantResponse>
+                    {
+                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
 
             return new BaseResponse<MerchantResponse>
             {
@@ -139,7 +139,7 @@ namespace BLL.Services
                 merchant = await _unitOfWork.Repository<Merchant>().
                                              FindAsync(merchant => merchant.MerchantId.Equals(id));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.Error("[MerchantService.UpdateMerchantById()]: " + e.Message);
 
@@ -203,7 +203,7 @@ namespace BLL.Services
             {
                 merchant = await _unitOfWork.Repository<Merchant>().
                                                       FindAsync(merchant => merchant.MerchantId.Equals(id));
-            } 
+            }
             catch (Exception e)
             {
                 _logger.Error("[MerchantService.DeleteMerchant()]: " + e.Message);
@@ -226,7 +226,7 @@ namespace BLL.Services
 
                 await _unitOfWork.SaveChangesAsync();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.Error("[MerchantService.DeleteMerchant()]: " + e.Message);
 
@@ -262,25 +262,25 @@ namespace BLL.Services
 
             MerchantResponse merchantResponse;
 
-                //Get Merchant From Database
-                try
-                {
-                    Merchant merchant = await _unitOfWork.Repository<Merchant>()
-                                                       .FindAsync(merchant => merchant.MerchantName.Equals(name));
-                    merchantResponse = _mapper.Map<MerchantResponse>(merchant);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[MerchantService.GetMerchantByName()]: " + e.Message);
+            //Get Merchant From Database
+            try
+            {
+                Merchant merchant = await _unitOfWork.Repository<Merchant>()
+                                                   .FindAsync(merchant => merchant.MerchantName.Equals(name));
+                merchantResponse = _mapper.Map<MerchantResponse>(merchant);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantService.GetMerchantByName()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<MerchantResponse>
-                        {
-                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
-                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantResponse>
+                    {
+                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             return new BaseResponse<MerchantResponse>
             {
@@ -301,26 +301,26 @@ namespace BLL.Services
             //biz rule
 
             MerchantResponse merchantResponse;
-            
-                //Get Merchant From Database
-                try
-                {
-                    Merchant merchant = await _unitOfWork.Repository<Merchant>()
-                                                       .FindAsync(merchant => merchant.Address.Equals(address));
-                    merchantResponse = _mapper.Map<MerchantResponse>(merchant);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[MerchantService.GetMerchantByAddress()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<MerchantResponse>
-                        {
-                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
-                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+            //Get Merchant From Database
+            try
+            {
+                Merchant merchant = await _unitOfWork.Repository<Merchant>()
+                                                   .FindAsync(merchant => merchant.Address.Equals(address));
+                merchantResponse = _mapper.Map<MerchantResponse>(merchant);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantService.GetMerchantByAddress()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantResponse>
+                    {
+                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             return new BaseResponse<MerchantResponse>
             {
@@ -342,25 +342,25 @@ namespace BLL.Services
 
             MerchantResponse merchantResponse;
 
-                //Get Merchant From Database
-                try
-                {
-                    Merchant merchant = await _unitOfWork.Repository<Merchant>()
-                                                       .FindAsync(merchant => merchant.PhoneNumber.Equals(number));
-                    merchantResponse = _mapper.Map<MerchantResponse>(merchant);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[MerchantService.GetMerchantByPhoneNumber()]: " + e.Message);
+            //Get Merchant From Database
+            try
+            {
+                Merchant merchant = await _unitOfWork.Repository<Merchant>()
+                                                   .FindAsync(merchant => merchant.PhoneNumber.Equals(number));
+                merchantResponse = _mapper.Map<MerchantResponse>(merchant);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantService.GetMerchantByPhoneNumber()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<MerchantResponse>
-                        {
-                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
-                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantResponse>
+                    {
+                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             return new BaseResponse<MerchantResponse>
             {
@@ -376,38 +376,37 @@ namespace BLL.Services
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<MerchantResponse>>> GetMerchantByAccountId(string accountId)
+        public async Task<BaseResponse<MerchantResponse>> GetMerchantByAccountId(string accountId)
         {
-            List<MerchantResponse> merchantResponses;
+            MerchantResponse merchantResponse;
 
             //Get Merchant From Database
-            
-                try
-                {
-                    List<Merchant> merchants = await _unitOfWork.Repository<Merchant>().
-                                                            FindListAsync
-                                                            (merchant => merchant.AccountId.Equals(accountId));
 
-                    merchantResponses = _mapper.Map<List<MerchantResponse>>(merchants);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[MarketManagerService.GetMerchantByAccountId()]: " + e.Message);
+            try
+            {
+                Merchant merchants = await _unitOfWork.Repository<Merchant>()
+                                        .FindAsync(merchant => merchant.AccountId.Equals(accountId));
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<MerchantResponse>
-                        {
-                            ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
-                            ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                merchantResponse = _mapper.Map<MerchantResponse>(merchants);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MarketManagerService.GetMerchantByAccountId()]: " + e.Message);
 
-            return new BaseResponse<List<MerchantResponse>>
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantResponse>
+                    {
+                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
+                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<MerchantResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantResponses
+                Data = merchantResponse
             };
         }
 
@@ -449,5 +448,6 @@ namespace BLL.Services
                 Data = merchantList
             };
         }
+
     }
 }

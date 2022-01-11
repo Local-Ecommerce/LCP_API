@@ -3,6 +3,7 @@
     public class ProductInMenuRequest
     {
         public string ProductId { get; set; }
+        public double? UnitCost { get; set; }
         public double Price { get; set; }
     }
 }

@@ -145,7 +145,7 @@ namespace API.Controllers
             watch.Start();
 
             //get MarketManager
-            BaseResponse<List<MarketManagerResponse>> response = await _marketManagerService.GetMarketManagerByAccountId(accountId);
+            BaseResponse<MarketManagerResponse> response = await _marketManagerService.GetMarketManagerByAccountId(accountId);
 
             string json = JsonSerializer.Serialize(response);
 

@@ -89,13 +89,5 @@ namespace BLL.Services.Interfaces
         /// <param name="date"></param>
         /// <returns></returns>
         Task<BaseResponse<List<CustomerResponse>>> GetCustomersByUpdateDate(DateTime date);
-
-
-        /// <summary>
-        /// Get Customer By Account Id
-        /// </summary>
-        /// <param name="accountId"></param>
-        /// <returns></returns>
-        Task<BaseResponse<List<CustomerResponse>>> GetCustomersByAccountId(string accountId);
     }
 }

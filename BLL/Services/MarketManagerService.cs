@@ -147,37 +147,37 @@ namespace BLL.Services
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<MarketManagerResponse>>> GetMarketManagerByAccountId(string accountId)
+        public async Task<BaseResponse<MarketManagerResponse>> GetMarketManagerByAccountId(string accountId)
         {
-            List<MarketManagerResponse> marketManagerResponses;
+            MarketManagerResponse marketManagerResponse;
 
             //Get MarketManager From Database
 
-                try
-                {
-                    List<MarketManager> marketManagers = await _unitOfWork.Repository<MarketManager>().
-                                                            FindListAsync(MarketManager => MarketManager.AccountId.Equals(accountId));
+            try
+            {
+                MarketManager marketManagers = await _unitOfWork.Repository<MarketManager>().
+                                                        FindAsync(MarketManager => MarketManager.AccountId.Equals(accountId));
 
-                    marketManagerResponses = _mapper.Map<List<MarketManagerResponse>>(marketManagers);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[MarketManagerService.GetMarketManagerByAccountId()]: " + e.Message);
+                marketManagerResponse = _mapper.Map<MarketManagerResponse>(marketManagers);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MarketManagerService.GetMarketManagerByAccountId()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<MarketManagerResponse>
-                        {
-                            ResultCode = (int)MarketManagerStatus.MARKETMANAGER_NOT_FOUND,
-                            ResultMessage = MarketManagerStatus.MARKETMANAGER_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MarketManagerResponse>
+                    {
+                        ResultCode = (int)MarketManagerStatus.MARKETMANAGER_NOT_FOUND,
+                        ResultMessage = MarketManagerStatus.MARKETMANAGER_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
-            return new BaseResponse<List<MarketManagerResponse>>
+            return new BaseResponse<MarketManagerResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = marketManagerResponses
+                Data = marketManagerResponse
             };
         }
 
@@ -196,25 +196,25 @@ namespace BLL.Services
 
             //Get MarketManager From Database
 
-                try
-                {
-                    MarketManager marketManager = await _unitOfWork.Repository<MarketManager>().
-                                                            FindAsync(mar => mar.MarketManagerId.Equals(id));
+            try
+            {
+                MarketManager marketManager = await _unitOfWork.Repository<MarketManager>().
+                                                        FindAsync(mar => mar.MarketManagerId.Equals(id));
 
-                    marketManagerResponse = _mapper.Map<MarketManagerResponse>(marketManager);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[MarketManagerService.GetMarketManagerById()]: " + e.Message);
+                marketManagerResponse = _mapper.Map<MarketManagerResponse>(marketManager);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MarketManagerService.GetMarketManagerById()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<MarketManagerResponse>
-                        {
-                            ResultCode = (int)MarketManagerStatus.MARKETMANAGER_NOT_FOUND,
-                            ResultMessage = MarketManagerStatus.MARKETMANAGER_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MarketManagerResponse>
+                    {
+                        ResultCode = (int)MarketManagerStatus.MARKETMANAGER_NOT_FOUND,
+                        ResultMessage = MarketManagerStatus.MARKETMANAGER_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             return new BaseResponse<MarketManagerResponse>
             {
@@ -323,5 +323,6 @@ namespace BLL.Services
                 Data = marketManagerList
             };
         }
+
     }
 }
