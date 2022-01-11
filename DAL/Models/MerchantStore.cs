@@ -19,9 +19,9 @@ namespace DAL.Models
         public DateTime? CreatedDate { get; set; }
         public int? Status { get; set; }
         public string MerchantId { get; set; }
-        public string AparmentId { get; set; }
+        public string ApartmentId { get; set; }
 
-        public virtual Apartment Aparment { get; set; }
+        public virtual Apartment Apartment { get; set; }
         public virtual Merchant Merchant { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
