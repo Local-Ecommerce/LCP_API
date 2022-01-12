@@ -160,7 +160,6 @@ namespace API.Controllers
         /// <summary>
         /// Change Role By Account Id
         /// </summary>
-        [Authorize(Roles = Role.Admin)]
         [HttpPut("{id}/role/{role}")]
         public async Task<IActionResult> ChangeRoleByAccountId(string id, string role)
         {
