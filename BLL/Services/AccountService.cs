@@ -109,9 +109,9 @@ namespace BLL.Services
 
                 await _unitOfWork.SaveChangesAsync();
             }
-            catch (HttpStatusException ex)
+            catch (HttpStatusException)
             {
-                throw ex;
+                throw;
             }
             catch (Exception e)
             {
