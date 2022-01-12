@@ -52,20 +52,11 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Store Account Token
-        /// </summary>
-        /// <param name="token"></param>
-        /// <param name="accountId"></param>
-        /// <param name="role"></param>
-        void StoreAccountToken(string token, string accountId, string role);
-
-
-        /// <summary>
         /// Change Role By Account Id
         /// </summary>
         /// <param name="accountId"></param>
-        /// <param name="role"></param>
+        /// <param name="roleId"></param>
         /// <returns></returns>
-        Task<BaseResponse<AccountResponse>> ChangeRoleByAccountId(string accountId, string role);
+        Task<BaseResponse<AccountResponse>> ChangeRoleByAccountId(string accountId, string roleId);
     }
 }

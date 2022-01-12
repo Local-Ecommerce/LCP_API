@@ -64,32 +64,54 @@ namespace BLL.Services
                     });
             }
 
-            string accountId = _utilService.CreateId(PREFIX);
+            Account account;
 
-            //upload image
-            string profileImageUrl = _uploadFirebaseService
-                .UploadFileToFirebase(accountRegisterRequest.ProfileImage, TYPE, accountId, "profileImage").Result;
-            string avatarImageUrl = _uploadFirebaseService
-                .UploadFileToFirebase(accountRegisterRequest.ProfileImage, TYPE, accountId, "avatarImage").Result;
-
-            //store account to database
-            Account account = _mapper.Map<Account>(accountRegisterRequest);
             try
             {
+                //check if username exists
+                account = await _unitOfWork.Repository<Account>().FindAsync(acc => acc.Username.Equals(accountRegisterRequest.Username));
+                if (account != null)
+                {
+                    _logger.Error($"[AccountService.Register()]: Username '{accountRegisterRequest.Username}' is already exists.");
+
+                    throw new HttpStatusException(HttpStatusCode.OK,
+                        new BaseResponse<AccountResponse>
+                        {
+                            ResultCode = (int)AccountStatus.ACCOUNT_ALREADY_EXISTS,
+                            ResultMessage = AccountStatus.ACCOUNT_ALREADY_EXISTS.ToString(),
+                            Data = default
+                        });
+                }
+
+                string accountId = _utilService.CreateId(PREFIX);
+
+                //upload image
+                string profileImageUrl = _uploadFirebaseService
+                    .UploadFileToFirebase(accountRegisterRequest.ProfileImage, TYPE, accountId, "profileImage").Result;
+                string avatarImageUrl = _uploadFirebaseService
+                    .UploadFileToFirebase(accountRegisterRequest.ProfileImage, TYPE, accountId, "avatarImage").Result;
+
+                //store account to database
+                account = _mapper.Map<Account>(accountRegisterRequest);
+
                 account.AccountId = accountId;
                 account.Password = BCryptNet.HashPassword(accountRegisterRequest.Password);
                 account.ProfileImage = profileImageUrl;
                 account.AvatarImage = avatarImageUrl;
                 account.CreatedDate = DateTime.Now;
                 account.UpdatedDate = DateTime.Now;
+                account.RoleId = RoleId.CUSTOMER;
+                account.Token = null;
+                account.TokenExpiredDate = null;
                 account.Status = (int)AccountStatus.ACTIVE_ACCOUNT;
 
                 _unitOfWork.Repository<Account>().Add(account);
 
-                //store account token to database
-                StoreAccountToken(null, account.AccountId, Role.Customer);
-
                 await _unitOfWork.SaveChangesAsync();
+            }
+            catch (HttpStatusException)
+            {
+                throw;
             }
             catch (Exception e)
             {
@@ -106,7 +128,6 @@ namespace BLL.Services
 
             //create response
             AccountResponse accountResponse = _mapper.Map<AccountResponse>(account);
-            accountResponse.Role = Role.Customer;
 
             return new BaseResponse<AccountResponse>
             {
@@ -170,6 +191,15 @@ namespace BLL.Services
             }
 
             //revoke token here
+            TokenInfo tokenInfo = new TokenInfo
+            {
+                Token = account.Token,
+                ExpiredDate = account.TokenExpiredDate,
+                RoleId = account.RoleId
+            };
+
+            _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,
+                new Predicate<TokenInfo>(ti => ti.Token == tokenInfo.Token));
 
             return new BaseResponse<AccountResponse>
             {
@@ -189,40 +219,26 @@ namespace BLL.Services
         {
             AccountResponse accountResponse;
 
-                //get account from database
-                try
-                {
-                    await using(var context = new LoichDBContext())
-                    {
-                        accountResponse = (from acc in context.Accounts
-                                    join at in context.AccountTokens
-                                    on acc.AccountId equals at.AccountId
-                                           where acc.AccountId == id
-                                    select new AccountResponse
-                                    {
-                                        AccountId = acc.AccountId,
-                                        Username = acc.Username,
-                                        ProfileImage = acc.ProfileImage,
-                                        AvatarImage = acc.AvatarImage,
-                                        CreatedDate = acc.CreatedDate,
-                                        UpdatedDate = acc.UpdatedDate,
-                                        Status = acc.Status,
-                                        Role = at.Role
-                                    }).First();
-                    }
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[AccountService.GetAccountById()]: " + e.Message);
+            //get account from database
+            try
+            {
+                Account account = await _unitOfWork.Repository<Account>()
+                .FindAsync(acc => acc.AccountId.Equals(id));
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<AccountResponse>
-                        {
-                            ResultCode = (int)AccountStatus.ACCOUNT_NOT_FOUND,
-                            ResultMessage = AccountStatus.ACCOUNT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                accountResponse = _mapper.Map<AccountResponse>(account);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[AccountService.GetAccountById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<AccountResponse>
+                    {
+                        ResultCode = (int)AccountStatus.ACCOUNT_NOT_FOUND,
+                        ResultMessage = AccountStatus.ACCOUNT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             return new BaseResponse<AccountResponse>
             {
@@ -240,36 +256,53 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<AccountResponse>> Login(AccountLoginRequest accountLoginRequest)
         {
+
+            DateTime expiredDate = DateTime.Now;
+            string clientRoleId = "";
             Account account;
-            AccountToken accountToken;
             try
             {
-                account = await _unitOfWork.Repository<Account>().FindAsync(
-                    a => a.Username.Equals(accountLoginRequest.Username));
+                account = await _unitOfWork.Repository<Account>()
+                .FindAsync(acc => acc.Username.Equals(accountLoginRequest.Username));
 
+                //check account from db and verify password
                 if (!BCryptNet.Verify(accountLoginRequest.Password, account.Password))
                 {
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<AccountResponse>
-                    {
-                        ResultCode = (int)AccountStatus.INVALID_USERNAME_PASSWORD,
-                        ResultMessage = AccountStatus.INVALID_USERNAME_PASSWORD.ToString(),
-                        Data = default
-                    });
+                    throw new Exception();
                 }
 
-                string token = _jwtAuthenticationManager.Authenticate(account, accountLoginRequest.Role);
+                //find client role id
+                switch (account.RoleId)
+                {
+                    case RoleId.ADMIN:
+                        expiredDate = DateTime.UtcNow.AddHours((double)TimeUnit.ONE_HOUR);
+                        clientRoleId = account.AccountId;
+                        break;
 
-                accountToken = await _unitOfWork.Repository<AccountToken>()
-                    .FindAsync(at => at.AccountId.Equals(account.AccountId));
+                    case RoleId.CUSTOMER:
+                        expiredDate = DateTime.UtcNow.AddDays((double)TimeUnit.THIRTY_DAYS);
+                        Customer customer = await _unitOfWork.Repository<Customer>()
+                        .FindAsync(ctm => ctm.AccountId.Equals(account.AccountId));
+                        clientRoleId = customer.CustomerId;
+                        break;
 
-                accountToken.Token = token;
-                accountToken.ExpiredDate = accountLoginRequest.Role.Equals(Role.Admin) 
-                                || accountLoginRequest.Role.Equals(Role.MarketManager)
-                                ? DateTime.UtcNow.AddHours((double)TimeUnit.ONE_HOUR)
-                                : DateTime.UtcNow.AddDays((double)TimeUnit.THIRTY_DAYS);
+                    case RoleId.MERCHANT:
+                        expiredDate = DateTime.UtcNow.AddDays((double)TimeUnit.THIRTY_DAYS);
+                        Merchant merchant = await _unitOfWork.Repository<Merchant>()
+                        .FindAsync(mc => mc.AccountId.Equals(account.AccountId));
+                        clientRoleId = merchant.MerchantId;
+                        break;
 
-                _unitOfWork.Repository<AccountToken>().Update(accountToken);
+                    case RoleId.MARKET_MANAGER:
+                        expiredDate = DateTime.UtcNow.AddHours((double)TimeUnit.ONE_HOUR);
+                        MarketManager marketManager = await _unitOfWork.Repository<MarketManager>()
+                        .FindAsync(mm => mm.AccountId.Equals(account.AccountId));
+                        clientRoleId = marketManager.MarketManagerId;
+                        break;
+                }
+
+                account.Token = _jwtAuthenticationManager.Authenticate(clientRoleId, account.RoleId, expiredDate);
+                account.TokenExpiredDate = expiredDate;
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -288,8 +321,6 @@ namespace BLL.Services
 
             //create response
             AccountResponse accountResponse = _mapper.Map<AccountResponse>(account);
-            accountResponse.Token = accountToken.Token;
-            accountResponse.Role = accountToken.Role;
 
             return new BaseResponse<AccountResponse>
             {
@@ -333,8 +364,10 @@ namespace BLL.Services
             }
 
             //upload image
-            string profileImageUrl = accountImageForm.ProfileImage.ToString();
-            string avatarImageUrl = accountImageForm.AvatarImage.ToString();
+            string profileImageUrl = _uploadFirebaseService
+                .UploadFileToFirebase(accountImageForm.ProfileImage, TYPE, id, "profileImage").Result;
+            string avatarImageUrl = _uploadFirebaseService
+                .UploadFileToFirebase(accountImageForm.ProfileImage, TYPE, id, "avatarImage").Result;
 
             //update data
             try
@@ -383,86 +416,32 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Store Account Token
-        /// </summary>
-        /// <param name="token"></param>
-        /// <param name="accountId"></param>
-        /// <param name="role"></param>
-        /// <exception cref="HttpStatusException"></exception>
-        public async void StoreAccountToken(string token, string accountId, string role)
-        {
-            //if token is not null, update exist account token
-            if (token != null)
-            {
-                try
-                {
-                    AccountToken accountToken = await _unitOfWork.Repository<AccountToken>()
-                        .FindAsync(at => at.AccountId == accountId);
-
-                        accountToken.ExpiredDate = role.Equals(Role.Admin) || role.Equals(Role.MarketManager)
-                                                    ? DateTime.UtcNow.AddHours((double)TimeUnit.ONE_HOUR)
-                                                    : DateTime.UtcNow.AddDays((double)TimeUnit.THIRTY_DAYS);
-                        accountToken.Token = token;
-                        accountToken.Role = role;
-
-                        _unitOfWork.Repository<AccountToken>().Update(accountToken);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[AccountService.StoreAccountToken()]: " + e.Message);
-
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<AccountToken>
-                        {
-                            ResultCode = (int)CommonResponse.ERROR,
-                            ResultMessage = CommonResponse.ERROR.ToString(),
-                            Data = default
-                        });
-                }
-            }
-            //else create new account token
-            else
-            {
-                _unitOfWork.Repository<AccountToken>().Add(new AccountToken
-                {
-                    TokenId = _utilService.CreateId(PREFIX),
-                    Token = token,
-                    Role = role,
-                    ExpiredDate = null,
-                    AccountId = accountId
-                }); ;
-            }
-        }
-
-
-        /// <summary>
         /// Change Role By Account Id
         /// </summary>
         /// <param name="accountId"></param>
         /// <param name="role"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<AccountResponse>> ChangeRoleByAccountId(string accountId, string role)
+        public async Task<BaseResponse<AccountResponse>> ChangeRoleByAccountId(string accountId, string roleId)
         {
-            AccountToken accountToken;
             TokenInfo tokenInfo;
+            Account account;
             try
             {
-                accountToken = await _unitOfWork.Repository<AccountToken>()
-                    .FindAsync(at => at.AccountId == accountId);
+                account = await _unitOfWork.Repository<Account>().FindAsync(acc => acc.AccountId.Equals(accountId));
 
                 tokenInfo = new TokenInfo
                 {
-                    Token = accountToken.Token,
-                    Role = accountToken.Role,
-                    ExpiredDate = accountToken.ExpiredDate
+                    Token = account.Token,
+                    RoleId = account.RoleId,
+                    ExpiredDate = account.TokenExpiredDate
                 };
 
-                accountToken.Token = null;
-                accountToken.ExpiredDate = null;
-                accountToken.Role = role;
+                account.Token = null;
+                account.TokenExpiredDate = null;
+                account.RoleId = roleId;
 
-                _unitOfWork.Repository<AccountToken>().Update(accountToken);
+                _unitOfWork.Repository<Account>().Update(account);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -471,7 +450,7 @@ namespace BLL.Services
                 _logger.Error("[AccountService.ChangeRoleByAccountId()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<AccountToken>
+                    new BaseResponse<Account>
                     {
                         ResultCode = (int)CommonResponse.ERROR,
                         ResultMessage = CommonResponse.ERROR.ToString(),
@@ -480,21 +459,17 @@ namespace BLL.Services
             }
 
             //create response
-            AccountResponse accountResponse = new AccountResponse
-            {
-                AccountId = accountId,
-                Role = role,
-            };
+            AccountResponse accountResponse = _mapper.Map<AccountResponse>(account);
 
             //move old token to blacklist
-            _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo, 
+            _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,
                 new Predicate<TokenInfo>(ti => ti.Token == tokenInfo.Token));
 
             return new BaseResponse<AccountResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data= accountResponse
+                Data = accountResponse
             };
         }
     }

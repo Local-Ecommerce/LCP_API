@@ -6,6 +6,6 @@ namespace BLL.Dtos.JWT
     {
         public string Token { get; set; }
         public DateTime? ExpiredDate { get; set; }
-        public string Role { get; set; }
+        public string RoleId { get; set; }
     }
 }

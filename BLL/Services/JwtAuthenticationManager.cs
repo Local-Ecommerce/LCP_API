@@ -1,6 +1,4 @@
-﻿using BLL.Constants;
-using BLL.Services.Interfaces;
-using DAL.Models;
+﻿using BLL.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,23 +15,19 @@ namespace BLL.Services
             _key = key;
         }
 
-        public string Authenticate(Account account, string role)
+        public string Authenticate(string clientRoleId, string roleName, DateTime expiredDate)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.ASCII.GetBytes(_key);
-
-            DateTime expires = role.Equals(Role.Admin) || role.Equals(Role.MarketManager)
-                                ? DateTime.UtcNow.AddHours((double)TimeUnit.ONE_HOUR) 
-                                : DateTime.UtcNow.AddDays((double)TimeUnit.THIRTY_DAYS);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, account.AccountId),
-                    new Claim(ClaimTypes.Role, role)
+                    new Claim(ClaimTypes.Name, clientRoleId),
+                    new Claim(ClaimTypes.Role, roleName)
                 }),
-                Expires = expires,
+                Expires = expiredDate,
 
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(tokenKey),

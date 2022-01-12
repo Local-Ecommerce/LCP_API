@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace BLL.Dtos.Account
 {
@@ -12,7 +13,10 @@ namespace BLL.Dtos.Account
         public DateTime? UpdatedDate { get; set; }
         public int? Status { get; set; }
         public string Token { get; set; }
-        public string Role { get; set; }
+        public string TokenExpiredDate { get; set; }
+        public string RoleId { get; set; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public string ClientRoleId { get; set; }
     }
 }

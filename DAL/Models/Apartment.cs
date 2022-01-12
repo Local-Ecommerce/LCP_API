@@ -12,6 +12,7 @@ namespace DAL.Models
             MerchantStores = new HashSet<MerchantStore>();
             News = new HashSet<News>();
             Pois = new HashSet<Poi>();
+            Residents = new HashSet<Resident>();
         }
 
         public string ApartmentId { get; set; }
@@ -23,5 +24,6 @@ namespace DAL.Models
         public virtual ICollection<MerchantStore> MerchantStores { get; set; }
         public virtual ICollection<News> News { get; set; }
         public virtual ICollection<Poi> Pois { get; set; }
+        public virtual ICollection<Resident> Residents { get; set; }
     }
 }
