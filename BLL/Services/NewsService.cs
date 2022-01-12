@@ -10,6 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using System.Linq;
+using BLL.Dtos.MarketManager;
+using BLL.Dtos.Apartment;
 
 namespace BLL.Services
 {
@@ -51,8 +54,8 @@ namespace BLL.Services
                 _unitOfWork.Repository<News>().Add(news);
 
                 await _unitOfWork.SaveChangesAsync();
-            } 
-            catch (Exception e) 
+            }
+            catch (Exception e)
             {
                 _logger.Error("[NewsService.CreateNews()]: " + e.Message);
 
@@ -85,23 +88,23 @@ namespace BLL.Services
 
             //Get News from DB
 
-                try
-                {
-                    News news = await _unitOfWork.Repository<News>().FindAsync(local => local.NewsId.Equals(id));
+            try
+            {
+                News news = await _unitOfWork.Repository<News>().FindAsync(local => local.NewsId.Equals(id));
 
-                    newsReponse = _mapper.Map<NewsResponse>(news);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[NewsService.GetNewsById()]: " + e.Message);
+                newsReponse = _mapper.Map<NewsResponse>(news);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[NewsService.GetNewsById()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<News>
-                    {
-                        ResultCode = (int)NewsStatus.NEWS_NOT_FOUND,
-                        ResultMessage = NewsStatus.NEWS_NOT_FOUND.ToString(),
-                        Data = default
-                    });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<News>
+                {
+                    ResultCode = (int)NewsStatus.NEWS_NOT_FOUND,
+                    ResultMessage = NewsStatus.NEWS_NOT_FOUND.ToString(),
+                    Data = default
+                });
+            }
 
             return new BaseResponse<NewsResponse>
             {
@@ -122,23 +125,23 @@ namespace BLL.Services
 
             //Get News from DB
 
-                try
-                {
-                    List<News> news = await _unitOfWork.Repository<News>().FindListAsync(news => news.ReleaseDate.Value.Date == date.Date);
+            try
+            {
+                List<News> news = await _unitOfWork.Repository<News>().FindListAsync(news => news.ReleaseDate.Value.Date == date.Date);
 
-                    newsResponses = _mapper.Map<List<NewsResponse>>(news);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[NewsService.GetNewsByReleasedDate()]: " + e.Message);
+                newsResponses = _mapper.Map<List<NewsResponse>>(news);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[NewsService.GetNewsByReleasedDate()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<News>
-                    {
-                        ResultCode = (int)NewsStatus.NEWS_NOT_FOUND,
-                        ResultMessage = NewsStatus.NEWS_NOT_FOUND.ToString(),
-                        Data = default
-                    });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<News>
+                {
+                    ResultCode = (int)NewsStatus.NEWS_NOT_FOUND,
+                    ResultMessage = NewsStatus.NEWS_NOT_FOUND.ToString(),
+                    Data = default
+                });
+            }
 
             return new BaseResponse<List<NewsResponse>>
             {
@@ -159,23 +162,23 @@ namespace BLL.Services
 
             //Get ApartmentId from DB
 
-                try
-                {
-                    List<News> news = await _unitOfWork.Repository<News>().FindListAsync(news => news.ApartmentId.Equals(apatrmentId));
+            try
+            {
+                List<News> news = await _unitOfWork.Repository<News>().FindListAsync(news => news.ApartmentId.Equals(apatrmentId));
 
-                    newsResponses = _mapper.Map<List<NewsResponse>>(news);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[NewsService.GetNewsByAparmentId()]: " + e.Message);
+                newsResponses = _mapper.Map<List<NewsResponse>>(news);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[NewsService.GetNewsByAparmentId()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<News>
-                    {
-                        ResultCode = (int)NewsStatus.NEWS_NOT_FOUND,
-                        ResultMessage = NewsStatus.NEWS_NOT_FOUND.ToString(),
-                        Data = default
-                    });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<News>
+                {
+                    ResultCode = (int)NewsStatus.NEWS_NOT_FOUND,
+                    ResultMessage = NewsStatus.NEWS_NOT_FOUND.ToString(),
+                    Data = default
+                });
+            }
 
             return new BaseResponse<List<NewsResponse>>
             {
@@ -196,24 +199,24 @@ namespace BLL.Services
 
             //Get News from DB
 
-                try
-                {
-                    List<News> news = await _unitOfWork.Repository<News>()
-                        .FindListAsync(news => news.MarketManagerId.Equals(marketmanagerId));
+            try
+            {
+                List<News> news = await _unitOfWork.Repository<News>()
+                    .FindListAsync(news => news.MarketManagerId.Equals(marketmanagerId));
 
-                    newsResponses = _mapper.Map<List<NewsResponse>>(news);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[NewsService.GetNewsByMarketManagerId()]: " + e.Message);
+                newsResponses = _mapper.Map<List<NewsResponse>>(news);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[NewsService.GetNewsByMarketManagerId()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<News>
-                    {
-                        ResultCode = (int)NewsStatus.NEWS_NOT_FOUND,
-                        ResultMessage = NewsStatus.NEWS_NOT_FOUND.ToString(),
-                        Data = default
-                    });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<News>
+                {
+                    ResultCode = (int)NewsStatus.NEWS_NOT_FOUND,
+                    ResultMessage = NewsStatus.NEWS_NOT_FOUND.ToString(),
+                    Data = default
+                });
+            }
 
             return new BaseResponse<List<NewsResponse>>
             {
@@ -292,8 +295,8 @@ namespace BLL.Services
             try
             {
                 news = await _unitOfWork.Repository<News>().FindAsync(local => local.NewsId.Equals(id));
-            } 
-            catch (Exception e) 
+            }
+            catch (Exception e)
             {
                 _logger.Error("[NewsService.DeleteNewsById()]: " + e.Message);
 
@@ -313,8 +316,8 @@ namespace BLL.Services
                 _unitOfWork.Repository<News>().Update(news);
 
                 await _unitOfWork.SaveChangesAsync();
-            } 
-            catch (Exception e) 
+            }
+            catch (Exception e)
             {
                 _logger.Error("[NewsService.DeleteNewsById()]: " + e.Message);
 
@@ -386,9 +389,38 @@ namespace BLL.Services
 
             try
             {
-                newsList = _mapper.Map<List<NewsResponse>>(
-                    await _unitOfWork.Repository<News>()
-                                     .FindListAsync(news => news.NewsId != null));
+                await using var context = new LoichDBContext();
+                newsList = (from news in context.News
+                            join mm in context.MarketManagers
+                            on news.MarketManagerId equals mm.MarketManagerId
+                            join ap in context.Apartments
+                            on news.ApartmentId equals ap.ApartmentId
+                            select new NewsResponse
+                            {
+                                ApartmentId = news.ApartmentId,
+                                MarketManagerId = news.MarketManagerId,
+                                NewsId = news.NewsId,
+                                ReleaseDate = news.ReleaseDate,
+                                Status = news.Status,
+                                Text = news.Text,
+                                Title = news.Title,
+                                MarketManagers = new MarketManagerResponse
+                                {
+                                    MarketManagerId = mm.MarketManagerId,
+                                    Status = mm.Status,
+                                    MarketManagerName = mm.MarketManagerName,
+                                    AccountId = mm.AccountId,
+                                    PhoneNumber = mm.PhoneNumber
+                                },
+                                Apartments = new ApartmentResponse
+                                {
+                                    ApartmentId = ap.ApartmentId,
+                                    Address = ap.Address,
+                                    Lat = ap.Lat,
+                                    Long = ap.Long,
+                                    Status = ap.Status
+                                }
+                            }).ToList();
             }
             catch (Exception e)
             {

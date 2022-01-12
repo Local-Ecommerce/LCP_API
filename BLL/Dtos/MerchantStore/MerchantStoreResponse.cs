@@ -1,6 +1,8 @@
 ﻿using BLL.Dtos.Apartment;
 using BLL.Dtos.Merchant;
+using BLL.Dtos.StoreMenuDetail;
 using System;
+using System.Collections.Generic;
 
 namespace BLL.Dtos.MerchantStore
 {
@@ -11,8 +13,9 @@ namespace BLL.Dtos.MerchantStore
         public DateTime? CreatedDate { get; set; }
         public int? Status { get; set; }
         public string MerchantId { get; set; }
-        public string AparmentId { get; set; }
+        public string ApartmentId { get; set; }
         public MerchantResponse Merchant { get; set; }
         public ApartmentResponse Apartment { get; set; }
+        public List<StoreMenuDetailResponse> StoreMenuDetails { get; set; }
     }
 }

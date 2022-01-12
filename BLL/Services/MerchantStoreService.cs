@@ -648,11 +648,11 @@ namespace BLL.Services
                                      join mc in context.Merchants
                                      on mcs.MerchantId equals mc.MerchantId
                                      join ap in context.Apartments
-                                     on mcs.AparmentId equals ap.ApartmentId
+                                     on mcs.ApartmentId equals ap.ApartmentId
                                      select new MerchantStoreResponse
                                      {
                                          MerchantStoreId = mcs.MerchantStoreId,
-                                         AparmentId = mcs.AparmentId,
+                                         ApartmentId = mcs.ApartmentId,
                                          CreatedDate = mcs.CreatedDate,
                                          MerchantId = mcs.MerchantId,
                                          Status = mcs.Status,
@@ -681,7 +681,7 @@ namespace BLL.Services
             }
             catch (Exception e)
             {
-                _logger.Error("[MerchantStoreService.GetVerifiedMerchantStores()]: " + e.Message);
+                _logger.Error("[MerchantStoreService.GetAllMerchantStores()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<MerchantStoreResponse>
