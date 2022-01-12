@@ -10,7 +10,7 @@ namespace DAL.Models
         public Customer()
         {
             DeliveryAddresses = new HashSet<DeliveryAddress>();
-            Orders = new HashSet<Order>();
+            Residents = new HashSet<Resident>();
         }
 
         public string CustomerId { get; set; }
@@ -25,6 +25,6 @@ namespace DAL.Models
 
         public virtual Account Account { get; set; }
         public virtual ICollection<DeliveryAddress> DeliveryAddresses { get; set; }
-        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Resident> Residents { get; set; }
     }
 }
