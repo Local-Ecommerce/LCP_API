@@ -304,5 +304,32 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Get All Menus
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllMenus()
+        {
+            _logger.Information($"GET api/menu/all START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get Menu
+            BaseResponse<List<MenuResponse>> response =
+                await _menuService.GetAllMenus();
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/menu/all END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }

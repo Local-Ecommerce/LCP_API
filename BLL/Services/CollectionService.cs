@@ -236,32 +236,30 @@ namespace BLL.Services
 
             try
             {
-                await using (var context = new LoichDBContext())
-                {
-                    collectionResponses = (from clt in context.Collections
-                                           join mc in context.Merchants
-                                           on clt.MerchantId equals mc.MerchantId
-                                           where clt.MerchantId == merchantId
-                                           select new CollectionResponse
+                await using var context = new LoichDBContext();
+                collectionResponses = (from clt in context.Collections
+                                       join mc in context.Merchants
+                                       on clt.MerchantId equals mc.MerchantId
+                                       where clt.MerchantId == merchantId
+                                       select new CollectionResponse
+                                       {
+                                           CollectionId = clt.CollectionId,
+                                           CollectionName = clt.CollectionName,
+                                           CreatedDate = clt.CreatedDate,
+                                           UpdatedDate = clt.UpdatedDate,
+                                           Status = clt.Status,
+                                           Merchant = new MerchantResponse
                                            {
-                                               CollectionId = clt.CollectionId,
-                                               CollectionName = clt.CollectionName,
-                                               CreatedDate = clt.CreatedDate,
-                                               UpdatedDate = clt.UpdatedDate,
-                                               Status = clt.Status,
-                                               Merchant = new MerchantResponse
-                                               {
-                                                   AccountId = mc.AccountId,
-                                                   Address = mc.Address,
-                                                   ApproveBy = mc.ApproveBy,
-                                                   LevelId = mc.LevelId,
-                                                   MerchantId = mc.MerchantId,
-                                                   MerchantName = mc.MerchantName,
-                                                   PhoneNumber = mc.PhoneNumber,
-                                                   Status = mc.Status
-                                               }
-                                           }).ToList();
-                }
+                                               AccountId = mc.AccountId,
+                                               Address = mc.Address,
+                                               ApproveBy = mc.ApproveBy,
+                                               LevelId = mc.LevelId,
+                                               MerchantId = mc.MerchantId,
+                                               MerchantName = mc.MerchantName,
+                                               PhoneNumber = mc.PhoneNumber,
+                                               Status = mc.Status
+                                           }
+                                       }).ToList();
             }
             catch (Exception e)
             {

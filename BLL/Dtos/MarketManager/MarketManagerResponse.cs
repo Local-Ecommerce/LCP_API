@@ -7,6 +7,5 @@
         public string PhoneNumber { get; set; }
         public int? Status { get; set; }
         public string AccountId { get; set; }
-        public string AparmentId { get; set; }
     }
 }

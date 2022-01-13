@@ -98,5 +98,12 @@ namespace BLL.Services.Interfaces
         /// <param name="status"></param>
         /// <returns></returns>
         Task<BaseResponse<List<MenuResponse>>> GetMenusByStatus(int status);
+        
+        
+        /// <summary>
+        /// Get All Menus
+        /// </summary>
+        /// <returns></returns>
+        Task<BaseResponse<List<MenuResponse>>> GetAllMenus();
     }
 }
