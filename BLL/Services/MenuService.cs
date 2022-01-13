@@ -433,12 +433,19 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<ProductInMenuResponse>> GetProductInMenuById(string productInMenuId)
         {
-            ProductInMenu productInMenu;
+            ProductInMenuResponse productInMenuResponse;
 
             try
             {
-                productInMenu = await _unitOfWork.Repository<ProductInMenu>().FindAsync(p =>
-                                                                    p.ProductInMenuId.Equals(productInMenuId));
+                await using var context = new LoichDBContext();
+                productInMenuResponse = (from pmn in context.ProductInMenus
+                                 join p in context.Products
+                                 on pmn.ProductId equals p.ProductId
+                                 where productInMenuId == pmn.ProductInMenuId
+                                 select new ProductInMenuResponse
+                                 {
+
+                                 }).FirstOrDefault();
             }
             catch (Exception e)
             {
@@ -451,9 +458,6 @@ namespace BLL.Services
                     Data = default
                 });
             }
-
-            //create response
-            ProductInMenuResponse productInMenuResponse = _mapper.Map<ProductInMenuResponse>(productInMenu);
 
             return new BaseResponse<ProductInMenuResponse>
             {
@@ -540,7 +544,11 @@ namespace BLL.Services
         }
 
 
-
+        /// <summary>
+        /// Get All Menus
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<List<MenuResponse>>> GetAllMenus()
         {
             List<MenuResponse> menuList = null;
@@ -552,6 +560,7 @@ namespace BLL.Services
                 menuList = (from mn in context.Menus
                             join mc in context.Merchants
                             on mn.MerchantId equals mc.MerchantId
+                            orderby mn.CreatedDate descending
                             select new MenuResponse
                             {
                                 MenuId = mn.MenuId,

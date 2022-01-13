@@ -395,6 +395,7 @@ namespace BLL.Services
                             on news.MarketManagerId equals mm.MarketManagerId
                             join ap in context.Apartments
                             on news.ApartmentId equals ap.ApartmentId
+                            orderby news.ReleaseDate descending
                             select new NewsResponse
                             {
                                 ApartmentId = news.ApartmentId,

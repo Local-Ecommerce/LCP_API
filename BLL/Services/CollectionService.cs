@@ -607,6 +607,7 @@ namespace BLL.Services
                     collectionResponses = (from clt in context.Collections
                                            join mc in context.Merchants
                                            on clt.MerchantId equals mc.MerchantId
+                                           orderby clt.CreatedDate descending
                                            select new CollectionResponse
                                            {
                                                CollectionId = clt.CollectionId,

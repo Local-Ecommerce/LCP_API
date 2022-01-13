@@ -649,6 +649,7 @@ namespace BLL.Services
                                      on mcs.MerchantId equals mc.MerchantId
                                      join ap in context.Apartments
                                      on mcs.ApartmentId equals ap.ApartmentId
+                                     orderby mcs.CreatedDate descending
                                      select new MerchantStoreResponse
                                      {
                                          MerchantStoreId = mcs.MerchantStoreId,

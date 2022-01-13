@@ -419,6 +419,7 @@ namespace BLL.Services
                            on poi.MarketManagerId equals mm.MarketManagerId
                            join ap in context.Apartments
                            on poi.ApartmentId equals ap.ApartmentId
+                           orderby poi.ReleaseDate descending
                            select new PoiResponse
                            {
                                PoiId = poi.PoiId,
