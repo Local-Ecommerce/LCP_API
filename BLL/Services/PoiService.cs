@@ -51,7 +51,7 @@ namespace BLL.Services
                 poi.ReleaseDate = DateTime.Now;
                 poi.Status = (int)PoiStatus.ACTIVE_POI;
 
-                _unitOfWork.Repository<Poi>().Add(poi);
+                _unitOfWork.Pois.Add(poi);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -90,11 +90,11 @@ namespace BLL.Services
             //Get poi from Redis
 
             //Get poi from DB
-            if(poiResponse is null)
+            if (poiResponse is null)
             {
                 try
                 {
-                    Poi poi = await _unitOfWork.Repository<Poi>().FindAsync(local => local.PoiId.Equals(id));
+                    Poi poi = await _unitOfWork.Pois.FindAsync(local => local.PoiId.Equals(id));
 
                     poiResponse = _mapper.Map<PoiResponse>(poi);
                 }
@@ -108,7 +108,7 @@ namespace BLL.Services
                         ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
                         Data = default
                     });
-                }          
+                }
             }
 
             return new BaseResponse<PoiResponse>
@@ -134,7 +134,7 @@ namespace BLL.Services
             {
                 try
                 {
-                    List<Poi> poi = await _unitOfWork.Repository<Poi>().FindListAsync(poi => poi.ReleaseDate.Value.Date == date.Date);
+                    List<Poi> poi = await _unitOfWork.Pois.FindListAsync(poi => poi.ReleaseDate.Value.Date == date.Date);
 
                     poiResponses = _mapper.Map<List<PoiResponse>>(poi);
                 }
@@ -175,7 +175,7 @@ namespace BLL.Services
             {
                 try
                 {
-                    List<Poi> poi = await _unitOfWork.Repository<Poi>().FindListAsync(poi => poi.ApartmentId.Equals(apartmentId));
+                    List<Poi> poi = await _unitOfWork.Pois.FindListAsync(poi => poi.ApartmentId.Equals(apartmentId));
 
                     poiResponses = _mapper.Map<List<PoiResponse>>(poi);
                 }
@@ -216,7 +216,7 @@ namespace BLL.Services
             {
                 try
                 {
-                    List<Poi> poi = await _unitOfWork.Repository<Poi>()
+                    List<Poi> poi = await _unitOfWork.Pois
                         .FindListAsync(poi => poi.MarketManagerId.Equals(marketManagerId));
 
                     poiResponses = _mapper.Map<List<PoiResponse>>(poi);
@@ -255,7 +255,7 @@ namespace BLL.Services
             //Find Poi
             try
             {
-                poi = await _unitOfWork.Repository<Poi>().FindAsync(local => local.PoiId.Equals(id));
+                poi = await _unitOfWork.Pois.FindAsync(local => local.PoiId.Equals(id));
             }
             catch (Exception e)
             {
@@ -275,7 +275,7 @@ namespace BLL.Services
                 poi = _mapper.Map(poiRequest, poi);
                 poi.Status = (int)PoiStatus.ACTIVE_POI;
 
-                _unitOfWork.Repository<Poi>().Update(poi);
+                _unitOfWork.Pois.Update(poi);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -316,7 +316,7 @@ namespace BLL.Services
             Poi poi;
             try
             {
-                poi = await _unitOfWork.Repository<Poi>().FindAsync(local => local.PoiId.Equals(id));
+                poi = await _unitOfWork.Pois.FindAsync(local => local.PoiId.Equals(id));
             }
             catch (Exception e)
             {
@@ -335,7 +335,7 @@ namespace BLL.Services
             {
                 poi.Status = (int)PoiStatus.INACTIVE_POI;
 
-                _unitOfWork.Repository<Poi>().Update(poi);
+                _unitOfWork.Pois.Update(poi);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -379,7 +379,7 @@ namespace BLL.Services
             try
             {
                 poiList = _mapper.Map<List<PoiResponse>>(
-                    await _unitOfWork.Repository<Poi>()
+                    await _unitOfWork.Pois
                                      .FindListAsync(Poi => Poi.Status == status));
             }
             catch (Exception e)

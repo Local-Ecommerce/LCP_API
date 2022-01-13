@@ -51,7 +51,7 @@ namespace BLL.Services
                 merchant.Status = (int)MerchantStatus.UNVERIFIED_CREATE_MERCHANT;
                 merchant.LevelId = "L001";
 
-                _unitOfWork.Repository<Merchant>().Add(merchant);
+                _unitOfWork.Merchants.Add(merchant);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -95,7 +95,7 @@ namespace BLL.Services
             //Get Merchant From Database
             try
             {
-                Merchant merchant = await _unitOfWork.Repository<Merchant>()
+                Merchant merchant = await _unitOfWork.Merchants
                                                    .FindAsync(merchant => merchant.MerchantId.Equals(id));
                 merchantResponse = _mapper.Map<MerchantResponse>(merchant);
             }
@@ -136,7 +136,7 @@ namespace BLL.Services
             //Check id
             try
             {
-                merchant = await _unitOfWork.Repository<Merchant>().
+                merchant = await _unitOfWork.Merchants.
                                              FindAsync(merchant => merchant.MerchantId.Equals(id));
             }
             catch (Exception e)
@@ -158,7 +158,7 @@ namespace BLL.Services
                 merchant = _mapper.Map(merchantRequest, merchant);
                 merchant.Status = (int)MerchantStatus.UNVERIFIED_UPDATE_MERCHANT;
 
-                _unitOfWork.Repository<Merchant>().Update(merchant);
+                _unitOfWork.Merchants.Update(merchant);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -201,7 +201,7 @@ namespace BLL.Services
             Merchant merchant;
             try
             {
-                merchant = await _unitOfWork.Repository<Merchant>().
+                merchant = await _unitOfWork.Merchants.
                                                       FindAsync(merchant => merchant.MerchantId.Equals(id));
             }
             catch (Exception e)
@@ -222,7 +222,7 @@ namespace BLL.Services
             {
                 merchant.Status = (int)MerchantStatus.DELETED_MERCHANT;
 
-                _unitOfWork.Repository<Merchant>().Update(merchant);
+                _unitOfWork.Merchants.Update(merchant);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -265,7 +265,7 @@ namespace BLL.Services
             //Get Merchant From Database
             try
             {
-                Merchant merchant = await _unitOfWork.Repository<Merchant>()
+                Merchant merchant = await _unitOfWork.Merchants
                                                    .FindAsync(merchant => merchant.MerchantName.Equals(name));
                 merchantResponse = _mapper.Map<MerchantResponse>(merchant);
             }
@@ -305,7 +305,7 @@ namespace BLL.Services
             //Get Merchant From Database
             try
             {
-                Merchant merchant = await _unitOfWork.Repository<Merchant>()
+                Merchant merchant = await _unitOfWork.Merchants
                                                    .FindAsync(merchant => merchant.Address.Equals(address));
                 merchantResponse = _mapper.Map<MerchantResponse>(merchant);
             }
@@ -345,7 +345,7 @@ namespace BLL.Services
             //Get Merchant From Database
             try
             {
-                Merchant merchant = await _unitOfWork.Repository<Merchant>()
+                Merchant merchant = await _unitOfWork.Merchants
                                                    .FindAsync(merchant => merchant.PhoneNumber.Equals(number));
                 merchantResponse = _mapper.Map<MerchantResponse>(merchant);
             }
@@ -384,7 +384,7 @@ namespace BLL.Services
 
             try
             {
-                Merchant merchants = await _unitOfWork.Repository<Merchant>()
+                Merchant merchants = await _unitOfWork.Merchants
                                         .FindAsync(merchant => merchant.AccountId.Equals(accountId));
 
                 merchantResponse = _mapper.Map<MerchantResponse>(merchants);
@@ -425,7 +425,7 @@ namespace BLL.Services
             try
             {
                 merchantList = _mapper.Map<List<MerchantResponse>>(
-                    await _unitOfWork.Repository<Merchant>()
+                    await _unitOfWork.Merchants
                                      .FindListAsync(merchant => merchant.Status == status));
             }
             catch (Exception e)

@@ -52,7 +52,7 @@ namespace BLL.Services
                 productCategory.CreatedDate = DateTime.Now;
                 productCategory.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.Repository<ProductCategory>().Add(productCategory);
+                _unitOfWork.ProductCategories.Add(productCategory);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -95,7 +95,7 @@ namespace BLL.Services
             ProductCategory productCategory;
             try
             {
-                productCategory = await _unitOfWork.Repository<ProductCategory>()
+                productCategory = await _unitOfWork.ProductCategories
                                            .FindAsync(p => p.ProductCategoryId.Equals(id));
             }
             catch (Exception e)
@@ -115,7 +115,7 @@ namespace BLL.Services
             try
             {
                 productCategory.Status = (int)ProductCategoryStatus.DELETED_PRODUCT_CATEGORY;
-                _unitOfWork.Repository<ProductCategory>().Update(productCategory);
+                _unitOfWork.ProductCategories.Update(productCategory);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -160,7 +160,7 @@ namespace BLL.Services
                 try
                 {
                     productCategoryList = _mapper.Map<List<ProductCategoryResponse>>(
-                        await _unitOfWork.Repository<ProductCategory>()
+                        await _unitOfWork.ProductCategories
                                          .FindListAsync(pc => pc.MerchantId.Equals(merchantId)));
                 }
                 catch (Exception e)
@@ -201,7 +201,7 @@ namespace BLL.Services
             ProductCategory productCategory;
             try
             {
-                productCategory = await _unitOfWork.Repository<ProductCategory>()
+                productCategory = await _unitOfWork.ProductCategories
                                            .FindAsync(p => p.ProductCategoryId.Equals(id));
             }
             catch (Exception e)
@@ -224,7 +224,7 @@ namespace BLL.Services
                 productCategory.Status = (int)ProductCategoryStatus.UNVERIFIED_UPDATE_PRODUCT_CATEGORY;
                 productCategory.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.Repository<ProductCategory>().Update(productCategory);
+                _unitOfWork.ProductCategories.Update(productCategory);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -263,26 +263,26 @@ namespace BLL.Services
         {
             ProductCategoryResponse productCategoryResponse;
 
-                //get productCategory from database
-                try
-                {
-                    ProductCategory productCategory = await _unitOfWork.Repository<ProductCategory>()
-                                                       .FindAsync(p => p.ProductCategoryId.Equals(id));
-                    productCategoryResponse = _mapper.Map<ProductCategoryResponse>(productCategory);
+            //get productCategory from database
+            try
+            {
+                ProductCategory productCategory = await _unitOfWork.ProductCategories
+                                                   .FindAsync(p => p.ProductCategoryId.Equals(id));
+                productCategoryResponse = _mapper.Map<ProductCategoryResponse>(productCategory);
 
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[ProductCategoryService.GetProductCategoryById()]: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductCategoryService.GetProductCategoryById()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<ProductCategoryResponse>
-                        {
-                            ResultCode = (int)ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND,
-                            ResultMessage = ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ProductCategoryResponse>
+                    {
+                        ResultCode = (int)ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND,
+                        ResultMessage = ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             return new BaseResponse<ProductCategoryResponse>
             {
@@ -307,7 +307,7 @@ namespace BLL.Services
             try
             {
                 productCategoryList = _mapper.Map<List<ProductCategoryResponse>>(
-                    await _unitOfWork.Repository<ProductCategory>()
+                    await _unitOfWork.ProductCategories
                                      .FindListAsync(ms => ms.Status == status));
             }
             catch (Exception e)

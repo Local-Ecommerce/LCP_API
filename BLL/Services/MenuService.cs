@@ -52,7 +52,7 @@ namespace BLL.Services
                 menu.UpdatedDate = DateTime.Now;
                 menu.Status = (int)MenuStatus.ACTIVE_MENU;
 
-                _unitOfWork.Repository<Menu>().Add(menu);
+                _unitOfWork.Menus.Add(menu);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -93,7 +93,7 @@ namespace BLL.Services
             {
                 try
                 {
-                    Menu Menu = await _unitOfWork.Repository<Menu>().FindAsync(menu => menu.MenuId.Equals(id));
+                    Menu Menu = await _unitOfWork.Menus.FindAsync(menu => menu.MenuId.Equals(id));
 
                     menuReponse = _mapper.Map<MenuResponse>(Menu);
                 }
@@ -133,7 +133,7 @@ namespace BLL.Services
             {
                 try
                 {
-                    List<Menu> Menu = await _unitOfWork.Repository<Menu>().FindListAsync(menu => menu.MerchantId.Equals(merchantId));
+                    List<Menu> Menu = await _unitOfWork.Menus.FindListAsync(menu => menu.MerchantId.Equals(merchantId));
 
                     menuResponses = _mapper.Map<List<MenuResponse>>(Menu);
                 }
@@ -170,7 +170,7 @@ namespace BLL.Services
             Menu menu;
             try
             {
-                menu = await _unitOfWork.Repository<Menu>().FindAsync(m => m.MenuId.Equals(id));
+                menu = await _unitOfWork.Menus.FindAsync(m => m.MenuId.Equals(id));
             }
             catch (Exception e)
             {
@@ -190,7 +190,7 @@ namespace BLL.Services
                 menu = _mapper.Map(menuUpdateRequest, menu);
                 menu.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.Repository<Menu>().Update(menu);
+                _unitOfWork.Menus.Update(menu);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -229,7 +229,7 @@ namespace BLL.Services
             Menu menu;
             try
             {
-                menu = await _unitOfWork.Repository<Menu>().FindAsync(menu => menu.MenuId.Equals(id));
+                menu = await _unitOfWork.Menus.FindAsync(menu => menu.MenuId.Equals(id));
             }
             catch (Exception e)
             {
@@ -249,7 +249,7 @@ namespace BLL.Services
                 menu.Status = (int)MenuStatus.INACTIVE_MENU;
                 menu.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.Repository<Menu>().Update(menu);
+                _unitOfWork.Menus.Update(menu);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -298,7 +298,7 @@ namespace BLL.Services
                     productInMenu.CreatedDate = DateTime.Now;
                     productInMenu.Status = (int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU;
 
-                    _unitOfWork.Repository<ProductInMenu>().Add(productInMenu);
+                    _unitOfWork.ProductInMenus.Add(productInMenu);
                 });
 
                 await _unitOfWork.SaveChangesAsync();
@@ -340,7 +340,7 @@ namespace BLL.Services
             ProductInMenu productInMenu;
             try
             {
-                productInMenu = await _unitOfWork.Repository<ProductInMenu>().FindAsync(p => p.ProductInMenuId.Equals(productInMenuId));
+                productInMenu = await _unitOfWork.ProductInMenus.FindAsync(p => p.ProductInMenuId.Equals(productInMenuId));
             }
             catch (Exception e)
             {
@@ -360,7 +360,7 @@ namespace BLL.Services
                 productInMenu.Status = productInMenuUpdateRequest.Status;
                 productInMenu.Price = productInMenuUpdateRequest.Price;
 
-                _unitOfWork.Repository<ProductInMenu>().Update(productInMenu);
+                _unitOfWork.ProductInMenus.Update(productInMenu);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -398,10 +398,10 @@ namespace BLL.Services
             ProductInMenu productInMenu;
             try
             {
-                productInMenu = await _unitOfWork.Repository<ProductInMenu>().FindAsync(p =>
+                productInMenu = await _unitOfWork.ProductInMenus.FindAsync(p =>
                                                                     p.ProductInMenuId.Equals(productInMenuId));
 
-                _unitOfWork.Repository<ProductInMenu>().Delete(productInMenu);
+                _unitOfWork.ProductInMenus.Delete(productInMenu);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -436,7 +436,7 @@ namespace BLL.Services
             ProductInMenu productInMenu;
             try
             {
-                productInMenu = await _unitOfWork.Repository<ProductInMenu>().FindAsync(p =>
+                productInMenu = await _unitOfWork.ProductInMenus.FindAsync(p =>
                                                                     p.ProductInMenuId.Equals(productInMenuId));
             }
             catch (Exception e)
@@ -473,7 +473,7 @@ namespace BLL.Services
             List<ProductInMenu> productsInMenu;
             try
             {
-                productsInMenu = await _unitOfWork.Repository<ProductInMenu>().FindListAsync(p =>
+                productsInMenu = await _unitOfWork.ProductInMenus.FindListAsync(p =>
                                                                     p.MenuId.Equals(menuId));
             }
             catch (Exception e)
@@ -514,7 +514,7 @@ namespace BLL.Services
             try
             {
                 menuList = _mapper.Map<List<MenuResponse>>(
-                    await _unitOfWork.Repository<Menu>()
+                    await _unitOfWork.Menus
                                      .FindListAsync(me => me.Status == status));
             }
             catch (Exception e)

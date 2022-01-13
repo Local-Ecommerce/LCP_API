@@ -10,7 +10,6 @@ namespace DAL.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly LoichDBContext _context;
-        private readonly Dictionary<Type, object> repositories = new Dictionary<Type, object>();
 
         public IAccountRepository Accounts { get; private set; }
         public IApartmentRepository Apartments { get; private set; }
@@ -36,7 +35,7 @@ namespace DAL.UnitOfWork
         public IResidentRepository Residents { get; private set; }
         public IRoleRepository Roles { get; private set; }
         public IStoreMenuDetailRepository StoreMenuDetails { get; private set; }
-        public ISystemCategoryRepository SystemCategoryDetails { get; private set; }
+        public ISystemCategoryRepository SystemCategories { get; private set; }
 
         public UnitOfWork(LoichDBContext context)
         {
@@ -65,7 +64,7 @@ namespace DAL.UnitOfWork
             Residents = new ResidentRepository(_context);
             Roles = new RoleRepository(_context);
             StoreMenuDetails = new StoreMenuDetailRepository(_context);
-            SystemCategoryDetails = new SystemCategoryRepository(context);
+            SystemCategories = new SystemCategoryRepository(context);
         }
 
         /// <summary>
@@ -85,26 +84,6 @@ namespace DAL.UnitOfWork
         {
             _context.Dispose();
             GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Get Repository of T
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public IRepository<T> Repository<T>() where T : class
-        {
-            var type = typeof(T);
-
-            if (!repositories.ContainsKey(type))
-            {
-                var repositoryType = typeof(Repository<>);
-
-                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)), _context);
-
-                repositories.Add(type, repositoryInstance);
-            }
-            return (IRepository<T>)repositories[type];
         }
     }
 }
