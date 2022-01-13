@@ -1,4 +1,5 @@
 ﻿using DAL.Models;
+using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -40,7 +41,7 @@ namespace DAL.Repositories
         {
             return await _dbSet.Where(expression).ToListAsync();
         }
-        
+
         public void Update(T entity)
         {
             _dbSet.Update(entity);
