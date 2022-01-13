@@ -404,7 +404,7 @@ namespace BLL.Services
                                 Status = news.Status,
                                 Text = news.Text,
                                 Title = news.Title,
-                                MarketManagers = new MarketManagerResponse
+                                MarketManager = new MarketManagerResponse
                                 {
                                     MarketManagerId = mm.MarketManagerId,
                                     Status = mm.Status,
@@ -412,7 +412,7 @@ namespace BLL.Services
                                     AccountId = mm.AccountId,
                                     PhoneNumber = mm.PhoneNumber
                                 },
-                                Apartments = new ApartmentResponse
+                                Apartment = new ApartmentResponse
                                 {
                                     ApartmentId = ap.ApartmentId,
                                     Address = ap.Address,

@@ -13,7 +13,7 @@ namespace BLL.Dtos.News
         public int? Status { get; set; }
         public string MarketManagerId { get; set; }
         public string ApartmentId { get; set; }
-        public MarketManagerResponse MarketManagers { get; set; }
-        public ApartmentResponse Apartments { get; set; }
+        public MarketManagerResponse MarketManager { get; set; }
+        public ApartmentResponse Apartment { get; set; }
     }
 }

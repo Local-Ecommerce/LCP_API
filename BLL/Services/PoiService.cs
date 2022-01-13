@@ -428,7 +428,7 @@ namespace BLL.Services
                                Status = poi.Status,
                                Text = poi.Text,
                                Title = poi.Title,
-                               MarketManagers = new MarketManagerResponse
+                               MarketManager = new MarketManagerResponse
                                {
                                    MarketManagerId = mm.MarketManagerId,
                                    Status = mm.Status,
@@ -436,7 +436,7 @@ namespace BLL.Services
                                    AccountId = mm.AccountId,
                                    PhoneNumber = mm.PhoneNumber
                                },
-                               Apartments = new ApartmentResponse
+                               Apartment = new ApartmentResponse
                                {
                                    ApartmentId = ap.ApartmentId,
                                    Address = ap.Address,
