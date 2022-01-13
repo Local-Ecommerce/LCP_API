@@ -53,7 +53,7 @@ namespace BLL.Services
                 paymentMethod.PaymentMethodId = _utilService.CreateId(PREFIX);
                 paymentMethod.Status = (int)PaymentMethodStatus.ACTIVE_PAYMENT_METHOD;
 
-                _unitOfWork.Repository<PaymentMethod>().Add(paymentMethod);
+                _unitOfWork.PaymentMethods.Add(paymentMethod);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -96,7 +96,7 @@ namespace BLL.Services
             PaymentMethod paymentMethod;
             try
             {
-                paymentMethod = await _unitOfWork.Repository<PaymentMethod>()
+                paymentMethod = await _unitOfWork.PaymentMethods
                                        .FindAsync(local => local.PaymentMethodId.Equals(id));
             }
             catch (Exception e)
@@ -117,7 +117,7 @@ namespace BLL.Services
             {
                 paymentMethod.Status = (int)PaymentMethodStatus.DELETED_PAYMENT_METHOD;
 
-                _unitOfWork.Repository<PaymentMethod>().Update(paymentMethod);
+                _unitOfWork.PaymentMethods.Update(paymentMethod);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -163,7 +163,7 @@ namespace BLL.Services
 
             try
             {
-                PaymentMethod paymentMethod = await _unitOfWork.Repository<PaymentMethod>().
+                PaymentMethod paymentMethod = await _unitOfWork.PaymentMethods.
                                                         FindAsync(local => local.PaymentMethodId.Equals(id));
 
                 paymentMethodResponse = _mapper.Map<PaymentMethodResponse>(paymentMethod);
@@ -208,7 +208,7 @@ namespace BLL.Services
             try
             {
                 paymentMethodResponses = _mapper.Map<List<PaymentMethodResponse>>(
-                    await _unitOfWork.Repository<PaymentMethod>()
+                    await _unitOfWork.PaymentMethods
                                      .FindListAsync(pm => pm.PaymentMethodId != null));
             }
             catch (Exception e)
@@ -248,7 +248,7 @@ namespace BLL.Services
             PaymentMethod paymentMethod;
             try
             {
-                paymentMethod = await _unitOfWork.Repository<PaymentMethod>()
+                paymentMethod = await _unitOfWork.PaymentMethods
                                        .FindAsync(local => local.PaymentMethodId.Equals(id));
             }
             catch (Exception e)
@@ -269,7 +269,7 @@ namespace BLL.Services
                 paymentMethod = _mapper.Map(paymentMethodRequest, paymentMethod);
                 paymentMethod.Status = (int)PaymentMethodStatus.ACTIVE_PAYMENT_METHOD;
 
-                _unitOfWork.Repository<PaymentMethod>().Update(paymentMethod);
+                _unitOfWork.PaymentMethods.Update(paymentMethod);
 
                 await _unitOfWork.SaveChangesAsync();
             }

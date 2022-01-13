@@ -58,7 +58,7 @@ namespace BLL.Services
 
                 if (systemCategory.BelongTo != null)
                 {
-                    int? parentLevel = (await _unitOfWork.Repository<SystemCategory>().FindAsync(sc =>
+                    int? parentLevel = (await _unitOfWork.SystemCategories.FindAsync(sc =>
                                             sc.SystemCategoryId.Equals(systemCategory.BelongTo))).CategoryLevel;
                     level = parentLevel + 1;
                 }
@@ -68,7 +68,7 @@ namespace BLL.Services
 
                 systemCategory.CategoryLevel = level;
 
-                _unitOfWork.Repository<SystemCategory>().Add(systemCategory);
+                _unitOfWork.SystemCategories.Add(systemCategory);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -118,7 +118,7 @@ namespace BLL.Services
             SystemCategory systemCategory;
             try
             {
-                systemCategory = await _unitOfWork.Repository<SystemCategory>()
+                systemCategory = await _unitOfWork.SystemCategories
                                            .FindAsync(p => p.SystemCategoryId.Equals(id));
             }
             catch (Exception e)
@@ -140,7 +140,7 @@ namespace BLL.Services
                 systemCategory.Status = (int)SystemCategoryStatus.DELETED_SYSTEM_CATEGORY;
                 systemCategory.ApproveBy = "";
 
-                _unitOfWork.Repository<SystemCategory>().Update(systemCategory);
+                _unitOfWork.SystemCategories.Update(systemCategory);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -190,7 +190,7 @@ namespace BLL.Services
                 try
                 {
                     systemCategoryList = _mapper.Map<List<SystemCategoryResponse>>(
-                        await _unitOfWork.Repository<SystemCategory>()
+                        await _unitOfWork.SystemCategories
                                          .FindListAsync(sc => sc.SystemCategoryId != null));
 
                     //store new list to Redis
@@ -265,7 +265,7 @@ namespace BLL.Services
             SystemCategory systemCategory;
             try
             {
-                systemCategory = await _unitOfWork.Repository<SystemCategory>()
+                systemCategory = await _unitOfWork.SystemCategories
                                            .FindAsync(p => p.SystemCategoryId.Equals(id));
             }
             catch (Exception e)
@@ -287,7 +287,7 @@ namespace BLL.Services
                 systemCategory = _mapper.Map(request, systemCategory);
                 systemCategory.ApproveBy = "";
 
-                _unitOfWork.Repository<SystemCategory>().Update(systemCategory);
+                _unitOfWork.SystemCategories.Update(systemCategory);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -337,7 +337,7 @@ namespace BLL.Services
                 //get systemCategory from database
                 try
                 {
-                    SystemCategory systemCategory = await _unitOfWork.Repository<SystemCategory>()
+                    SystemCategory systemCategory = await _unitOfWork.SystemCategories
                                                        .FindAsync(p => p.SystemCategoryId.Equals(id));
                     systemCategoryResponse = _mapper.Map<SystemCategoryResponse>(systemCategory);
 
@@ -379,7 +379,7 @@ namespace BLL.Services
             try
             {
                 systemCategoryList = _mapper.Map<List<SystemCategoryResponse>>(
-                    await _unitOfWork.Repository<SystemCategory>()
+                    await _unitOfWork.SystemCategories
                                      .FindListAsync(SystemCategory => SystemCategory.Status == status));
             }
             catch (Exception e)
