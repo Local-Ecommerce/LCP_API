@@ -57,8 +57,12 @@ namespace BLL.Services
                 int? level;
 
                 if (systemCategory.BelongTo != null)
-                    level = (await _unitOfWork.Repository<SystemCategory>().FindAsync(sc =>
-                        sc.SystemCategoryId.Equals(systemCategory.BelongTo))).CategoryLevel++;
+                {
+                    int? parentLevel = (await _unitOfWork.Repository<SystemCategory>().FindAsync(sc =>
+                                            sc.SystemCategoryId.Equals(systemCategory.BelongTo))).CategoryLevel;
+                    level = parentLevel + 1;
+                }
+
                 else
                     level = (int)CategoryLevel.ONE;
 
