@@ -1,6 +1,7 @@
 ﻿using BLL.Dtos.Apartment;
 using BLL.Dtos.MarketManager;
 using System;
+using System.Text.Json.Serialization;
 
 namespace BLL.Dtos.News
 {
@@ -13,7 +14,9 @@ namespace BLL.Dtos.News
         public int? Status { get; set; }
         public string MarketManagerId { get; set; }
         public string ApartmentId { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public MarketManagerResponse MarketManager { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public ApartmentResponse Apartment { get; set; }
     }
 }

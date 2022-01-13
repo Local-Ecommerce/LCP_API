@@ -1,5 +1,6 @@
 ﻿using BLL.Dtos.Merchant;
 using System;
+using System.Text.Json.Serialization;
 
 namespace BLL.Dtos.Menu
 {
@@ -11,6 +12,7 @@ namespace BLL.Dtos.Menu
         public DateTime? UpdatedDate { get; set; }
         public int? Status { get; set; }
         public string MerchantId { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public MerchantResponse Merchant { get; set; }
     }
 }

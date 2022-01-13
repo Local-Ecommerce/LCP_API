@@ -38,5 +38,13 @@ namespace BLL.Services.Interfaces
         /// <param name="email"></param>
         /// <returns></returns>
         bool IsValidEmail(string email);
+        
+        
+        /// <summary>
+        /// Validate Password
+        /// </summary>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        bool IsValidPassword(string password);
     }
 }
