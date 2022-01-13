@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BLL.Dtos.Merchant;
+using System;
 
 namespace BLL.Dtos.Menu
 {
@@ -10,5 +11,6 @@ namespace BLL.Dtos.Menu
         public DateTime? UpdatedDate { get; set; }
         public int? Status { get; set; }
         public string MerchantId { get; set; }
+        public MerchantResponse Merchant { get; set; }
     }
 }

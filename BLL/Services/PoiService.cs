@@ -10,6 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using System.Linq;
+using BLL.Dtos.MarketManager;
+using BLL.Dtos.Apartment;
 
 namespace BLL.Services
 {
@@ -410,9 +413,38 @@ namespace BLL.Services
 
             try
             {
-                poiList = _mapper.Map<List<PoiResponse>>(
-                    await _unitOfWork.Repository<Poi>()
-                                     .FindListAsync(poi => poi.PoiId != null));
+                await using var context = new LoichDBContext();
+                poiList = (from poi in context.Pois
+                           join mm in context.MarketManagers
+                           on poi.MarketManagerId equals mm.MarketManagerId
+                           join ap in context.Apartments
+                           on poi.ApartmentId equals ap.ApartmentId
+                           select new PoiResponse
+                           {
+                               PoiId = poi.PoiId,
+                               ApartmentId = poi.ApartmentId,
+                               MarketManagerId = poi.MarketManagerId,
+                               ReleaseDate = poi.ReleaseDate,
+                               Status = poi.Status,
+                               Text = poi.Text,
+                               Title = poi.Title,
+                               MarketManager = new MarketManagerResponse
+                               {
+                                   MarketManagerId = mm.MarketManagerId,
+                                   Status = mm.Status,
+                                   MarketManagerName = mm.MarketManagerName,
+                                   AccountId = mm.AccountId,
+                                   PhoneNumber = mm.PhoneNumber
+                               },
+                               Apartment = new ApartmentResponse
+                               {
+                                   ApartmentId = ap.ApartmentId,
+                                   Address = ap.Address,
+                                   Lat = ap.Lat,
+                                   Long = ap.Long,
+                                   Status = ap.Status
+                               }
+                           }).ToList();
             }
             catch (Exception e)
             {

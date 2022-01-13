@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using System.Linq;
+using BLL.Dtos.Merchant;
 
 namespace BLL.Services
 {
@@ -518,6 +520,61 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[MenuService.GetMenusByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MenuResponse>
+                    {
+                        ResultCode = (int)MenuStatus.MENU_NOT_FOUND,
+                        ResultMessage = MenuStatus.MENU_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<MenuResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = menuList
+            };
+        }
+
+
+
+        public async Task<BaseResponse<List<MenuResponse>>> GetAllMenus()
+        {
+            List<MenuResponse> menuList = null;
+
+            //get menu from database
+            try
+            {
+                await using var context = new LoichDBContext();
+                menuList = (from mn in context.Menus
+                            join mc in context.Merchants
+                            on mn.MerchantId equals mc.MerchantId
+                            select new MenuResponse
+                            {
+                                MenuId = mn.MenuId,
+                                MerchantId = mn.MerchantId,
+                                MenuName = mn.MenuName,
+                                CreatedDate = mn.CreatedDate,
+                                Status = mn.Status,
+                                UpdatedDate = mn.UpdatedDate,
+                                Merchant = new MerchantResponse
+                                {
+                                    MerchantId = mc.MerchantId,
+                                    MerchantName = mc.MerchantName,
+                                    Status = mc.Status,
+                                    AccountId = mc.AccountId,
+                                    Address = mc.Address,
+                                    ApproveBy = mc.ApproveBy,
+                                    LevelId = mc.LevelId,
+                                    PhoneNumber = mc.PhoneNumber
+                                }
+                            }).ToList();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MenuService.GetAllMenus()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<MenuResponse>

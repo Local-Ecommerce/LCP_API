@@ -11,6 +11,9 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using BLL.Dtos.StoreMenuDetail;
+using System.Linq;
+using BLL.Dtos.Merchant;
+using BLL.Dtos.Apartment;
 
 namespace BLL.Services
 {
@@ -633,18 +636,52 @@ namespace BLL.Services
         /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<List<MerchantStoreResponse>>> GetAllMerchantStores()
         {
-            List<MerchantStoreResponse> merchantStoreList = null;
+            List<MerchantStoreResponse> merchantStoreList;
 
-            //get systemCategory from database
+            //Get MerchantStore from database
+
             try
             {
-                merchantStoreList = _mapper.Map<List<MerchantStoreResponse>>(
-                    await _unitOfWork.Repository<MerchantStore>()
-                                     .FindListAsync(ms => ms.MerchantStoreId != null));
+                await using var context = new LoichDBContext();
+
+                merchantStoreList = (from mcs in context.MerchantStores
+                                     join mc in context.Merchants
+                                     on mcs.MerchantId equals mc.MerchantId
+                                     join ap in context.Apartments
+                                     on mcs.ApartmentId equals ap.ApartmentId
+                                     select new MerchantStoreResponse
+                                     {
+                                         MerchantStoreId = mcs.MerchantStoreId,
+                                         ApartmentId = mcs.ApartmentId,
+                                         CreatedDate = mcs.CreatedDate,
+                                         MerchantId = mcs.MerchantId,
+                                         Status = mcs.Status,
+                                         StoreName = mcs.StoreName,
+                                         Merchant = new MerchantResponse
+                                         {
+                                             AccountId = mc.AccountId,
+                                             Address = mc.Address,
+                                             ApproveBy = mc.ApproveBy,
+                                             LevelId = mc.LevelId,
+                                             MerchantId = mc.MerchantId,
+                                             MerchantName = mc.MerchantName,
+                                             PhoneNumber = mc.PhoneNumber,
+                                             Status = mc.Status
+                                         },
+                                         Apartment = new ApartmentResponse
+                                         {
+                                             ApartmentId = ap.ApartmentId,
+                                             Address = ap.Address,
+                                             Status = ap.Status,
+                                             Lat = ap.Lat,
+                                             Long = ap.Long,
+                                         }
+                                     }).ToList();
+
             }
             catch (Exception e)
             {
-                _logger.Error("[MerchantStoreService.GetVerifiedMerchantStores()]: " + e.Message);
+                _logger.Error("[MerchantStoreService.GetAllMerchantStores()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<MerchantStoreResponse>
