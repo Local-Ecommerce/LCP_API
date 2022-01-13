@@ -51,7 +51,7 @@ namespace BLL.Services
                 news.ReleaseDate = DateTime.Now;
                 news.Status = (int)NewsStatus.ACTIVE_NEWS;
 
-                _unitOfWork.Repository<News>().Add(news);
+                _unitOfWork.News.Add(news);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -90,7 +90,7 @@ namespace BLL.Services
 
             try
             {
-                News news = await _unitOfWork.Repository<News>().FindAsync(local => local.NewsId.Equals(id));
+                News news = await _unitOfWork.News.FindAsync(local => local.NewsId.Equals(id));
 
                 newsReponse = _mapper.Map<NewsResponse>(news);
             }
@@ -127,7 +127,7 @@ namespace BLL.Services
 
             try
             {
-                List<News> news = await _unitOfWork.Repository<News>().FindListAsync(news => news.ReleaseDate.Value.Date == date.Date);
+                List<News> news = await _unitOfWork.News.FindListAsync(news => news.ReleaseDate.Value.Date == date.Date);
 
                 newsResponses = _mapper.Map<List<NewsResponse>>(news);
             }
@@ -164,7 +164,7 @@ namespace BLL.Services
 
             try
             {
-                List<News> news = await _unitOfWork.Repository<News>().FindListAsync(news => news.ApartmentId.Equals(apatrmentId));
+                List<News> news = await _unitOfWork.News.FindListAsync(news => news.ApartmentId.Equals(apatrmentId));
 
                 newsResponses = _mapper.Map<List<NewsResponse>>(news);
             }
@@ -201,7 +201,7 @@ namespace BLL.Services
 
             try
             {
-                List<News> news = await _unitOfWork.Repository<News>()
+                List<News> news = await _unitOfWork.News
                     .FindListAsync(news => news.MarketManagerId.Equals(marketmanagerId));
 
                 newsResponses = _mapper.Map<List<NewsResponse>>(news);
@@ -237,7 +237,7 @@ namespace BLL.Services
             News news;
             try
             {
-                news = await _unitOfWork.Repository<News>().FindAsync(local => local.NewsId.Equals(id));
+                news = await _unitOfWork.News.FindAsync(local => local.NewsId.Equals(id));
             }
             catch (Exception e)
             {
@@ -256,7 +256,7 @@ namespace BLL.Services
             {
                 news = _mapper.Map(newsRequest, news);
 
-                _unitOfWork.Repository<News>().Update(news);
+                _unitOfWork.News.Update(news);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -294,7 +294,7 @@ namespace BLL.Services
             News news;
             try
             {
-                news = await _unitOfWork.Repository<News>().FindAsync(local => local.NewsId.Equals(id));
+                news = await _unitOfWork.News.FindAsync(local => local.NewsId.Equals(id));
             }
             catch (Exception e)
             {
@@ -313,7 +313,7 @@ namespace BLL.Services
             {
                 news.Status = (int)NewsStatus.INACTIVE_NEWS;
 
-                _unitOfWork.Repository<News>().Update(news);
+                _unitOfWork.News.Update(news);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -355,7 +355,7 @@ namespace BLL.Services
             try
             {
                 newsList = _mapper.Map<List<NewsResponse>>(
-                    await _unitOfWork.Repository<News>()
+                    await _unitOfWork.News
                                      .FindListAsync(mar => mar.Status == status));
             }
             catch (Exception e)

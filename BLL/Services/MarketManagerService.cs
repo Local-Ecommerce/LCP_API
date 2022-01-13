@@ -81,7 +81,7 @@ namespace BLL.Services
                 marketManager.MarketManagerId = _utilService.CreateId(PREFIX);
                 marketManager.Status = (int)MarketManagerStatus.ACTIVE_MARKETMANAGER;
 
-                _unitOfWork.Repository<MarketManager>().Add(marketManager);
+                _unitOfWork.MarketManagers.Add(marketManager);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -123,7 +123,7 @@ namespace BLL.Services
             MarketManager marketManager;
             try
             {
-                marketManager = await _unitOfWork.Repository<MarketManager>()
+                marketManager = await _unitOfWork.MarketManagers
                                        .FindAsync(mar => mar.MarketManagerId.Equals(id));
             }
             catch (Exception e)
@@ -144,7 +144,7 @@ namespace BLL.Services
             {
                 marketManager.Status = (int)MarketManagerStatus.DELETED_MARKETMANAGER;
 
-                _unitOfWork.Repository<MarketManager>().Update(marketManager);
+                _unitOfWork.MarketManagers.Update(marketManager);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -186,7 +186,7 @@ namespace BLL.Services
 
             try
             {
-                MarketManager marketManagers = await _unitOfWork.Repository<MarketManager>().
+                MarketManager marketManagers = await _unitOfWork.MarketManagers.
                                                         FindAsync(MarketManager => MarketManager.AccountId.Equals(accountId));
 
                 marketManagerResponse = _mapper.Map<MarketManagerResponse>(marketManagers);
@@ -229,7 +229,7 @@ namespace BLL.Services
 
             try
             {
-                MarketManager marketManager = await _unitOfWork.Repository<MarketManager>().
+                MarketManager marketManager = await _unitOfWork.MarketManagers.
                                                         FindAsync(mar => mar.MarketManagerId.Equals(id));
 
                 marketManagerResponse = _mapper.Map<MarketManagerResponse>(marketManager);
@@ -269,7 +269,7 @@ namespace BLL.Services
             MarketManager marketManager;
             try
             {
-                marketManager = await _unitOfWork.Repository<MarketManager>()
+                marketManager = await _unitOfWork.MarketManagers
                                        .FindAsync(mar => mar.MarketManagerId.Equals(id));
             }
             catch (Exception e)
@@ -317,7 +317,7 @@ namespace BLL.Services
             {
                 marketManager = _mapper.Map(marketManagerRequest, marketManager);
 
-                _unitOfWork.Repository<MarketManager>().Update(marketManager);
+                _unitOfWork.MarketManagers.Update(marketManager);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -359,7 +359,7 @@ namespace BLL.Services
             try
             {
                 marketManagerList = _mapper.Map<List<MarketManagerResponse>>(
-                    await _unitOfWork.Repository<MarketManager>()
+                    await _unitOfWork.MarketManagers
                                      .FindListAsync(mar => mar.Status == status));
             }
             catch (Exception e)

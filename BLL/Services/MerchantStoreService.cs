@@ -57,7 +57,7 @@ namespace BLL.Services
                 merchantStore.Status = (int)MerchantStoreStatus.UNVERIFIED_CREATE_MERCHANT_STORE;
                 merchantStore.CreatedDate = DateTime.Now;
 
-                _unitOfWork.Repository<MerchantStore>().Add(merchantStore);
+                _unitOfWork.MerchantStores.Add(merchantStore);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -99,7 +99,7 @@ namespace BLL.Services
             MerchantStore merchantStore;
             try
             {
-                merchantStore = await _unitOfWork.Repository<MerchantStore>().
+                merchantStore = await _unitOfWork.MerchantStores.
                                                       FindAsync(m => m.MerchantStoreId.Equals(id));
             }
             catch (Exception e)
@@ -120,7 +120,7 @@ namespace BLL.Services
             {
                 merchantStore.Status = (int)MerchantStoreStatus.DELETED_MERCHANT_STORE;
 
-                _unitOfWork.Repository<MerchantStore>().Update(merchantStore);
+                _unitOfWork.MerchantStores.Update(merchantStore);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -163,7 +163,7 @@ namespace BLL.Services
             //Get MerchantStore From Database
             try
             {
-                MerchantStore merchantStore = await _unitOfWork.Repository<MerchantStore>()
+                MerchantStore merchantStore = await _unitOfWork.MerchantStores
                                                    .FindAsync(m => m.MerchantStoreId.Equals(id));
                 merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
             }
@@ -203,7 +203,7 @@ namespace BLL.Services
             //Check id
             try
             {
-                merchantStore = await _unitOfWork.Repository<MerchantStore>().
+                merchantStore = await _unitOfWork.MerchantStores.
                                              FindAsync(m => m.MerchantStoreId.Equals(id));
             }
             catch (Exception e)
@@ -225,7 +225,7 @@ namespace BLL.Services
                 merchantStore = _mapper.Map(merchantStoreRequest, merchantStore);
                 merchantStore.Status = (int)MerchantStoreStatus.UNVERIFIED_UPDATE_MERCHANT_STORE;
 
-                _unitOfWork.Repository<MerchantStore>().Update(merchantStore);
+                _unitOfWork.MerchantStores.Update(merchantStore);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -269,7 +269,7 @@ namespace BLL.Services
 
             try
             {
-                MerchantStore merchantStore = await _unitOfWork.Repository<MerchantStore>()
+                MerchantStore merchantStore = await _unitOfWork.MerchantStores
                                                    .FindAsync(m => m.StoreName.Equals(name));
                 merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
             }
@@ -308,7 +308,7 @@ namespace BLL.Services
 
             try
             {
-                List<MerchantStore> merchantStores = await _unitOfWork.Repository<MerchantStore>().
+                List<MerchantStore> merchantStores = await _unitOfWork.MerchantStores.
                                                         FindListAsync
                                                         (store => store.MerchantId.Equals(merchantId));
 
@@ -349,7 +349,7 @@ namespace BLL.Services
 
             try
             {
-                List<MerchantStore> merchantStores = await _unitOfWork.Repository<MerchantStore>().
+                List<MerchantStore> merchantStores = await _unitOfWork.MerchantStores.
                                                         FindListAsync
                                                         (store => store.ApartmentId.Equals(apartmentId));
 
@@ -396,7 +396,7 @@ namespace BLL.Services
                     storeMenuDetail.MerchantStoreId = merchantStoreId;
                     storeMenuDetail.Status = (int)StoreMenuDetailStatus.ACTIVE_STORE_MENU_DETAIL;
 
-                    _unitOfWork.Repository<StoreMenuDetail>().Add(storeMenuDetail);
+                    _unitOfWork.StoreMenuDetails.Add(storeMenuDetail);
 
                 });
 
@@ -437,7 +437,7 @@ namespace BLL.Services
             List<StoreMenuDetail> storeMenuDetails;
             try
             {
-                storeMenuDetails = await _unitOfWork.Repository<StoreMenuDetail>()
+                storeMenuDetails = await _unitOfWork.StoreMenuDetails
                     .FindListAsync(smd => smd.MerchantStoreId == merchantStoreId);
             }
             catch (Exception e)
@@ -475,7 +475,7 @@ namespace BLL.Services
             StoreMenuDetail storeMenuDetail;
             try
             {
-                storeMenuDetail = await _unitOfWork.Repository<StoreMenuDetail>()
+                storeMenuDetail = await _unitOfWork.StoreMenuDetails
                     .FindAsync(smd => smd.StoreMenuDetailId == storeMenuDetailId);
             }
             catch (Exception e)
@@ -515,14 +515,14 @@ namespace BLL.Services
             StoreMenuDetail storeMenuDetail;
             try
             {
-                storeMenuDetail = await _unitOfWork.Repository<StoreMenuDetail>()
+                storeMenuDetail = await _unitOfWork.StoreMenuDetails
                     .FindAsync(smd => smd.StoreMenuDetailId == storeMenuDetailId);
 
                 storeMenuDetail.Status = storeMenuDetailUpdateRequest.Status;
                 storeMenuDetail.TimeStart = storeMenuDetailUpdateRequest.TimeStart;
                 storeMenuDetail.TimeEnd = storeMenuDetailUpdateRequest.TimeEnd;
 
-                _unitOfWork.Repository<StoreMenuDetail>().Update(storeMenuDetail);
+                _unitOfWork.StoreMenuDetails.Update(storeMenuDetail);
             }
             catch (Exception e)
             {
@@ -559,12 +559,12 @@ namespace BLL.Services
             StoreMenuDetail storeMenuDetail;
             try
             {
-                storeMenuDetail = await _unitOfWork.Repository<StoreMenuDetail>()
+                storeMenuDetail = await _unitOfWork.StoreMenuDetails
                     .FindAsync(smd => smd.StoreMenuDetailId == storeMenuDetailId);
 
                 storeMenuDetail.Status = (int)StoreMenuDetailStatus.DELETED_STORE_MENU_DETAIL;
 
-                _unitOfWork.Repository<StoreMenuDetail>().Update(storeMenuDetail);
+                _unitOfWork.StoreMenuDetails.Update(storeMenuDetail);
             }
             catch (Exception e)
             {
@@ -604,7 +604,7 @@ namespace BLL.Services
             try
             {
                 merchantStoreList = _mapper.Map<List<MerchantStoreResponse>>(
-                    await _unitOfWork.Repository<MerchantStore>()
+                    await _unitOfWork.MerchantStores
                                      .FindListAsync(ms => ms.Status == status));
             }
             catch (Exception e)

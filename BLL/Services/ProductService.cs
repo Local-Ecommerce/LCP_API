@@ -74,7 +74,7 @@ namespace BLL.Services
                 product.ApproveBy = "";
                 product.BelongTo = null;
 
-                _unitOfWork.Repository<Product>().Add(product);
+                _unitOfWork.Products.Add(product);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -138,7 +138,7 @@ namespace BLL.Services
                     product.ApproveBy = "";
                     product.BelongTo = baseProductId;
 
-                    _unitOfWork.Repository<Product>().Add(product);
+                    _unitOfWork.Products.Add(product);
                 });
 
                 await _unitOfWork.SaveChangesAsync();
@@ -207,7 +207,7 @@ namespace BLL.Services
                 try
                 {
 
-                    List<Product> products = await _unitOfWork.Repository<Product>()
+                    List<Product> products = await _unitOfWork.Products
                         .FindListAsync(p => p.ProductId.Equals(id) || p.BelongTo.Equals(id));
 
                     Product product = products.Find(p => p.ProductId.Equals(id));
@@ -260,7 +260,7 @@ namespace BLL.Services
                 try
                 {
 
-                    List<Product> products = await _unitOfWork.Repository<Product>()
+                    List<Product> products = await _unitOfWork.Products
                         .FindListAsync(p => p.BelongTo.Equals(id));
 
                     productResponses = _mapper.Map<List<ProductResponse>>(products);
@@ -306,7 +306,7 @@ namespace BLL.Services
                 try
                 {
 
-                    Product product = await _unitOfWork.Repository<Product>()
+                    Product product = await _unitOfWork.Products
                         .FindAsync(p => p.ProductId.Equals(id));
 
                     productResponse = _mapper.Map<ProductResponse>(product);
@@ -349,7 +349,7 @@ namespace BLL.Services
             Product product;
             try
             {
-                product = await _unitOfWork.Repository<Product>()
+                product = await _unitOfWork.Products
                                            .FindAsync(p => p.ProductId.Equals(id));
             }
             catch (Exception e)
@@ -377,7 +377,7 @@ namespace BLL.Services
                 product.Status = (int)ProductStatus.UNVERIFIED_UPDATE_PRODUCT;
                 product.ApproveBy = "";
 
-                _unitOfWork.Repository<Product>().Update(product);
+                _unitOfWork.Products.Update(product);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -430,7 +430,7 @@ namespace BLL.Services
             Product product;
             try
             {
-                product = await _unitOfWork.Repository<Product>()
+                product = await _unitOfWork.Products
                                            .FindAsync(p => p.ProductId.Equals(id));
             }
             catch (Exception e)
@@ -458,7 +458,7 @@ namespace BLL.Services
                 product.Status = (int)ProductStatus.UNVERIFIED_UPDATE_PRODUCT;
                 product.ApproveBy = "";
 
-                _unitOfWork.Repository<Product>().Update(product);
+                _unitOfWork.Products.Update(product);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -504,7 +504,7 @@ namespace BLL.Services
             List<Product> products;
             try
             {
-                products = await _unitOfWork.Repository<Product>()
+                products = await _unitOfWork.Products
                                            .FindListAsync(p => p.ProductId.Equals(id) || p.BelongTo.Equals(id));
             }
             catch (Exception e)
@@ -529,7 +529,7 @@ namespace BLL.Services
                     product.UpdatedDate = DateTime.Now;
                     product.ApproveBy = "";
 
-                    _unitOfWork.Repository<Product>().Update(product);
+                    _unitOfWork.Products.Update(product);
                 });
 
                 await _unitOfWork.SaveChangesAsync();
@@ -588,7 +588,7 @@ namespace BLL.Services
             Product product;
             try
             {
-                product = await _unitOfWork.Repository<Product>()
+                product = await _unitOfWork.Products
                                            .FindAsync(p => p.ProductId.Equals(id));
             }
             catch (Exception e)
@@ -611,7 +611,7 @@ namespace BLL.Services
                 product.Status = (int)ProductStatus.DELETED_PRODUCT;
                 product.ApproveBy = "";
 
-                _unitOfWork.Repository<Product>().Update(product);
+                _unitOfWork.Products.Update(product);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -661,7 +661,7 @@ namespace BLL.Services
 
             try
             {
-                List<Product> products = await _unitOfWork.Repository<Product>().
+                List<Product> products = await _unitOfWork.Products.
                                                         FindListAsync(ap => ap.Status == status);
 
                 productResponses = _mapper.Map<List<ProductResponse>>(products);
@@ -705,7 +705,7 @@ namespace BLL.Services
 
             try
             {
-                List<Product> products = await _unitOfWork.Repository<Product>().
+                List<Product> products = await _unitOfWork.Products.
                                                         FindListAsync(ap => ap.ProductType.Equals(type));
 
                 productResponses = _mapper.Map<List<ProductResponse>>(products);

@@ -95,7 +95,7 @@ namespace BLL.Services
                 customer.UpdatedDate = DateTime.Now;
                 customer.Status = (int)CustomerStatus.UNVERIFIED_CREATE_CUSTOMER;
 
-                _unitOfWork.Repository<Customer>().Add(customer);
+                _unitOfWork.Customers.Add(customer);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -138,7 +138,7 @@ namespace BLL.Services
             Customer customer;
             try
             {
-                customer = await _unitOfWork.Repository<Customer>()
+                customer = await _unitOfWork.Customers
                                        .FindAsync(cus => cus.CustomerId.Equals(id));
             }
             catch (Exception e)
@@ -159,7 +159,7 @@ namespace BLL.Services
             {
                 customer.Status = (int)CustomerStatus.DELETED_CUSTOMER;
 
-                _unitOfWork.Repository<Customer>().Update(customer);
+                _unitOfWork.Customers.Update(customer);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -204,7 +204,7 @@ namespace BLL.Services
 
             try
             {
-                Customer customer = await _unitOfWork.Repository<Customer>().
+                Customer customer = await _unitOfWork.Customers.
                                                         FindAsync(cus => cus.CustomerId.Equals(id));
 
                 customerResponse = _mapper.Map<CustomerResponse>(customer);
@@ -245,7 +245,7 @@ namespace BLL.Services
             Customer customer;
             try
             {
-                customer = await _unitOfWork.Repository<Customer>()
+                customer = await _unitOfWork.Customers
                                        .FindAsync(cus => cus.CustomerId.Equals(id));
             }
             catch (Exception e)
@@ -293,7 +293,7 @@ namespace BLL.Services
                 customer.Status = (int)CustomerStatus.UNVERIFIED_UPDATE_CUSTOMER;
                 customer.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.Repository<Customer>().Update(customer);
+                _unitOfWork.Customers.Update(customer);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -338,7 +338,7 @@ namespace BLL.Services
 
             try
             {
-                Customer customer = await _unitOfWork.Repository<Customer>().
+                Customer customer = await _unitOfWork.Customers.
                                                         FindAsync(cus => cus.CustomerName.Equals(name));
 
                 customerResponse = _mapper.Map<CustomerResponse>(customer);
@@ -382,7 +382,7 @@ namespace BLL.Services
 
             try
             {
-                Customer customer = await _unitOfWork.Repository<Customer>().
+                Customer customer = await _unitOfWork.Customers.
                                                         FindAsync(cus => cus.PhoneNumber.Equals(phone));
 
                 customerResponse = _mapper.Map<CustomerResponse>(customer);
@@ -426,7 +426,7 @@ namespace BLL.Services
 
             try
             {
-                Customer customer = await _unitOfWork.Repository<Customer>().
+                Customer customer = await _unitOfWork.Customers.
                                                         FindAsync(cus => cus.DateOfBirth.Value.Date == dob.Date);
 
                 customerResponse = _mapper.Map<CustomerResponse>(customer);
@@ -470,7 +470,7 @@ namespace BLL.Services
 
             try
             {
-                List<Customer> customers = await _unitOfWork.Repository<Customer>().
+                List<Customer> customers = await _unitOfWork.Customers.
                                                         FindListAsync(cus => cus.Gender.Equals(gender));
 
                 customerResponses = _mapper.Map<List<CustomerResponse>>(customers);
@@ -514,7 +514,7 @@ namespace BLL.Services
 
             try
             {
-                List<Customer> customers = await _unitOfWork.Repository<Customer>().
+                List<Customer> customers = await _unitOfWork.Customers.
                                                         FindListAsync(cus => cus.CreatedDate.Value.Date == date.Date);
 
                 customerResponses = _mapper.Map<List<CustomerResponse>>(customers);
@@ -558,7 +558,7 @@ namespace BLL.Services
 
             try
             {
-                List<Customer> customers = await _unitOfWork.Repository<Customer>().
+                List<Customer> customers = await _unitOfWork.Customers.
                                                         FindListAsync(cus => cus.UpdatedDate.Value.Date == date.Date);
 
                 customerResponses = _mapper.Map<List<CustomerResponse>>(customers);
@@ -602,7 +602,7 @@ namespace BLL.Services
 
             try
             {
-                List<Customer> customers = await _unitOfWork.Repository<Customer>().
+                List<Customer> customers = await _unitOfWork.Customers.
                                                         FindListAsync(cus => cus.AccountId.Equals(accountId));
 
                 customerResponses = _mapper.Map<List<CustomerResponse>>(customers);

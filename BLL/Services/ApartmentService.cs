@@ -51,7 +51,7 @@ namespace BLL.Services
                 apartment.ApartmentId = _utilService.CreateId(PREFIX);
                 apartment.Status = (int)ApartmentStatus.ACTIVE_APARTMENT;
 
-                _unitOfWork.Repository<Apartment>().Add(apartment);
+                _unitOfWork.Apartments.Add(apartment);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -94,7 +94,7 @@ namespace BLL.Services
             Apartment apartment;
             try
             {
-                apartment = await _unitOfWork.Repository<Apartment>()
+                apartment = await _unitOfWork.Apartments
                                        .FindAsync(ap => ap.ApartmentId.Equals(id));
             }
             catch (Exception e)
@@ -115,7 +115,7 @@ namespace BLL.Services
             {
                 apartment.Status = (int)ApartmentStatus.DELETED_APARTMENT;
 
-                _unitOfWork.Repository<Apartment>().Update(apartment);
+                _unitOfWork.Apartments.Update(apartment);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -158,26 +158,26 @@ namespace BLL.Services
             ApartmentResponse apartmentResponse;
 
             //Get Apartment From Database
-            
-                try
-                {
-                    Apartment apartment = await _unitOfWork.Repository<Apartment>().
-                                                            FindAsync(ap => ap.ApartmentId.Equals(id));
 
-                    apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[ApartmentService.GetApartmentById()]: " + e.Message);
+            try
+            {
+                Apartment apartment = await _unitOfWork.Apartments.
+                                                        FindAsync(ap => ap.ApartmentId.Equals(id));
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<ApartmentResponse>
-                        {
-                            ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
-                            ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ApartmentService.GetApartmentById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ApartmentResponse>
+                    {
+                        ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
+                        ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             return new BaseResponse<ApartmentResponse>
             {
@@ -202,7 +202,7 @@ namespace BLL.Services
             Apartment apartment;
             try
             {
-                apartment = await _unitOfWork.Repository<Apartment>()
+                apartment = await _unitOfWork.Apartments
                                        .FindAsync(ap => ap.ApartmentId.Equals(id));
             }
             catch (Exception e)
@@ -222,7 +222,7 @@ namespace BLL.Services
             {
                 apartment = _mapper.Map(apartmentRequest, apartment);
 
-                _unitOfWork.Repository<Apartment>().Update(apartment);
+                _unitOfWork.Apartments.Update(apartment);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -258,25 +258,25 @@ namespace BLL.Services
 
             //Get Apartment From Database
 
-                try
-                {
-                    Apartment apartment = await _unitOfWork.Repository<Apartment>().
-                                                            FindAsync(ap => ap.Address.Equals(address));
+            try
+            {
+                Apartment apartment = await _unitOfWork.Apartments.
+                                                        FindAsync(ap => ap.Address.Equals(address));
 
-                    apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[ApartmentService.GetApartmentByAddress()]: " + e.Message);
+                apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ApartmentService.GetApartmentByAddress()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<ApartmentResponse>
-                        {
-                            ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
-                            ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ApartmentResponse>
+                    {
+                        ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
+                        ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             return new BaseResponse<ApartmentResponse>
             {
@@ -303,7 +303,7 @@ namespace BLL.Services
 
             try
             {
-                List<Apartment> apartments = await _unitOfWork.Repository<Apartment>().
+                List<Apartment> apartments = await _unitOfWork.Apartments.
                                                         FindListAsync(ap => ap.Status == status);
 
                 apartmentResponses = _mapper.Map<List<ApartmentResponse>>(apartments);

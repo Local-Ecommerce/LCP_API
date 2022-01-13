@@ -60,7 +60,7 @@ namespace BLL.Services
                 collection.CreatedDate = DateTime.Now;
                 collection.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.Repository<Collection>().Add(collection);
+                _unitOfWork.Collections.Add(collection);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -104,7 +104,7 @@ namespace BLL.Services
             Collection collection;
             try
             {
-                collection = await _unitOfWork.Repository<Collection>()
+                collection = await _unitOfWork.Collections
                                        .FindAsync(collection => collection.CollectionId.Equals(id));
             }
             catch (Exception e)
@@ -126,7 +126,7 @@ namespace BLL.Services
                 collection.Status = (int)CollectionStatus.DELETED_COLLECTION;
                 collection.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.Repository<Collection>().Update(collection);
+                _unitOfWork.Collections.Update(collection);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -298,7 +298,7 @@ namespace BLL.Services
             Collection collection;
             try
             {
-                collection = await _unitOfWork.Repository<Collection>()
+                collection = await _unitOfWork.Collections
                                        .FindAsync(collection => collection.CollectionId.Equals(id));
             }
             catch (Exception e)
@@ -319,7 +319,7 @@ namespace BLL.Services
                 collection = _mapper.Map(collectionRequest, collection);
                 collection.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.Repository<Collection>().Update(collection);
+                _unitOfWork.Collections.Update(collection);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -371,7 +371,7 @@ namespace BLL.Services
                     };
 
                     collectionMappings.Add(collectionMapping);
-                    _unitOfWork.Repository<CollectionMapping>().Add(collectionMapping);
+                    _unitOfWork.CollectionMappings.Add(collectionMapping);
                 }
 
                 await _unitOfWork.SaveChangesAsync();
@@ -417,7 +417,7 @@ namespace BLL.Services
             CollectionMapping collectionMapping;
             try
             {
-                collectionMapping = await _unitOfWork.Repository<CollectionMapping>()
+                collectionMapping = await _unitOfWork.CollectionMappings
                                                        .FindAsync(cm =>
                                                        cm.CollectionId.Equals(collectionId) ||
                                                        cm.ProductId.Equals(productId));
@@ -439,7 +439,7 @@ namespace BLL.Services
             //remove from database
             try
             {
-                _unitOfWork.Repository<CollectionMapping>().Delete(collectionMapping);
+                _unitOfWork.CollectionMappings.Delete(collectionMapping);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -482,7 +482,7 @@ namespace BLL.Services
             CollectionMapping collectionMapping;
             try
             {
-                collectionMapping = await _unitOfWork.Repository<CollectionMapping>()
+                collectionMapping = await _unitOfWork.CollectionMappings
                                                        .FindAsync(cm =>
                                                        cm.CollectionId.Equals(collectionId) ||
                                                        cm.ProductId.Equals(productId));
@@ -506,7 +506,7 @@ namespace BLL.Services
             {
                 collectionMapping.Status = status;
 
-                _unitOfWork.Repository<CollectionMapping>().Update(collectionMapping);
+                _unitOfWork.CollectionMappings.Update(collectionMapping);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -551,7 +551,7 @@ namespace BLL.Services
             List<CollectionMapping> collectionMappings;
             try
             {
-                collectionMappings = await _unitOfWork.Repository<CollectionMapping>()
+                collectionMappings = await _unitOfWork.CollectionMappings
                                                        .FindListAsync(cm => cm.CollectionId.Equals(collectionId));
 
                 collectionMappingResponses = _mapper.Map<List<CollectionMappingResponse>>(collectionMappings);

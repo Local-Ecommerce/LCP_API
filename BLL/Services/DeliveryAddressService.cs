@@ -51,7 +51,7 @@ namespace BLL.Services
             {
                 deliveryAddress.DeliveryAddressId = _utilService.CreateId(PREFIX);
                 deliveryAddress.IsPrimaryAddress = false;
-                _unitOfWork.Repository<DeliveryAddress>().Add(deliveryAddress);
+                _unitOfWork.DeliveryAddresses.Add(deliveryAddress);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -94,7 +94,7 @@ namespace BLL.Services
             DeliveryAddress deliveryAddress;
             try
             {
-                deliveryAddress = await _unitOfWork.Repository<DeliveryAddress>()
+                deliveryAddress = await _unitOfWork.DeliveryAddresses
                                        .FindAsync(deli => deli.DeliveryAddressId.Equals(id));
             }
             catch (Exception e)
@@ -113,7 +113,7 @@ namespace BLL.Services
             //Delete DeliveryAddress
             try
             {
-                _unitOfWork.Repository<DeliveryAddress>().Delete(deliveryAddress);
+                _unitOfWork.DeliveryAddresses.Delete(deliveryAddress);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -157,25 +157,25 @@ namespace BLL.Services
 
             //Get DeliveryAddress From Database
 
-                try
-                {
-                    DeliveryAddress deliveryAddress = await _unitOfWork.Repository<DeliveryAddress>().
-                                                            FindAsync(deli => deli.DeliveryAddressId.Equals(id));
+            try
+            {
+                DeliveryAddress deliveryAddress = await _unitOfWork.DeliveryAddresses.
+                                                        FindAsync(deli => deli.DeliveryAddressId.Equals(id));
 
-                    deliveryAddressResponse = _mapper.Map<DeliveryAddressResponse>(deliveryAddress);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[DeliveryAddressService.GetDeliveryAddressById()]: " + e.Message);
+                deliveryAddressResponse = _mapper.Map<DeliveryAddressResponse>(deliveryAddress);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[DeliveryAddressService.GetDeliveryAddressById()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<DeliveryAddressResponse>
-                        {
-                            ResultCode = (int)DeliveryAddressStatus.DELIVERYADDRESS_NOT_FOUND,
-                            ResultMessage = DeliveryAddressStatus.DELIVERYADDRESS_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<DeliveryAddressResponse>
+                    {
+                        ResultCode = (int)DeliveryAddressStatus.DELIVERYADDRESS_NOT_FOUND,
+                        ResultMessage = DeliveryAddressStatus.DELIVERYADDRESS_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             return new BaseResponse<DeliveryAddressResponse>
             {
@@ -200,7 +200,7 @@ namespace BLL.Services
             DeliveryAddress deliveryAddress;
             try
             {
-                deliveryAddress = await _unitOfWork.Repository<DeliveryAddress>()
+                deliveryAddress = await _unitOfWork.DeliveryAddresses
                                        .FindAsync(deli => deli.DeliveryAddressId.Equals(id));
             }
             catch (Exception e)
@@ -220,7 +220,7 @@ namespace BLL.Services
             {
                 deliveryAddress = _mapper.Map(deliveryAddressRequest, deliveryAddress);
 
-                _unitOfWork.Repository<DeliveryAddress>().Update(deliveryAddress);
+                _unitOfWork.DeliveryAddresses.Update(deliveryAddress);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -265,7 +265,7 @@ namespace BLL.Services
 
             try
             {
-                List<DeliveryAddress> deliveryAddress = await _unitOfWork.Repository<DeliveryAddress>().
+                List<DeliveryAddress> deliveryAddress = await _unitOfWork.DeliveryAddresses.
                                                         FindListAsync(deli => deli.CustomerId.Equals(customerId));
 
                 deliveryAddressResponses = _mapper.Map<List<DeliveryAddressResponse>>(deliveryAddress);

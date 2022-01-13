@@ -86,7 +86,7 @@ namespace BLL.Services
             try
             {
                 //check if username exists
-                account = await _unitOfWork.Repository<Account>().FindAsync(acc => acc.Username.Equals(accountRegisterRequest.Username));
+                account = await _unitOfWork.Accounts.FindAsync(acc => acc.Username.Equals(accountRegisterRequest.Username));
                 if (account != null)
                 {
                     _logger.Error($"[AccountService.Register()]: Username '{accountRegisterRequest.Username}' is already exists.");
@@ -122,7 +122,7 @@ namespace BLL.Services
                 account.TokenExpiredDate = null;
                 account.Status = (int)AccountStatus.ACTIVE_ACCOUNT;
 
-                _unitOfWork.Repository<Account>().Add(account);
+                _unitOfWork.Accounts.Add(account);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -168,7 +168,7 @@ namespace BLL.Services
             Account account;
             try
             {
-                account = await _unitOfWork.Repository<Account>()
+                account = await _unitOfWork.Accounts
                                            .FindAsync(a => a.AccountId.Equals(id));
             }
             catch (Exception e)
@@ -190,7 +190,7 @@ namespace BLL.Services
                 account.UpdatedDate = DateTime.Now;
                 account.Status = (int)AccountStatus.DELETED_ACCOUNT;
 
-                _unitOfWork.Repository<Account>().Update(account);
+                _unitOfWork.Accounts.Update(account);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -239,7 +239,7 @@ namespace BLL.Services
             //get account from database
             try
             {
-                Account account = await _unitOfWork.Repository<Account>()
+                Account account = await _unitOfWork.Accounts
                 .FindAsync(acc => acc.AccountId.Equals(id));
 
                 accountResponse = _mapper.Map<AccountResponse>(account);
@@ -279,7 +279,7 @@ namespace BLL.Services
             Account account;
             try
             {
-                account = await _unitOfWork.Repository<Account>()
+                account = await _unitOfWork.Accounts
                 .FindAsync(acc => acc.Username.Equals(accountLoginRequest.Username));
 
                 //check account from db and verify password
@@ -298,21 +298,21 @@ namespace BLL.Services
 
                     case RoleId.CUSTOMER:
                         expiredDate = DateTime.UtcNow.AddDays((double)TimeUnit.THIRTY_DAYS);
-                        Customer customer = await _unitOfWork.Repository<Customer>()
+                        Customer customer = await _unitOfWork.Customers
                         .FindAsync(ctm => ctm.AccountId.Equals(account.AccountId));
                         clientRoleId = customer.CustomerId;
                         break;
 
                     case RoleId.MERCHANT:
                         expiredDate = DateTime.UtcNow.AddDays((double)TimeUnit.THIRTY_DAYS);
-                        Merchant merchant = await _unitOfWork.Repository<Merchant>()
+                        Merchant merchant = await _unitOfWork.Merchants
                         .FindAsync(mc => mc.AccountId.Equals(account.AccountId));
                         clientRoleId = merchant.MerchantId;
                         break;
 
                     case RoleId.MARKET_MANAGER:
                         expiredDate = DateTime.UtcNow.AddHours((double)TimeUnit.ONE_HOUR);
-                        MarketManager marketManager = await _unitOfWork.Repository<MarketManager>()
+                        MarketManager marketManager = await _unitOfWork.MarketManagers
                         .FindAsync(mm => mm.AccountId.Equals(account.AccountId));
                         clientRoleId = marketManager.MarketManagerId;
                         break;
@@ -364,7 +364,7 @@ namespace BLL.Services
             Account account;
             try
             {
-                account = await _unitOfWork.Repository<Account>()
+                account = await _unitOfWork.Accounts
                                            .FindAsync(a => a.AccountId.Equals(id));
             }
             catch (Exception e)
@@ -393,7 +393,7 @@ namespace BLL.Services
                 account.AvatarImage = avatarImageUrl;
                 account.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.Repository<Account>().Update(account);
+                _unitOfWork.Accounts.Update(account);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -445,7 +445,7 @@ namespace BLL.Services
             Account account;
             try
             {
-                account = await _unitOfWork.Repository<Account>().FindAsync(acc => acc.AccountId.Equals(accountId));
+                account = await _unitOfWork.Accounts.FindAsync(acc => acc.AccountId.Equals(accountId));
 
                 tokenInfo = new TokenInfo
                 {
@@ -458,7 +458,7 @@ namespace BLL.Services
                 account.TokenExpiredDate = null;
                 account.RoleId = roleId;
 
-                _unitOfWork.Repository<Account>().Update(account);
+                _unitOfWork.Accounts.Update(account);
 
                 await _unitOfWork.SaveChangesAsync();
             }
