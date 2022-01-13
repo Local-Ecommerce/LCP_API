@@ -246,7 +246,7 @@ namespace BLL.Services
             //Delete Menu
             try
             {
-                menu.Status = (int)MenuStatus.INACTIVE_MENU;
+                menu.Status = (int)MenuStatus.DELETED_MENU;
                 menu.UpdatedDate = DateTime.Now;
 
                 _unitOfWork.Repository<Menu>().Update(menu);
@@ -434,6 +434,7 @@ namespace BLL.Services
         public async Task<BaseResponse<ProductInMenuResponse>> GetProductInMenuById(string productInMenuId)
         {
             ProductInMenu productInMenu;
+
             try
             {
                 productInMenu = await _unitOfWork.Repository<ProductInMenu>().FindAsync(p =>

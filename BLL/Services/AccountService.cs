@@ -24,6 +24,7 @@ namespace BLL.Services
         private readonly IRedisService _redisService;
         private readonly IUploadFirebaseService _uploadFirebaseService;
         private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
+        private readonly IValidateDataService _validateDataService;
         private const string PREFIX = "ACC_";
         private const string TYPE = "Account";
         private const string TOKEN_BLACKLIST_KEY = "Token Blacklist";
@@ -34,7 +35,8 @@ namespace BLL.Services
             IUtilService utilService,
             IRedisService redisService,
             IUploadFirebaseService uploadFirebaseService,
-            IJwtAuthenticationManager jwtAuthenticationManager)
+            IJwtAuthenticationManager jwtAuthenticationManager,
+            IValidateDataService validateDataService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -43,6 +45,7 @@ namespace BLL.Services
             _redisService = redisService;
             _uploadFirebaseService = uploadFirebaseService;
             _jwtAuthenticationManager = jwtAuthenticationManager;
+            _validateDataService = validateDataService;
         }
 
         /// <summary>
@@ -52,6 +55,20 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<AccountResponse>> Register(AccountRegisterRequest accountRegisterRequest)
         {
+
+            //check valid password
+            if (!_validateDataService.IsValidPassword(accountRegisterRequest.Password))
+            {
+                _logger.Error($"[Invalid Password : '{accountRegisterRequest.Password}']");
+                throw new HttpStatusException(HttpStatusCode.OK,
+                new BaseResponse<AccountResponse>
+                {
+                    ResultCode = (int)AccountStatus.INVALID_PASSWORD,
+                    ResultMessage = AccountStatus.INVALID_PASSWORD.ToString(),
+                    Data = default
+                });
+            }
+
             //check valid confirm password
             if (!IsValidConfirmPassword(accountRegisterRequest.Password, accountRegisterRequest.ConfirmPassword))
             {

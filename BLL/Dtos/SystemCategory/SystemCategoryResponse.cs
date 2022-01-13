@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace BLL.Dtos.SystemCategory
 {
@@ -10,6 +11,7 @@ namespace BLL.Dtos.SystemCategory
         public int? Status { get; set; }
         public int CategoryLevel { get; set; }
         public string BelongTo { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public List<SystemCategoryResponse> Child { get; set; }
     }
 }

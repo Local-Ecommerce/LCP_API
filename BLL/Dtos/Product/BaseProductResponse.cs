@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace BLL.Dtos.Product
 {
@@ -18,6 +19,7 @@ namespace BLL.Dtos.Product
         public string Size { get; set; }
         public string Color { get; set; }
         public double Weight { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public List<ProductResponse> RelatedProducts { get; set; }
     }
 }

@@ -20,17 +20,20 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
+        private readonly IValidateDataService _validateDataService;
         private const string PREFIX = "CTM_";
 
         public CustomerService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IUtilService utilService)
+            IUtilService utilService,
+            IValidateDataService validateDataService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
+            _validateDataService = validateDataService;
         }
 
 
@@ -45,6 +48,45 @@ namespace BLL.Services
 
             //Store Customer To Dabatabase
             Customer customer = _mapper.Map<Customer>(customerRequest);
+
+            //Check Valid Name
+            if (!_validateDataService.IsValidName(customer.CustomerName))
+            {
+                _logger.Error($"[Invalid Customer's Name : '{customer.CustomerName}']");
+                throw new HttpStatusException(HttpStatusCode.OK,
+                new BaseResponse<CustomerResponse>
+                {
+                    ResultCode = (int)CustomerStatus.INVALID_NAME_CUSTOMER,
+                    ResultMessage = CustomerStatus.INVALID_NAME_CUSTOMER.ToString(),
+                    Data = default
+                });
+            }
+            
+            //Check Valid Phone Number
+            if(!_validateDataService.IsValidPhoneNumber(customer.PhoneNumber))
+            {
+                _logger.Error($"[Invalid Customer's Name : '{customer.PhoneNumber}']");
+                throw new HttpStatusException(HttpStatusCode.OK,
+                new BaseResponse<CustomerResponse>
+                {
+                    ResultCode = (int)CustomerStatus.INVALID_PHONE_NUMBER_CUSTOMER,
+                    ResultMessage = CustomerStatus.INVALID_PHONE_NUMBER_CUSTOMER.ToString(),
+                    Data = default
+                });
+            }
+
+            //Check Valid Date Of Birth
+            if (!_validateDataService.IsLaterThanPresent(customer.DateOfBirth))
+            {
+                _logger.Error($"[Invalid Customer's Name : '{customer.DateOfBirth}']");
+                throw new HttpStatusException(HttpStatusCode.OK,
+                new BaseResponse<CustomerResponse>
+                {
+                    ResultCode = (int)CustomerStatus.INVALID_DATE_OF_BIRTH,
+                    ResultMessage = CustomerStatus.INVALID_DATE_OF_BIRTH.ToString(),
+                    Data = default
+                });
+            }
 
             try
             {
@@ -160,25 +202,25 @@ namespace BLL.Services
 
             //Get Customer From Database
 
-                try
-                {
-                    Customer customer = await _unitOfWork.Repository<Customer>().
-                                                            FindAsync(cus => cus.CustomerId.Equals(id));
+            try
+            {
+                Customer customer = await _unitOfWork.Repository<Customer>().
+                                                        FindAsync(cus => cus.CustomerId.Equals(id));
 
-                    customerResponse = _mapper.Map<CustomerResponse>(customer);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[CustomerService.GetCustomerById()]: " + e.Message);
+                customerResponse = _mapper.Map<CustomerResponse>(customer);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[CustomerService.GetCustomerById()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<CustomerResponse>
-                        {
-                            ResultCode = (int)CustomerStatus.CUSTOMER_NOT_FOUND,
-                            ResultMessage = CustomerStatus.CUSTOMER_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<CustomerResponse>
+                    {
+                        ResultCode = (int)CustomerStatus.CUSTOMER_NOT_FOUND,
+                        ResultMessage = CustomerStatus.CUSTOMER_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             return new BaseResponse<CustomerResponse>
             {
@@ -214,6 +256,32 @@ namespace BLL.Services
                 {
                     ResultCode = (int)CustomerStatus.CUSTOMER_NOT_FOUND,
                     ResultMessage = CustomerStatus.CUSTOMER_NOT_FOUND.ToString(),
+                    Data = default
+                });
+            }
+
+            //Check Valid Name
+            if (!_validateDataService.IsValidName(customer.CustomerName))
+            {
+                _logger.Error($"[Invalid Customer's Name : '{customer.CustomerName}']");
+                throw new HttpStatusException(HttpStatusCode.OK,
+                new BaseResponse<CustomerResponse>
+                {
+                    ResultCode = (int)CustomerStatus.INVALID_NAME_CUSTOMER,
+                    ResultMessage = CustomerStatus.INVALID_NAME_CUSTOMER.ToString(),
+                    Data = default
+                });
+            }
+
+            //Check Valid Phone Number
+            if (!_validateDataService.IsValidPhoneNumber(customer.PhoneNumber))
+            {
+                _logger.Error($"[Invalid Customer's Name : '{customer.PhoneNumber}']");
+                throw new HttpStatusException(HttpStatusCode.OK,
+                new BaseResponse<CustomerResponse>
+                {
+                    ResultCode = (int)CustomerStatus.INVALID_PHONE_NUMBER_CUSTOMER,
+                    ResultMessage = CustomerStatus.INVALID_PHONE_NUMBER_CUSTOMER.ToString(),
                     Data = default
                 });
             }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BLL.Dtos.Product;
+using System;
+using System.Text.Json.Serialization;
 
 namespace BLL.Dtos.ProductInMenu
 {
@@ -11,5 +13,7 @@ namespace BLL.Dtos.ProductInMenu
         public int? Status { get; set; }
         public string ProductId { get; set; }
         public string MenuId { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public ProductResponse Product { get; set; }
     }
 }

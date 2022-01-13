@@ -10,7 +10,7 @@ namespace BLL.Services
 
         public static string PHONE_REGEX = @"^((09(\d){8})|(086(\d){7})|(088(\d){7})|(089(\d){7})|(01(\d){9}))$";
         public static string NAME_REGEX = @"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s\W|_]+$";
-
+        public static string PASSWORD_REGEX = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
 
         /// <summary>
         /// Is Later Than Present
@@ -78,6 +78,21 @@ namespace BLL.Services
             if (!String.IsNullOrEmpty(phoneNumber))
             {
                 return Regex.IsMatch(phoneNumber, PHONE_REGEX);
+            }
+            return false;
+        }
+
+
+        /// <summary>
+        /// Is Valid Password
+        /// </summary>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public bool IsValidPassword(string password)
+        {
+            if (!String.IsNullOrEmpty(password))
+            {
+                return Regex.IsMatch(password, PASSWORD_REGEX);
             }
             return false;
         }

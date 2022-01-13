@@ -19,17 +19,20 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
+        private readonly IValidateDataService _validateDataService;
         private const string PREFIX = "MC_";
 
         public MerchantService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IUtilService utilService)
+            IUtilService utilService,
+            IValidateDataService validateDataService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
+            _validateDataService = validateDataService;
         }
 
 
@@ -43,8 +46,38 @@ namespace BLL.Services
 
             //biz rule
 
-            //Store Merchant To Database
+
             Merchant merchant = _mapper.Map<Merchant>(merchantRequest);
+
+            //check merchant's name
+            if (!_validateDataService.IsValidName(merchant.MerchantName))
+            {
+                _logger.Error($"[Invalid Merchant's Name]: '{merchant.MerchantName}' ");
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantResponse>
+                    {
+                        ResultCode = (int)MerchantStatus.INVALID_NAME_MERCHANT,
+                        ResultMessage = MerchantStatus.INVALID_NAME_MERCHANT.ToString(),
+                        Data = default
+                    });
+            }
+            
+            //check merchant's phone
+            if (!_validateDataService.IsValidPhoneNumber(merchant.PhoneNumber))
+            {
+                _logger.Error($"[Invalid Merchant's Phone]: '{merchant.PhoneNumber}' ");
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantResponse>
+                    {
+                        ResultCode = (int)MerchantStatus.INVALID_PHONE_NUMBER_MERCHANT,
+                        ResultMessage = MerchantStatus.INVALID_PHONE_NUMBER_MERCHANT.ToString(),
+                        Data = default
+                    });
+            }
+
+            //Store Merchant To Database
             try
             {
                 merchant.MerchantId = _utilService.CreateId(PREFIX);
@@ -132,6 +165,34 @@ namespace BLL.Services
         {
 
             Merchant merchant;
+
+            //check merchant's name
+            if (!_validateDataService.IsValidName(merchantRequest.MerchantName))
+            {
+                _logger.Error($"[Invalid Merchant's Name]: '{merchantRequest.MerchantName}' ");
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantResponse>
+                    {
+                        ResultCode = (int)MerchantStatus.INVALID_NAME_MERCHANT,
+                        ResultMessage = MerchantStatus.INVALID_NAME_MERCHANT.ToString(),
+                        Data = default
+                    });
+            }
+
+            //check merchant's phone
+            if (!_validateDataService.IsValidPhoneNumber(merchantRequest.PhoneNumber))
+            {
+                _logger.Error($"[Invalid Merchant's Phone]: '{merchantRequest.PhoneNumber}' ");
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantResponse>
+                    {
+                        ResultCode = (int)MerchantStatus.INVALID_PHONE_NUMBER_MERCHANT,
+                        ResultMessage = MerchantStatus.INVALID_PHONE_NUMBER_MERCHANT.ToString(),
+                        Data = default
+                    });
+            }
 
             //Check id
             try

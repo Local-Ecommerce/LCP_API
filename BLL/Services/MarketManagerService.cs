@@ -19,17 +19,20 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
+        private readonly IValidateDataService _validateDataService;
         private const string PREFIX = "MM_";
 
         public MarketManagerService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IUtilService utilService)
+            IUtilService utilService,
+            IValidateDataService validateDataService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
+            _validateDataService = validateDataService;
         }
 
         /// <summary>
@@ -44,6 +47,34 @@ namespace BLL.Services
 
             //Store MarketManager To Dabatabase
             MarketManager marketManager = _mapper.Map<MarketManager>(marketManagerRequest);
+
+            //Check Valid Market Manager Name
+            if(!_validateDataService.IsValidName(marketManager.MarketManagerName))
+            {
+                _logger.Error($"[Invalid Market Manager's Name]: '{marketManager.MarketManagerName}' ");
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MarketManagerResponse>
+                    {
+                        ResultCode = (int)MarketManagerStatus.INVALID_NAME_MARKETMANAGER,
+                        ResultMessage = MarketManagerStatus.INVALID_NAME_MARKETMANAGER.ToString(),
+                        Data = default
+                    });
+            } 
+            
+            //Check Valid Market Manager Phone Number
+            if(!_validateDataService.IsValidPhoneNumber(marketManager.PhoneNumber))
+            {
+                _logger.Error($"[Invalid Market Manager's Phone Number]: '{marketManager.PhoneNumber}' ");
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MarketManagerResponse>
+                    {
+                        ResultCode = (int)MarketManagerStatus.INVALID_PHONE_NUMBER_MARKETMANAGER,
+                        ResultMessage = MarketManagerStatus.INVALID_PHONE_NUMBER_MARKETMANAGER.ToString(),
+                        Data = default
+                    });
+            }
 
             try
             {
@@ -251,6 +282,34 @@ namespace BLL.Services
                     ResultMessage = MarketManagerStatus.MARKETMANAGER_NOT_FOUND.ToString(),
                     Data = default
                 });
+            }
+
+            //Check Valid Market Manager Name
+            if (!_validateDataService.IsValidEmail(marketManager.MarketManagerName))
+            {
+                _logger.Error($"[Invalid Market Manager's Name]: '{marketManager.MarketManagerName}' ");
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MarketManagerResponse>
+                    {
+                        ResultCode = (int)MarketManagerStatus.INVALID_NAME_MARKETMANAGER,
+                        ResultMessage = MarketManagerStatus.INVALID_NAME_MARKETMANAGER.ToString(),
+                        Data = default
+                    });
+            }
+
+            //Check Valid Market Manager Phone Number
+            if (!_validateDataService.IsValidPhoneNumber(marketManager.PhoneNumber))
+            {
+                _logger.Error($"[Invalid Market Manager's Phone Number]: '{marketManager.PhoneNumber}' ");
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MarketManagerResponse>
+                    {
+                        ResultCode = (int)MarketManagerStatus.INVALID_PHONE_NUMBER_MARKETMANAGER,
+                        ResultMessage = MarketManagerStatus.INVALID_PHONE_NUMBER_MARKETMANAGER.ToString(),
+                        Data = default
+                    });
             }
 
             //Update MarketManager To DB
