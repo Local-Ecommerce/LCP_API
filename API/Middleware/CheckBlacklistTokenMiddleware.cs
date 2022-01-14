@@ -1,9 +1,7 @@
 ﻿using BLL.Dtos.JWT;
 using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DAL.Models;
@@ -9,6 +10,22 @@ namespace DAL.Repositories
     public class ProductInMenuRepository : Repository<ProductInMenu>, IProductInMenuRepository
     {
         public ProductInMenuRepository(LoichDBContext context) : base(context) { }
+
+
+        /// <summary>
+        /// Get Product In Menus Include Product By Menu Id
+        /// </summary>
+        /// <param name="menuId"></param>
+        /// <returns></returns>
+        public async Task<List<ProductInMenu>> GetProductInMenusIncludeProductByMenuId(string menuId)
+        {
+            List<ProductInMenu> productInMenus = await _context.ProductInMenus
+                                                   .Where(pim => pim.MenuId == menuId)
+                                                   .Include(pim => pim.Product)
+                                                   .ToListAsync();
+
+            return productInMenus;
+        }
 
 
         /// <summary>
