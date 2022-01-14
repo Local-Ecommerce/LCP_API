@@ -471,8 +471,7 @@ namespace BLL.Services
             List<ProductInMenu> productsInMenu;
             try
             {
-                productsInMenu = await _unitOfWork.ProductInMenus.FindListAsync(p =>
-                                                                    p.MenuId.Equals(menuId));
+                productsInMenu = await _unitOfWork.ProductInMenus.GetProductInMenusIncludeProductByMenuId(menuId);
             }
             catch (Exception e)
             {

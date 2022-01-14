@@ -159,7 +159,7 @@ namespace API.Controllers
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetSystemCategoriesByStatus(int status)
         {
-            _logger.Information($"GET api/SystemCategory/status/{status} START");
+            _logger.Information($"GET api/systemCategory/status/{status} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -172,7 +172,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/SystemCategory/status/{status} END duration: " +
+            _logger.Information($"GET api/systemCategory/status/{status} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -186,7 +186,7 @@ namespace API.Controllers
         [HttpGet("autocomplete")]
         public async Task<IActionResult> GetAllLevelOneAndTwoSystemCategory()
         {
-            _logger.Information($"GET api/SystemCategory/autocomplete START");
+            _logger.Information($"GET api/systemCategory/autocomplete START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -199,7 +199,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/SystemCategory/autocomplete END duration: " +
+            _logger.Information($"GET api/systemCategory/autocomplete END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
