@@ -60,9 +60,22 @@ namespace BLL.Services
                 {
                     int? parentLevel = (await _unitOfWork.SystemCategories.FindAsync(sc =>
                                             sc.SystemCategoryId.Equals(systemCategory.BelongTo))).CategoryLevel;
-                    level = parentLevel + 1;
-                }
 
+                    if (parentLevel == (int?)CategoryLevel.THREE)
+                    {
+                        _logger.Error("[SystemCategoryService.CreateSystemCategory()]: Max level has been reached.");
+
+                        throw new HttpStatusException(HttpStatusCode.OK,
+                            new BaseResponse<SystemCategoryResponse>
+                            {
+                                ResultCode = (int)SystemCategoryStatus.MAXED_OUT_LEVEL,
+                                ResultMessage = SystemCategoryStatus.MAXED_OUT_LEVEL.ToString(),
+                                Data = default
+                            });
+                    }
+                    else
+                        level = parentLevel + 1;
+                }
                 else
                     level = (int)CategoryLevel.ONE;
 
@@ -71,6 +84,10 @@ namespace BLL.Services
                 _unitOfWork.SystemCategories.Add(systemCategory);
 
                 await _unitOfWork.SaveChangesAsync();
+            }
+            catch (HttpStatusException)
+            {
+                throw;
             }
             catch (Exception e)
             {
@@ -118,8 +135,7 @@ namespace BLL.Services
             SystemCategory systemCategory;
             try
             {
-                systemCategory = await _unitOfWork.SystemCategories
-                                           .FindAsync(p => p.SystemCategoryId.Equals(id));
+                systemCategory = await _unitOfWork.SystemCategories.FindAsync(p => p.SystemCategoryId.Equals(id));
             }
             catch (Exception e)
             {
@@ -190,8 +206,7 @@ namespace BLL.Services
                 try
                 {
                     systemCategoryList = _mapper.Map<List<SystemCategoryResponse>>(
-                        await _unitOfWork.SystemCategories
-                                         .FindListAsync(sc => sc.SystemCategoryId != null));
+                        await _unitOfWork.SystemCategories.FindListAsync(sc => sc.SystemCategoryId != null));
 
                     //store new list to Redis
                     _redisService.DeleteFromList<SystemCategoryResponse>(CACHE_KEY,

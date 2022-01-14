@@ -11,8 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using System.Linq;
-using BLL.Dtos.Merchant;
 
 namespace BLL.Services
 {
@@ -433,19 +431,11 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<ProductInMenuResponse>> GetProductInMenuById(string productInMenuId)
         {
-            ProductInMenuResponse productInMenuResponse;
+            ProductInMenu productInMenu;
 
             try
             {
-                await using var context = new LoichDBContext();
-                productInMenuResponse = (from pmn in context.ProductInMenus
-                                 join p in context.Products
-                                 on pmn.ProductId equals p.ProductId
-                                 where productInMenuId == pmn.ProductInMenuId
-                                 select new ProductInMenuResponse
-                                 {
-
-                                 }).FirstOrDefault();
+                productInMenu = await _unitOfWork.ProductInMenus.GetProductInMenusIncludeProductByProductInMenuId(productInMenuId);
             }
             catch (Exception e)
             {
@@ -458,6 +448,9 @@ namespace BLL.Services
                     Data = default
                 });
             }
+
+            //create response
+            ProductInMenuResponse productInMenuResponse = _mapper.Map<ProductInMenuResponse>(productInMenu);
 
             return new BaseResponse<ProductInMenuResponse>
             {
@@ -551,36 +544,12 @@ namespace BLL.Services
         /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<List<MenuResponse>>> GetAllMenus()
         {
-            List<MenuResponse> menuList = null;
+            List<Menu> menus;
 
             //get menu from database
             try
             {
-                await using var context = new LoichDBContext();
-                menuList = (from mn in context.Menus
-                            join mc in context.Merchants
-                            on mn.MerchantId equals mc.MerchantId
-                            orderby mn.CreatedDate descending
-                            select new MenuResponse
-                            {
-                                MenuId = mn.MenuId,
-                                MerchantId = mn.MerchantId,
-                                MenuName = mn.MenuName,
-                                CreatedDate = mn.CreatedDate,
-                                Status = mn.Status,
-                                UpdatedDate = mn.UpdatedDate,
-                                Merchant = new MerchantResponse
-                                {
-                                    MerchantId = mc.MerchantId,
-                                    MerchantName = mc.MerchantName,
-                                    Status = mc.Status,
-                                    AccountId = mc.AccountId,
-                                    Address = mc.Address,
-                                    ApproveBy = mc.ApproveBy,
-                                    LevelId = mc.LevelId,
-                                    PhoneNumber = mc.PhoneNumber
-                                }
-                            }).ToList();
+                menus = await _unitOfWork.Menus.GetAllMenusIncludeMerchant();
             }
             catch (Exception e)
             {
@@ -595,11 +564,13 @@ namespace BLL.Services
                     });
             }
 
+            List<MenuResponse> menuResponses = _mapper.Map<List<MenuResponse>>(menus);
+
             return new BaseResponse<List<MenuResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = menuList
+                Data = menuResponses
             };
         }
     }

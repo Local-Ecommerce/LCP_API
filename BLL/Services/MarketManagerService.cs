@@ -49,7 +49,7 @@ namespace BLL.Services
             MarketManager marketManager = _mapper.Map<MarketManager>(marketManagerRequest);
 
             //Check Valid Market Manager Name
-            if(!_validateDataService.IsValidName(marketManager.MarketManagerName))
+            if (!_validateDataService.IsValidName(marketManager.MarketManagerName))
             {
                 _logger.Error($"[Invalid Market Manager's Name]: '{marketManager.MarketManagerName}' ");
 
@@ -60,10 +60,10 @@ namespace BLL.Services
                         ResultMessage = MarketManagerStatus.INVALID_NAME_MARKETMANAGER.ToString(),
                         Data = default
                     });
-            } 
-            
+            }
+
             //Check Valid Market Manager Phone Number
-            if(!_validateDataService.IsValidPhoneNumber(marketManager.PhoneNumber))
+            if (!_validateDataService.IsValidPhoneNumber(marketManager.PhoneNumber))
             {
                 _logger.Error($"[Invalid Market Manager's Phone Number]: '{marketManager.PhoneNumber}' ");
 
@@ -123,8 +123,7 @@ namespace BLL.Services
             MarketManager marketManager;
             try
             {
-                marketManager = await _unitOfWork.MarketManagers
-                                       .FindAsync(mar => mar.MarketManagerId.Equals(id));
+                marketManager = await _unitOfWork.MarketManagers.FindAsync(mar => mar.MarketManagerId.Equals(id));
             }
             catch (Exception e)
             {
@@ -229,8 +228,7 @@ namespace BLL.Services
 
             try
             {
-                MarketManager marketManager = await _unitOfWork.MarketManagers.
-                                                        FindAsync(mar => mar.MarketManagerId.Equals(id));
+                MarketManager marketManager = await _unitOfWork.MarketManagers.FindAsync(mar => mar.MarketManagerId.Equals(id));
 
                 marketManagerResponse = _mapper.Map<MarketManagerResponse>(marketManager);
             }
@@ -269,8 +267,7 @@ namespace BLL.Services
             MarketManager marketManager;
             try
             {
-                marketManager = await _unitOfWork.MarketManagers
-                                       .FindAsync(mar => mar.MarketManagerId.Equals(id));
+                marketManager = await _unitOfWork.MarketManagers.FindAsync(mar => mar.MarketManagerId.Equals(id));
             }
             catch (Exception e)
             {
@@ -359,8 +356,7 @@ namespace BLL.Services
             try
             {
                 marketManagerList = _mapper.Map<List<MarketManagerResponse>>(
-                    await _unitOfWork.MarketManagers
-                                     .FindListAsync(mar => mar.Status == status));
+                    await _unitOfWork.MarketManagers.FindListAsync(mar => mar.Status == status));
             }
             catch (Exception e)
             {

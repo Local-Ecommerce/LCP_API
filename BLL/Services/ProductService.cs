@@ -349,8 +349,7 @@ namespace BLL.Services
             Product product;
             try
             {
-                product = await _unitOfWork.Products
-                                           .FindAsync(p => p.ProductId.Equals(id));
+                product = await _unitOfWork.Products.FindAsync(p => p.ProductId.Equals(id));
             }
             catch (Exception e)
             {
@@ -430,8 +429,7 @@ namespace BLL.Services
             Product product;
             try
             {
-                product = await _unitOfWork.Products
-                                           .FindAsync(p => p.ProductId.Equals(id));
+                product = await _unitOfWork.Products.FindAsync(p => p.ProductId.Equals(id));
             }
             catch (Exception e)
             {
@@ -505,7 +503,7 @@ namespace BLL.Services
             try
             {
                 products = await _unitOfWork.Products
-                                           .FindListAsync(p => p.ProductId.Equals(id) || p.BelongTo.Equals(id));
+                                .FindListAsync(p => p.ProductId.Equals(id) || p.BelongTo.Equals(id));
             }
             catch (Exception e)
             {
@@ -588,8 +586,7 @@ namespace BLL.Services
             Product product;
             try
             {
-                product = await _unitOfWork.Products
-                                           .FindAsync(p => p.ProductId.Equals(id));
+                product = await _unitOfWork.Products.FindAsync(p => p.ProductId.Equals(id));
             }
             catch (Exception e)
             {
@@ -661,8 +658,7 @@ namespace BLL.Services
 
             try
             {
-                List<Product> products = await _unitOfWork.Products.
-                                                        FindListAsync(ap => ap.Status == status);
+                List<Product> products = await _unitOfWork.Products.FindListAsync(p => p.Status == status);
 
                 productResponses = _mapper.Map<List<ProductResponse>>(products);
             }
@@ -705,8 +701,7 @@ namespace BLL.Services
 
             try
             {
-                List<Product> products = await _unitOfWork.Products.
-                                                        FindListAsync(ap => ap.ProductType.Equals(type));
+                List<Product> products = await _unitOfWork.Products.FindListAsync(p => p.ProductType.Equals(type));
 
                 productResponses = _mapper.Map<List<ProductResponse>>(products);
             }

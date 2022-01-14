@@ -5,8 +5,6 @@ namespace DAL.Repositories
 {
     public class OrderRepository : Repository<Order>, IOrderRepository
     {
-        private readonly LoichDBContext _context;
-
         public OrderRepository(LoichDBContext context) : base(context) { }
     }
 }

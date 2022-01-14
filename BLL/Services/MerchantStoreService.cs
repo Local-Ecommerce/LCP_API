@@ -11,9 +11,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using BLL.Dtos.StoreMenuDetail;
-using System.Linq;
-using BLL.Dtos.Merchant;
-using BLL.Dtos.Apartment;
 
 namespace BLL.Services
 {
@@ -99,8 +96,7 @@ namespace BLL.Services
             MerchantStore merchantStore;
             try
             {
-                merchantStore = await _unitOfWork.MerchantStores.
-                                                      FindAsync(m => m.MerchantStoreId.Equals(id));
+                merchantStore = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id));
             }
             catch (Exception e)
             {
@@ -163,8 +159,7 @@ namespace BLL.Services
             //Get MerchantStore From Database
             try
             {
-                MerchantStore merchantStore = await _unitOfWork.MerchantStores
-                                                   .FindAsync(m => m.MerchantStoreId.Equals(id));
+                MerchantStore merchantStore = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id));
                 merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
             }
             catch (Exception e)
@@ -203,8 +198,7 @@ namespace BLL.Services
             //Check id
             try
             {
-                merchantStore = await _unitOfWork.MerchantStores.
-                                             FindAsync(m => m.MerchantStoreId.Equals(id));
+                merchantStore = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id));
             }
             catch (Exception e)
             {
@@ -269,8 +263,7 @@ namespace BLL.Services
 
             try
             {
-                MerchantStore merchantStore = await _unitOfWork.MerchantStores
-                                                   .FindAsync(m => m.StoreName.Equals(name));
+                MerchantStore merchantStore = await _unitOfWork.MerchantStores.FindAsync(m => m.StoreName.Equals(name));
                 merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
             }
             catch (Exception e)
@@ -308,9 +301,8 @@ namespace BLL.Services
 
             try
             {
-                List<MerchantStore> merchantStores = await _unitOfWork.MerchantStores.
-                                                        FindListAsync
-                                                        (store => store.MerchantId.Equals(merchantId));
+                List<MerchantStore> merchantStores = await _unitOfWork.MerchantStores
+                                                            .FindListAsync(store => store.MerchantId.Equals(merchantId));
 
                 merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
             }
@@ -349,9 +341,8 @@ namespace BLL.Services
 
             try
             {
-                List<MerchantStore> merchantStores = await _unitOfWork.MerchantStores.
-                                                        FindListAsync
-                                                        (store => store.ApartmentId.Equals(apartmentId));
+                List<MerchantStore> merchantStores = await _unitOfWork.MerchantStores
+                                                            .FindListAsync(store => store.ApartmentId.Equals(apartmentId));
 
                 merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
             }
@@ -604,8 +595,7 @@ namespace BLL.Services
             try
             {
                 merchantStoreList = _mapper.Map<List<MerchantStoreResponse>>(
-                    await _unitOfWork.MerchantStores
-                                     .FindListAsync(ms => ms.Status == status));
+                    await _unitOfWork.MerchantStores.FindListAsync(ms => ms.Status == status));
             }
             catch (Exception e)
             {
@@ -636,49 +626,11 @@ namespace BLL.Services
         /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<List<MerchantStoreResponse>>> GetAllMerchantStores()
         {
-            List<MerchantStoreResponse> merchantStoreList;
-
             //Get MerchantStore from database
-
+            List<MerchantStore> merchantStores;
             try
             {
-                await using var context = new LoichDBContext();
-
-                merchantStoreList = (from mcs in context.MerchantStores
-                                     join mc in context.Merchants
-                                     on mcs.MerchantId equals mc.MerchantId
-                                     join ap in context.Apartments
-                                     on mcs.ApartmentId equals ap.ApartmentId
-                                     orderby mcs.CreatedDate descending
-                                     select new MerchantStoreResponse
-                                     {
-                                         MerchantStoreId = mcs.MerchantStoreId,
-                                         ApartmentId = mcs.ApartmentId,
-                                         CreatedDate = mcs.CreatedDate,
-                                         MerchantId = mcs.MerchantId,
-                                         Status = mcs.Status,
-                                         StoreName = mcs.StoreName,
-                                         Merchant = new MerchantResponse
-                                         {
-                                             AccountId = mc.AccountId,
-                                             Address = mc.Address,
-                                             ApproveBy = mc.ApproveBy,
-                                             LevelId = mc.LevelId,
-                                             MerchantId = mc.MerchantId,
-                                             MerchantName = mc.MerchantName,
-                                             PhoneNumber = mc.PhoneNumber,
-                                             Status = mc.Status
-                                         },
-                                         Apartment = new ApartmentResponse
-                                         {
-                                             ApartmentId = ap.ApartmentId,
-                                             Address = ap.Address,
-                                             Status = ap.Status,
-                                             Lat = ap.Lat,
-                                             Long = ap.Long,
-                                         }
-                                     }).ToList();
-
+                merchantStores = await _unitOfWork.MerchantStores.GetAllMerchantStoresInCludeMerchantAndApartment();
             }
             catch (Exception e)
             {
@@ -693,11 +645,13 @@ namespace BLL.Services
                     });
             }
 
+            List<MerchantStoreResponse> merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
+
             return new BaseResponse<List<MerchantStoreResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreList
+                Data = merchantStoreResponses
             };
         }
     }

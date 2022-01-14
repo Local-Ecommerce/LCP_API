@@ -62,7 +62,7 @@ namespace BLL.Services
                         Data = default
                     });
             }
-            
+
             //check merchant's phone
             if (!_validateDataService.IsValidPhoneNumber(merchant.PhoneNumber))
             {
@@ -128,8 +128,7 @@ namespace BLL.Services
             //Get Merchant From Database
             try
             {
-                Merchant merchant = await _unitOfWork.Merchants
-                                                   .FindAsync(merchant => merchant.MerchantId.Equals(id));
+                Merchant merchant = await _unitOfWork.Merchants.FindAsync(merchant => merchant.MerchantId.Equals(id));
                 merchantResponse = _mapper.Map<MerchantResponse>(merchant);
             }
             catch (Exception e)
@@ -197,8 +196,7 @@ namespace BLL.Services
             //Check id
             try
             {
-                merchant = await _unitOfWork.Merchants.
-                                             FindAsync(merchant => merchant.MerchantId.Equals(id));
+                merchant = await _unitOfWork.Merchants.FindAsync(merchant => merchant.MerchantId.Equals(id));
             }
             catch (Exception e)
             {
@@ -262,8 +260,7 @@ namespace BLL.Services
             Merchant merchant;
             try
             {
-                merchant = await _unitOfWork.Merchants.
-                                                      FindAsync(merchant => merchant.MerchantId.Equals(id));
+                merchant = await _unitOfWork.Merchants.FindAsync(merchant => merchant.MerchantId.Equals(id));
             }
             catch (Exception e)
             {
@@ -326,8 +323,7 @@ namespace BLL.Services
             //Get Merchant From Database
             try
             {
-                Merchant merchant = await _unitOfWork.Merchants
-                                                   .FindAsync(merchant => merchant.MerchantName.Equals(name));
+                Merchant merchant = await _unitOfWork.Merchants.FindAsync(merchant => merchant.MerchantName.Equals(name));
                 merchantResponse = _mapper.Map<MerchantResponse>(merchant);
             }
             catch (Exception e)
@@ -366,8 +362,7 @@ namespace BLL.Services
             //Get Merchant From Database
             try
             {
-                Merchant merchant = await _unitOfWork.Merchants
-                                                   .FindAsync(merchant => merchant.Address.Equals(address));
+                Merchant merchant = await _unitOfWork.Merchants.FindAsync(merchant => merchant.Address.Equals(address));
                 merchantResponse = _mapper.Map<MerchantResponse>(merchant);
             }
             catch (Exception e)
@@ -406,8 +401,7 @@ namespace BLL.Services
             //Get Merchant From Database
             try
             {
-                Merchant merchant = await _unitOfWork.Merchants
-                                                   .FindAsync(merchant => merchant.PhoneNumber.Equals(number));
+                Merchant merchant = await _unitOfWork.Merchants.FindAsync(merchant => merchant.PhoneNumber.Equals(number));
                 merchantResponse = _mapper.Map<MerchantResponse>(merchant);
             }
             catch (Exception e)
@@ -445,8 +439,7 @@ namespace BLL.Services
 
             try
             {
-                Merchant merchants = await _unitOfWork.Merchants
-                                        .FindAsync(merchant => merchant.AccountId.Equals(accountId));
+                Merchant merchants = await _unitOfWork.Merchants.FindAsync(merchant => merchant.AccountId.Equals(accountId));
 
                 merchantResponse = _mapper.Map<MerchantResponse>(merchants);
             }
@@ -486,8 +479,7 @@ namespace BLL.Services
             try
             {
                 merchantList = _mapper.Map<List<MerchantResponse>>(
-                    await _unitOfWork.Merchants
-                                     .FindListAsync(merchant => merchant.Status == status));
+                    await _unitOfWork.Merchants.FindListAsync(merchant => merchant.Status == status));
             }
             catch (Exception e)
             {

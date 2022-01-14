@@ -1,7 +1,6 @@
 ﻿using DAL.Models;
 using System;
 using DAL.Repositories;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Repositories.Interfaces;
 
@@ -40,30 +39,30 @@ namespace DAL.UnitOfWork
         public UnitOfWork(LoichDBContext context)
         {
             _context = context;
-            Accounts = new AccountRepository(_context);
-            Apartments = new ApartmentRepository(_context);
-            Collections = new CollectionRepository(_context);
-            CollectionMappings = new CollectionMappingRepository(_context);
-            Customers = new CustomerRepository(_context);
-            DeliveryAddresses = new DeliveryAddressRepository(_context);
-            MarketManagers = new MarketManagerRepository(_context);
-            Menus = new MenuRepository(_context);
-            Merchants = new MerchantRepository(_context);
-            MerchantLevels = new MerchantLevelResponsitory(_context);
-            MerchantStores = new MerchantStoreRepository(_context);
-            News = new NewsRepository(_context);
-            Orders = new OrderRepository(_context);
-            OrderDetails = new OrderDetailRepository(_context);
-            Payments = new PaymentRepository(_context);
+            Accounts = new AccountRepository(context);
+            Apartments = new ApartmentRepository(context);
+            Collections = new CollectionRepository(context);
+            CollectionMappings = new CollectionMappingRepository(context);
+            Customers = new CustomerRepository(context);
+            DeliveryAddresses = new DeliveryAddressRepository(context);
+            MarketManagers = new MarketManagerRepository(context);
+            Menus = new MenuRepository(context);
+            Merchants = new MerchantRepository(context);
+            MerchantLevels = new MerchantLevelResponsitory(context);
+            MerchantStores = new MerchantStoreRepository(context);
+            News = new NewsRepository(context);
+            Orders = new OrderRepository(context);
+            OrderDetails = new OrderDetailRepository(context);
+            Payments = new PaymentRepository(context);
             PaymentMethods = new PaymentMethodRepository(context);
-            Pois = new PoiRepository(_context);
-            Products = new ProductRepository(_context);
-            ProductCategories = new ProductCategoryRepository(_context);
-            ProductCombinations = new ProductCombinationRepository(_context);
-            ProductInMenus = new ProductInMenuRepository(_context);
-            Residents = new ResidentRepository(_context);
-            Roles = new RoleRepository(_context);
-            StoreMenuDetails = new StoreMenuDetailRepository(_context);
+            Pois = new PoiRepository(context);
+            Products = new ProductRepository(context);
+            ProductCategories = new ProductCategoryRepository(context);
+            ProductCombinations = new ProductCombinationRepository(context);
+            ProductInMenus = new ProductInMenuRepository(context);
+            Residents = new ResidentRepository(context);
+            Roles = new RoleRepository(context);
+            StoreMenuDetails = new StoreMenuDetailRepository(context);
             SystemCategories = new SystemCategoryRepository(context);
         }
 

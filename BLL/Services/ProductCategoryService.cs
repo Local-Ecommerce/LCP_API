@@ -8,7 +8,6 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -95,8 +94,7 @@ namespace BLL.Services
             ProductCategory productCategory;
             try
             {
-                productCategory = await _unitOfWork.ProductCategories
-                                           .FindAsync(p => p.ProductCategoryId.Equals(id));
+                productCategory = await _unitOfWork.ProductCategories.FindAsync(p => p.ProductCategoryId.Equals(id));
             }
             catch (Exception e)
             {
@@ -160,8 +158,7 @@ namespace BLL.Services
                 try
                 {
                     productCategoryList = _mapper.Map<List<ProductCategoryResponse>>(
-                        await _unitOfWork.ProductCategories
-                                         .FindListAsync(pc => pc.MerchantId.Equals(merchantId)));
+                        await _unitOfWork.ProductCategories.FindListAsync(pc => pc.MerchantId.Equals(merchantId)));
                 }
                 catch (Exception e)
                 {
@@ -201,8 +198,7 @@ namespace BLL.Services
             ProductCategory productCategory;
             try
             {
-                productCategory = await _unitOfWork.ProductCategories
-                                           .FindAsync(p => p.ProductCategoryId.Equals(id));
+                productCategory = await _unitOfWork.ProductCategories.FindAsync(p => p.ProductCategoryId.Equals(id));
             }
             catch (Exception e)
             {
@@ -266,8 +262,7 @@ namespace BLL.Services
             //get productCategory from database
             try
             {
-                ProductCategory productCategory = await _unitOfWork.ProductCategories
-                                                   .FindAsync(p => p.ProductCategoryId.Equals(id));
+                ProductCategory productCategory = await _unitOfWork.ProductCategories.FindAsync(p => p.ProductCategoryId.Equals(id));
                 productCategoryResponse = _mapper.Map<ProductCategoryResponse>(productCategory);
 
             }
@@ -307,8 +302,7 @@ namespace BLL.Services
             try
             {
                 productCategoryList = _mapper.Map<List<ProductCategoryResponse>>(
-                    await _unitOfWork.ProductCategories
-                                     .FindListAsync(ms => ms.Status == status));
+                    await _unitOfWork.ProductCategories.FindListAsync(ms => ms.Status == status));
             }
             catch (Exception e)
             {
