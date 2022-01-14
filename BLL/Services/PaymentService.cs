@@ -89,7 +89,7 @@ namespace BLL.Services
             Payment payment;
             try
             {
-                payment = await _unitOfWork.Payments.FindAsync(local => local.PaymentId.Equals(id));
+                payment = await _unitOfWork.Payments.FindAsync(pm => pm.PaymentId.Equals(id));
             }
             catch (Exception e)
             {
@@ -189,7 +189,7 @@ namespace BLL.Services
 
             try
             {
-                Payment payment = await _unitOfWork.Payments.FindAsync(local => local.PaymentId.Equals(id));
+                Payment payment = await _unitOfWork.Payments.FindAsync(pm => pm.PaymentId.Equals(id));
 
                 paymentReponse = _mapper.Map<PaymentResponse>(payment);
             }
@@ -267,7 +267,7 @@ namespace BLL.Services
 
             try
             {
-                List<Payment> Payment = await _unitOfWork.Payments.FindListAsync(Payment => Payment.PaymentAmount.Equals(amount));
+                List<Payment> Payment = await _unitOfWork.Payments.FindListAsync(pm => pm.PaymentAmount.Equals(amount));
 
                 paymentResponses = _mapper.Map<List<PaymentResponse>>(Payment);
             }
@@ -306,7 +306,7 @@ namespace BLL.Services
 
             try
             {
-                List<Payment> Payment = await _unitOfWork.Payments.FindListAsync(Payment => Payment.PaymentMethodId.Equals(paymentMethodId));
+                List<Payment> Payment = await _unitOfWork.Payments.FindListAsync(pm => pm.PaymentMethodId.Equals(paymentMethodId));
 
                 paymentResponses = _mapper.Map<List<PaymentResponse>>(Payment);
             }
@@ -343,7 +343,7 @@ namespace BLL.Services
             Payment payment;
             try
             {
-                payment = await _unitOfWork.Payments.FindAsync(local => local.PaymentId.Equals(id));
+                payment = await _unitOfWork.Payments.FindAsync(pm => pm.PaymentId.Equals(id));
             }
             catch (Exception e)
             {

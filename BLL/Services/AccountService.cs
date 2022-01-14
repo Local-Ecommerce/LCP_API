@@ -9,7 +9,6 @@ using BCryptNet = BCrypt.Net.BCrypt;
 using DAL.UnitOfWork;
 using System;
 using System.Net;
-using System.Linq;
 using System.Threading.Tasks;
 using BLL.Dtos.JWT;
 
@@ -168,8 +167,7 @@ namespace BLL.Services
             Account account;
             try
             {
-                account = await _unitOfWork.Accounts
-                                           .FindAsync(a => a.AccountId.Equals(id));
+                account = await _unitOfWork.Accounts.FindAsync(a => a.AccountId.Equals(id));
             }
             catch (Exception e)
             {
@@ -239,8 +237,7 @@ namespace BLL.Services
             //get account from database
             try
             {
-                Account account = await _unitOfWork.Accounts
-                .FindAsync(acc => acc.AccountId.Equals(id));
+                Account account = await _unitOfWork.Accounts.FindAsync(acc => acc.AccountId.Equals(id));
 
                 accountResponse = _mapper.Map<AccountResponse>(account);
             }
@@ -279,8 +276,7 @@ namespace BLL.Services
             Account account;
             try
             {
-                account = await _unitOfWork.Accounts
-                .FindAsync(acc => acc.Username.Equals(accountLoginRequest.Username));
+                account = await _unitOfWork.Accounts.FindAsync(acc => acc.Username.Equals(accountLoginRequest.Username));
 
                 //check account from db and verify password
                 if (!BCryptNet.Verify(accountLoginRequest.Password, account.Password))
@@ -364,8 +360,7 @@ namespace BLL.Services
             Account account;
             try
             {
-                account = await _unitOfWork.Accounts
-                                           .FindAsync(a => a.AccountId.Equals(id));
+                account = await _unitOfWork.Accounts.FindAsync(a => a.AccountId.Equals(id));
             }
             catch (Exception e)
             {

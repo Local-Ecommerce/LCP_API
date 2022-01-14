@@ -94,8 +94,7 @@ namespace BLL.Services
             Apartment apartment;
             try
             {
-                apartment = await _unitOfWork.Apartments
-                                       .FindAsync(ap => ap.ApartmentId.Equals(id));
+                apartment = await _unitOfWork.Apartments.FindAsync(ap => ap.ApartmentId.Equals(id));
             }
             catch (Exception e)
             {
@@ -161,8 +160,7 @@ namespace BLL.Services
 
             try
             {
-                Apartment apartment = await _unitOfWork.Apartments.
-                                                        FindAsync(ap => ap.ApartmentId.Equals(id));
+                Apartment apartment = await _unitOfWork.Apartments.FindAsync(ap => ap.ApartmentId.Equals(id));
 
                 apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
             }
@@ -202,8 +200,7 @@ namespace BLL.Services
             Apartment apartment;
             try
             {
-                apartment = await _unitOfWork.Apartments
-                                       .FindAsync(ap => ap.ApartmentId.Equals(id));
+                apartment = await _unitOfWork.Apartments.FindAsync(ap => ap.ApartmentId.Equals(id));
             }
             catch (Exception e)
             {
@@ -260,8 +257,7 @@ namespace BLL.Services
 
             try
             {
-                Apartment apartment = await _unitOfWork.Apartments.
-                                                        FindAsync(ap => ap.Address.Equals(address));
+                Apartment apartment = await _unitOfWork.Apartments.FindAsync(ap => ap.Address.Equals(address));
 
                 apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
             }
@@ -303,8 +299,7 @@ namespace BLL.Services
 
             try
             {
-                List<Apartment> apartments = await _unitOfWork.Apartments.
-                                                        FindListAsync(ap => ap.Status == status);
+                List<Apartment> apartments = await _unitOfWork.Apartments.FindListAsync(ap => ap.Status == status);
 
                 apartmentResponses = _mapper.Map<List<ApartmentResponse>>(apartments);
             }

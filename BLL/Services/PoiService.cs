@@ -10,9 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using System.Linq;
-using BLL.Dtos.MarketManager;
-using BLL.Dtos.Apartment;
 
 namespace BLL.Services
 {
@@ -79,6 +76,7 @@ namespace BLL.Services
             };
         }
 
+
         /// <summary>
         /// Get Poi by Id
         /// </summary>
@@ -94,7 +92,7 @@ namespace BLL.Services
             {
                 try
                 {
-                    Poi poi = await _unitOfWork.Pois.FindAsync(local => local.PoiId.Equals(id));
+                    Poi poi = await _unitOfWork.Pois.FindAsync(poi => poi.PoiId.Equals(id));
 
                     poiResponse = _mapper.Map<PoiResponse>(poi);
                 }
@@ -118,6 +116,7 @@ namespace BLL.Services
                 Data = poiResponse
             };
         }
+
 
         /// <summary>
         /// Get POI By Release Date
@@ -158,6 +157,7 @@ namespace BLL.Services
                 Data = poiResponses
             };
         }
+
 
         /// <summary>
         /// Get Poi by Apartment Id
@@ -200,6 +200,7 @@ namespace BLL.Services
             };
         }
 
+
         /// <summary>
         /// Get POI by Market Manager Id
         /// </summary>
@@ -216,8 +217,7 @@ namespace BLL.Services
             {
                 try
                 {
-                    List<Poi> poi = await _unitOfWork.Pois
-                        .FindListAsync(poi => poi.MarketManagerId.Equals(marketManagerId));
+                    List<Poi> poi = await _unitOfWork.Pois.FindListAsync(poi => poi.MarketManagerId.Equals(marketManagerId));
 
                     poiResponses = _mapper.Map<List<PoiResponse>>(poi);
                 }
@@ -255,7 +255,7 @@ namespace BLL.Services
             //Find Poi
             try
             {
-                poi = await _unitOfWork.Pois.FindAsync(local => local.PoiId.Equals(id));
+                poi = await _unitOfWork.Pois.FindAsync(poi => poi.PoiId.Equals(id));
             }
             catch (Exception e)
             {
@@ -316,7 +316,7 @@ namespace BLL.Services
             Poi poi;
             try
             {
-                poi = await _unitOfWork.Pois.FindAsync(local => local.PoiId.Equals(id));
+                poi = await _unitOfWork.Pois.FindAsync(poi => poi.PoiId.Equals(id));
             }
             catch (Exception e)
             {
@@ -379,8 +379,7 @@ namespace BLL.Services
             try
             {
                 poiList = _mapper.Map<List<PoiResponse>>(
-                    await _unitOfWork.Pois
-                                     .FindListAsync(Poi => Poi.Status == status));
+                    await _unitOfWork.Pois.FindListAsync(Poi => Poi.Status == status));
             }
             catch (Exception e)
             {
@@ -409,43 +408,11 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<List<PoiResponse>>> GetAllPoi()
         {
-            List<PoiResponse> poiList = null;
+            List<Poi> pois;
 
             try
             {
-                await using var context = new LoichDBContext();
-                poiList = (from poi in context.Pois
-                           join mm in context.MarketManagers
-                           on poi.MarketManagerId equals mm.MarketManagerId
-                           join ap in context.Apartments
-                           on poi.ApartmentId equals ap.ApartmentId
-                           orderby poi.ReleaseDate descending
-                           select new PoiResponse
-                           {
-                               PoiId = poi.PoiId,
-                               ApartmentId = poi.ApartmentId,
-                               MarketManagerId = poi.MarketManagerId,
-                               ReleaseDate = poi.ReleaseDate,
-                               Status = poi.Status,
-                               Text = poi.Text,
-                               Title = poi.Title,
-                               MarketManager = new MarketManagerResponse
-                               {
-                                   MarketManagerId = mm.MarketManagerId,
-                                   Status = mm.Status,
-                                   MarketManagerName = mm.MarketManagerName,
-                                   AccountId = mm.AccountId,
-                                   PhoneNumber = mm.PhoneNumber
-                               },
-                               Apartment = new ApartmentResponse
-                               {
-                                   ApartmentId = ap.ApartmentId,
-                                   Address = ap.Address,
-                                   Lat = ap.Lat,
-                                   Long = ap.Long,
-                                   Status = ap.Status
-                               }
-                           }).ToList();
+                pois = await _unitOfWork.Pois.GetAllPoisIncludeMarketManagerAndApartment();
             }
             catch (Exception e)
             {
@@ -460,11 +427,13 @@ namespace BLL.Services
                     });
             }
 
+            List<PoiResponse> poiResponses = _mapper.Map<List<PoiResponse>>(pois);
+
             return new BaseResponse<List<PoiResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = poiList
+                Data = poiResponses
             };
         }
     }

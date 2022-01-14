@@ -61,9 +61,9 @@ namespace BLL.Services
                     Data = default
                 });
             }
-            
+
             //Check Valid Phone Number
-            if(!_validateDataService.IsValidPhoneNumber(customer.PhoneNumber))
+            if (!_validateDataService.IsValidPhoneNumber(customer.PhoneNumber))
             {
                 _logger.Error($"[Invalid Customer's Name : '{customer.PhoneNumber}']");
                 throw new HttpStatusException(HttpStatusCode.OK,
@@ -138,8 +138,7 @@ namespace BLL.Services
             Customer customer;
             try
             {
-                customer = await _unitOfWork.Customers
-                                       .FindAsync(cus => cus.CustomerId.Equals(id));
+                customer = await _unitOfWork.Customers.FindAsync(cus => cus.CustomerId.Equals(id));
             }
             catch (Exception e)
             {
@@ -204,8 +203,7 @@ namespace BLL.Services
 
             try
             {
-                Customer customer = await _unitOfWork.Customers.
-                                                        FindAsync(cus => cus.CustomerId.Equals(id));
+                Customer customer = await _unitOfWork.Customers.FindAsync(cus => cus.CustomerId.Equals(id));
 
                 customerResponse = _mapper.Map<CustomerResponse>(customer);
             }
@@ -245,8 +243,7 @@ namespace BLL.Services
             Customer customer;
             try
             {
-                customer = await _unitOfWork.Customers
-                                       .FindAsync(cus => cus.CustomerId.Equals(id));
+                customer = await _unitOfWork.Customers.FindAsync(cus => cus.CustomerId.Equals(id));
             }
             catch (Exception e)
             {
@@ -338,8 +335,7 @@ namespace BLL.Services
 
             try
             {
-                Customer customer = await _unitOfWork.Customers.
-                                                        FindAsync(cus => cus.CustomerName.Equals(name));
+                Customer customer = await _unitOfWork.Customers.FindAsync(cus => cus.CustomerName.Equals(name));
 
                 customerResponse = _mapper.Map<CustomerResponse>(customer);
             }
@@ -382,8 +378,7 @@ namespace BLL.Services
 
             try
             {
-                Customer customer = await _unitOfWork.Customers.
-                                                        FindAsync(cus => cus.PhoneNumber.Equals(phone));
+                Customer customer = await _unitOfWork.Customers.FindAsync(cus => cus.PhoneNumber.Equals(phone));
 
                 customerResponse = _mapper.Map<CustomerResponse>(customer);
             }
@@ -426,8 +421,7 @@ namespace BLL.Services
 
             try
             {
-                Customer customer = await _unitOfWork.Customers.
-                                                        FindAsync(cus => cus.DateOfBirth.Value.Date == dob.Date);
+                Customer customer = await _unitOfWork.Customers.FindAsync(cus => cus.DateOfBirth.Value.Date == dob.Date);
 
                 customerResponse = _mapper.Map<CustomerResponse>(customer);
             }
@@ -470,8 +464,7 @@ namespace BLL.Services
 
             try
             {
-                List<Customer> customers = await _unitOfWork.Customers.
-                                                        FindListAsync(cus => cus.Gender.Equals(gender));
+                List<Customer> customers = await _unitOfWork.Customers.FindListAsync(cus => cus.Gender.Equals(gender));
 
                 customerResponses = _mapper.Map<List<CustomerResponse>>(customers);
             }
@@ -514,8 +507,7 @@ namespace BLL.Services
 
             try
             {
-                List<Customer> customers = await _unitOfWork.Customers.
-                                                        FindListAsync(cus => cus.CreatedDate.Value.Date == date.Date);
+                List<Customer> customers = await _unitOfWork.Customers.FindListAsync(cus => cus.CreatedDate.Value.Date == date.Date);
 
                 customerResponses = _mapper.Map<List<CustomerResponse>>(customers);
             }
@@ -558,8 +550,7 @@ namespace BLL.Services
 
             try
             {
-                List<Customer> customers = await _unitOfWork.Customers.
-                                                        FindListAsync(cus => cus.UpdatedDate.Value.Date == date.Date);
+                List<Customer> customers = await _unitOfWork.Customers.FindListAsync(cus => cus.UpdatedDate.Value.Date == date.Date);
 
                 customerResponses = _mapper.Map<List<CustomerResponse>>(customers);
             }
@@ -602,8 +593,7 @@ namespace BLL.Services
 
             try
             {
-                List<Customer> customers = await _unitOfWork.Customers.
-                                                        FindListAsync(cus => cus.AccountId.Equals(accountId));
+                List<Customer> customers = await _unitOfWork.Customers.FindListAsync(cus => cus.AccountId.Equals(accountId));
 
                 customerResponses = _mapper.Map<List<CustomerResponse>>(customers);
             }

@@ -10,9 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using System.Linq;
-using BLL.Dtos.MarketManager;
-using BLL.Dtos.Apartment;
 
 namespace BLL.Services
 {
@@ -201,8 +198,7 @@ namespace BLL.Services
 
             try
             {
-                List<News> news = await _unitOfWork.News
-                    .FindListAsync(news => news.MarketManagerId.Equals(marketmanagerId));
+                List<News> news = await _unitOfWork.News.FindListAsync(news => news.MarketManagerId.Equals(marketmanagerId));
 
                 newsResponses = _mapper.Map<List<NewsResponse>>(news);
             }
@@ -355,8 +351,7 @@ namespace BLL.Services
             try
             {
                 newsList = _mapper.Map<List<NewsResponse>>(
-                    await _unitOfWork.News
-                                     .FindListAsync(mar => mar.Status == status));
+                    await _unitOfWork.News.FindListAsync(mar => mar.Status == status));
             }
             catch (Exception e)
             {
@@ -385,43 +380,10 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<List<NewsResponse>>> GetAllNews()
         {
-            List<NewsResponse> newsList = null;
-
+            List<News> news;
             try
             {
-                await using var context = new LoichDBContext();
-                newsList = (from news in context.News
-                            join mm in context.MarketManagers
-                            on news.MarketManagerId equals mm.MarketManagerId
-                            join ap in context.Apartments
-                            on news.ApartmentId equals ap.ApartmentId
-                            orderby news.ReleaseDate descending
-                            select new NewsResponse
-                            {
-                                ApartmentId = news.ApartmentId,
-                                MarketManagerId = news.MarketManagerId,
-                                NewsId = news.NewsId,
-                                ReleaseDate = news.ReleaseDate,
-                                Status = news.Status,
-                                Text = news.Text,
-                                Title = news.Title,
-                                MarketManager = new MarketManagerResponse
-                                {
-                                    MarketManagerId = mm.MarketManagerId,
-                                    Status = mm.Status,
-                                    MarketManagerName = mm.MarketManagerName,
-                                    AccountId = mm.AccountId,
-                                    PhoneNumber = mm.PhoneNumber
-                                },
-                                Apartment = new ApartmentResponse
-                                {
-                                    ApartmentId = ap.ApartmentId,
-                                    Address = ap.Address,
-                                    Lat = ap.Lat,
-                                    Long = ap.Long,
-                                    Status = ap.Status
-                                }
-                            }).ToList();
+                news = await _unitOfWork.News.GetAllNewsIncludeMarketManagerAndApartment();
             }
             catch (Exception e)
             {
@@ -435,6 +397,8 @@ namespace BLL.Services
                         Data = default
                     });
             }
+
+            List<NewsResponse> newsList = _mapper.Map<List<NewsResponse>>(news);
 
             return new BaseResponse<List<NewsResponse>>
             {

@@ -15,10 +15,13 @@ namespace BLL.Dtos.MerchantStore
         public int? Status { get; set; }
         public string MerchantId { get; set; }
         public string ApartmentId { get; set; }
+
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public MerchantResponse Merchant { get; set; }
+
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public ApartmentResponse Apartment { get; set; }
+
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public List<StoreMenuDetailResponse> StoreMenuDetails { get; set; }
     }

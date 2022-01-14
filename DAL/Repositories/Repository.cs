@@ -11,7 +11,7 @@ namespace DAL.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly LoichDBContext _context;
+        internal LoichDBContext _context;
         private readonly DbSet<T> _dbSet;
 
         public Repository(LoichDBContext context)

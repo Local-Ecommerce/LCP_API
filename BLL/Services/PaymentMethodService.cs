@@ -8,9 +8,7 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BLL.Services
@@ -96,8 +94,7 @@ namespace BLL.Services
             PaymentMethod paymentMethod;
             try
             {
-                paymentMethod = await _unitOfWork.PaymentMethods
-                                       .FindAsync(local => local.PaymentMethodId.Equals(id));
+                paymentMethod = await _unitOfWork.PaymentMethods.FindAsync(pmm => pmm.PaymentMethodId.Equals(id));
             }
             catch (Exception e)
             {
@@ -163,8 +160,7 @@ namespace BLL.Services
 
             try
             {
-                PaymentMethod paymentMethod = await _unitOfWork.PaymentMethods.
-                                                        FindAsync(local => local.PaymentMethodId.Equals(id));
+                PaymentMethod paymentMethod = await _unitOfWork.PaymentMethods.FindAsync(pmm => pmm.PaymentMethodId.Equals(id));
 
                 paymentMethodResponse = _mapper.Map<PaymentMethodResponse>(paymentMethod);
             }
@@ -208,8 +204,7 @@ namespace BLL.Services
             try
             {
                 paymentMethodResponses = _mapper.Map<List<PaymentMethodResponse>>(
-                    await _unitOfWork.PaymentMethods
-                                     .FindListAsync(pm => pm.PaymentMethodId != null));
+                    await _unitOfWork.PaymentMethods.FindListAsync(pmm => pmm.PaymentMethodId != null));
             }
             catch (Exception e)
             {
@@ -248,8 +243,7 @@ namespace BLL.Services
             PaymentMethod paymentMethod;
             try
             {
-                paymentMethod = await _unitOfWork.PaymentMethods
-                                       .FindAsync(local => local.PaymentMethodId.Equals(id));
+                paymentMethod = await _unitOfWork.PaymentMethods.FindAsync(pmm => pmm.PaymentMethodId.Equals(id));
             }
             catch (Exception e)
             {

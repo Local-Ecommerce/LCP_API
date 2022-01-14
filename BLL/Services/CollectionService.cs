@@ -12,8 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using System.Linq;
-using BLL.Dtos.Merchant;
 
 namespace BLL.Services
 {
@@ -166,39 +164,12 @@ namespace BLL.Services
         {
             //biz rule
 
-
-            CollectionResponse collectionResponse;
-
+            Collection collection;
             //Get Collection From Database
 
             try
             {
-                await using (var context = new LoichDBContext())
-                {
-                    collectionResponse = (from clt in context.Collections
-                                          join mc in context.Merchants
-                                          on clt.MerchantId equals mc.MerchantId
-                                          where clt.CollectionId == id
-                                          select new CollectionResponse
-                                          {
-                                              CollectionId = clt.CollectionId,
-                                              CollectionName = clt.CollectionName,
-                                              CreatedDate = clt.CreatedDate,
-                                              UpdatedDate = clt.UpdatedDate,
-                                              Status = clt.Status,
-                                              Merchant = new MerchantResponse
-                                              {
-                                                  AccountId = mc.AccountId,
-                                                  Address = mc.Address,
-                                                  ApproveBy = mc.ApproveBy,
-                                                  LevelId = mc.LevelId,
-                                                  MerchantId = mc.MerchantId,
-                                                  MerchantName = mc.MerchantName,
-                                                  PhoneNumber = mc.PhoneNumber,
-                                                  Status = mc.Status
-                                              }
-                                          }).First();
-                }
+                collection = await _unitOfWork.Collections.GetCollectionIncludeMerchantByCollectionId(id);
             }
             catch (Exception e)
             {
@@ -212,6 +183,8 @@ namespace BLL.Services
                         Data = default
                     });
             }
+
+            CollectionResponse collectionResponse = _mapper.Map<CollectionResponse>(collection);
 
             return new BaseResponse<CollectionResponse>
             {
@@ -230,36 +203,12 @@ namespace BLL.Services
         /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<List<CollectionResponse>>> GetCollectionsByMerchantId(string merchantId)
         {
-            List<CollectionResponse> collectionResponses;
+            List<Collection> collections;
 
-            //Get Collection From Database
-
+            //Get Collections From Database
             try
             {
-                await using var context = new LoichDBContext();
-                collectionResponses = (from clt in context.Collections
-                                       join mc in context.Merchants
-                                       on clt.MerchantId equals mc.MerchantId
-                                       where clt.MerchantId == merchantId
-                                       select new CollectionResponse
-                                       {
-                                           CollectionId = clt.CollectionId,
-                                           CollectionName = clt.CollectionName,
-                                           CreatedDate = clt.CreatedDate,
-                                           UpdatedDate = clt.UpdatedDate,
-                                           Status = clt.Status,
-                                           Merchant = new MerchantResponse
-                                           {
-                                               AccountId = mc.AccountId,
-                                               Address = mc.Address,
-                                               ApproveBy = mc.ApproveBy,
-                                               LevelId = mc.LevelId,
-                                               MerchantId = mc.MerchantId,
-                                               MerchantName = mc.MerchantName,
-                                               PhoneNumber = mc.PhoneNumber,
-                                               Status = mc.Status
-                                           }
-                                       }).ToList();
+                collections = await _unitOfWork.Collections.GetCollectionsIncludeMerchantByMerchantId(merchantId);
             }
             catch (Exception e)
             {
@@ -273,6 +222,9 @@ namespace BLL.Services
                         Data = default
                     });
             }
+
+            List<CollectionResponse> collectionResponses = _mapper.Map<List<CollectionResponse>>(collections);
+
 
             return new BaseResponse<List<CollectionResponse>>
             {
@@ -546,7 +498,7 @@ namespace BLL.Services
             List<CollectionMappingResponse> collectionMappingResponses;
 
 
-            //Get CollectionMapping from database
+            //Get CollectionMappings from database
 
             List<CollectionMapping> collectionMappings;
             try
@@ -596,38 +548,13 @@ namespace BLL.Services
         /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<List<CollectionResponse>>> GetAllCollections()
         {
-            List<CollectionResponse> collectionResponses;
+            List<Collection> collections;
 
-            //Get Collection From Database
 
+            //Get Collections From Database
             try
             {
-                await using (var context = new LoichDBContext())
-                {
-                    collectionResponses = (from clt in context.Collections
-                                           join mc in context.Merchants
-                                           on clt.MerchantId equals mc.MerchantId
-                                           orderby clt.CreatedDate descending
-                                           select new CollectionResponse
-                                           {
-                                               CollectionId = clt.CollectionId,
-                                               CollectionName = clt.CollectionName,
-                                               CreatedDate = clt.CreatedDate,
-                                               UpdatedDate = clt.UpdatedDate,
-                                               Status = clt.Status,
-                                               Merchant = new MerchantResponse
-                                               {
-                                                   AccountId = mc.AccountId,
-                                                   Address = mc.Address,
-                                                   ApproveBy = mc.ApproveBy,
-                                                   LevelId = mc.LevelId,
-                                                   MerchantId = mc.MerchantId,
-                                                   MerchantName = mc.MerchantName,
-                                                   PhoneNumber = mc.PhoneNumber,
-                                                   Status = mc.Status
-                                               }
-                                           }).ToList();
-                }
+                collections = await _unitOfWork.Collections.GetAllCollectionsIncludeMerchant();
             }
             catch (Exception e)
             {
@@ -641,6 +568,9 @@ namespace BLL.Services
                         Data = default
                     });
             }
+
+            List<CollectionResponse> collectionResponses = _mapper.Map<List<CollectionResponse>>(collections);
+
 
             return new BaseResponse<List<CollectionResponse>>
             {
