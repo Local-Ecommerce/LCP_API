@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 
 namespace BLL.Dtos.SystemCategory
@@ -13,6 +14,6 @@ namespace BLL.Dtos.SystemCategory
         public string BelongTo { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public List<SystemCategoryResponse> Child { get; set; }
+        public Collection<SystemCategoryResponse> InverseBelongToNavigation { get; set; }
     }
 }
