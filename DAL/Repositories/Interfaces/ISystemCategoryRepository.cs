@@ -11,5 +11,12 @@ namespace DAL.Repositories.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<List<SystemCategory>> GetAllSystemCategoryIncludeInverseBelongTo();
+
+
+        /// <summary>
+        /// Get All Level One And Two System Category
+        /// </summary>
+        /// <returns></returns>
+        Task<List<SystemCategory>> GetAllLevelOneAndTwoSystemCategory();
     }
 }

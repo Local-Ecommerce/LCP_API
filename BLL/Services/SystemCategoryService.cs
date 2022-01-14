@@ -359,5 +359,42 @@ namespace BLL.Services
                 Data = systemCategoryList
             };
         }
+
+
+        /// <summary>
+        /// Get System Categories For Auto Complete
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<SystemCategoryForAutoCompleteResponse>>> GetSystemCategoriesForAutoComplete()
+        {
+            List<SystemCategoryForAutoCompleteResponse> systemCategoryList = null;
+
+            //get SystemCategory from database
+            try
+            {
+                systemCategoryList = _mapper.Map<List<SystemCategoryForAutoCompleteResponse>>(
+                    await _unitOfWork.SystemCategories.GetAllLevelOneAndTwoSystemCategory());
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[SystemCategoryService.GetSystemCategoriesForAutoComplete()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<SystemCategoryResponse>
+                    {
+                        ResultCode = (int)SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND,
+                        ResultMessage = SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<SystemCategoryForAutoCompleteResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = systemCategoryList
+            };
+        }
     }
 }

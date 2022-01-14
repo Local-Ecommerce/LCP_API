@@ -177,5 +177,32 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Get All Level One And Two System Category
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("autocomplete")]
+        public async Task<IActionResult> GetAllLevelOneAndTwoSystemCategory()
+        {
+            _logger.Information($"GET api/SystemCategory/autocomplete START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get SystemCategory
+            BaseResponse<List<SystemCategoryForAutoCompleteResponse>> response =
+                await _systemCategoryService.GetSystemCategoriesForAutoComplete();
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/SystemCategory/autocomplete END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace DAL.Repositories
 {
@@ -16,7 +17,9 @@ namespace DAL.Repositories
         /// <returns></returns>
         public async Task<List<Menu>> GetAllMenusIncludeMerchant()
         {
-            List<Menu> menus = await _context.Menus.Include(menu => menu.Merchant).ToListAsync();
+            List<Menu> menus = await _context.Menus.Include(menu => menu.Merchant)
+                                                   .OrderByDescending(menu => menu.CreatedDate)
+                                                   .ToListAsync();
 
             return menus;
         }

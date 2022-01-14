@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace DAL.Repositories
 {
@@ -20,6 +21,7 @@ namespace DAL.Repositories
             List<MerchantStore> merchantStores = await _context.MerchantStores
                                                         .Include(ms => ms.Merchant)
                                                         .Include(ms => ms.Apartment)
+                                                        .OrderByDescending(ms => ms.CreatedDate)
                                                         .ToListAsync();
 
             return merchantStores;

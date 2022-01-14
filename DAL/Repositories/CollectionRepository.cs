@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace DAL.Repositories
 {
@@ -20,6 +21,7 @@ namespace DAL.Repositories
         {
             Collection collection = await _context.Collections
                                             .Where(clt => clt.CollectionId.Equals(collectionId))
+                                            .OrderByDescending(clt => clt.CreatedDate)
                                             .Include(clt => clt.Merchant).FirstOrDefaultAsync();
 
             return collection;

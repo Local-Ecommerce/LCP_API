@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace DAL.Repositories
 {
@@ -20,6 +21,7 @@ namespace DAL.Repositories
             List<News> news = await _context.News
                                 .Include(news => news.MarketManager)
                                 .Include(news => news.Apartment)
+                                .OrderByDescending(news => news.ReleaseDate)
                                 .ToListAsync();
 
             return news;
