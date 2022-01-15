@@ -1,4 +1,4 @@
-﻿using BLL.Dtos;
+﻿/*using BLL.Dtos;
 using BLL.Dtos.MarketManager;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -55,3 +55,4 @@ namespace BLL.Services.Interfaces
         Task<BaseResponse<List<MarketManagerResponse>>> GetMarketManagerByStatus(int status);
     }
 }
+*/

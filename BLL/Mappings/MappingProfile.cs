@@ -3,10 +3,6 @@ using BLL.Dtos.Account;
 using BLL.Dtos.Apartment;
 using BLL.Dtos.Collection;
 using BLL.Dtos.CollectionMapping;
-using BLL.Dtos.Customer;
-using BLL.Dtos.DeliveryAddress;
-using BLL.Dtos.MarketManager;
-using BLL.Dtos.Merchant;
 using BLL.Dtos.MerchantStore;
 using BLL.Dtos.Product;
 using BLL.Dtos.ProductCategory;
@@ -19,6 +15,7 @@ using BLL.Dtos.ProductInMenu;
 using BLL.Dtos.StoreMenuDetail;
 using BLL.Dtos.Payment;
 using BLL.Dtos.PaymentMethod;
+using BLL.Dtos.Resident;
 
 namespace BLL.Mappings
 {
@@ -89,6 +86,10 @@ namespace BLL.Mappings
             //Payment Method Mapping
             CreateMap<PaymentMethodRequest, PaymentMethod>();
             CreateMap<PaymentMethod, PaymentMethodResponse>();
+
+            //Resident Mapping
+            CreateMap<ResidentRequest, Resident>();
+            CreateMap<Resident, ResidentResponse>();
         }
     }
 }

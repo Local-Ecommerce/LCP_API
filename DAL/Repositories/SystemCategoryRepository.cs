@@ -15,7 +15,7 @@ namespace DAL.Repositories
         private const int THREE = 3;
 
         /// <summary>
-        /// Get All Level On eAnd Two System Category
+        /// Get All Level One And Two System Category
         /// </summary>
         /// <returns></returns>
         public async Task<List<SystemCategory>> GetAllLevelOneAndTwoSystemCategory()

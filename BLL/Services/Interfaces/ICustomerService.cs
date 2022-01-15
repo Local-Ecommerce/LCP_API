@@ -1,4 +1,4 @@
-﻿using BLL.Dtos;
+﻿/*using BLL.Dtos;
 using BLL.Dtos.Customer;
 using System;
 using System.Collections.Generic;
@@ -91,3 +91,4 @@ namespace BLL.Services.Interfaces
         Task<BaseResponse<List<CustomerResponse>>> GetCustomersByUpdateDate(DateTime date);
     }
 }
+*/
