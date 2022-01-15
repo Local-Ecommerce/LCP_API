@@ -9,7 +9,8 @@ namespace DAL.Models
     {
         public string BaseProductId { get; set; }
         public string ProductId { get; set; }
-        public int? DefaultMinMax { get; set; }
+        public int? DefaultMin { get; set; }
+        public string DefaultMax { get; set; }
         public int? Status { get; set; }
 
         public virtual Product BaseProduct { get; set; }

@@ -143,47 +143,6 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Product Category By Merchant Id
-        /// </summary>
-        /// <param name="merchantId"></param>
-        /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ProductCategoryResponse>>> GetProCategoryByMerchantId(string merchantId)
-        {
-            List<ProductCategoryResponse> productCategoryList = null;
-
-            if (_utilService.IsNullOrEmpty(productCategoryList))
-            {
-                //get productCategory from database
-                try
-                {
-                    productCategoryList = _mapper.Map<List<ProductCategoryResponse>>(
-                        await _unitOfWork.ProductCategories.FindListAsync(pc => pc.MerchantId.Equals(merchantId)));
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[ProductCategoryService.GetAllProductCategory()]: " + e.Message);
-
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<ProductCategoryResponse>
-                        {
-                            ResultCode = (int)ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND,
-                            ResultMessage = ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
-            }
-
-            return new BaseResponse<List<ProductCategoryResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productCategoryList
-            };
-        }
-
-
-        /// <summary>
         /// Update Product Category
         /// </summary>
         /// <param name="id"></param>

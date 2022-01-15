@@ -14,12 +14,7 @@ namespace DAL.UnitOfWork
         public IApartmentRepository Apartments { get; private set; }
         public ICollectionRepository Collections { get; private set; }
         public ICollectionMappingRepository CollectionMappings { get; private set; }
-        public ICustomerRepository Customers { get; private set; }
-        public IDeliveryAddressRepository DeliveryAddresses { get; private set; }
-        public IMarketManagerRepository MarketManagers { get; private set; }
         public IMenuRepository Menus { get; private set; }
-        public IMerchantRepository Merchants { get; private set; }
-        public IMerchantLevelRepository MerchantLevels { get; private set; }
         public IMerchantStoreRepository MerchantStores { get; private set; }
         public INewsRepository News { get; private set; }
         public IOrderDetailRepository OrderDetails { get; private set; }
@@ -43,12 +38,7 @@ namespace DAL.UnitOfWork
             Apartments = new ApartmentRepository(context);
             Collections = new CollectionRepository(context);
             CollectionMappings = new CollectionMappingRepository(context);
-            Customers = new CustomerRepository(context);
-            DeliveryAddresses = new DeliveryAddressRepository(context);
-            MarketManagers = new MarketManagerRepository(context);
             Menus = new MenuRepository(context);
-            Merchants = new MerchantRepository(context);
-            MerchantLevels = new MerchantLevelResponsitory(context);
             MerchantStores = new MerchantStoreRepository(context);
             News = new NewsRepository(context);
             Orders = new OrderRepository(context);

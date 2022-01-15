@@ -25,14 +25,6 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Menus By Merchant Id
-        /// </summary>
-        /// <param name="merchantId"></param>
-        /// <returns></returns>
-        Task<BaseResponse<List<MenuResponse>>> GetMenusByMerchantId(string merchantId);
-
-
-        /// <summary>
         /// Update Menu By Id
         /// </summary>
         /// <param name="id"></param>

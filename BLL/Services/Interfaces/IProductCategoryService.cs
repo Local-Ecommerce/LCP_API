@@ -32,13 +32,6 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Product Category By Merchant Id
-        /// </summary>
-        /// <returns></returns>
-        Task<BaseResponse<List<ProductCategoryResponse>>> GetProCategoryByMerchantId(string merchantId);
-
-
-        /// <summary>
         /// Get Product Category By Id
         /// </summary>
         /// <param name="id"></param>

@@ -16,10 +16,9 @@ namespace DAL.Repositories
         /// Get All Merchant Stores InClude Merchant And Apartment
         /// </summary>
         /// <returns></returns>
-        public async Task<List<MerchantStore>> GetAllMerchantStoresInCludeMerchantAndApartment()
+        public async Task<List<MerchantStore>> GetAllMerchantStoresInCludeApartment()
         {
             List<MerchantStore> merchantStores = await _context.MerchantStores
-                                                        .Include(ms => ms.Merchant)
                                                         .Include(ms => ms.Apartment)
                                                         .OrderByDescending(ms => ms.CreatedDate)
                                                         .ToListAsync();

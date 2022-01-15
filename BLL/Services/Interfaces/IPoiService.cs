@@ -38,12 +38,6 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<BaseResponse<List<PoiResponse>>> GetPoiByApartmentId(string apartmentId);
 
-        /// <summary>
-        /// Get POI by marketManagerId
-        /// </summary>
-        /// <param name="marketManagerId"></param>
-        /// <returns></returns>
-        Task<BaseResponse<List<PoiResponse>>> GetPoiByMarketManagerId(string marketManagerId);
 
         /// <summary>
         /// Update POI by Id

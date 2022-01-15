@@ -16,10 +16,9 @@ namespace DAL.Repositories
         /// Get All News Include Market Manager And Apartment
         /// </summary>
         /// <returns></returns>
-        public async Task<List<News>> GetAllNewsIncludeMarketManagerAndApartment()
+        public async Task<List<News>> GetAllNewsIncludeApartment()
         {
             List<News> news = await _context.News
-                                .Include(news => news.MarketManager)
                                 .Include(news => news.Apartment)
                                 .OrderByDescending(news => news.ReleaseDate)
                                 .ToListAsync();

@@ -176,30 +176,6 @@ namespace API.Controllers
             return Ok(json);
         }
 
-        /// <summary>
-        /// Get poi by market manager Id
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("marketmanager/{marketManagerId}")]
-        public async Task<IActionResult> GetPoiByMarketManagerId(string marketManagerId)
-        {
-            _logger.Information($"GET api/poi/marketmanager/{marketManagerId} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Get Poi by MarketManager
-            BaseResponse<List<PoiResponse>> response = await _poiService.GetPoiByMarketManagerId(marketManagerId);
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information($"GET api/poi/marketmanager/{marketManagerId} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
 
         /// <summary>
         /// Get Poi By Release Date

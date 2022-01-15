@@ -127,31 +127,6 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Menus By Merchant Id
-        /// </summary>
-        [HttpGet("merchant/{merchantId}")]
-        public async Task<IActionResult> GetMenusByMerchantId(string merchantId)
-        {
-            _logger.Information($"GET api/menu/merchant/{merchantId} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Get Menu by Merchant Id
-            BaseResponse<List<MenuResponse>> response = await _menuService.GetMenusByMerchantId(merchantId);
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information($"GET api/menu/merchant/{merchantId} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
         /// Add Products To Menu
         /// </summary>
         [HttpPost("{menuId}/add")]

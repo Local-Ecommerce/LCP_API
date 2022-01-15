@@ -17,29 +17,14 @@ namespace DAL.Repositories
         /// </summary>
         /// <param name="collectionId"></param>
         /// <returns></returns>
-        public async Task<Collection> GetCollectionIncludeMerchantByCollectionId(string collectionId)
+        public async Task<Collection> GetCollectionByCollectionId(string collectionId)
         {
             Collection collection = await _context.Collections
                                             .Where(clt => clt.CollectionId.Equals(collectionId))
                                             .OrderByDescending(clt => clt.CreatedDate)
-                                            .Include(clt => clt.Merchant).FirstOrDefaultAsync();
+                                            .FirstOrDefaultAsync();
 
             return collection;
-        }
-
-
-        /// <summary>
-        /// Get Collections Include Merchant By Merchant Id
-        /// </summary>
-        /// <param name="merchantId"></param>
-        /// <returns></returns>
-        public async Task<List<Collection>> GetCollectionsIncludeMerchantByMerchantId(string merchantId)
-        {
-            List<Collection> collections = await _context.Collections
-                                            .Where(clt => clt.MerchantId.Equals(merchantId))
-                                            .Include(clt => clt.Merchant).ToListAsync();
-
-            return collections;
         }
 
 
@@ -47,10 +32,9 @@ namespace DAL.Repositories
         /// Get All Collections Include Merchant
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Collection>> GetAllCollectionsIncludeMerchant()
+        public async Task<List<Collection>> GetAllCollections()
         {
-            List<Collection> collections = await _context.Collections
-                                            .Include(clt => clt.Merchant).ToListAsync();
+            List<Collection> collections = await _context.Collections.ToListAsync();
 
             return collections;
         }

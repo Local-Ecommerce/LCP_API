@@ -186,43 +186,6 @@ namespace BLL.Services
         }
 
         /// <summary>
-        /// GetNewsByMarketManagerId
-        /// </summary>
-        /// <param name="marketmanagerId"></param>
-        /// <returns></returns>
-        public async Task<BaseResponse<List<NewsResponse>>> GetNewsByMarketManagerId(string marketmanagerId)
-        {
-            List<NewsResponse> newsResponses;
-
-            //Get News from DB
-
-            try
-            {
-                List<News> news = await _unitOfWork.News.FindListAsync(news => news.MarketManagerId.Equals(marketmanagerId));
-
-                newsResponses = _mapper.Map<List<NewsResponse>>(news);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[NewsService.GetNewsByMarketManagerId()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<News>
-                {
-                    ResultCode = (int)NewsStatus.NEWS_NOT_FOUND,
-                    ResultMessage = NewsStatus.NEWS_NOT_FOUND.ToString(),
-                    Data = default
-                });
-            }
-
-            return new BaseResponse<List<NewsResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = newsResponses
-            };
-        }
-
-        /// <summary>
         ///  Update News By Id
         /// </summary>
         /// <param name="id"></param>
@@ -383,7 +346,7 @@ namespace BLL.Services
             List<News> news;
             try
             {
-                news = await _unitOfWork.News.GetAllNewsIncludeMarketManagerAndApartment();
+                news = await _unitOfWork.News.GetAllNewsIncludeApartment();
             }
             catch (Exception e)
             {

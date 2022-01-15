@@ -16,10 +16,9 @@ namespace DAL.Repositories
         /// Get All Pois Include Market Manager And Apartment
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Poi>> GetAllPoisIncludeMarketManagerAndApartment()
+        public async Task<List<Poi>> GetAllPoisIncludeApartment()
         {
             List<Poi> pois = await _context.Pois
-                                .Include(poi => poi.MarketManager)
                                 .Include(poi => poi.Apartment)
                                 .OrderByDescending(poi => poi.ReleaseDate)
                                 .ToListAsync();

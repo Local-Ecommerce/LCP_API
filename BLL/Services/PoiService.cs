@@ -202,47 +202,6 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get POI by Market Manager Id
-        /// </summary>
-        /// <param name="marketManagerId"></param>
-        /// <returns></returns>
-        public async Task<BaseResponse<List<PoiResponse>>> GetPoiByMarketManagerId(string marketManagerId)
-        {
-            List<PoiResponse> poiResponses = null;
-
-            //Get Poi from Redis
-
-            //Get apartment id from DB
-            if (_utilService.IsNullOrEmpty(poiResponses))
-            {
-                try
-                {
-                    List<Poi> poi = await _unitOfWork.Pois.FindListAsync(poi => poi.MarketManagerId.Equals(marketManagerId));
-
-                    poiResponses = _mapper.Map<List<PoiResponse>>(poi);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[PoiService.GetPoiByMarketManagerId()]: " + e.Message);
-
-                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
-                    {
-                        ResultCode = (int)PoiStatus.POI_NOT_FOUND,
-                        ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
-                        Data = default
-                    });
-                }
-            }
-
-            return new BaseResponse<List<PoiResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = poiResponses
-            };
-        }
-
-        /// <summary>
         /// Update Poi by Id
         /// </summary>
         /// <param name="id"></param>
@@ -412,7 +371,7 @@ namespace BLL.Services
 
             try
             {
-                pois = await _unitOfWork.Pois.GetAllPoisIncludeMarketManagerAndApartment();
+                pois = await _unitOfWork.Pois.GetAllPoisIncludeApartment();
             }
             catch (Exception e)
             {

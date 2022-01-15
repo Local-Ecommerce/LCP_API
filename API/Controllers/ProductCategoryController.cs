@@ -74,29 +74,6 @@ namespace API.Controllers
             return Ok(json);
         }
 
-        /// <summary>
-        /// Get Product Category By Merchant Id
-        /// </summary>
-        [HttpGet("merchant/{id}")]
-        public async Task<IActionResult> GetProductCategoryByMerchantId(string id)
-        {
-            _logger.Information($"GET api/productCategory/merchant/{id} START");
-
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-
-            //get product Categories
-            BaseResponse<List<ProductCategoryResponse>> response = await _productCategoryService.GetProCategoryByMerchantId(id);
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information($"GET api/productCategory/merchant/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
 
         /// <summary>
         /// Update Product Category

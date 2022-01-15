@@ -289,46 +289,6 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Merchant Store By Merchant Id
-        /// </summary>
-        /// <param name="merchantId"></param>
-        /// <returns></returns>
-        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByMerchantId(string merchantId)
-        {
-            List<MerchantStoreResponse> merchantStoreResponses;
-
-            //Get MerchantStore From Database
-
-            try
-            {
-                List<MerchantStore> merchantStores = await _unitOfWork.MerchantStores
-                                                            .FindListAsync(store => store.MerchantId.Equals(merchantId));
-
-                merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.GetMerchantStoreByMerchantId()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
-                    {
-                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
-                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
-            }
-
-            return new BaseResponse<List<MerchantStoreResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreResponses
-            };
-        }
-
-
-        /// <summary>
         /// Get Merchant Store By Apartment Id
         /// </summary>
         /// <param name="apartmentId"></param>
@@ -630,7 +590,7 @@ namespace BLL.Services
             List<MerchantStore> merchantStores;
             try
             {
-                merchantStores = await _unitOfWork.MerchantStores.GetAllMerchantStoresInCludeMerchantAndApartment();
+                merchantStores = await _unitOfWork.MerchantStores.GetAllMerchantStoresInCludeApartment();
             }
             catch (Exception e)
             {

@@ -32,10 +32,6 @@ namespace BLL.Mappings
             CreateMap<Product, ProductResponse>().ReverseMap();
             CreateMap<ProductResponse, BaseProductResponse>().ReverseMap();
 
-            //Merchant Mapping
-            CreateMap<MerchantRequest, Merchant>();
-            CreateMap<Merchant, MerchantResponse>().ReverseMap();
-
             //Apartment Mapping
             CreateMap<ApartmentRequest, Apartment>();
             CreateMap<Apartment, ApartmentResponse>();
@@ -58,24 +54,12 @@ namespace BLL.Mappings
             CreateMap<ProductCategoryRequest, ProductCategory>();
             CreateMap<ProductCategory, ProductCategoryResponse>().ReverseMap();
 
-            //Customer Mapping
-            CreateMap<CustomerRequest, Customer>();
-            CreateMap<Customer, CustomerResponse>().ReverseMap();
-
             //Collection Mapping
             CreateMap<CollectionRequest, Collection>();
             CreateMap<Collection, CollectionResponse>().ReverseMap();
 
             //CollectionMapping Mapping
             CreateMap<CollectionMapping, CollectionMappingResponse>();
-
-            //DeliveryAddress Mapping
-            CreateMap<DeliveryAddressRequest, DeliveryAddress>();
-            CreateMap<DeliveryAddress, DeliveryAddressResponse>().ReverseMap();
-
-            //MarketManager Mapping
-            CreateMap<MarketManagerRequest, MarketManager>();
-            CreateMap<MarketManager, MarketManagerResponse>();
 
             //News Mapping
             CreateMap<NewsRequest, News>();
