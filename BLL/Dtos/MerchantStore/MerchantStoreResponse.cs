@@ -1,5 +1,5 @@
 ﻿using BLL.Dtos.Apartment;
-using BLL.Dtos.Merchant;
+using BLL.Dtos.Resident;
 using BLL.Dtos.StoreMenuDetail;
 using System;
 using System.Collections.Generic;
@@ -13,14 +13,14 @@ namespace BLL.Dtos.MerchantStore
         public string StoreName { get; set; }
         public DateTime? CreatedDate { get; set; }
         public int? Status { get; set; }
-        public string MerchantId { get; set; }
+        public string ResidentId { get; set; }
         public string ApartmentId { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public MerchantResponse Merchant { get; set; }
+        public ApartmentResponse Apartment { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public ApartmentResponse Apartment { get; set; }
+        public ResidentResponse Resident { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public List<StoreMenuDetailResponse> StoreMenuDetails { get; set; }

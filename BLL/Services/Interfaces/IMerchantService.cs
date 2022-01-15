@@ -1,4 +1,4 @@
-﻿using BLL.Dtos;
+﻿/*using BLL.Dtos;
 using BLL.Dtos.Merchant;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -79,3 +79,4 @@ namespace BLL.Services.Interfaces
         Task<BaseResponse<List<MerchantResponse>>> GetMerchantsByStatus(int status);
     }
 }
+*/

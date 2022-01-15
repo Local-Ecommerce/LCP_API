@@ -1,4 +1,4 @@
-﻿using BLL.Dtos;
+﻿/*using BLL.Dtos;
 using BLL.Dtos.DeliveryAddress;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -48,3 +48,4 @@ namespace BLL.Services.Interfaces
         Task<BaseResponse<List<DeliveryAddressResponse>>> GetDeliveryAddressByCustomerId(string customerId);
     }
 }
+*/
