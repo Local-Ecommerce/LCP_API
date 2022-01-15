@@ -10,6 +10,6 @@ namespace DAL.Repositories.Interfaces
         /// Get All News Include Market Manager And Apartment
         /// </summary>
         /// <returns></returns>
-        Task<List<News>> GetAllNewsIncludeMarketManagerAndApartment();
+        Task<List<News>> GetAllNewsIncludeApartment();
     }
 }

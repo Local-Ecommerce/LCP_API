@@ -10,6 +10,6 @@ namespace DAL.Repositories.Interfaces
         /// Get All Pois Include Market Manager And Apartment
         /// </summary>
         /// <returns></returns>
-        Task<List<Poi>> GetAllPoisIncludeMarketManagerAndApartment();
+        Task<List<Poi>> GetAllPoisIncludeApartment();
     }
 }

@@ -9,9 +9,7 @@ namespace DAL.Models
     {
         public Account()
         {
-            Customers = new HashSet<Customer>();
-            MarketManagers = new HashSet<MarketManager>();
-            Merchants = new HashSet<Merchant>();
+            Residents = new HashSet<Resident>();
         }
 
         public string AccountId { get; set; }
@@ -27,8 +25,6 @@ namespace DAL.Models
         public int? Status { get; set; }
 
         public virtual Role Role { get; set; }
-        public virtual ICollection<Customer> Customers { get; set; }
-        public virtual ICollection<MarketManager> MarketManagers { get; set; }
-        public virtual ICollection<Merchant> Merchants { get; set; }
+        public virtual ICollection<Resident> Residents { get; set; }
     }
 }

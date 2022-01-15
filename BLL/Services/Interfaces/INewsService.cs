@@ -15,12 +15,14 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<BaseResponse<NewsResponse>> CreateNews(NewsRequest newsRequest);
 
+
         /// <summary>
         /// //Get News by Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task<BaseResponse<NewsResponse>> GetNewsById(string id);
+
 
         /// <summary>
         /// Get news by date
@@ -29,6 +31,7 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<BaseResponse<List<NewsResponse>>> GetNewsByReleaseDate(DateTime date);
 
+
         /// <summary>
         /// get news by apartmentid
         /// </summary>
@@ -36,12 +39,6 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<BaseResponse<List<NewsResponse>>> GetNewsByAparmentId(string apartmentId);
 
-        /// <summary>
-        /// get news by marketmanagerid
-        /// </summary>
-        /// <param name="MarketManagerId"></param>
-        /// <returns></returns>
-        Task<BaseResponse<List<NewsResponse>>> GetNewsByMarketManagerId(string MarketManagerId);
 
         /// <summary>
         /// update news
@@ -50,6 +47,7 @@ namespace BLL.Services.Interfaces
         /// <param name="newsRequest"></param>
         /// <returns></returns>
         Task<BaseResponse<NewsResponse>> UpdateNewsById(string id, NewsRequest newsRequest);
+
 
         /// <summary>
         /// delete news
@@ -65,6 +63,7 @@ namespace BLL.Services.Interfaces
         /// <param name="status"></param>
         /// <returns></returns>
         Task<BaseResponse<List<NewsResponse>>> GetNewsByStatus(int status);
+
 
         /// <summary>
         /// Get All News

@@ -108,32 +108,6 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Collections By Merchant Id
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("merchant/{merchantId}")]
-        public async Task<IActionResult> GetCollectionsByMerchantId(string merchantId)
-        {
-            _logger.Information($"GET api/collection/merchant/{merchantId} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get Collection
-            BaseResponse<List<CollectionResponse>> response = await _collectionService.GetCollectionsByMerchantId(merchantId);
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information($"GET api/collection/merchant/{merchantId} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
         /// Update Collection
         /// </summary>
         [HttpPut("{id}")]

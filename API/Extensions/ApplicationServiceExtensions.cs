@@ -26,17 +26,13 @@ namespace API.Extensions
             services.AddScoped<IValidateDataService, ValidateDataService>();
             services.AddScoped<IUtilService, UtilService>();
             services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IMerchantService, MerchantService>();
             services.AddScoped<IApartmentService, ApartmentService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ISystemCategoryService, SystemCategoryService>();
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<IApartmentService, ApartmentService>();
             services.AddScoped<IMerchantStoreService, MerchantStoreService>();
-            services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<ICollectionService, CollectionService>();
-            services.AddScoped<IDeliveryAddressService, DeliveryAddressService>();
-            services.AddScoped<IMarketManagerService, MarketManagerService>();
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IPoiService, PoiService>();
             services.AddScoped<IMenuService, MenuService>();

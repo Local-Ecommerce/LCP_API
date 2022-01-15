@@ -284,7 +284,7 @@ namespace BLL.Services
                     throw new Exception();
                 }
 
-                //find client role id
+/*                //find client role id
                 switch (account.RoleId)
                 {
                     case RoleId.ADMIN:
@@ -312,7 +312,7 @@ namespace BLL.Services
                         .FindAsync(mm => mm.AccountId.Equals(account.AccountId));
                         clientRoleId = marketManager.MarketManagerId;
                         break;
-                }
+                }*/
 
                 account.Token = _jwtAuthenticationManager.Authenticate(clientRoleId, account.RoleId, expiredDate);
                 account.TokenExpiredDate = expiredDate;

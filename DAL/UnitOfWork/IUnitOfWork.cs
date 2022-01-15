@@ -10,12 +10,7 @@ namespace DAL.UnitOfWork
         IApartmentRepository Apartments { get; }
         ICollectionRepository Collections { get; }
         ICollectionMappingRepository CollectionMappings { get; }
-        ICustomerRepository Customers { get; }
-        IDeliveryAddressRepository DeliveryAddresses { get; }
-        IMarketManagerRepository MarketManagers { get; }
         IMenuRepository Menus { get; }
-        IMerchantLevelRepository MerchantLevels { get; }
-        IMerchantRepository Merchants { get; }
         IMerchantStoreRepository MerchantStores { get; }
         INewsRepository News { get; }
         IOrderRepository Orders { get; }

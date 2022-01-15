@@ -159,33 +159,6 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Merchant Store By Merchant Id
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("merchant/{merchantId}")]
-        public async Task<IActionResult> GetMerchantStoreByStoreMerchantId(string merchantId)
-        {
-            _logger.Information($"GET api/store/merchant/{merchantId} START");
-
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-
-            //get MerchantStore
-            BaseResponse<List<MerchantStoreResponse>> response =
-                await _merchantStoreService.GetMerchantStoreByMerchantId(merchantId);
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information($"GET api/store/merchant/{merchantId} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
         /// Get Merchant Store By Apartment Id
         /// </summary>
         [AllowAnonymous]

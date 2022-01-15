@@ -17,11 +17,11 @@ namespace DAL.Models
         public string StoreName { get; set; }
         public DateTime? CreatedDate { get; set; }
         public int? Status { get; set; }
-        public string MerchantId { get; set; }
+        public string ResidentId { get; set; }
         public string ApartmentId { get; set; }
 
         public virtual Apartment Apartment { get; set; }
-        public virtual Merchant Merchant { get; set; }
+        public virtual Resident Resident { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<StoreMenuDetail> StoreMenuDetails { get; set; }
     }

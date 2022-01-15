@@ -175,30 +175,6 @@ namespace API.Controllers
             return Ok(json);
         }
 
-        /// <summary>
-        /// Get news by market manager Id
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("marketmanager/{marketManagerId}")]
-        public async Task<IActionResult> GetNewsByMarketManagerId(string marketManagerId)
-        {
-            _logger.Information($"GET api/news/marketmanager/{marketManagerId} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Get News by MarketManager
-            BaseResponse<List<NewsResponse>> response = await _newsService.GetNewsByMarketManagerId(marketManagerId);
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information($"GET api/news/marketmanager/{marketManagerId} END duration: " + 
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
 
         /// <summary>
         /// Get News By Release Date

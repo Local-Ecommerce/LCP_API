@@ -15,10 +15,9 @@ namespace DAL.Repositories
         /// Get All Menus Include Merchant
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Menu>> GetAllMenusIncludeMerchant()
+        public async Task<List<Menu>> GetAllMenus()
         {
-            List<Menu> menus = await _context.Menus.Include(menu => menu.Merchant)
-                                                   .OrderByDescending(menu => menu.CreatedDate)
+            List<Menu> menus = await _context.Menus.OrderByDescending(menu => menu.CreatedDate)
                                                    .ToListAsync();
 
             return menus;

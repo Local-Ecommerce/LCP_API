@@ -52,14 +52,6 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Get Merchant By Account Id
         /// </summary>
-        /// <param name="merchantId"></param>
-        /// <returns></returns>
-        Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByMerchantId(string merchantId);
-
-
-        /// <summary>
-        /// Get Merchant By Account Id
-        /// </summary>
         /// <param name="apartmentId"></param>
         /// <returns></returns>
         Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByApartmentId(string apartmentId);

@@ -169,7 +169,7 @@ namespace BLL.Services
 
             try
             {
-                collection = await _unitOfWork.Collections.GetCollectionIncludeMerchantByCollectionId(id);
+                collection = await _unitOfWork.Collections.GetCollectionByCollectionId(id);
             }
             catch (Exception e)
             {
@@ -191,46 +191,6 @@ namespace BLL.Services
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = collectionResponse
-            };
-        }
-
-
-        /// <summary>
-        /// Get Collections By Merchant Id
-        /// </summary>
-        /// <param name="merchantId"></param>
-        /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<CollectionResponse>>> GetCollectionsByMerchantId(string merchantId)
-        {
-            List<Collection> collections;
-
-            //Get Collections From Database
-            try
-            {
-                collections = await _unitOfWork.Collections.GetCollectionsIncludeMerchantByMerchantId(merchantId);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[CollectionService.GetCollectionByMerchantId()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<CollectionResponse>
-                    {
-                        ResultCode = (int)CollectionStatus.COLLECTION_NOT_FOUND,
-                        ResultMessage = CollectionStatus.COLLECTION_NOT_FOUND.ToString(),
-                        Data = default
-                    });
-            }
-
-            List<CollectionResponse> collectionResponses = _mapper.Map<List<CollectionResponse>>(collections);
-
-
-            return new BaseResponse<List<CollectionResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = collectionResponses
             };
         }
 
@@ -554,7 +514,7 @@ namespace BLL.Services
             //Get Collections From Database
             try
             {
-                collections = await _unitOfWork.Collections.GetAllCollectionsIncludeMerchant();
+                collections = await _unitOfWork.Collections.GetAllCollections();
             }
             catch (Exception e)
             {

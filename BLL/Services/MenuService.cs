@@ -118,46 +118,6 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Menu By Release Date
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        public async Task<BaseResponse<List<MenuResponse>>> GetMenusByMerchantId(string merchantId)
-        {
-            List<MenuResponse> menuResponses = null;
-
-            //Get ApartmentId from DB
-            if (_utilService.IsNullOrEmpty(menuResponses))
-            {
-                try
-                {
-                    List<Menu> Menu = await _unitOfWork.Menus.FindListAsync(menu => menu.MerchantId.Equals(merchantId));
-
-                    menuResponses = _mapper.Map<List<MenuResponse>>(Menu);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[MenuService.GetMenuByMerchantId()]: " + e.Message);
-
-                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Menu>
-                    {
-                        ResultCode = (int)MenuStatus.MENU_NOT_FOUND,
-                        ResultMessage = MenuStatus.MENU_NOT_FOUND.ToString(),
-                        Data = default
-                    });
-                }
-            }
-
-            return new BaseResponse<List<MenuResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = menuResponses
-            };
-        }
-
-
-        /// <summary>
         ///  Update Menu By Id
         /// </summary>
         /// <param name="id"></param>
@@ -548,7 +508,7 @@ namespace BLL.Services
             //get menu from database
             try
             {
-                menus = await _unitOfWork.Menus.GetAllMenusIncludeMerchant();
+                menus = await _unitOfWork.Menus.GetAllMenus();
             }
             catch (Exception e)
             {

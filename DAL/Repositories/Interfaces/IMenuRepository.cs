@@ -10,6 +10,6 @@ namespace DAL.Repositories.Interfaces
         /// Get All Menus Include Merchant
         /// </summary>
         /// <returns></returns>
-        Task<List<Menu>> GetAllMenusIncludeMerchant();
+        Task<List<Menu>> GetAllMenus();
     }
 }

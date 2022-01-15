@@ -10,6 +10,6 @@ namespace DAL.Repositories.Interfaces
         /// Get All Merchant Stores InClude Merchant And Apartment
         /// </summary>
         /// <returns></returns>
-        Task<List<MerchantStore>> GetAllMerchantStoresInCludeMerchantAndApartment();
+        Task<List<MerchantStore>> GetAllMerchantStoresInCludeApartment();
     }
 }
