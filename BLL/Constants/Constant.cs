@@ -184,4 +184,22 @@
         PAYMENT_METHOD_NOT_FOUND = 18003,
         DELETED_PAYMENT_METHOD = 18004
     }
+
+    public enum OrderStatus
+    {
+        CART = 20001,
+        ORDER_NOT_FOUND = 20003,
+        DELETED_ORDER = 20004,
+        PAID = 20005,
+        IN_PAYMENT = 20006
+    }
+
+    public enum OrderDetailStatus
+    {
+        CART = 21001,
+        ORDER_DETAIL_NOT_FOUND = 21003,
+        DELETED_ORDER_DETAIL = 21004,
+        PAID = 21005,
+        IN_PAYMENT = 21006
+    }
 }
