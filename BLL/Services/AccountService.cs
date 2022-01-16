@@ -11,6 +11,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using BLL.Dtos.JWT;
+using System.Linq;
 
 namespace BLL.Services
 {
@@ -54,7 +55,6 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<AccountResponse>> Register(AccountRegisterRequest accountRegisterRequest)
         {
-
             //check valid password
             if (!_validateDataService.IsValidPassword(accountRegisterRequest.Password))
             {
@@ -116,7 +116,7 @@ namespace BLL.Services
                 account.AvatarImage = avatarImageUrl;
                 account.CreatedDate = DateTime.Now;
                 account.UpdatedDate = DateTime.Now;
-                account.RoleId = RoleId.CUSTOMER;
+                account.RoleId = RoleId.APARTMENT;
                 account.Token = null;
                 account.TokenExpiredDate = null;
                 account.Status = (int)AccountStatus.ACTIVE_ACCOUNT;
@@ -270,13 +270,13 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<AccountResponse>> Login(AccountLoginRequest accountLoginRequest)
         {
-
             DateTime expiredDate = DateTime.Now;
-            string clientRoleId = "";
+            string residentId = "";
+            string roleId = "";
             Account account;
             try
             {
-                account = await _unitOfWork.Accounts.FindAsync(acc => acc.Username.Equals(accountLoginRequest.Username));
+                account = await _unitOfWork.Accounts.GetAccountIncludeResidentByUsername(accountLoginRequest.Username);
 
                 //check account from db and verify password
                 if (!BCryptNet.Verify(accountLoginRequest.Password, account.Password))
@@ -284,37 +284,28 @@ namespace BLL.Services
                     throw new Exception();
                 }
 
-/*                //find client role id
-                switch (account.RoleId)
+                //find resident role
+                if (account.RoleId.Equals(RoleId.ADMIN))
                 {
-                    case RoleId.ADMIN:
-                        expiredDate = DateTime.UtcNow.AddHours((double)TimeUnit.ONE_HOUR);
-                        clientRoleId = account.AccountId;
-                        break;
+                    //is admin
+                    residentId = account.AccountId;
+                    expiredDate = DateTime.Now.AddHours((double)TimeUnit.ONE_HOUR);
+                    roleId = account.RoleId;
+                }
+                else
+                {
+                    Resident resident = account.Residents.FirstOrDefault();
 
-                    case RoleId.CUSTOMER:
-                        expiredDate = DateTime.UtcNow.AddDays((double)TimeUnit.THIRTY_DAYS);
-                        Customer customer = await _unitOfWork.Customers
-                        .FindAsync(ctm => ctm.AccountId.Equals(account.AccountId));
-                        clientRoleId = customer.CustomerId;
-                        break;
+                    if (resident.Type.Equals(ResidentType.MARKET_MANAGER))
+                        expiredDate = DateTime.Now.AddHours((double)TimeUnit.ONE_HOUR);
+                    else
+                        expiredDate = DateTime.Now.AddDays((double)TimeUnit.THIRTY_DAYS);
 
-                    case RoleId.MERCHANT:
-                        expiredDate = DateTime.UtcNow.AddDays((double)TimeUnit.THIRTY_DAYS);
-                        Merchant merchant = await _unitOfWork.Merchants
-                        .FindAsync(mc => mc.AccountId.Equals(account.AccountId));
-                        clientRoleId = merchant.MerchantId;
-                        break;
+                    residentId = resident.ResidentId;
+                    roleId = resident.Type;
+                }
 
-                    case RoleId.MARKET_MANAGER:
-                        expiredDate = DateTime.UtcNow.AddHours((double)TimeUnit.ONE_HOUR);
-                        MarketManager marketManager = await _unitOfWork.MarketManagers
-                        .FindAsync(mm => mm.AccountId.Equals(account.AccountId));
-                        clientRoleId = marketManager.MarketManagerId;
-                        break;
-                }*/
-
-                account.Token = _jwtAuthenticationManager.Authenticate(clientRoleId, account.RoleId, expiredDate);
+                account.Token = _jwtAuthenticationManager.Authenticate(residentId, roleId, expiredDate);
                 account.TokenExpiredDate = expiredDate;
 
                 await _unitOfWork.SaveChangesAsync();
@@ -428,30 +419,31 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Change Role By Account Id
+        /// Change Resident Type By Account Id
         /// </summary>
         /// <param name="accountId"></param>
-        /// <param name="role"></param>
+        /// <param name="residentType"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<AccountResponse>> ChangeRoleByAccountId(string accountId, string roleId)
+        public async Task<BaseResponse<AccountResponse>> ChangeResidentTypeByAccountId(string accountId, string residentType)
         {
             TokenInfo tokenInfo;
             Account account;
             try
             {
-                account = await _unitOfWork.Accounts.FindAsync(acc => acc.AccountId.Equals(accountId));
+                account = await _unitOfWork.Accounts.GetAccountIncludeResidentByAccountId(accountId);
+
+                Resident resident = account.Residents.FirstOrDefault();
 
                 tokenInfo = new TokenInfo
                 {
                     Token = account.Token,
-                    RoleId = account.RoleId,
+                    RoleId = resident.ResidentId,
                     ExpiredDate = account.TokenExpiredDate
                 };
 
                 account.Token = null;
                 account.TokenExpiredDate = null;
-                account.RoleId = roleId;
+                resident.Type = residentType;
 
                 _unitOfWork.Accounts.Update(account);
 
@@ -459,7 +451,7 @@ namespace BLL.Services
             }
             catch (Exception e)
             {
-                _logger.Error("[AccountService.ChangeRoleByAccountId()]: " + e.Message);
+                _logger.Error("[AccountService.ChangeResidentTypeByAccountId()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<Account>
