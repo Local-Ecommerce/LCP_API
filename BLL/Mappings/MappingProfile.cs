@@ -89,6 +89,7 @@ namespace BLL.Mappings
 
             //Resident Mapping
             CreateMap<ResidentRequest, Resident>();
+            CreateMap<ResidentUpdateRequest, Resident>();
             CreateMap<Resident, ResidentResponse>();
         }
     }
