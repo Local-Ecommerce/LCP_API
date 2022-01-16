@@ -59,7 +59,22 @@ namespace BLL.Services
                     Data = default
                 });
             }
-            
+
+            //check valid Resident's Type
+            if (!residentRequest.Type.Equals(ResidentType.MERCHANT) 
+                && !residentRequest.Type.Equals(ResidentType.MARKET_MANAGER)
+                && !residentRequest.Type.Equals(ResidentType.CUSTOMER))
+            {
+                _logger.Error($"[Invalid Resident Type : '{residentRequest.Type}']");
+                throw new HttpStatusException(HttpStatusCode.OK,
+                new BaseResponse<ResidentResponse>
+                {
+                    ResultCode = (int)ResidentStatus.INVALID_TYPE_RESIDENT,
+                    ResultMessage = ResidentStatus.INVALID_TYPE_RESIDENT.ToString(),
+                    Data = default
+                });
+            }
+
             //check valid Resident's PhoneNumber
             if (!_validateDataService.IsValidPhoneNumber(residentRequest.PhoneNumber))
             {
