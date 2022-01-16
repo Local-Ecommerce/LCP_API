@@ -158,24 +158,24 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Change Role By Account Id
+        /// Change Resident Type By Account Id
         /// </summary>
-        [HttpPut("{id}/role/{role}")]
-        public async Task<IActionResult> ChangeRoleByAccountId(string id, string role)
+        [HttpPut("{id}/residentType/{type}")]
+        public async Task<IActionResult> ChangeRoleByAccountId(string id, string type)
         {
-            _logger.Information($"PUT api/account/{id}/role/{role} START");
+            _logger.Information($"PUT api/account/{id}/residentType/{type} START");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
             //change Role By Account
-            BaseResponse<AccountResponse> response = await _accountService.ChangeRoleByAccountId(id, role);
+            BaseResponse<AccountResponse> response = await _accountService.ChangeResidentTypeByAccountId(id, type);
 
             string json = JsonSerializer.Serialize(response);
 
             watch.Stop();
 
-            _logger.Information($"PUT api/account/{id}/role/{role} END duration: " +
+            _logger.Information($"PUT api/account/{id}/residentType/{type} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

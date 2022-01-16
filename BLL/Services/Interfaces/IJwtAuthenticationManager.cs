@@ -5,6 +5,6 @@ namespace BLL.Services.Interfaces
 {
     public interface IJwtAuthenticationManager
     {
-        string Authenticate(string clientRoleId, string roleName, DateTime expiredDate);
+        string Authenticate(string residentId, string roleName, DateTime expiredDate);
     }
 }

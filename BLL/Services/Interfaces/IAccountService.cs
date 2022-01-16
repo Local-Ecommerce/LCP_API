@@ -52,11 +52,11 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Change Role By Account Id
+        /// Change Resident Type By Account Id
         /// </summary>
         /// <param name="accountId"></param>
-        /// <param name="roleId"></param>
+        /// <param name="residentType"></param>
         /// <returns></returns>
-        Task<BaseResponse<AccountResponse>> ChangeRoleByAccountId(string accountId, string roleId);
+        Task<BaseResponse<AccountResponse>> ChangeResidentTypeByAccountId(string accountId, string residentType);
     }
 }

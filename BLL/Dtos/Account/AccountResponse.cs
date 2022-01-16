@@ -17,6 +17,6 @@ namespace BLL.Dtos.Account
         public string RoleId { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public string ClientRoleId { get; set; }
+        public string ResidentId { get; set; }
     }
 }
