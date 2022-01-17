@@ -91,7 +91,7 @@ namespace BLL.Services
             {
                 try
                 {
-                    Menu Menu = await _unitOfWork.Menus.FindAsync(menu => menu.MenuId.Equals(id));
+                    Menu Menu = await _unitOfWork.Menus.GetMenuIncludeResidentById(id);
 
                     menuReponse = _mapper.Map<MenuResponse>(Menu);
                 }
@@ -508,7 +508,7 @@ namespace BLL.Services
             //get menu from database
             try
             {
-                menus = await _unitOfWork.Menus.GetAllMenus();
+                menus = await _unitOfWork.Menus.GetAllMenusIncludeResident();
             }
             catch (Exception e)
             {

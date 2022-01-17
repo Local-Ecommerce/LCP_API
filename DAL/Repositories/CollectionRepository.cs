@@ -12,14 +12,15 @@ namespace DAL.Repositories
         public CollectionRepository(LoichDBContext context) : base(context) { }
 
         /// <summary>
-        /// Get Collection Include Merchant By Collection Id
+        /// Get Collection Include Resident By Collection Id
         /// </summary>
         /// <param name="collectionId"></param>
         /// <returns></returns>
-        public async Task<Collection> GetCollectionByCollectionId(string collectionId)
+        public async Task<Collection> GetCollectionIncludeResidentByCollectionId(string collectionId)
         {
             Collection collection = await _context.Collections
                                             .Where(clt => clt.CollectionId.Equals(collectionId))
+                                            .Include(clt => clt.Resident)
                                             .OrderByDescending(clt => clt.CreatedDate)
                                             .FirstOrDefaultAsync();
 
@@ -28,12 +29,15 @@ namespace DAL.Repositories
 
 
         /// <summary>
-        /// Get All Collections Include Merchant
+        /// Get All Collections Include Resident
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Collection>> GetAllCollections()
+        public async Task<List<Collection>> GetAllCollectionsIncludeResident()
         {
-            List<Collection> collections = await _context.Collections.ToListAsync();
+            List<Collection> collections = await _context.Collections
+                                                    .Include(clt => clt.Resident)
+                                                    .OrderByDescending(clt => clt.CreatedDate)
+                                                    .ToListAsync();
 
             return collections;
         }

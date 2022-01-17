@@ -7,9 +7,17 @@ namespace DAL.Repositories.Interfaces
     public interface IMenuRepository : IRepository<Menu>
     {
         /// <summary>
-        /// Get All Menus Include Merchant
+        /// Get All Menus Include Resident
         /// </summary>
         /// <returns></returns>
-        Task<List<Menu>> GetAllMenus();
+        Task<List<Menu>> GetAllMenusIncludeResident();
+
+
+        /// <summary>
+        /// Get Menu Include Resident By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Menu> GetMenuIncludeResidentById(string id);
     }
 }

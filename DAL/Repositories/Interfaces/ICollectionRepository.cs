@@ -12,13 +12,13 @@ namespace DAL.Repositories.Interfaces
         /// </summary>
         /// <param name="collectionId"></param>
         /// <returns></returns>
-        Task<Collection> GetCollectionByCollectionId(string collectionId);
+        Task<Collection> GetCollectionIncludeResidentByCollectionId(string collectionId);
 
 
         /// <summary>
         /// Get All Collections Include Merchant
         /// </summary>
         /// <returns></returns>
-        Task<List<Collection>> GetAllCollections();
+        Task<List<Collection>> GetAllCollectionsIncludeResident();
     }
 }

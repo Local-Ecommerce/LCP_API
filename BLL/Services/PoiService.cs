@@ -92,7 +92,7 @@ namespace BLL.Services
             {
                 try
                 {
-                    Poi poi = await _unitOfWork.Pois.FindAsync(poi => poi.PoiId.Equals(id));
+                    Poi poi = await _unitOfWork.Pois.GetPoiIncludeResidentByPoiId(id);
 
                     poiResponse = _mapper.Map<PoiResponse>(poi);
                 }
@@ -371,7 +371,7 @@ namespace BLL.Services
 
             try
             {
-                pois = await _unitOfWork.Pois.GetAllPoisIncludeApartment();
+                pois = await _unitOfWork.Pois.GetAllPoisIncludeApartmentAndResident();
             }
             catch (Exception e)
             {
