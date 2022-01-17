@@ -9,7 +9,6 @@ namespace BLL.Dtos.Resident
         public DateTime? DateOfBirth { get; set; }
         public string Gender { get; set; }
         public string DeliveryAddress { get; set; }
-        public string ApproveBy { get; set; }
         public string Type { get; set; }
         public string AccountId { get; set; }
         public string ApartmentId { get; set; }
