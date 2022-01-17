@@ -169,7 +169,7 @@ namespace BLL.Services
 
             try
             {
-                collection = await _unitOfWork.Collections.GetCollectionByCollectionId(id);
+                collection = await _unitOfWork.Collections.GetCollectionIncludeResidentByCollectionId(id);
             }
             catch (Exception e)
             {
@@ -514,7 +514,7 @@ namespace BLL.Services
             //Get Collections From Database
             try
             {
-                collections = await _unitOfWork.Collections.GetAllCollections();
+                collections = await _unitOfWork.Collections.GetAllCollectionsIncludeResident();
             }
             catch (Exception e)
             {

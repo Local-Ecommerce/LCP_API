@@ -12,15 +12,29 @@ namespace DAL.Repositories
         public MenuRepository(LoichDBContext context) : base(context) { }
 
         /// <summary>
-        /// Get All Menus Include Merchant
+        /// Get All Menus Include Resident
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Menu>> GetAllMenus()
+        public async Task<List<Menu>> GetAllMenusIncludeResident()
         {
-            List<Menu> menus = await _context.Menus.OrderByDescending(menu => menu.CreatedDate)
+            List<Menu> menus = await _context.Menus.Include(menus => menus.Resident)
+                                                   .OrderByDescending(menus => menus.CreatedDate)
                                                    .ToListAsync();
 
             return menus;
+        }
+
+
+
+        public async Task<Menu> GetMenuIncludeResidentById(string id)
+        {
+            Menu menu = await _context.Menus
+                                .Where(menus => menus.MenuId.Equals(id))
+                                .Include(menus => menus.Resident)
+                                .OrderByDescending(menus => menus.CreatedDate)
+                                .FirstOrDefaultAsync();
+
+            return menu;
         }
     }
 }

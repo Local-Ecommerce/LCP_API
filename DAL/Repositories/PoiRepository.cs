@@ -13,17 +13,30 @@ namespace DAL.Repositories
 
 
         /// <summary>
-        /// Get All Pois Include Market Manager And Apartment
+        /// Get All Pois Include Resident And Apartment
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Poi>> GetAllPoisIncludeApartment()
+        public async Task<List<Poi>> GetAllPoisIncludeApartmentAndResident()
         {
             List<Poi> pois = await _context.Pois
                                 .Include(poi => poi.Apartment)
+                                .Include(poi => poi.Resident)
                                 .OrderByDescending(poi => poi.ReleaseDate)
                                 .ToListAsync();
 
             return pois;
+        }
+
+
+        public async Task<Poi> GetPoiIncludeResidentByPoiId(string poiId)
+        {
+            Poi poi = await _context.Pois
+                                .Where(poi => poi.PoiId.Equals(poiId))
+                                .Include(poi => poi.Resident)
+                                .OrderByDescending(poi => poi.ReleaseDate)
+                                .FirstOrDefaultAsync();
+
+            return poi;
         }
     }
 }

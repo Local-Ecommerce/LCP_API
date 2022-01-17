@@ -159,7 +159,7 @@ namespace BLL.Services
             //Get MerchantStore From Database
             try
             {
-                MerchantStore merchantStore = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id));
+                MerchantStore merchantStore = await _unitOfWork.MerchantStores.GetMerchantStoreIncludeResidentById(id);
                 merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
             }
             catch (Exception e)
@@ -590,7 +590,7 @@ namespace BLL.Services
             List<MerchantStore> merchantStores;
             try
             {
-                merchantStores = await _unitOfWork.MerchantStores.GetAllMerchantStoresInCludeApartment();
+                merchantStores = await _unitOfWork.MerchantStores.GetAllMerchantStoresIncludeResidentAndApartment();
             }
             catch (Exception e)
             {

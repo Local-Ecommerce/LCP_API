@@ -87,7 +87,7 @@ namespace BLL.Services
 
             try
             {
-                News news = await _unitOfWork.News.FindAsync(local => local.NewsId.Equals(id));
+                News news = await _unitOfWork.News.GetNewsIncludeResidentByNewsId(id);
 
                 newsReponse = _mapper.Map<NewsResponse>(news);
             }
@@ -346,7 +346,7 @@ namespace BLL.Services
             List<News> news;
             try
             {
-                news = await _unitOfWork.News.GetAllNewsIncludeApartment();
+                news = await _unitOfWork.News.GetAllNewsIncludeApartmentAndResident();
             }
             catch (Exception e)
             {

@@ -7,9 +7,17 @@ namespace DAL.Repositories.Interfaces
     public interface IMerchantStoreRepository : IRepository<MerchantStore>
     {
         /// <summary>
-        /// Get All Merchant Stores InClude Merchant And Apartment
+        /// Get All Merchant Stores Include Resident And Apartment
         /// </summary>
         /// <returns></returns>
-        Task<List<MerchantStore>> GetAllMerchantStoresInCludeApartment();
+        Task<List<MerchantStore>> GetAllMerchantStoresIncludeResidentAndApartment();
+
+
+        /// <summary>
+        /// Get Merchant Store Include Resident By Id
+        /// </summary>
+        /// <param name="merchantStoreId"></param>
+        /// <returns></returns>
+        Task<MerchantStore> GetMerchantStoreIncludeResidentById(string merchantStoreId);
     }
 }
