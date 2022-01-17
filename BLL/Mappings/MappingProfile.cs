@@ -16,6 +16,8 @@ using BLL.Dtos.StoreMenuDetail;
 using BLL.Dtos.Payment;
 using BLL.Dtos.PaymentMethod;
 using BLL.Dtos.Resident;
+using BLL.Dtos.OrderDetail;
+using BLL.Dtos.Order;
 
 namespace BLL.Mappings
 {
@@ -91,6 +93,11 @@ namespace BLL.Mappings
             CreateMap<ResidentRequest, Resident>();
             CreateMap<ResidentUpdateRequest, Resident>();
             CreateMap<Resident, ResidentResponse>();
+
+            //Order & Order Detail Mapping
+            CreateMap<OrderDetailRequest, OrderDetail>();
+            CreateMap<OrderDetail, OrderDetailResponse>();
+            CreateMap<Order, OrderResponse>();
         }
     }
 }

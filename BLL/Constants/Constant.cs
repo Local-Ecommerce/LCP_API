@@ -185,7 +185,6 @@
         DELETED_PAYMENT_METHOD = 18004
     }
 
-
     public enum ResidentStatus
     {
         ACTIVE_RESIDENT = 19001,
@@ -196,5 +195,14 @@
         INVALID_PHONE_NUMBER_RESIDENT = 19009,
         INVALID_DATE_OF_BIRTH_RESIDENT = 19010,
         INVALID_TYPE_RESIDENT = 19011,
+    }
+
+    public enum OrderStatus
+    {
+        CART = 20001,
+        ORDER_NOT_FOUND = 20003,
+        DELETED_ORDER = 20004,
+        PAID = 20005,
+        IN_PAYMENT = 20006
     }
 }
