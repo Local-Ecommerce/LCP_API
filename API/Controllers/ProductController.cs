@@ -278,33 +278,5 @@ namespace API.Controllers
 
             return Ok(json);
         }
-
-
-
-        /// <summary>
-        /// Get Products By Product Type
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("type/{type}")]
-        public async Task<IActionResult> GetProductsByProductType(string type)
-        {
-            _logger.Information($"GET api/product/status/{type} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get Product
-            BaseResponse<List<ProductResponse>> response =
-                await _productService.GetProductsByProductType(type);
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information($"GET api/product/status/{type} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
     }
 }

@@ -87,7 +87,7 @@ namespace BLL.Services
 
             try
             {
-                News news = await _unitOfWork.News.GetNewsIncludeResidentByNewsId(id);
+                News news = await _unitOfWork.News.GetNewsIncludeResidentAndApartmentByNewsId(id);
 
                 newsReponse = _mapper.Map<NewsResponse>(news);
             }
