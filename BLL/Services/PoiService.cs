@@ -92,7 +92,7 @@ namespace BLL.Services
             {
                 try
                 {
-                    Poi poi = await _unitOfWork.Pois.GetPoiIncludeResidentByPoiId(id);
+                    Poi poi = await _unitOfWork.Pois.GetPoiIncludeResidentAndApartMentByPoiId(id);
 
                     poiResponse = _mapper.Map<PoiResponse>(poi);
                 }
