@@ -42,6 +42,7 @@ namespace DAL.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=localhost;Database=LoichDB;Trusted_Connection=True;");
             }
         }
@@ -383,13 +384,13 @@ namespace DAL.Models
 
                 entity.Property(e => e.Image).IsUnicode(false);
 
+                entity.Property(e => e.IsFavorite).HasColumnName("isFavorite");
+
                 entity.Property(e => e.ProductCode)
                     .HasMaxLength(200)
                     .IsUnicode(false);
 
                 entity.Property(e => e.ProductName).HasMaxLength(250);
-
-                entity.Property(e => e.ProductType).HasMaxLength(250);
 
                 entity.Property(e => e.Size).HasMaxLength(250);
 
@@ -549,9 +550,9 @@ namespace DAL.Models
                     .HasForeignKey(d => d.AccountId)
                     .HasConstraintName("FK_Resident_Account");
 
-                entity.HasOne(d => d.AccountNavigation)
+                entity.HasOne(d => d.Apartment)
                     .WithMany(p => p.Residents)
-                    .HasForeignKey(d => d.AccountId)
+                    .HasForeignKey(d => d.ApartmentId)
                     .HasConstraintName("FK_Resident_Apartment");
             });
 
@@ -615,6 +616,10 @@ namespace DAL.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.SysCategoryName).HasMaxLength(250);
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.BelongToNavigation)
                     .WithMany(p => p.InverseBelongToNavigation)
