@@ -246,6 +246,13 @@ namespace BLL.Services
             };
         }
 
+
+        /// <summary>
+        /// Get Apartment By Address
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<ApartmentResponse>> GetApartmentByAddress(string address)
         {
             //biz rule
@@ -306,6 +313,48 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[ApartmentService.GetApartmentsByStatus()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ApartmentResponse>
+                    {
+                        ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
+                        ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<ApartmentResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = apartmentResponses
+            };
+        }
+
+
+        /// <summary>
+        /// Get Apartment For Auto Complete
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<ApartmentResponse>>> GetApartmentForAutoComplete()
+        {
+            //biz rule
+
+
+            List<ApartmentResponse> apartmentResponses;
+
+            //Get Apartment From Database
+
+            try
+            {
+                List<Apartment> apartments = await _unitOfWork.Apartments.GetAllActiveApartment();
+
+                apartmentResponses = _mapper.Map<List<ApartmentResponse>>(apartments);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ApartmentService.GetApartmentForAutoComplete()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<ApartmentResponse>

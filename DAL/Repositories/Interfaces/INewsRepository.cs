@@ -14,10 +14,10 @@ namespace DAL.Repositories.Interfaces
 
 
         /// <summary>
-        /// Get News Include Resident By News Id
+        /// Get News Include Resident And Apartment By News Id
         /// </summary>
         /// <param name="newsId"></param>
         /// <returns></returns>
-        Task<News> GetNewsIncludeResidentByNewsId(string newsId);
+        Task<News> GetNewsIncludeResidentAndApartmentByNewsId(string newsId);
     }
 }

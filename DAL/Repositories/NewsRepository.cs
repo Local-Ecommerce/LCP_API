@@ -29,15 +29,16 @@ namespace DAL.Repositories
 
 
         /// <summary>
-        /// 
+        /// Get News Include Resident And Apartment By News Id
         /// </summary>
         /// <param name="newsId"></param>
         /// <returns></returns>
-        public async Task<News> GetNewsIncludeResidentByNewsId(string newsId)
+        public async Task<News> GetNewsIncludeResidentAndApartmentByNewsId(string newsId)
         {
             News news = await _context.News
                                 .Where(news => news.NewsId.Equals(newsId))
                                 .Include(news => news.Resident)
+                                .Include(news => news.Apartment)
                                 .OrderByDescending(news => news.ReleaseDate)
                                 .FirstOrDefaultAsync();
 

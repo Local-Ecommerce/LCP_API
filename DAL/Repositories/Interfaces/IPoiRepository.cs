@@ -18,6 +18,6 @@ namespace DAL.Repositories.Interfaces
         /// </summary>
         /// <param name="poiId"></param>
         /// <returns></returns>
-        Task<Poi> GetPoiIncludeResidentByPoiId(string poiId);
+        Task<Poi> GetPoiIncludeResidentAndApartMentByPoiId(string poiId);
     }
 }
