@@ -28,11 +28,12 @@ namespace DAL.Repositories
         }
 
 
-        public async Task<Poi> GetPoiIncludeResidentByPoiId(string poiId)
+        public async Task<Poi> GetPoiIncludeResidentAndApartMentByPoiId(string poiId)
         {
             Poi poi = await _context.Pois
                                 .Where(poi => poi.PoiId.Equals(poiId))
                                 .Include(poi => poi.Resident)
+                                .Include(poi => poi.Apartment)
                                 .OrderByDescending(poi => poi.ReleaseDate)
                                 .FirstOrDefaultAsync();
 

@@ -60,7 +60,7 @@ namespace API.Controllers
         {
             _logger.Information($"GET api/systemCategory/{id} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //get systemCategory
@@ -75,6 +75,33 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Get System Category And One Level Down Inverse Belong To By Id
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("oneLevelDown/{id}")]
+        public async Task<IActionResult> GetSystemCategoryAndOneLevelDownInverseBelongToById(string id)
+        {
+            _logger.Information($"GET api/systemCategory/oneLevelDown/{id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get systemCategory
+            BaseResponse<SystemCategoryResponse> response = await _systemCategoryService.GetSystemCategoryAndOneLevelDownInverseBelongToById(id);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/systemCategory/oneLevelDown/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
 
         /// <summary>
         /// Get All System Category

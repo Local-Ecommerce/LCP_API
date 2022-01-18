@@ -1,4 +1,5 @@
-﻿using BLL.Dtos;
+﻿using BLL.Constants;
+using BLL.Dtos;
 using BLL.Dtos.Menu;
 using BLL.Dtos.ProductInMenu;
 using BLL.Services.Interfaces;
@@ -29,6 +30,7 @@ namespace API.Controllers
         /// <summary>
         /// Create menu
         /// </summary>
+/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
         [HttpPost("create")]
         public async Task<IActionResult> CreateMenu([FromBody] MenuRequest menuRequest)
         {
@@ -79,6 +81,7 @@ namespace API.Controllers
         /// <summary>
         /// Update menu
         /// </summary>
+/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateMenuById(string id, [FromBody] MenuUpdateRequest menuUpdateRequest)
         {
@@ -104,6 +107,7 @@ namespace API.Controllers
         /// <summary>
         /// Delete menu
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteMenuById(string id)
         {
@@ -129,6 +133,7 @@ namespace API.Controllers
         /// <summary>
         /// Add Products To Menu
         /// </summary>
+/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
         [HttpPost("{menuId}/add")]
         public async Task<IActionResult> AddProductsToMenu(string menuId,
             [FromBody] List<ProductInMenuRequest> productInMenuRequests)
@@ -205,6 +210,7 @@ namespace API.Controllers
         /// <summary>
         /// Update Product In Menu By Id
         /// </summary>
+/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
         [HttpPut("product/{productInMenuId}")]
         public async Task<IActionResult> UpdateProductInMenuById(string productInMenuId,
             [FromBody] ProductInMenuUpdateRequest productInMenuUpdateRequest)
@@ -232,6 +238,7 @@ namespace API.Controllers
         /// <summary>
         /// Delete Product In Menu By Id
         /// </summary>
+/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
         [HttpDelete("product/{productInMenuId}")]
         public async Task<IActionResult> DeleteProductInMenuById(string productInMenuId)
         {

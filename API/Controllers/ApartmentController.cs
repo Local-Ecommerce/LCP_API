@@ -162,7 +162,7 @@ namespace API.Controllers
         /// </summary>
         [AllowAnonymous]
         [HttpGet("status/{status}")]
-        public async Task<IActionResult> GetApartments(int status)
+        public async Task<IActionResult> GetApartmentsByStatus(int status)
         {
             _logger.Information($"GET api/apartment/status/{status} START");
 
@@ -177,6 +177,32 @@ namespace API.Controllers
             watch.Stop();
 
             _logger.Information($"GET api/apartment/status/{status} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get Apartments For Auto Complete
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("autocomplete")]
+        public async Task<IActionResult> GetApartmentsForAutoComplete()
+        {
+            _logger.Information($"GET api/apartment/autocomplete START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get Apartment
+            BaseResponse<List<ApartmentResponse>> responses = await _apartmentService.GetApartmentForAutoComplete();
+
+            string json = JsonSerializer.Serialize(responses);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/apartment/autocomplete END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

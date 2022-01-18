@@ -59,5 +59,13 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<BaseResponse<List<SystemCategoryForAutoCompleteResponse>>> GetSystemCategoriesForAutoComplete();
+
+
+        /// <summary>
+        /// Get System Category And One Level Down Inverse Belong To By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<BaseResponse<SystemCategoryResponse>> GetSystemCategoryAndOneLevelDownInverseBelongToById(string id);
     }
 }

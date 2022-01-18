@@ -295,7 +295,47 @@ namespace BLL.Services
             try
             {
                 systemCategory = await _unitOfWork.SystemCategories
-                                                  .FindAsync(p => p.SystemCategoryId.Equals(id));
+                                            .GetSystemCategoryByIdIncludeInverseBelongTo(id);
+
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[SystemCategoryService.GetSystemCategoryById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<SystemCategoryResponse>
+                    {
+                        ResultCode = (int)SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND,
+                        ResultMessage = SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            SystemCategoryResponse systemCategoryResponse = _mapper.Map<SystemCategoryResponse>(systemCategory);
+
+            return new BaseResponse<SystemCategoryResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = systemCategoryResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get System Category And One Level Down Inverse Belong To By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<SystemCategoryResponse>> GetSystemCategoryAndOneLevelDownInverseBelongToById(string id)
+        {
+            SystemCategory systemCategory;
+            //get systemCategory from database
+            try
+            {
+                systemCategory = await _unitOfWork.SystemCategories
+                                            .GetSystemCategoryByIdIncludeOneLevelDownInverseBelongTo(id);
 
             }
             catch (Exception e)

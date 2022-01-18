@@ -42,5 +42,38 @@ namespace DAL.Repositories
 
             return systemCategories;
         }
+
+
+        /// <summary>
+        /// Get System Category By Id Include Inverse Belong To
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<SystemCategory> GetSystemCategoryByIdIncludeInverseBelongTo(string id)
+        {
+            SystemCategory systemCategory = await _context.SystemCategories
+                                                    .Where(sc => sc.SystemCategoryId.Equals(id))
+                                                    .Include(sc => sc.InverseBelongToNavigation)
+                                                    .ThenInclude(sc => sc.InverseBelongToNavigation)
+                                                    .FirstOrDefaultAsync();
+
+            return systemCategory;
+        }
+        
+        
+        /// <summary>
+        /// Get System Category By Id Include One Level Down Inverse Belong To
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<SystemCategory> GetSystemCategoryByIdIncludeOneLevelDownInverseBelongTo(string id)
+        {
+            SystemCategory systemCategory = await _context.SystemCategories
+                                                    .Where(sc => sc.SystemCategoryId.Equals(id))
+                                                    .Include(sc => sc.InverseBelongToNavigation)
+                                                    .FirstOrDefaultAsync();
+
+            return systemCategory;
+        }
     }
 }
