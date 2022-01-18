@@ -33,7 +33,7 @@ namespace DAL.Models
         public string ApartmentId { get; set; }
 
         public virtual Account Account { get; set; }
-        public virtual Apartment AccountNavigation { get; set; }
+        public virtual Apartment Apartment { get; set; }
         public virtual ICollection<Collection> Collections { get; set; }
         public virtual ICollection<Menu> Menus { get; set; }
         public virtual ICollection<MerchantStore> MerchantStores { get; set; }

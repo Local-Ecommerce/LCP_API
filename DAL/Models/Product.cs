@@ -20,7 +20,8 @@ namespace DAL.Models
         public string ProductId { get; set; }
         public string ProductCode { get; set; }
         public string ProductName { get; set; }
-        public string ProductType { get; set; }
+        public string BriefDescription { get; set; }
+        public string Description { get; set; }
         public double? DefaultPrice { get; set; }
         public string Image { get; set; }
         public int? Status { get; set; }
@@ -30,6 +31,7 @@ namespace DAL.Models
         public string Size { get; set; }
         public string Color { get; set; }
         public double? Weight { get; set; }
+        public int? IsFavorite { get; set; }
         public string BelongTo { get; set; }
 
         public virtual Product BelongToNavigation { get; set; }
