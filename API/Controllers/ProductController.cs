@@ -27,10 +27,10 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create Base Product
+        /// Create Product (base include related product)
         /// </summary>
-        [HttpPost("create-base")]
-        public async Task<IActionResult> CreateBaseProduct([FromForm] ProductRequest productRequest)
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateBaseProduct([FromBody] BaseProductRequest productRequest)
         {
             _logger.Information($"POST api/product/create-base START Request: {JsonSerializer.Serialize(productRequest)}");
 
@@ -38,7 +38,7 @@ namespace API.Controllers
             watch.Start();
 
             //create product
-            BaseResponse<BaseProductResponse> response = await _productService.CreateBaseProduct(productRequest);
+            BaseResponse<BaseProductResponse> response = await _productService.CreateProduct(productRequest);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -52,24 +52,24 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Create Related Product
+        /// Add Related Product
         /// </summary>
-        [HttpPost("create-related/{id}")]
-        public async Task<IActionResult> CreateRelatedProduct(string id, [FromForm] RelatedProductRequest relatedProductRequest)
+        [HttpPost("addRelated/{id}")]
+        public async Task<IActionResult> AddRelatedProduct(string id, [FromBody] RelatedProductRequest relatedProductRequest)
         {
-            _logger.Information($"POST api/product/create-related/{id} START Request: {JsonSerializer.Serialize(relatedProductRequest)}");
+            _logger.Information($"POST api/product/addRelated/{id} START Request: {JsonSerializer.Serialize(relatedProductRequest)}");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
             //create product
-            BaseResponse<BaseProductResponse> response = await _productService.CreateRelatedProduct(id, relatedProductRequest.productRequests);
+            BaseResponse<ProductResponse> response = await _productService.AddRelatedProduct(id, relatedProductRequest.productRequests);
 
             string json = JsonSerializer.Serialize(response);
 
             watch.Stop();
 
-            _logger.Information($"POST api/product/create-related/{id} END duration: " +
+            _logger.Information($"POST api/product/addRelated/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -129,36 +129,11 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Related Product By Base Product Id
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("related/base={id}")]
-        public async Task<IActionResult> GetRelatedProductsByBaseProductId(string id)
-        {
-            _logger.Information($"GET api/product/related/base={id} START");
-
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-
-            //get related product
-            BaseResponse<List<ProductResponse>> response = await _productService.GetRelatedProductsByBaseProductId(id);
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information($"GET api/product/related/base={id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-        /// <summary>
         /// Update Base Product
         /// </summary>
         [HttpPut("base/{id}")]
         public async Task<IActionResult> UpdateBaseProduct(string id,
-            [FromForm] ProductRequest productRequest)
+            [FromBody] ProductRequest productRequest)
         {
             _logger.Information($"PUT api/product/base/{id} START Request: {JsonSerializer.Serialize(productRequest)}");
 
@@ -184,7 +159,7 @@ namespace API.Controllers
         /// </summary>
         [HttpPut("related/{id}")]
         public async Task<IActionResult> UpdateRelatedProduct(string id,
-            [FromForm] ProductRequest productRequest)
+            [FromBody] ProductRequest productRequest)
         {
             _logger.Information($"PUT api/product/related/{id} START Request: {JsonSerializer.Serialize(productRequest)}");
 

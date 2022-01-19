@@ -32,7 +32,7 @@ namespace API.Controllers
         /// </summary>
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromForm] AccountRegisterRequest accountRegisterRequest)
+        public async Task<IActionResult> Register([FromBody] AccountRegisterRequest accountRegisterRequest)
         {
             _logger.Information($"POST api/acccount/register START Request: " +
                 $"{JsonSerializer.Serialize(accountRegisterRequest)}");
@@ -110,16 +110,15 @@ namespace API.Controllers
         /// Update Account
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAccount(string id, [FromForm] AccountImageForm accountImageForm)
+        public async Task<IActionResult> UpdateAccount(string id)
         {
-            _logger.Information($"PUT api/acccount/{id} START Request: " +
-                $"{JsonSerializer.Serialize(id)}, {JsonSerializer.Serialize(accountImageForm)}");
+            _logger.Information($"PUT api/acccount/{id} START Request: ");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
             //update account
-            BaseResponse<AccountResponse> response = await _accountService.UpdateAccount(id, accountImageForm);
+            BaseResponse<AccountResponse> response = await _accountService.UpdateAccount(id);
 
             string json = JsonSerializer.Serialize(response);
 

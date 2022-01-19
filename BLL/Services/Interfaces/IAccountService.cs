@@ -33,7 +33,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="accountRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<AccountResponse>> UpdateAccount(string id, AccountImageForm accountImageForm);
+        Task<BaseResponse<AccountResponse>> UpdateAccount(string id);
 
 
         /// <summary>
