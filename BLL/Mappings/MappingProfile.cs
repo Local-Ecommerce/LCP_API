@@ -42,11 +42,13 @@ namespace BLL.Mappings
 
             //SystemCategory Mapping
             CreateMap<SystemCategoryRequest, SystemCategory>();
+            CreateMap<SystemCategoryUpdateRequest, SystemCategory>();
             CreateMap<SystemCategory, SystemCategoryResponse>().ReverseMap();
             CreateMap<SystemCategory, SystemCategoryForAutoCompleteResponse>().ReverseMap();
 
             //MerchantStore Mapping
             CreateMap<MerchantStoreRequest, MerchantStore>();
+            CreateMap<MerchantStoreUpdateRequest, MerchantStore>();
             CreateMap<MerchantStore, MerchantStoreResponse>().ReverseMap();
 
             //ProCategory Mapping
@@ -55,6 +57,7 @@ namespace BLL.Mappings
 
             //Collection Mapping
             CreateMap<CollectionRequest, Collection>();
+            CreateMap<CollectionUpdateRequest, Collection>();
             CreateMap<Collection, CollectionResponse>().ReverseMap();
 
             //CollectionMapping Mapping
@@ -62,10 +65,12 @@ namespace BLL.Mappings
 
             //News Mapping
             CreateMap<NewsRequest, News>();
+            CreateMap<NewsUpdateRequest, News>();
             CreateMap<News, NewsResponse>();
 
             //POI Mapping
             CreateMap<PoiRequest, Poi>();
+            CreateMap<PoiUpdateRequest, Poi>();
             CreateMap<Poi, PoiResponse>();
 
             //Menu Mapping

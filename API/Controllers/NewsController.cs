@@ -105,9 +105,9 @@ namespace API.Controllers
         /// Update news
         /// </summary>
         [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdateNewsById(string id, [FromBody] NewsRequest newsRequest)
+        public async Task<IActionResult> UpdateNewsById(string id, [FromBody] NewsUpdateRequest newsRequest)
         {
-            _logger.Information($"PUT api/news/update/{id} START Request: " + 
+            _logger.Information($"PUT api/news/update/{id} START Request: " +
                 $"{JsonSerializer.Serialize(newsRequest)}");
 
             Stopwatch watch = new();

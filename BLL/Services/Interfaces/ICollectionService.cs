@@ -29,9 +29,9 @@ namespace BLL.Services.Interfaces
         /// Update Collection By Id
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="collectionRequest"></param>
+        /// <param name="collectionUpdateRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<CollectionResponse>> UpdateCollectionById(string id, CollectionRequest collectionRequest);
+        Task<BaseResponse<CollectionResponse>> UpdateCollectionById(string id, CollectionUpdateRequest collectionUpdateRequest);
 
 
         /// <summary>

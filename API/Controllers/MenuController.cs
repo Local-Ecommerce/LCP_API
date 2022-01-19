@@ -56,7 +56,7 @@ namespace API.Controllers
         /// <summary>
         /// Get menu by id
         /// </summary>
-        [AllowAnonymous]
+/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMenuById(string id)
         {
@@ -107,7 +107,7 @@ namespace API.Controllers
         /// <summary>
         /// Delete menu
         /// </summary>
-        [Authorize(Roles = ResidentType.MERCHANT)]
+        // [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> DeleteMenuById(string id)
         {
@@ -160,6 +160,8 @@ namespace API.Controllers
         /// <summary>
         /// Get Products In Menu By Menu Id
         /// </summary>
+        // [Authorize(Roles = ResidentType.MERCHANT)]
+        // [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("{menuId}/product")]
         public async Task<IActionResult> GetProductsInMenuByMenuId(string menuId)
         {
@@ -185,6 +187,8 @@ namespace API.Controllers
         /// <summary>
         /// Get Product In Menu By Id
         /// </summary>
+        // [Authorize(Roles = ResidentType.MERCHANT)]
+        // [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("product/{productInMenuId}")]
         public async Task<IActionResult> GetProductInMenuById(string productInMenuId)
         {
@@ -264,7 +268,7 @@ namespace API.Controllers
         /// <summary>
         /// Get Menu By Status
         /// </summary>
-        [AllowAnonymous]
+        // [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetMenuByStatus(int status)
         {
@@ -291,7 +295,7 @@ namespace API.Controllers
         /// <summary>
         /// Get All Menus
         /// </summary>
-        [AllowAnonymous]
+        // [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllMenus()
         {

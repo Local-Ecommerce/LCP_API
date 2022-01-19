@@ -85,16 +85,16 @@ namespace API.Controllers
         /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMerchantStore(string id,
-                                                      [FromBody] MerchantStoreRequest merchantStoreRequest)
+                                                      [FromBody] MerchantStoreUpdateRequest request)
         {
             _logger.Information($"PUT api/store/{id} START Request: " +
-                $"{JsonSerializer.Serialize(merchantStoreRequest)}");
+                $"{JsonSerializer.Serialize(request)}");
 
             Stopwatch watch = new();
             watch.Start();
 
             //update MerchantStore
-            BaseResponse<MerchantStoreResponse> response = await _merchantStoreService.UpdateMerchantStoreById(id, merchantStoreRequest);
+            BaseResponse<MerchantStoreResponse> response = await _merchantStoreService.UpdateMerchantStoreById(id, request);
 
             string json = JsonSerializer.Serialize(response);
 

@@ -133,7 +133,7 @@ namespace API.Controllers
         /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateSystemCategory(string id,
-            [FromBody] SystemCategoryRequest systemCategoryRequest)
+            [FromBody] SystemCategoryUpdateRequest systemCategoryRequest)
         {
             _logger.Information($"PUT api/systemCategory/{id} START Request: {JsonSerializer.Serialize(systemCategoryRequest)}");
 

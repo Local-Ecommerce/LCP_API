@@ -199,13 +199,12 @@ namespace BLL.Services
         /// Update Collection By Id
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="collectionRequest"></param>
+        /// <param name="collectionUpdateRequest"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<CollectionResponse>> UpdateCollectionById(string id, CollectionRequest collectionRequest)
+        public async Task<BaseResponse<CollectionResponse>> UpdateCollectionById(string id,
+            CollectionUpdateRequest collectionUpdateRequest)
         {
-            //biz ruie
-
             //Check id
             Collection collection;
             try
@@ -228,7 +227,7 @@ namespace BLL.Services
             //Update Collection To DB
             try
             {
-                collection = _mapper.Map(collectionRequest, collection);
+                collection = _mapper.Map(collectionUpdateRequest, collection);
                 collection.UpdatedDate = DateTime.Now;
 
                 _unitOfWork.Collections.Update(collection);
