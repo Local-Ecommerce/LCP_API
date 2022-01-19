@@ -11,6 +11,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace BLL.Services
 {
@@ -45,34 +46,46 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Create base product
+        /// Create product
         /// </summary>
-        /// <param name="productRequest"></param>
+        /// <param name="baseProductRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<BaseProductResponse>> CreateBaseProduct(ProductRequest productRequest)
+        public async Task<BaseResponse<BaseProductResponse>> CreateProduct(BaseProductRequest baseProductRequest)
         {
-            string productId = _utilService.CreateId(PREFIX);
-
             //biz rule
 
-
-
-            //upload image
-
-            string imageUrl = _uploadFirebaseService
-                .UploadFilesToFirebase(productRequest.Image, TYPE, productId, "Image").Result;
-
             //store product to database
-            Product product = _mapper.Map<Product>(productRequest);
+            Product product = _mapper.Map<Product>(baseProductRequest);
             try
             {
-                product.ProductId = productId;
-                product.Image = imageUrl;
+                product.ProductId = _utilService.CreateId(PREFIX); ;
+                product.Image = _uploadFirebaseService
+                    .UploadFilesToFirebase(baseProductRequest.Image, TYPE, product.ProductId, "Image").Result;
                 product.Status = (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT;
                 product.CreatedDate = DateTime.Now;
                 product.UpdatedDate = DateTime.Now;
+                product.IsFavorite = 0;
                 product.ApproveBy = "";
                 product.BelongTo = null;
+                product.InverseBelongToNavigation = new Collection<Product>();
+
+                //create related product
+                foreach (ProductRequest relatedProductRequest in baseProductRequest.InverseBelongToNavigation)
+                {
+                    Product relatedProduct = _mapper.Map<Product>(relatedProductRequest);
+
+                    relatedProduct.ProductId = _utilService.CreateId(PREFIX);
+                    relatedProduct.Image = _uploadFirebaseService
+                                        .UploadFilesToFirebase(relatedProductRequest.Image, TYPE, relatedProduct.ProductId, "Image")
+                                        .Result;
+                    relatedProduct.Status = (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT;
+                    relatedProduct.CreatedDate = DateTime.Now;
+                    relatedProduct.UpdatedDate = DateTime.Now;
+                    relatedProduct.ApproveBy = "";
+                    relatedProduct.BelongTo = product.ProductId;
+
+                    product.InverseBelongToNavigation.Add(relatedProduct);
+                }
 
                 _unitOfWork.Products.Add(product);
 
@@ -83,7 +96,7 @@ namespace BLL.Services
                 _logger.Error("[ProductService.CreateBaseProduct()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<BaseProductResponse>
+                    new BaseResponse<ProductResponse>
                     {
                         ResultCode = (int)CommonResponse.ERROR,
                         ResultMessage = CommonResponse.ERROR.ToString(),
@@ -91,45 +104,46 @@ namespace BLL.Services
                     });
             }
 
+            BaseProductResponse productResponse = _mapper.Map<BaseProductResponse>(product);
+
             //store product response to Redis
-            ProductResponse productResponse = _mapper.Map<ProductResponse>(product);
 
-            _redisService.StoreToList(CACHE_KEY, productResponse,
-                    new Predicate<ProductResponse>(a => a.ProductId == productResponse.ProductId));
+            // _redisService.StoreToList(CACHE_KEY, productResponse,
+            //         new Predicate<ProductResponse>(a => a.ProductId == productResponse.ProductId));
 
 
-            //create base product response
-            BaseProductResponse baseProductResponse = _mapper.Map<BaseProductResponse>(product);
-            baseProductResponse.RelatedProducts = new List<ProductResponse>();
+            // //create base product response
+            // ProductResponse baseProductResponse = _mapper.Map<ProductResponse>(product);
 
             return new BaseResponse<BaseProductResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = baseProductResponse
+                Data = productResponse
             };
         }
 
 
         /// <summary>
-        /// Create Related Product
+        /// Add Related Product
         /// </summary>
         /// <param name="productRequests"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<BaseProductResponse>> CreateRelatedProduct(string baseProductId,
+        public async Task<BaseResponse<ProductResponse>> AddRelatedProduct(string baseProductId,
             List<ProductRequest> productRequests)
         {
-            //biz rule
-
-            //upload image
-            //string imageUrl = productRequest.Image.ToString();
-
-            //store related products to database
-            List<Product> products = _mapper.Map<List<Product>>(productRequests);
             try
             {
-                products.ForEach(product =>
+                productRequests.ForEach(productRequest =>
                 {
+                    string productId = _utilService.CreateId(PREFIX);
+
+                    //upload image
+                    string imageUrl = _uploadFirebaseService
+                        .UploadFilesToFirebase(productRequest.Image, TYPE, productId, "Image").Result;
+
+                    Product product = _mapper.Map<Product>(productRequest);
+
                     product.ProductId = _utilService.CreateId(PREFIX);
                     product.Image = "";
                     product.Status = (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT;
@@ -148,7 +162,7 @@ namespace BLL.Services
                 _logger.Error("[ProductService.CreateRelatedProduct()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<BaseProductResponse>
+                    new BaseResponse<ProductResponse>
                     {
                         ResultCode = (int)CommonResponse.ERROR,
                         ResultMessage = CommonResponse.ERROR.ToString(),
@@ -158,22 +172,21 @@ namespace BLL.Services
 
 
             //store new related product to Redis
-            List<ProductResponse> productResponses = _mapper.Map<List<ProductResponse>>(products);
-            productResponses.ForEach(product =>
-            {
-                _redisService.StoreToList(CACHE_KEY, product,
-                    new Predicate<ProductResponse>(p => p.ProductId == product.ProductId));
-            });
+            // List<ProductResponse> productResponses = _mapper.Map<List<ProductResponse>>(products);
+            // productResponses.ForEach(product =>
+            // {
+            //     _redisService.StoreToList(CACHE_KEY, product,
+            //         new Predicate<ProductResponse>(p => p.ProductId == product.ProductId));
+            // });
 
             //create response
-            BaseProductResponse baseProductResponse = GetBaseProductById(baseProductId).Result.Data;
-            baseProductResponse.RelatedProducts = GetRelatedProductsByBaseProductId(baseProductId).Result.Data;
+            ProductResponse productResponse = GetBaseProductById(baseProductId).Result.Data;
 
-            return new BaseResponse<BaseProductResponse>
+            return new BaseResponse<ProductResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = baseProductResponse
+                Data = productResponse
             };
         }
 
@@ -185,105 +198,33 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<BaseProductResponse>> GetBaseProductById(string id)
         {
-            BaseProductResponse baseProductResponse = null;
+            Product product;
 
-            ProductResponse productResponse = null;
-
-            //get product from Redis
-            productResponse = _redisService.GetList<ProductResponse>(CACHE_KEY)
-                .Find(product => product.ProductId.Equals(id));
-
-            if (productResponse != null)
+            //get product from database
+            try
             {
-                baseProductResponse = _mapper.Map<BaseProductResponse>(productResponse);
-
-                baseProductResponse.RelatedProducts = _redisService.GetList<ProductResponse>(CACHE_KEY)
-                    .Where(p => p.BelongTo != null && p.BelongTo.Equals(id))
-                    .ToList();
+                product = await _unitOfWork.Products.GetBaseProductById(id);
             }
-            else
+            catch (Exception e)
             {
-                //get product from database
-                try
-                {
+                _logger.Error("[ProductService.GetBaseProductById()]: " + e.Message);
 
-                    List<Product> products = await _unitOfWork.Products
-                        .FindListAsync(p => p.ProductId.Equals(id) || p.BelongTo.Equals(id));
-
-                    Product product = products.Find(p => p.ProductId.Equals(id));
-                    products.Remove(product);
-
-                    baseProductResponse = _mapper.Map<BaseProductResponse>(product);
-                    baseProductResponse.RelatedProducts = _mapper.Map<List<ProductResponse>>(products);
-
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[ProductService.GetBaseProductById()]: " + e.Message);
-
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<BaseProductResponse>
-                        {
-                            ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
-                            ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<BaseProductResponse>
+                    {
+                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
+                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
             }
+
+            BaseProductResponse baseProductResponse = _mapper.Map<BaseProductResponse>(product);
 
             return new BaseResponse<BaseProductResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = baseProductResponse
-            };
-        }
-
-
-        /// <summary>
-        /// Get Related Products By Base Product Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<BaseResponse<List<ProductResponse>>> GetRelatedProductsByBaseProductId(string id)
-        {
-            List<ProductResponse> productResponses = null;
-
-            //get product from Redis
-            productResponses = _redisService.GetList<ProductResponse>(CACHE_KEY)
-                .Where(p => p.BelongTo != null && p.BelongTo.Equals(id))
-                .ToList();
-
-            if (_utilService.IsNullOrEmpty(productResponses))
-            {
-                //get product from database
-                try
-                {
-
-                    List<Product> products = await _unitOfWork.Products
-                        .FindListAsync(p => p.BelongTo.Equals(id));
-
-                    productResponses = _mapper.Map<List<ProductResponse>>(products);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[ProductService.GetRelatedProductsByBaseProductId()]: " + e.Message);
-
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<BaseProductResponse>
-                        {
-                            ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
-                            ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
-            }
-
-            return new BaseResponse<List<ProductResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productResponses
             };
         }
 
@@ -297,32 +238,26 @@ namespace BLL.Services
         {
             ProductResponse productResponse = null;
 
-            //get product from Redis
-            productResponse = _redisService.GetList<ProductResponse>(CACHE_KEY)
-                .Find(product => product.ProductId.Equals(id));
+            //get product from database
+            try
+            {
 
-            if (productResponse == null)
-                //get product from database
-                try
-                {
+                Product product = await _unitOfWork.Products.GetRelatedProductById(id);
 
-                    Product product = await _unitOfWork.Products
-                        .FindAsync(p => p.ProductId.Equals(id));
+                productResponse = _mapper.Map<ProductResponse>(product);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductService.GetRelatedProductById()]: " + e.Message);
 
-                    productResponse = _mapper.Map<ProductResponse>(product);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[ProductService.GetRelatedProductById()]: " + e.Message);
-
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<BaseProductResponse>
-                        {
-                            ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
-                            ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
-                }
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ProductResponse>
+                    {
+                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
+                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
 
             return new BaseResponse<ProductResponse>
             {
@@ -396,19 +331,18 @@ namespace BLL.Services
 
 
             //store product to Redis
-            ProductResponse productResponse = _mapper.Map<ProductResponse>(product);
-            _redisService.StoreToList(CACHE_KEY, productResponse,
-                    new Predicate<ProductResponse>(a => a.ProductId == productResponse.ProductId));
+            // ProductResponse productResponse = _mapper.Map<ProductResponse>(product);
+            // _redisService.StoreToList(CACHE_KEY, productResponse,
+            //         new Predicate<ProductResponse>(a => a.ProductId == productResponse.ProductId));
 
             //create response
-            BaseProductResponse baseProductResponse = _mapper.Map<BaseProductResponse>(product);
-            baseProductResponse.RelatedProducts = GetRelatedProductsByBaseProductId(baseProductResponse.ProductId).Result.Data;
+            BaseProductResponse productResponse = _mapper.Map<BaseProductResponse>(product);
 
             return new BaseResponse<BaseProductResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = baseProductResponse
+                Data = productResponse
             };
         }
 
@@ -561,7 +495,6 @@ namespace BLL.Services
             });
 
             productResponses.Remove(productResponses.Find(p => p.ProductId.Equals(id)));
-            baseProductResponse.RelatedProducts = productResponses;
 
             return new BaseResponse<BaseProductResponse>
             {

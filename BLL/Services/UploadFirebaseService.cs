@@ -2,9 +2,10 @@
 using Microsoft.Extensions.Configuration;
 using Firebase.Storage;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
 using System;
+using System.IO;
+using System.Drawing;
+using System.Net.Http;
 
 namespace BLL.Services
 {
@@ -30,21 +31,21 @@ namespace BLL.Services
         /// <param name="parent"></param>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public async Task<string> UploadFileToFirebase(IFormFile file, string type, string parent, string fileName)
+        public async Task<string> UploadFileToFirebase(string file, string type, string parent, string fileName)
         {
             if (file != null)
             {
                 if (file.Length > 0)
                 {
-                    string typeOfFile = file.FileName.Substring(file.FileName.IndexOf("."));
-
                     try
                     {
+                        var bytes = Convert.FromBase64String(file);
+
                         FirebaseStorageTask task = new FirebaseStorage(bucket)
                             .Child(type)
                             .Child(parent)
-                            .Child(fileName + typeOfFile)
-                            .PutAsync(file.OpenReadStream());
+                            .Child(fileName)
+                            .PutAsync(new MemoryStream(bytes));
                         return await task;
                     }
                     catch (Exception e)
@@ -67,7 +68,7 @@ namespace BLL.Services
         /// <param name="parent"></param>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public async Task<string> UploadFilesToFirebase(List<IFormFile> files, string type, string parent, string fileName)
+        public async Task<string> UploadFilesToFirebase(string[] files, string type, string parent, string fileName)
         {
             string urlConcat = String.Empty;
             foreach (var file in files)
@@ -75,9 +76,9 @@ namespace BLL.Services
                 try
                 {
                     string url = await UploadFileToFirebase(file, type, parent,
-                        fileName + (files.IndexOf(file) + 1));
+                        fileName + (Array.IndexOf(files, file) + 1));
 
-                    if (file == files[files.Count - 1])
+                    if (file == files[files.Length - 1])
                     {
                         urlConcat += url;
                     }
@@ -88,7 +89,7 @@ namespace BLL.Services
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e.Message + "\nCannot upload image to Firebase Storage");
+                    _logger.Error(e.Message + "\nCannot upload images to Firebase Storage");
                     return null;
                 }
             }

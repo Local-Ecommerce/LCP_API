@@ -14,7 +14,7 @@ namespace BLL.Services.Interfaces
         /// <param name="parent"></param>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        Task<string> UploadFileToFirebase(IFormFile file, string type, string parent, string fileName);
+        Task<string> UploadFileToFirebase(string file, string type, string parent, string fileName);
 
 
         /// <summary>
@@ -25,6 +25,6 @@ namespace BLL.Services.Interfaces
         /// <param name="parent"></param>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        Task<string> UploadFilesToFirebase(List<IFormFile> files, string type, string parent, string fileName);
+        Task<string> UploadFilesToFirebase(string[] files, string type, string parent, string fileName);
     }
 }

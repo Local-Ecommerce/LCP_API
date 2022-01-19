@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace BLL.Dtos.Product
 {
-    public class BaseProductResponse : ProductResponse
+    public class BaseProductRequest : ProductRequest
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public Collection<ProductResponse> InverseBelongToNavigation { get; set; }
+        public Collection<ProductRequest> InverseBelongToNavigation { get; set; }
     }
 }

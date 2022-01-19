@@ -8,19 +8,19 @@ namespace BLL.Services.Interfaces
     public interface IProductService
     {
         /// <summary>
-        /// Create a Base Product
+        /// Create a Product
         /// </summary>
-        /// <param name="productRequest"></param>
+        /// <param name="baseProductRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<BaseProductResponse>> CreateBaseProduct(ProductRequest productRequest);
+        Task<BaseResponse<BaseProductResponse>> CreateProduct(BaseProductRequest baseProductRequest);
 
 
         /// <summary>
-        /// Create Related Product
+        /// Add Related Product
         /// </summary>
         /// <param name="productRequests"></param>
         /// <returns></returns>
-        Task<BaseResponse<BaseProductResponse>> CreateRelatedProduct(string baseProductId, 
+        Task<BaseResponse<ProductResponse>> AddRelatedProduct(string baseProductId,
             List<ProductRequest> productRequests);
 
 
@@ -30,7 +30,7 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="productRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<BaseProductResponse>> UpdateBaseProduct(string id, 
+        Task<BaseResponse<BaseProductResponse>> UpdateBaseProduct(string id,
             ProductRequest productRequest);
 
 
@@ -74,14 +74,6 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<BaseResponse<ProductResponse>> DeleteRelatedProduct(string id);
-
-
-        /// <summary>
-        /// Get Related Products By Base Product Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<BaseResponse<List<ProductResponse>>> GetRelatedProductsByBaseProductId(string id);
 
 
         /// <summary>

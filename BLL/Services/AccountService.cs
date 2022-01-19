@@ -105,7 +105,7 @@ namespace BLL.Services
                 string profileImageUrl = _uploadFirebaseService
                     .UploadFileToFirebase(accountRegisterRequest.ProfileImage, TYPE, accountId, "profileImage").Result;
                 string avatarImageUrl = _uploadFirebaseService
-                    .UploadFileToFirebase(accountRegisterRequest.ProfileImage, TYPE, accountId, "avatarImage").Result;
+                    .UploadFileToFirebase(accountRegisterRequest.AvatarImage, TYPE, accountId, "avatarImage").Result;
 
                 //store account to database
                 account = _mapper.Map<Account>(accountRegisterRequest);
@@ -342,8 +342,7 @@ namespace BLL.Services
         /// <param name="accountImageForm"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<AccountResponse>> UpdateAccount(string id,
-            AccountImageForm accountImageForm)
+        public async Task<BaseResponse<AccountResponse>> UpdateAccount(string id)
         {
             //biz rule
 
@@ -366,17 +365,9 @@ namespace BLL.Services
                     });
             }
 
-            //upload image
-            string profileImageUrl = _uploadFirebaseService
-                .UploadFileToFirebase(accountImageForm.ProfileImage, TYPE, id, "profileImage").Result;
-            string avatarImageUrl = _uploadFirebaseService
-                .UploadFileToFirebase(accountImageForm.ProfileImage, TYPE, id, "avatarImage").Result;
-
             //update data
             try
             {
-                account.ProfileImage = profileImageUrl;
-                account.AvatarImage = avatarImageUrl;
                 account.UpdatedDate = DateTime.Now;
 
                 _unitOfWork.Accounts.Update(account);
