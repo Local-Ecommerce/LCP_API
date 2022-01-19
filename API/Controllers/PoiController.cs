@@ -106,7 +106,7 @@ namespace API.Controllers
         /// Update Poi
         /// </summary>
         [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdatePoiById(string id, [FromBody] PoiRequest poiRequest)
+        public async Task<IActionResult> UpdatePoiById(string id, [FromBody] PoiUpdateRequest poiRequest)
         {
             _logger.Information($"PUT api/poi/update/{id} START Request: " +
                 $"{JsonSerializer.Serialize(poiRequest)}");

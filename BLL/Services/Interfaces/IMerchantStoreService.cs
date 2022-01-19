@@ -28,9 +28,9 @@ namespace BLL.Services.Interfaces
         /// Update Merchant Store By Id
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="merchantStoreRequest"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        Task<BaseResponse<MerchantStoreResponse>> UpdateMerchantStoreById(string id, MerchantStoreRequest merchantStoreRequest);
+        Task<BaseResponse<MerchantStoreResponse>> UpdateMerchantStoreById(string id, MerchantStoreUpdateRequest request);
 
 
         /// <summary>

@@ -188,10 +188,10 @@ namespace BLL.Services
         /// Update Merchant Store By Id
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="merchantStoreRequest"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         public async Task<BaseResponse<MerchantStoreResponse>> UpdateMerchantStoreById(string id,
-            MerchantStoreRequest merchantStoreRequest)
+            MerchantStoreUpdateRequest request)
         {
             MerchantStore merchantStore;
 
@@ -216,7 +216,7 @@ namespace BLL.Services
             //update MerchantStore
             try
             {
-                merchantStore = _mapper.Map(merchantStoreRequest, merchantStore);
+                merchantStore = _mapper.Map(request, merchantStore);
                 merchantStore.Status = (int)MerchantStoreStatus.UNVERIFIED_UPDATE_MERCHANT_STORE;
 
                 _unitOfWork.MerchantStores.Update(merchantStore);

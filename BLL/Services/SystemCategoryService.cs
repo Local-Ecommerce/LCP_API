@@ -223,7 +223,8 @@ namespace BLL.Services
         /// <param name="request"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<SystemCategoryResponse>> UpdateSystemCategory(string id, SystemCategoryRequest request)
+        public async Task<BaseResponse<SystemCategoryResponse>> UpdateSystemCategory(string id,
+            SystemCategoryUpdateRequest request)
         {
             //biz rule
 

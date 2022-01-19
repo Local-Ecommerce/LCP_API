@@ -189,9 +189,9 @@ namespace BLL.Services
         ///  Update News By Id
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="newsRequest"></param>
+        /// <param name="newsUpdateRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<NewsResponse>> UpdateNewsById(string id, NewsRequest newsRequest)
+        public async Task<BaseResponse<NewsResponse>> UpdateNewsById(string id, NewsUpdateRequest newsUpdateRequest)
         {
             News news;
             try
@@ -213,7 +213,7 @@ namespace BLL.Services
             //Update News to DB
             try
             {
-                news = _mapper.Map(newsRequest, news);
+                news = _mapper.Map(newsUpdateRequest, news);
 
                 _unitOfWork.News.Update(news);
 

@@ -112,7 +112,7 @@ namespace API.Controllers
         /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCollectionById(string id,
-                                              [FromBody] CollectionRequest collectionRequest)
+                                              [FromBody] CollectionUpdateRequest collectionRequest)
         {
             _logger.Information($"PUT api/collection/{id} START Request: " +
                 $"{JsonSerializer.Serialize(collectionRequest)}");

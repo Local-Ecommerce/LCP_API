@@ -43,9 +43,9 @@ namespace BLL.Services.Interfaces
         /// Update POI by Id
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="poiRequest"></param>
+        /// <param name="poiUpdateRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<PoiResponse>> UpdatePoiById(string id, PoiRequest poiRequest);
+        Task<BaseResponse<PoiResponse>> UpdatePoiById(string id, PoiUpdateRequest poiUpdateRequest);
 
         /// <summary>
         /// Delte POI by Id

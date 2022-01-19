@@ -44,9 +44,9 @@ namespace BLL.Services.Interfaces
         /// update news
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="newsRequest"></param>
+        /// <param name="newsUpdateRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<NewsResponse>> UpdateNewsById(string id, NewsRequest newsRequest);
+        Task<BaseResponse<NewsResponse>> UpdateNewsById(string id, NewsUpdateRequest newsUpdateRequest);
 
 
         /// <summary>

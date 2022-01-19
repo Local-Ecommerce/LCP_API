@@ -20,7 +20,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<BaseResponse<SystemCategoryResponse>> UpdateSystemCategory(string id, SystemCategoryRequest request);
+        Task<BaseResponse<SystemCategoryResponse>> UpdateSystemCategory(string id, SystemCategoryUpdateRequest request);
 
 
         /// <summary>
@@ -52,8 +52,8 @@ namespace BLL.Services.Interfaces
         /// <param name="status"></param>
         /// <returns></returns>
         Task<BaseResponse<List<SystemCategoryResponse>>> GetSystemCategoriesByStatus(int status);
-        
-        
+
+
         /// <summary>
         /// Get System Categories By Status
         /// </summary>
