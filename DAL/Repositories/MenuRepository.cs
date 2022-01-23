@@ -9,6 +9,8 @@ namespace DAL.Repositories
 {
     public class MenuRepository : Repository<Menu>, IMenuRepository
     {
+        private const int ACTIVE_PRODUCT_IN_MENU = 15001;
+
         public MenuRepository(LoichDBContext context) : base(context) { }
 
         /// <summary>
@@ -25,7 +27,11 @@ namespace DAL.Repositories
         }
 
 
-
+        /// <summary>
+        /// Get Menu Include Resident By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<Menu> GetMenuIncludeResidentById(string id)
         {
             Menu menu = await _context.Menus
@@ -35,6 +41,26 @@ namespace DAL.Repositories
                                 .FirstOrDefaultAsync();
 
             return menu;
+        }
+
+
+        /// <summary>
+        /// Get Menu By Resident Id
+        /// </summary>
+        /// <param name="residentId"></param>
+        /// <returns></returns>
+        public async Task<List<Menu>> GetMenusByResidentId(string residentId)
+        {
+            List<Menu> menus = await _context.Menus
+                                        .Where(menu => menu.ResidentId.Equals(residentId))
+                                        .Include(menu => menu.StoreMenuDetails)
+                                        .Include(menu => menu.ProductInMenus)
+                                        .ThenInclude(pim => pim.Product)
+                                        .Include(menu => menu.ProductInMenus)
+                                        .ThenInclude(pim => pim.ProductCombination)
+                                        .ToListAsync();
+
+            return menus;
         }
     }
 }

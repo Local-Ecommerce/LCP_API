@@ -18,10 +18,12 @@ namespace DAL.Models
         public DateTime? CreatedDate { get; set; }
         public int? Status { get; set; }
         public string ProductId { get; set; }
+        public string ProductCombinationId { get; set; }
         public string MenuId { get; set; }
 
         public virtual Menu Menu { get; set; }
         public virtual Product Product { get; set; }
+        public virtual ProductCombination ProductCombination { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }

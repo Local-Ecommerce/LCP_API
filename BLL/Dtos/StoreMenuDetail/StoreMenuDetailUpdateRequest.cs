@@ -4,8 +4,9 @@ namespace BLL.Dtos.StoreMenuDetail
 {
     public class StoreMenuDetailUpdateRequest
     {
-        public DateTime TimeStart { get; set; }
-        public DateTime TimeEnd { get; set; }
-        public int Status { get; set; }
+        public TimeSpan? TimeStart { get; set; }
+        public TimeSpan? TimeEnd { get; set; }
+        public int? Status { get; set; }
+        public string RepeatDate { get; set; }
     }
 }

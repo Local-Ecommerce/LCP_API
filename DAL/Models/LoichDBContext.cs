@@ -55,7 +55,7 @@ namespace DAL.Models
                 entity.ToTable("Account");
 
                 entity.Property(e => e.AccountId)
-                    .HasMaxLength(20)
+                    .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("AccountID");
 
@@ -106,7 +106,7 @@ namespace DAL.Models
                     .HasColumnName("CollectionID");
 
                 entity.Property(e => e.ResidentId)
-                    .HasMaxLength(20)
+                    .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("ResidentID");
 
@@ -158,7 +158,7 @@ namespace DAL.Models
                 entity.Property(e => e.MenuName).HasMaxLength(250);
 
                 entity.Property(e => e.ResidentId)
-                    .HasMaxLength(20)
+                    .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("ResidentID");
 
@@ -183,7 +183,7 @@ namespace DAL.Models
                     .HasColumnName("ApartmentID");
 
                 entity.Property(e => e.ResidentId)
-                    .HasMaxLength(20)
+                    .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("ResidentID");
 
@@ -213,7 +213,7 @@ namespace DAL.Models
                     .HasColumnName("ApartmentID");
 
                 entity.Property(e => e.ResidentId)
-                    .HasMaxLength(20)
+                    .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("ResidentID");
 
@@ -245,7 +245,7 @@ namespace DAL.Models
                     .HasColumnName("MerchantStoreID");
 
                 entity.Property(e => e.ResidentId)
-                    .HasMaxLength(20)
+                    .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("ResidentID");
 
@@ -347,7 +347,7 @@ namespace DAL.Models
                     .HasColumnName("ApartmentID");
 
                 entity.Property(e => e.ResidentId)
-                    .HasMaxLength(20)
+                    .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("ResidentID");
 
@@ -418,7 +418,7 @@ namespace DAL.Models
                     .HasColumnName("ProductID");
 
                 entity.Property(e => e.ResidentId)
-                    .HasMaxLength(20)
+                    .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("ResidentID");
 
@@ -445,35 +445,39 @@ namespace DAL.Models
 
             modelBuilder.Entity<ProductCombination>(entity =>
             {
-                entity.HasKey(e => new { e.BaseProductId, e.ProductId })
-                    .HasName("PK_tblProductCombination");
-
                 entity.ToTable("ProductCombination");
+
+                entity.Property(e => e.ProductCombinationId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("ProductCombinationID");
 
                 entity.Property(e => e.BaseProductId)
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("BaseProductID");
 
-                entity.Property(e => e.ProductId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("ProductID");
+                entity.Property(e => e.DateEnd).HasColumnType("date");
+
+                entity.Property(e => e.DateStart).HasColumnType("date");
 
                 entity.Property(e => e.DefaultMax)
                     .HasMaxLength(10)
                     .IsFixedLength(true);
 
+                entity.Property(e => e.ProductId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("ProductID");
+
                 entity.HasOne(d => d.BaseProduct)
                     .WithMany(p => p.ProductCombinationBaseProducts)
                     .HasForeignKey(d => d.BaseProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_tblProductCombination_tblProduct1");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.ProductCombinationProducts)
                     .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_tblProductCombination_tblProduct");
             });
 
@@ -491,6 +495,11 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("MenuID");
 
+                entity.Property(e => e.ProductCombinationId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("ProductCombinationID");
+
                 entity.Property(e => e.ProductId)
                     .HasMaxLength(20)
                     .IsUnicode(false)
@@ -500,6 +509,11 @@ namespace DAL.Models
                     .WithMany(p => p.ProductInMenus)
                     .HasForeignKey(d => d.MenuId)
                     .HasConstraintName("FK_tblProductInMenu_tblMenu");
+
+                entity.HasOne(d => d.ProductCombination)
+                    .WithMany(p => p.ProductInMenus)
+                    .HasForeignKey(d => d.ProductCombinationId)
+                    .HasConstraintName("FK_ProductInMenu_ProductCombination");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.ProductInMenus)
@@ -512,12 +526,12 @@ namespace DAL.Models
                 entity.ToTable("Resident");
 
                 entity.Property(e => e.ResidentId)
-                    .HasMaxLength(20)
+                    .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("ResidentID");
 
                 entity.Property(e => e.AccountId)
-                    .HasMaxLength(20)
+                    .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("AccountID");
 
@@ -587,6 +601,10 @@ namespace DAL.Models
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("MerchantStoreID");
+
+                entity.Property(e => e.RepeatDate)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.Menu)
                     .WithMany(p => p.StoreMenuDetails)

@@ -21,6 +21,7 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
+        private readonly IMenuService _menuService;
         private const string PREFIX = "MS_";
         private const string SUB_PREFIX = "SMD_";
 
@@ -28,12 +29,14 @@ namespace BLL.Services
         public MerchantStoreService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IUtilService utilService)
+            IUtilService utilService,
+            IMenuService menuService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
+            _menuService = menuService;
         }
 
 
@@ -55,6 +58,9 @@ namespace BLL.Services
                 merchantStore.CreatedDate = DateTime.Now;
 
                 _unitOfWork.MerchantStores.Add(merchantStore);
+
+                //create default menu
+                _menuService.CreateDefaultMenu(merchantStore.ResidentId, merchantStore.StoreName, merchantStore.MerchantStoreId);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -343,7 +349,6 @@ namespace BLL.Services
                 storeMenuDetails.ForEach(storeMenuDetail =>
                 {
                     storeMenuDetail.StoreMenuDetailId = _utilService.CreateId(SUB_PREFIX);
-                    storeMenuDetail.CreatedDate = DateTime.Now;
                     storeMenuDetail.MerchantStoreId = merchantStoreId;
                     storeMenuDetail.Status = (int)StoreMenuDetailStatus.ACTIVE_STORE_MENU_DETAIL;
 
@@ -470,8 +475,6 @@ namespace BLL.Services
                     .FindAsync(smd => smd.StoreMenuDetailId == storeMenuDetailId);
 
                 storeMenuDetail.Status = storeMenuDetailUpdateRequest.Status;
-                storeMenuDetail.TimeStart = storeMenuDetailUpdateRequest.TimeStart;
-                storeMenuDetail.TimeEnd = storeMenuDetailUpdateRequest.TimeEnd;
 
                 _unitOfWork.StoreMenuDetails.Update(storeMenuDetail);
             }
