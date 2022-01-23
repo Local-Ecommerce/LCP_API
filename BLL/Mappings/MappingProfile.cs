@@ -104,6 +104,11 @@ namespace BLL.Mappings
             CreateMap<OrderDetail, OrderDetailResponse>();
             CreateMap<Order, OrderResponse>();
 
+            //Store Menu Detail Mapping
+            CreateMap<StoreMenuDetailRequest, StoreMenuDetail>();
+            CreateMap<StoreMenuDetailUpdateRequest, StoreMenuDetail>();
+            CreateMap<StoreMenuDetail, StoreMenuDetailResponse>();
+
             //Product Combination Mapping
             CreateMap<ProductCombinationRequest, ProductCombination>();
             CreateMap<ProductCombination, ProductCombinationResponse>();

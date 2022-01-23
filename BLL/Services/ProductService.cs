@@ -10,7 +10,6 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
 using System.Collections.ObjectModel;
 
 namespace BLL.Services
@@ -225,6 +224,43 @@ namespace BLL.Services
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = baseProductResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Get All Base Product
+        /// </summary>
+        /// <returns></returns>
+        public async Task<BaseResponse<List<BaseProductResponse>>> GetAllBaseProduct()
+        {
+            List<Product> products;
+
+            //get product from database
+            try
+            {
+                products = await _unitOfWork.Products.GetAllBaseProduct();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductService.GetAllBaseProduct()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<BaseProductResponse>
+                    {
+                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
+                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            List<BaseProductResponse> baseProductResponses = _mapper.Map<List<BaseProductResponse>>(products);
+
+            return new BaseResponse<List<BaseProductResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = baseProductResponses
             };
         }
 

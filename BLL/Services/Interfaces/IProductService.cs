@@ -43,6 +43,12 @@ namespace BLL.Services.Interfaces
         Task<BaseResponse<ProductResponse>> UpdateRelatedProduct(string id,
             ProductRequest productRequest);
 
+        /// <summary>
+        /// Get All Base Product
+        /// </summary>
+        /// <returns></returns>
+        Task<BaseResponse<List<BaseProductResponse>>> GetAllBaseProduct();
+
 
         /// <summary>
         /// Get Base Product by Id

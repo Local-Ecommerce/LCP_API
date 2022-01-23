@@ -3,12 +3,15 @@ using BLL.Constants;
 using BLL.Dtos;
 using BLL.Dtos.Exception;
 using BLL.Dtos.Menu;
+using BLL.Dtos.MerchantStore;
 using BLL.Dtos.ProductInMenu;
+using BLL.Dtos.StoreMenuDetail;
 using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -20,18 +23,21 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
+        private readonly IStoreMenuDetailService _storeMenuDetailService;
         private const string PREFIX = "MN_";
 
         public MenuService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IUtilService utilService
+            IUtilService utilService,
+            IStoreMenuDetailService storeMenuDetailService
             )
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
+            _storeMenuDetailService = storeMenuDetailService;
         }
 
         /// <summary>
@@ -531,6 +537,73 @@ namespace BLL.Services
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = menuResponses
             };
+        }
+
+
+        /// <summary>
+        /// Get Menus By Resident Id
+        /// </summary>
+        /// <param name="residentId"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<List<MenuResponse>>> GetMenusByResidentId(string residentId)
+        {
+            List<MenuResponse> menuResponses;
+
+            //get menu from database
+            try
+            {
+                menuResponses = _mapper.Map<List<MenuResponse>>(
+                    await _unitOfWork.Menus.GetMenusByResidentId(residentId));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MenuService.GetMenusByResidentId()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MenuResponse>
+                    {
+                        ResultCode = (int)MenuStatus.MENU_NOT_FOUND,
+                        ResultMessage = MenuStatus.MENU_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<MenuResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = menuResponses
+            };
+        }
+
+
+        /// <summary>
+        /// Create Default Menu
+        /// </summary>
+        /// <param name="residentId"></param>
+        /// <param name="storeName"></param>
+        /// <param name="merchantStoreId"></param>
+        /// <returns></returns>
+        public MenuResponse CreateDefaultMenu(string residentId, string storeName, string merchantStoreId)
+        {
+            Menu menu = new Menu
+            {
+                MenuId = _utilService.CreateId(PREFIX),
+                MenuName = "Bảng giá của " + storeName,
+                CreatedDate = DateTime.Now,
+                UpdatedDate = DateTime.Now,
+                Status = (int)MenuStatus.ACTIVE_MENU,
+                ResidentId = residentId
+            };
+
+            _unitOfWork.Menus.Add(menu);
+
+            MenuResponse menuResponse = _mapper.Map<MenuResponse>(menu);
+            menuResponse.StoreMenuDetails = new Collection<StoreMenuDetailResponse>();
+            menuResponse.StoreMenuDetails.Add(
+                _storeMenuDetailService.CreateDefaultStoreMenuDetail(menu.MenuId, merchantStoreId));
+
+            return menuResponse;
         }
     }
 }

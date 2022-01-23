@@ -12,6 +12,23 @@ namespace DAL.Repositories
     {
         public ProductRepository(LoichDBContext context) : base(context) { }
 
+        private const int VERIFIED_PRODUCT = 1005;
+
+        /// <summary>
+        /// Get All Base Product
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Product>> GetAllBaseProduct()
+        {
+            List<Product> products = await _context.Products
+                                            .Where(p => p.BelongTo == null && p.Status == VERIFIED_PRODUCT)
+                                            .Include(p => p.InverseBelongToNavigation)
+                                            .ToListAsync();
+
+            return products;
+        }
+
+
         private const int UNVERIFIED_CREATE_PRODUCT = 1006,
                           UNVERIFIED_UPDATE_PRODUCT = 1007;
 

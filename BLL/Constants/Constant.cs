@@ -3,7 +3,8 @@
     public enum TimeUnit
     {
         THIRTY_DAYS = 30,
-        ONE_HOUR = 1
+        ONE_HOUR = 1,
+        TWENTY_FOUR_HOUR = 24
     }
 
     public enum CategoryLevel

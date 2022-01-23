@@ -19,5 +19,13 @@ namespace DAL.Repositories.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Menu> GetMenuIncludeResidentById(string id);
+
+
+        /// <summary>
+        /// Get Menu By Resident Id
+        /// </summary>
+        /// <param name="residentId"></param>
+        /// <returns></returns>
+        Task<List<Menu>> GetMenusByResidentId(string residentId);
     }
 }

@@ -103,6 +103,32 @@ namespace API.Controllers
 
 
         /// <summary>
+        /// Get All Base Product
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("base")]
+        public async Task<IActionResult> GetAllBaseProduct()
+        {
+            _logger.Information($"GET api/product/base START");
+
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
+            //get base product
+            BaseResponse<List<BaseProductResponse>> response = await _productService.GetAllBaseProduct();
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/product/base END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
         /// Get Related Product By Id
         /// </summary>
         [AllowAnonymous]
