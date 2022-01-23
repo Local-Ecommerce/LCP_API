@@ -18,6 +18,7 @@ using BLL.Dtos.PaymentMethod;
 using BLL.Dtos.Resident;
 using BLL.Dtos.OrderDetail;
 using BLL.Dtos.Order;
+using BLL.Dtos.ProductCombination;
 
 namespace BLL.Mappings
 {
@@ -102,6 +103,10 @@ namespace BLL.Mappings
             CreateMap<OrderDetailRequest, OrderDetail>();
             CreateMap<OrderDetail, OrderDetailResponse>();
             CreateMap<Order, OrderResponse>();
+
+            //Product Combination Mapping
+            CreateMap<ProductCombinationRequest, ProductCombination>();
+            CreateMap<ProductCombination, ProductCombinationResponse>();
         }
     }
 }

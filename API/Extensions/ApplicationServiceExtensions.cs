@@ -41,6 +41,7 @@ namespace API.Extensions
             services.AddScoped<IUploadFirebaseService, UploadFirebaseService>();
             services.AddScoped<IResidentService, ResidentService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IProductCombinationService, ProductCombinationService>(); 
 
             return services;
         }

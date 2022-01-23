@@ -369,5 +369,32 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+        
+        /// <summary>
+        /// Get Pending Merchant Stores
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("pending")]
+        public async Task<IActionResult> GetPendingMerchantStores()
+        {
+            _logger.Information($"GET api/store/pending START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get pending merchantStore
+            BaseResponse<List<MerchantStoreResponse>> response =
+                await _merchantStoreService.GetPendingMerchantStores();
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/store/pending END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }

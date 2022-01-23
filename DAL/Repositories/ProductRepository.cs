@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DAL.Models;
@@ -10,6 +11,9 @@ namespace DAL.Repositories
     public class ProductRepository : Repository<Product>, IProductRepository
     {
         public ProductRepository(LoichDBContext context) : base(context) { }
+
+        private const int UNVERIFIED_CREATE_PRODUCT = 1006,
+                          UNVERIFIED_UPDATE_PRODUCT = 1007;
 
         /// <summary>
         /// Get Base Product By Id
@@ -39,6 +43,18 @@ namespace DAL.Repositories
                                                     .FirstOrDefaultAsync();
 
             return product;
+        }
+
+
+        public async Task<List<Product>> GetPendingProducts()
+        {
+            List<Product>  products = await _context.Products
+                                                              .Where(p => p.Status == UNVERIFIED_CREATE_PRODUCT || p.Status == UNVERIFIED_UPDATE_PRODUCT)
+                                                              .Include(p => p.BelongToNavigation)
+                                                              .OrderByDescending(p => p.CreatedDate)
+                                                              .ToListAsync();
+
+            return products;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Models;
 
@@ -18,5 +19,12 @@ namespace DAL.Repositories.Interfaces
         /// <param name="productId"></param>
         /// <returns></returns>
         Task<Product> GetRelatedProductById(string productId);
+
+
+        /// <summary>
+        /// Get Pending Products
+        /// </summary>
+        /// <returns></returns>
+        Task<List<Product>> GetPendingProducts();
     }
 }

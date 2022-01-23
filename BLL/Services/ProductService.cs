@@ -615,5 +615,46 @@ namespace BLL.Services
                 Data = productResponses
             };
         }
+        
+        
+        /// <summary>
+        /// Get Pending Products
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<ProductResponse>>> GetPendingProducts()
+        {
+            //biz rule
+
+            List<ProductResponse> productResponses;
+
+            //Get Product From Database
+
+            try
+            {
+                List<Product> products = await _unitOfWork.Products.GetPendingProducts();
+
+                productResponses = _mapper.Map<List<ProductResponse>>(products);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductService.GetPendingProducts()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ProductResponse>
+                    {
+                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
+                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<ProductResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = productResponses
+            };
+        }
     }
 }

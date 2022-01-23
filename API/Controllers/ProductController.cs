@@ -253,5 +253,32 @@ namespace API.Controllers
 
             return Ok(json);
         }
+        
+        
+        /// <summary>
+        /// Get Pendings Products
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("pending")]
+        public async Task<IActionResult> GetPendingProducts()
+        {
+            _logger.Information($"GET api/product/pending START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get Product
+            BaseResponse<List<ProductResponse>> response =
+                await _productService.GetPendingProducts();
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/product/pending END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }
