@@ -1,5 +1,6 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.Menu;
+using BLL.Dtos.MerchantStore;
 using BLL.Dtos.ProductInMenu;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,6 +15,16 @@ namespace BLL.Services.Interfaces
         /// <param name="menuRequest"></param>
         /// <returns></returns>
         Task<BaseResponse<MenuResponse>> CreateMenu(MenuRequest menuRequest);
+
+
+        /// <summary>
+        /// Create Default Menu
+        /// </summary>
+        /// <param name="residentId"></param>
+        /// <param name="storeName"></param>
+        /// <param name="merchantStoreId"></param>
+        /// <returns></returns>
+        MenuResponse CreateDefaultMenu(string residentId, string storeName, string merchantStoreId);
 
 
         /// <summary>
@@ -46,7 +57,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="productInMenuRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ProductInMenuResponse>>> AddProductsToMenu(string menuId, 
+        Task<BaseResponse<List<ProductInMenuResponse>>> AddProductsToMenu(string menuId,
             List<ProductInMenuRequest> productInMenuRequests);
 
 
@@ -90,12 +101,20 @@ namespace BLL.Services.Interfaces
         /// <param name="status"></param>
         /// <returns></returns>
         Task<BaseResponse<List<MenuResponse>>> GetMenusByStatus(int status);
-        
-        
+
+
         /// <summary>
         /// Get All Menus
         /// </summary>
         /// <returns></returns>
         Task<BaseResponse<List<MenuResponse>>> GetAllMenus();
+
+
+        /// <summary>
+        /// Get Menus By Resident Id
+        /// </summary>
+        /// <param name="residentId"></param>
+        /// <returns></returns>
+        Task<BaseResponse<List<MenuResponse>>> GetMenusByResidentId(string residentId);
     }
 }

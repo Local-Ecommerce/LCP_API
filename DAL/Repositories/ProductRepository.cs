@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DAL.Models;
@@ -10,6 +10,23 @@ namespace DAL.Repositories
     public class ProductRepository : Repository<Product>, IProductRepository
     {
         public ProductRepository(LoichDBContext context) : base(context) { }
+
+        private const int VERIFIED_PRODUCT = 1005;
+
+        /// <summary>
+        /// Get All Base Product
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Product>> GetAllBaseProduct()
+        {
+            List<Product> products = await _context.Products
+                                            .Where(p => p.BelongTo == null && p.Status == VERIFIED_PRODUCT)
+                                            .Include(p => p.InverseBelongToNavigation)
+                                            .ToListAsync();
+
+            return products;
+        }
+
 
         /// <summary>
         /// Get Base Product By Id

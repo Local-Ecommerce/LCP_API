@@ -8,10 +8,10 @@ namespace DAL.Models
     public partial class StoreMenuDetail
     {
         public string StoreMenuDetailId { get; set; }
-        public DateTime? TimeStart { get; set; }
-        public DateTime? TimeEnd { get; set; }
-        public DateTime? CreatedDate { get; set; }
+        public TimeSpan? TimeStart { get; set; }
+        public TimeSpan? TimeEnd { get; set; }
         public int? Status { get; set; }
+        public string RepeatDate { get; set; }
         public string MenuId { get; set; }
         public string MerchantStoreId { get; set; }
 
