@@ -90,7 +90,7 @@ namespace BLL.Services
             ProductCombination productCombination;
             try
             {
-                productCombination = await _unitOfWork.ProductCombinations.FindAsync(ProductCombination => ProductCombination.ProductCombinationId.Equals(id));
+                productCombination = await _unitOfWork.ProductCombinations.FindAsync(pdc => pdc.ProductCombinationId.Equals(id));
             }
             catch (Exception e)
             {
@@ -152,9 +152,9 @@ namespace BLL.Services
             {
                 try
                 {
-                    ProductCombination ProductCombination = await _unitOfWork.ProductCombinations.FindAsync(pdc => pdc.BaseProductId.Equals(id));
+                    ProductCombination productCombination = await _unitOfWork.ProductCombinations.FindAsync(pdc => pdc.ProductCombinationId.Equals(id));
 
-                    productCombinationReponse = _mapper.Map<ProductCombinationResponse>(ProductCombination);
+                    productCombinationReponse = _mapper.Map<ProductCombinationResponse>(productCombination);
                 }
                 catch (Exception e)
                 {
