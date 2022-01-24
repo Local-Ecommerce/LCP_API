@@ -165,7 +165,7 @@ namespace API.Controllers
         [HttpGet("product/{id}")]
         public async Task<IActionResult> GetProductCombinationByProductId(string id)
         {
-            _logger.Information($"GET api/combinationp/roduct/{id} START");
+            _logger.Information($"GET api/combination/product/{id} START");
 
             Stopwatch watch = new();
             watch.Start();
