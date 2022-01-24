@@ -4,8 +4,6 @@ using Firebase.Storage;
 using System.Threading.Tasks;
 using System;
 using System.IO;
-using System.Drawing;
-using System.Net.Http;
 
 namespace BLL.Services
 {

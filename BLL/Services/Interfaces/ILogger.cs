@@ -2,24 +2,28 @@
 {
     public interface ILogger
     {
-        /*
-         * [12/08/2021 - HanNQ] log infomation
-         */
+        /// <summary>
+        /// Log Infomation
+        /// </summary>
+        /// <param name="message"></param>
         void Information(string message);
 
-        /*
-         * [12/08/2021 - HanNQ] log warning
-         */
+        /// <summary>
+        /// Log Warning
+        /// </summary>
+        /// <param name="message"></param>
         void Warning(string message);
 
-        /*
-         * [12/08/2021 - HanNQ] log debug
-         */
+        /// <summary>
+        /// Log Debug
+        /// </summary>
+        /// <param name="message"></param>
         void Debug(string message);
 
-        /*
-         * [12/08/2021 - HanNQ] log error
-         */
+        /// <summary>
+        /// Log Error
+        /// </summary>
+        /// <param name="message"></param>
         void Error(string message);
     }
 }

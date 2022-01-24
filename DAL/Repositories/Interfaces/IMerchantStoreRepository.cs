@@ -22,10 +22,9 @@ namespace DAL.Repositories.Interfaces
 
 
         /// <summary>
-        /// Get Merchant Store Include Resident By Unvertified Status
+        /// Get Merchant Store Include Resident By Unverified Status
         /// </summary>
-        /// <param name="status"></param>
         /// <returns></returns>
-        Task<List<MerchantStore>> GetPendingMerchantStoreIncludeResidentByUnvertifiedStatus();
+        Task<List<MerchantStore>> GetPendingMerchantStoreIncludeResidentByUnverifiedStatus();
     }
 }

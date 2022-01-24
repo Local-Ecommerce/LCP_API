@@ -2,7 +2,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
-using BLL.Constants;
+using DAL.Constants;
 using BLL.Dtos;
 using BLL.Dtos.Exception;
 using BLL.Dtos.StoreMenuDetail;

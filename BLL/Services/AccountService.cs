@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BLL.Constants;
+using DAL.Constants;
 using BLL.Dtos;
 using BLL.Dtos.Account;
 using BLL.Dtos.Exception;

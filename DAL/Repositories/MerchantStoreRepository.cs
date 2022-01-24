@@ -4,6 +4,7 @@ using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using DAL.Constants;
 
 namespace DAL.Repositories
 {
@@ -11,8 +12,6 @@ namespace DAL.Repositories
     {
         public MerchantStoreRepository(LoichDBContext context) : base(context) { }
 
-        private const int UNVERIFIED_CREATE_MERCHANT_STORE = 6006,
-                          UNVERIFIED_UPDATE_MERCHANT_STORE = 6007;
 
         /// <summary>
         /// Get All Merchant Stores Include Resident And Apartment
@@ -49,13 +48,14 @@ namespace DAL.Repositories
 
 
         /// <summary>
-        /// Get Merchant Store Include Resident By Unvertified Status
+        /// Get Merchant Store Include Resident By Unverified Status
         /// </summary>
         /// <returns></returns>
-        public async Task<List<MerchantStore>> GetPendingMerchantStoreIncludeResidentByUnvertifiedStatus()
+        public async Task<List<MerchantStore>> GetPendingMerchantStoreIncludeResidentByUnverifiedStatus()
         {
             List<MerchantStore> merchantStores = await _context.MerchantStores
-                                                        .Where(ms => ms.Status == UNVERIFIED_CREATE_MERCHANT_STORE || ms.Status == UNVERIFIED_UPDATE_MERCHANT_STORE)
+                                                        .Where(ms => ms.Status == (int)MerchantStoreStatus.UNVERIFIED_CREATE_MERCHANT_STORE 
+                                                        || ms.Status == (int)MerchantStoreStatus.UNVERIFIED_UPDATE_MERCHANT_STORE)
                                                         .Include(ms => ms.Apartment)
                                                         .Include(ms => ms.Resident)
                                                         .OrderByDescending(ms => ms.CreatedDate)

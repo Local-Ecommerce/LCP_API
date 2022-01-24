@@ -4,14 +4,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using DAL.Constants;
 
 namespace DAL.Repositories
 {
     public class ApartmentRepository : Repository<Apartment>, IApartmentRepository
     {
         public ApartmentRepository(LoichDBContext context) : base(context) { }
-
-        private const int ACTIVE_STATUS = 4001;
 
 
         /// <summary>
@@ -21,7 +20,7 @@ namespace DAL.Repositories
         public async Task<List<Apartment>> GetAllActiveApartment()
         {
             List<Apartment> apartments = await _context.Apartments
-                                            .Where(ap => ap.Status == ACTIVE_STATUS)
+                                            .Where(ap => ap.Status == (int)ApartmentStatus.ACTIVE_APARTMENT)
                                             .OrderBy(ap => ap.Address)
                                             .ToListAsync();
 

@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using BLL.Dtos;
 using BLL.Dtos.StoreMenuDetail;
 using BLL.Services.Interfaces;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [EnableCors("MyPolicy")]
     [ApiController]
     [Route("api/storeMenuDetail")]
     public class StoreMenuDetailController : ControllerBase
