@@ -1,4 +1,4 @@
-namespace BLL.Constants
+namespace DAL.Constants
 {
     public class ResidentType
     {

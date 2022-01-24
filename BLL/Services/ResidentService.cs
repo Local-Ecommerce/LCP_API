@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using DAL.Models;
 using BLL.Dtos.Exception;
 using System.Net;
-using BLL.Constants;
+using DAL.Constants;
 
 namespace BLL.Services
 {

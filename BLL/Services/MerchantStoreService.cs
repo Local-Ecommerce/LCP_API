@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Dtos;
-using BLL.Constants;
+using DAL.Constants;
 using BLL.Dtos.Exception;
 using BLL.Dtos.MerchantStore;
 using BLL.Services.Interfaces;
@@ -632,7 +632,7 @@ namespace BLL.Services
             try
             {
                 merchantStoreList = await _unitOfWork.MerchantStores.
-                                            GetPendingMerchantStoreIncludeResidentByUnvertifiedStatus();
+                                            GetPendingMerchantStoreIncludeResidentByUnverifiedStatus();
             }
             catch (Exception e)
             {
