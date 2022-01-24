@@ -1,5 +1,5 @@
 ﻿using BLL.Dtos.Product;
-using DAL.Models;
+using BLL.Dtos.ProductCombination;
 using System;
 using System.Text.Json.Serialization;
 
@@ -20,6 +20,6 @@ namespace BLL.Dtos.ProductInMenu
         public ProductResponse Product { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public ProductCombination ProductCombination { get; set; }
+        public ProductCombinationResponse ProductCombination { get; set; }
     }
 }

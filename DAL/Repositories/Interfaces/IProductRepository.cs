@@ -26,5 +26,12 @@ namespace DAL.Repositories.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<List<Product>> GetAllBaseProduct();
+
+
+        /// <summary>
+        /// Get Pending Products
+        /// </summary>
+        /// <returns></returns>
+        Task<List<Product>> GetPendingProducts();
     }
 }

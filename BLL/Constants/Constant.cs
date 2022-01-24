@@ -206,4 +206,11 @@
         PAID = 20005,
         IN_PAYMENT = 20006
     }
+
+    public enum ProductCombinationStatus
+    {
+        ACTIVE_PRODUCT_COMBINATION = 21001,
+        INACTIVE_PRODUCT_COMBINATION = 21002,
+        PRODUCT_COMBINATION_NOT_FOUND = 21003
+    }
 }

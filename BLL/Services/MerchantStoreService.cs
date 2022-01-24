@@ -617,5 +617,166 @@ namespace BLL.Services
                 Data = merchantStoreResponses
             };
         }
+        
+        
+        /// <summary>
+        /// Get Pending Merchant Stores
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetPendingMerchantStores()
+        {
+            List<MerchantStore> merchantStoreList = null;
+
+            //get merchantStore from database
+            try
+            {
+                merchantStoreList = await _unitOfWork.MerchantStores.
+                                            GetPendingMerchantStoreIncludeResidentByUnvertifiedStatus();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.GetPendingMerchantStores()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantStoreResponse>
+                    {
+                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
+                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            List<MerchantStoreResponse> merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStoreList);
+
+            return new BaseResponse<List<MerchantStoreResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantStoreResponses
+            };
+        }
+
+
+        /// <summary>
+        /// Approve Merchant Store By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<MerchantStoreResponse>> ApproveMerchantStoreById(string id)
+        {
+            MerchantStore merchantStore;
+
+            //Check id
+            try
+            {
+                merchantStore = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.ApproveMerchantStoreById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantStoreResponse>
+                    {
+                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
+                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            //Approve MerchantStore
+            try
+            {
+                merchantStore.Status = (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE;
+
+                _unitOfWork.MerchantStores.Update(merchantStore);
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.ApproveMerchantStoreById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantStoreResponse>
+                    {
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
+                        Data = default
+                    });
+            }
+
+            //Create Response
+            MerchantStoreResponse merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
+
+            return new BaseResponse<MerchantStoreResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantStoreResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Decline Merchant Store By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<MerchantStoreResponse>> DeclineMerchantStoreById(string id)
+        {
+            MerchantStore merchantStore;
+
+            //Check id
+            try
+            {
+                merchantStore = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.DeclineMerchantStoreById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantStoreResponse>
+                    {
+                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
+                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            //Approve MerchantStore
+            try
+            {
+                merchantStore.Status = (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE;
+
+                _unitOfWork.MerchantStores.Update(merchantStore);
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.DeclineMerchantStoreById()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantStoreResponse>
+                    {
+                        ResultCode = (int)CommonResponse.ERROR,
+                        ResultMessage = CommonResponse.ERROR.ToString(),
+                        Data = default
+                    });
+            }
+
+            //Create Response
+            MerchantStoreResponse merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
+
+            return new BaseResponse<MerchantStoreResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantStoreResponse
+            };
+        }
     }
 }

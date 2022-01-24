@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,6 +29,9 @@ namespace DAL.Repositories
         }
 
 
+        private const int UNVERIFIED_CREATE_PRODUCT = 1006,
+                          UNVERIFIED_UPDATE_PRODUCT = 1007;
+
         /// <summary>
         /// Get Base Product By Id
         /// </summary>
@@ -56,6 +60,18 @@ namespace DAL.Repositories
                                                     .FirstOrDefaultAsync();
 
             return product;
+        }
+
+
+        public async Task<List<Product>> GetPendingProducts()
+        {
+            List<Product>  products = await _context.Products
+                                                              .Where(p => p.Status == UNVERIFIED_CREATE_PRODUCT || p.Status == UNVERIFIED_UPDATE_PRODUCT)
+                                                              .Include(p => p.BelongToNavigation)
+                                                              .OrderByDescending(p => p.CreatedDate)
+                                                              .ToListAsync();
+
+            return products;
         }
     }
 }

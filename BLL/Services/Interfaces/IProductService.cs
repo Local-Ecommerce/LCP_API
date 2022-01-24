@@ -88,5 +88,12 @@ namespace BLL.Services.Interfaces
         /// <param name="status"></param>
         /// <returns></returns>
         Task<BaseResponse<List<ProductResponse>>> GetProductsByStatus(int status);
+
+
+        /// <summary>
+        /// Get Pending Products
+        /// </summary>
+        /// <returns></returns>
+        Task<BaseResponse<List<ProductResponse>>> GetPendingProducts();
     }
 }
