@@ -342,7 +342,7 @@ namespace BLL.Services
 
             //store product to Redis
             _redisService.StoreToList(CACHE_KEY_FOR_UPDATE, extendProductResponse,
-                new Predicate<ExtendProductResponse>(up => up.ProductId != null));
+                new Predicate<ExtendProductResponse>(up => up.ProductId.Equals(extendProductResponse.ProductId)));
 
 
             return new BaseResponse<ExtendProductResponse>
