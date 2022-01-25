@@ -7,13 +7,13 @@ using System.IO;
 
 namespace BLL.Services
 {
-    public class UploadFirebaseService : IUploadFirebaseService
+    public class FirebaseService : IFirebaseService
     {
         private IConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly string bucket;
 
-        public UploadFirebaseService(IConfiguration configuration, ILogger logger)
+        public FirebaseService(IConfiguration configuration, ILogger logger)
         {
             _configuration = configuration;
             _logger = logger;
@@ -54,7 +54,7 @@ namespace BLL.Services
 
                 }
             }
-            return String.Empty;
+            return string.Empty;
         }
 
 
@@ -65,18 +65,19 @@ namespace BLL.Services
         /// <param name="type"></param>
         /// <param name="parent"></param>
         /// <param name="fileName"></param>
+        /// <param name="order"></param>
         /// <returns></returns>
-        public async Task<string> UploadFilesToFirebase(string[] files, string type, string parent, string fileName)
+        public async Task<string> UploadFilesToFirebase(string[] files, string type, string parent, string fileName, int order)
         {
-            string urlConcat = String.Empty;
+            string urlConcat = string.Empty;
             foreach (var file in files)
             {
                 try
                 {
                     string url = await UploadFileToFirebase(file, type, parent,
-                        fileName + (Array.IndexOf(files, file) + 1));
+                        fileName + (Array.IndexOf(files, file) + order + 1));
 
-                    if (file == files[files.Length - 1])
+                    if (file == files[^1])
                     {
                         urlConcat += url;
                     }

@@ -199,7 +199,7 @@ namespace API.Controllers
             watch.Start();
 
             //get products
-            BaseResponse<List<BaseProductResponse>> response = await _collectionService.GetProductsByCollectionId(id);
+            BaseResponse<List<ExtendProductResponse>> response = await _collectionService.GetProductsByCollectionId(id);
 
             string json = JsonSerializer.Serialize(response);
 

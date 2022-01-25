@@ -22,7 +22,7 @@ namespace BLL.Services
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
         private readonly IRedisService _redisService;
-        private readonly IUploadFirebaseService _uploadFirebaseService;
+        private readonly IFirebaseService _uploadFirebaseService;
         private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
         private readonly IValidateDataService _validateDataService;
         private const string PREFIX = "ACC_";
@@ -34,7 +34,7 @@ namespace BLL.Services
             IMapper mapper,
             IUtilService utilService,
             IRedisService redisService,
-            IUploadFirebaseService uploadFirebaseService,
+            IFirebaseService uploadFirebaseService,
             IJwtAuthenticationManager jwtAuthenticationManager,
             IValidateDataService validateDataService)
         {

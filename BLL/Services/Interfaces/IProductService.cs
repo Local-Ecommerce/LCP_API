@@ -12,7 +12,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="baseProductRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<BaseProductResponse>> CreateProduct(BaseProductRequest baseProductRequest);
+        Task<BaseResponse<ExtendProductResponse>> CreateProduct(BaseProductRequest baseProductRequest);
 
 
         /// <summary>
@@ -25,29 +25,19 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Update Base Product
+        /// Request Update Product
         /// </summary>
         /// <param name="id"></param>
         /// <param name="productRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<BaseProductResponse>> UpdateBaseProduct(string id,
-            ProductRequest productRequest);
+        Task<BaseResponse<ExtendProductResponse>> RequestUpdateProduct(string id, ProductRequest productRequest);
 
-
-        /// <summary>
-        /// Update Related Product
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="productRequest"></param>
-        /// <returns></returns>
-        Task<BaseResponse<ProductResponse>> UpdateRelatedProduct(string id,
-            ProductRequest productRequest);
 
         /// <summary>
         /// Get All Base Product
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<BaseProductResponse>>> GetAllBaseProduct();
+        Task<BaseResponse<List<ExtendProductResponse>>> GetAllBaseProduct();
 
 
         /// <summary>
@@ -55,7 +45,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<BaseProductResponse>> GetBaseProductById(string id);
+        Task<BaseResponse<ExtendProductResponse>> GetBaseProductById(string id);
 
 
         /// <summary>
@@ -71,7 +61,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<BaseProductResponse>> DeleteBaseProduct(string id);
+        Task<BaseResponse<ExtendProductResponse>> DeleteBaseProduct(string id);
 
 
         /// <summary>
@@ -94,6 +84,24 @@ namespace BLL.Services.Interfaces
         /// Get Pending Products
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<ProductResponse>>> GetPendingProducts();
+        Task<BaseResponse<List<ExtendProductResponse>>> GetPendingProducts();
+
+
+        /// <summary>
+        /// Verify Create Product By Id
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        Task<BaseResponse<ProductResponse>> VerifyCreateProductById(string productId, string type);
+
+
+        /// <summary>
+        /// Verify Update Product By Id
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        Task<BaseResponse<ProductResponse>> VerifyUpdateProductById(string productId, string type);
     }
 }
