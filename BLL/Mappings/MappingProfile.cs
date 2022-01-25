@@ -28,8 +28,10 @@ namespace BLL.Mappings
         {
             //Product Mapping
             CreateMap<ProductRequest, Product>();
+            CreateMap<ProductRequest, UpdateProductRequest>();
             CreateMap<Product, ProductResponse>().ReverseMap();
-            CreateMap<Product, BaseProductResponse>().ReverseMap();
+            CreateMap<Product, ExtendProductResponse>();
+            CreateMap<UpdateProductRequest, Product>();
 
             //Apartment Mapping
             CreateMap<ApartmentRequest, Apartment>();

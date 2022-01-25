@@ -29,9 +29,9 @@ namespace DAL.Repositories.Interfaces
 
 
         /// <summary>
-        /// Get Pending Products
+        /// Get Unverified Create Products
         /// </summary>
         /// <returns></returns>
-        Task<List<Product>> GetPendingProducts();
+        Task<List<Product>> GetUnverifiedCreateProducts();
     }
 }

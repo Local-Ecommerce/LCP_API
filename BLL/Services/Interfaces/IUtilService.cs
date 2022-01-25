@@ -35,5 +35,13 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         string ChangeToVietnamPhoneNumber(string phone);
 
+
+        /// <summary>
+        /// Last Image Number
+        /// </summary>
+        /// <param name="imageName"></param>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        int LastImageNumber(string imageName, string url);
     }
 }

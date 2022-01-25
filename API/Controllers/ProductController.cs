@@ -38,7 +38,7 @@ namespace API.Controllers
             watch.Start();
 
             //create product
-            BaseResponse<BaseProductResponse> response = await _productService.CreateProduct(productRequest);
+            BaseResponse<ExtendProductResponse> response = await _productService.CreateProduct(productRequest);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -55,7 +55,7 @@ namespace API.Controllers
         /// Add Related Product
         /// </summary>
         [HttpPost("addRelated/{id}")]
-        public async Task<IActionResult> AddRelatedProduct(string id, [FromBody] RelatedProductRequest relatedProductRequest)
+        public async Task<IActionResult> AddRelatedProduct(string id, [FromBody] List<ProductRequest> relatedProductRequest)
         {
             _logger.Information($"POST api/product/addRelated/{id} START Request: {JsonSerializer.Serialize(relatedProductRequest)}");
 
@@ -63,7 +63,7 @@ namespace API.Controllers
             watch.Start();
 
             //create product
-            BaseResponse<ProductResponse> response = await _productService.AddRelatedProduct(id, relatedProductRequest.productRequests);
+            BaseResponse<ProductResponse> response = await _productService.AddRelatedProduct(id, relatedProductRequest);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -89,7 +89,7 @@ namespace API.Controllers
             watch.Start();
 
             //get base product
-            BaseResponse<BaseProductResponse> response = await _productService.GetBaseProductById(id);
+            BaseResponse<ExtendProductResponse> response = await _productService.GetBaseProductById(id);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -115,7 +115,7 @@ namespace API.Controllers
             watch.Start();
 
             //get base product
-            BaseResponse<List<BaseProductResponse>> response = await _productService.GetAllBaseProduct();
+            BaseResponse<List<ExtendProductResponse>> response = await _productService.GetAllBaseProduct();
 
             string json = JsonSerializer.Serialize(response);
 
@@ -155,55 +155,30 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Base Product
+        /// Request Update Product
         /// </summary>
-        [HttpPut("base/{id}")]
-        public async Task<IActionResult> UpdateBaseProduct(string id,
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> RequestUpdateProduct(string id,
             [FromBody] ProductRequest productRequest)
         {
-            _logger.Information($"PUT api/product/base/{id} START Request: {JsonSerializer.Serialize(productRequest)}");
+            _logger.Information($"PUT api/product/{id} START Request: {JsonSerializer.Serialize(productRequest)}");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
-            //update base product
-            BaseResponse<BaseProductResponse> response = await _productService.UpdateBaseProduct(id, productRequest);
+            //update product
+            BaseResponse<ExtendProductResponse> response = await _productService.RequestUpdateProduct(id, productRequest);
 
             string json = JsonSerializer.Serialize(response);
 
             watch.Stop();
 
-            _logger.Information($"PUT api/product/base/{id} END duration: " +
+            _logger.Information($"PUT api/product/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
 
-
-        /// <summary>
-        /// Update Related Product
-        /// </summary>
-        [HttpPut("related/{id}")]
-        public async Task<IActionResult> UpdateRelatedProduct(string id,
-            [FromBody] ProductRequest productRequest)
-        {
-            _logger.Information($"PUT api/product/related/{id} START Request: {JsonSerializer.Serialize(productRequest)}");
-
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-
-            //update base product
-            BaseResponse<ProductResponse> response = await _productService.UpdateRelatedProduct(id, productRequest);
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information($"PUT api/product/related/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
 
         /// <summary>
         /// Delete Base Product by Id
@@ -217,7 +192,7 @@ namespace API.Controllers
             watch.Start();
 
             //delete product
-            BaseResponse<BaseProductResponse> response = await _productService.DeleteBaseProduct(id);
+            BaseResponse<ExtendProductResponse> response = await _productService.DeleteBaseProduct(id);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -228,6 +203,7 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
 
         /// <summary>
         /// Delete Related Product by Id
@@ -279,12 +255,11 @@ namespace API.Controllers
 
             return Ok(json);
         }
-        
-        
+
+
         /// <summary>
         /// Get Pendings Products
         /// </summary>
-        [AllowAnonymous]
         [HttpGet("pending")]
         public async Task<IActionResult> GetPendingProducts()
         {
@@ -294,14 +269,113 @@ namespace API.Controllers
             watch.Start();
 
             //get Product
-            BaseResponse<List<ProductResponse>> response =
-                await _productService.GetPendingProducts();
+            BaseResponse<List<ExtendProductResponse>> response = await _productService.GetPendingProducts();
 
             string json = JsonSerializer.Serialize(response);
 
             watch.Stop();
 
             _logger.Information($"GET api/product/pending END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Approve Update Project With ID
+        /// </summary>
+        [HttpPut("approve/update/{id}")]
+        public async Task<IActionResult> ApproveUpdateProduct(string id)
+        {
+            _logger.Information($"GET api/product/approve/update/{id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //approve Product
+            BaseResponse<ProductResponse> response = await _productService.VerifyUpdateProductById(id, "approve");
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/product/approve/update/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Approve Create Product With ID
+        /// </summary>
+        [HttpPut("approve/create/{id}")]
+        public async Task<IActionResult> ApproveCreateProduct(string id)
+        {
+            _logger.Information($"GET api/product/approve/create/{id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //approve Product
+            BaseResponse<ProductResponse> response = await _productService.VerifyCreateProductById(id, "approve");
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/product/approve/create/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Reject Update Project With ID
+        /// </summary>
+        [HttpPut("reject/update/{id}")]
+        public async Task<IActionResult> RejectUpdateProduct(string id)
+        {
+            _logger.Information($"GET api/product/reject/update/{id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //reject Product
+            BaseResponse<ProductResponse> response = await _productService.VerifyUpdateProductById(id, "reject");
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/product/reject/update/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Reject Create Product With ID
+        /// </summary>
+        [HttpPut("reject/create/{id}")]
+        public async Task<IActionResult> RejectCreateProduct(string id)
+        {
+            _logger.Information($"GET api/product/reject/create/{id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //reject Product
+            BaseResponse<ProductResponse> response = await _productService.VerifyCreateProductById(id, "reject");
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/product/reject/create/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

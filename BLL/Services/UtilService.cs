@@ -23,7 +23,7 @@ namespace BLL.Services
                 stringChars[i] = chars[random.Next(chars.Length)];
             }
 
-            return string.Concat(prefix, new String(stringChars));
+            return string.Concat(prefix, new string(stringChars));
         }
 
 
@@ -46,7 +46,7 @@ namespace BLL.Services
         /// <returns></returns>
         public string ChangeToInternationalPhoneNumber(string phone)
         {
-            return phone.StartsWith("0") ? "+84" + phone.Substring(1) : phone;
+            return phone.StartsWith("0") ? "+84" + phone[1..] : phone;
         }
 
 
@@ -57,7 +57,22 @@ namespace BLL.Services
         /// <returns></returns>
         public string ChangeToVietnamPhoneNumber(string phone)
         {
-            return phone.StartsWith("+84") ? "0" + phone.Substring(3) : phone;
+            return phone.StartsWith("+84") ? "0" + phone[3..] : phone;
+        }
+
+
+        /// <summary>
+        /// Last Image Number
+        /// </summary>
+        /// <param name="imageName"></param>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public int LastImageNumber(string imageName, string url)
+        {
+            int t1 = url.LastIndexOf(imageName) + imageName.Length;
+            int t2 = url.LastIndexOf(".");
+
+            return int.Parse(url[t1..t2]);
         }
     }
 }

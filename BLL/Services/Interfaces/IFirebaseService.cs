@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
 {
-    public interface IUploadFirebaseService
+    public interface IFirebaseService
     {
         /// <summary>
         /// Upload File To Firebase
@@ -24,7 +22,8 @@ namespace BLL.Services.Interfaces
         /// <param name="type"></param>
         /// <param name="parent"></param>
         /// <param name="fileName"></param>
+        /// <param name="order"></param>
         /// <returns></returns>
-        Task<string> UploadFilesToFirebase(string[] files, string type, string parent, string fileName);
+        Task<string> UploadFilesToFirebase(string[] files, string type, string parent, string fileName, int order);
     }
 }

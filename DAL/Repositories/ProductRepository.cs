@@ -60,14 +60,17 @@ namespace DAL.Repositories
         }
 
 
-        public async Task<List<Product>> GetPendingProducts()
+        /// <summary>
+        /// Get Unverified Create Products
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Product>> GetUnverifiedCreateProducts()
         {
             List<Product>  products = await _context.Products
-                                                              .Where(p => p.Status == (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT 
-                                                              || p.Status == (int)ProductStatus.UNVERIFIED_UPDATE_PRODUCT)
-                                                              .Include(p => p.BelongToNavigation)
-                                                              .OrderByDescending(p => p.CreatedDate)
-                                                              .ToListAsync();
+                                            .Where(p => p.Status == (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT)
+                                            .Include(p => p.BelongToNavigation)
+                                            .OrderByDescending(p => p.CreatedDate)
+                                            .ToListAsync();
 
             return products;
         }
