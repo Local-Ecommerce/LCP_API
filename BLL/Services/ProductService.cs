@@ -615,7 +615,7 @@ namespace BLL.Services
             }
             catch (Exception e)
             {
-                _logger.Error("[ProductService.ApproveCreateProductById()]: " + e.Message);
+                _logger.Error("[ProductService.VerifyCreateProductById()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<ProductResponse>
@@ -666,7 +666,7 @@ namespace BLL.Services
             }
             catch (Exception e)
             {
-                _logger.Error("[ProductService.ApproveUpdateProductById()]: " + e.Message);
+                _logger.Error("[ProductService.VerifyUpdateProductById()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<ProductResponse>
