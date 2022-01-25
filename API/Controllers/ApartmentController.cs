@@ -207,5 +207,31 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Get All Apartments
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllApartments()
+        {
+            _logger.Information($"GET api/apartment/all START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get Apartment
+            BaseResponse<List<ApartmentResponse>> responses = await _apartmentService.GetAllApartments();
+
+            string json = JsonSerializer.Serialize(responses);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/apartment/all END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }

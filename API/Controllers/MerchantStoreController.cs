@@ -53,7 +53,6 @@ namespace API.Controllers
         }
 
 
-
         /// <summary>
         /// Get Merchant Store By Id
         /// </summary>
@@ -241,15 +240,15 @@ namespace API.Controllers
         /// <summary>
         /// Get Store Menu Detail By Id
         /// </summary>
-        [HttpGet("menu/{id}")]
+        [HttpGet("menu/detail/{id}")]
         public async Task<IActionResult> GetStoreMenuDetailById(string id)
         {
-            _logger.Information($"GET api/store/menu/{id} START");
+            _logger.Information($"GET api/store/menu/detail/{id} START");
 
             Stopwatch watch = new();
             watch.Start();
 
-            //get MerchantStore
+            //get menu detail
             BaseResponse<StoreMenuDetailResponse> response =
                 await _merchantStoreService.GetStoreMenuDetailById(id);
 
@@ -257,7 +256,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/store/menu/{id} END duration: " +
+            _logger.Information($"GET api/store/menu/detail/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -392,6 +391,32 @@ namespace API.Controllers
             watch.Stop();
 
             _logger.Information($"GET api/store/pending END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Get Menus By Store Id
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("menu/{id}")]
+        public async Task<IActionResult> GetMenusByStoreId(string id)
+        {
+            _logger.Information($"GET api/store/menu/{id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get menus
+            BaseResponse<MerchantStoreResponse> response = await _merchantStoreService.GetMenusByStoreId(id);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/store/menu/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

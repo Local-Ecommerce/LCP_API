@@ -7,5 +7,7 @@ namespace DAL.Repositories.Interfaces
     public interface IApartmentRepository : IRepository<Apartment>
     {
         Task<List<Apartment>> GetAllActiveApartment();
+
+        Task<List<Apartment>> GetAllApartment();
     }
 }
