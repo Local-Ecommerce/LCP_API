@@ -63,5 +63,17 @@ namespace DAL.Repositories
 
             return merchantStores;
         }
+
+
+        public async Task<MerchantStore> GetMenusByStoreId(string id)
+        {
+            MerchantStore merchantStores = await _context.MerchantStores
+                                                        .Where(ms => ms.MerchantStoreId.Equals(id))
+                                                        .Include(ms => ms.StoreMenuDetails)
+                                                        .ThenInclude(stm => stm.Menu)
+                                                        .FirstOrDefaultAsync();
+
+            return merchantStores;
+        }
     }
 }

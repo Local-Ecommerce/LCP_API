@@ -372,5 +372,47 @@ namespace BLL.Services
                 Data = apartmentResponses
             };
         }
+
+
+        /// <summary>
+        /// Get All Apartments
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
+        public async Task<BaseResponse<List<ApartmentResponse>>> GetAllApartments()
+        {
+            //biz rule
+
+
+            List<ApartmentResponse> apartmentResponses;
+
+            //Get Apartment From Database
+
+            try
+            {
+                List<Apartment> apartments = await _unitOfWork.Apartments.GetAllApartment();
+
+                apartmentResponses = _mapper.Map<List<ApartmentResponse>>(apartments);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ApartmentService.GetAllApartments()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ApartmentResponse>
+                    {
+                        ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
+                        ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<List<ApartmentResponse>>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = apartmentResponses
+            };
+        }
     }
 }

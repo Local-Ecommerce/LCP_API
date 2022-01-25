@@ -778,5 +778,45 @@ namespace BLL.Services
                 Data = merchantStoreResponse
             };
         }
+
+
+        /// <summary>
+        /// Get Menus By Store Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<MerchantStoreResponse>> GetMenusByStoreId(string id)
+        {
+            //biz rule
+
+            MerchantStoreResponse merchantStoreResponse;
+
+            //Get MerchantStore From Database
+            try
+            {
+                MerchantStore merchantStore = await _unitOfWork.MerchantStores.GetMenusByStoreId(id);
+
+                merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.GetMenusByStoreId()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<MerchantStoreResponse>
+                    {
+                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
+                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<MerchantStoreResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantStoreResponse
+            };
+        }
     }
 }

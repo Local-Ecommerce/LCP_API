@@ -118,6 +118,14 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<BaseResponse<List<MerchantStoreResponse>>> GetPendingMerchantStores();
+
+
+        /// <summary>
+        /// Get Menus By Store Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<BaseResponse<MerchantStoreResponse>> GetMenusByStoreId(string id);
     }
 
 }

@@ -9,7 +9,6 @@ namespace DAL.Repositories
 {
     public class MenuRepository : Repository<Menu>, IMenuRepository
     {
-        private const int ACTIVE_PRODUCT_IN_MENU = 15001;
 
         public MenuRepository(LoichDBContext context) : base(context) { }
 

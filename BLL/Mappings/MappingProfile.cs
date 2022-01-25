@@ -77,6 +77,7 @@ namespace BLL.Mappings
             CreateMap<MenuRequest, Menu>();
             CreateMap<Menu, MenuResponse>();
             CreateMap<MenuUpdateRequest, Menu>();
+            CreateMap<Menu, MenuForStoreResponse>();
 
             //Product In Menu Mapping
             CreateMap<ProductInMenuRequest, ProductInMenu>();

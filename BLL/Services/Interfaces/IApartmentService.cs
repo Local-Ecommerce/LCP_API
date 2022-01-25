@@ -61,5 +61,12 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<BaseResponse<List<ApartmentResponse>>> GetApartmentForAutoComplete();
+        
+        
+        /// <summary>
+        /// Get Apartment For Auto Complete
+        /// </summary>
+        /// <returns></returns>
+        Task<BaseResponse<List<ApartmentResponse>>> GetAllApartments();
     }
 }

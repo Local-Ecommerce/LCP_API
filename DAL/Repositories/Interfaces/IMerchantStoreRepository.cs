@@ -26,5 +26,13 @@ namespace DAL.Repositories.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<List<MerchantStore>> GetPendingMerchantStoreIncludeResidentByUnverifiedStatus();
+
+
+        /// <summary>
+        /// Get Menus By Store Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<MerchantStore> GetMenusByStoreId(string id);
     }
 }
