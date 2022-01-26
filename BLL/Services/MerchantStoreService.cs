@@ -22,21 +22,25 @@ namespace BLL.Services
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
         private readonly IMenuService _menuService;
+        private readonly IRedisService _redisService;
         private const string PREFIX = "MS_";
         private const string SUB_PREFIX = "SMD_";
+        private const string CACHE_KEY_FOR_UPDATE = "Unverified Updated Store";
 
 
         public MerchantStoreService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
             IUtilService utilService,
-            IMenuService menuService)
+            IMenuService menuService,
+            IRedisService redisService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
             _menuService = menuService;
+            _redisService = redisService;
         }
 
 
@@ -156,17 +160,17 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<MerchantStoreResponse>> GetMerchantStoreById(string id)
+        public async Task<BaseResponse<ExtendMerchantStoreResponse>> GetMerchantStoreById(string id)
         {
             //biz rule
 
-            MerchantStoreResponse merchantStoreResponse;
+            ExtendMerchantStoreResponse merchantStoreResponse;
 
             //Get MerchantStore From Database
             try
             {
                 MerchantStore merchantStore = await _unitOfWork.MerchantStores.GetMerchantStoreIncludeResidentById(id);
-                merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
+                merchantStoreResponse = _mapper.Map<ExtendMerchantStoreResponse>(merchantStore);
             }
             catch (Exception e)
             {
@@ -181,7 +185,7 @@ namespace BLL.Services
                     });
             }
 
-            return new BaseResponse<MerchantStoreResponse>
+            return new BaseResponse<ExtendMerchantStoreResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
@@ -191,27 +195,30 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Update Merchant Store By Id
+        /// Request Update Merchant Store By Id
         /// </summary>
         /// <param name="id"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<MerchantStoreResponse>> UpdateMerchantStoreById(string id,
+        public async Task<BaseResponse<ExtendMerchantStoreResponse>> RequestUpdateMerchantStoreById(string id,
             MerchantStoreUpdateRequest request)
         {
-            MerchantStore merchantStore;
+            ExtendMerchantStoreResponse merchantStoreResponse;
 
             //Check id
             try
             {
-                merchantStore = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id));
+                merchantStoreResponse = _mapper.Map<ExtendMerchantStoreResponse>(
+                    await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id)));
+
+                merchantStoreResponse.UpdatedMerchantStore = request;
             }
             catch (Exception e)
             {
-                _logger.Error("[MerchantStoreService.UpdateMerchantStoreById()]: " + e.Message);
+                _logger.Error("[MerchantStoreService.RequestUpdateMerchantStoreById()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
+                    new BaseResponse<ExtendMerchantStoreResponse>
                     {
                         ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
                         ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
@@ -219,33 +226,11 @@ namespace BLL.Services
                     });
             }
 
-            //update MerchantStore
-            try
-            {
-                merchantStore = _mapper.Map(request, merchantStore);
-                merchantStore.Status = (int)MerchantStoreStatus.UNVERIFIED_UPDATE_MERCHANT_STORE;
+            //store to Redis
+            _redisService.StoreToList(CACHE_KEY_FOR_UPDATE, merchantStoreResponse,
+                new Predicate<MerchantStoreResponse>(ms => ms.MerchantStoreId.Equals(merchantStoreResponse.MerchantStoreId)));
 
-                _unitOfWork.MerchantStores.Update(merchantStore);
-
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.UpdateMerchantById()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
-            }
-
-            //Create Response
-            MerchantStoreResponse merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
-
-            return new BaseResponse<MerchantStoreResponse>
+            return new BaseResponse<ExtendMerchantStoreResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
@@ -587,7 +572,7 @@ namespace BLL.Services
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetAllMerchantStores()
+        public async Task<BaseResponse<List<ExtendMerchantStoreResponse>>> GetAllMerchantStores()
         {
             //Get MerchantStore from database
             List<MerchantStore> merchantStores;
@@ -608,38 +593,38 @@ namespace BLL.Services
                     });
             }
 
-            List<MerchantStoreResponse> merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
+            List<ExtendMerchantStoreResponse> merchantStoreResponses = _mapper.Map<List<ExtendMerchantStoreResponse>>(merchantStores);
 
-            return new BaseResponse<List<MerchantStoreResponse>>
+            return new BaseResponse<List<ExtendMerchantStoreResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = merchantStoreResponses
             };
         }
-        
-        
+
+
         /// <summary>
         /// Get Pending Merchant Stores
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetPendingMerchantStores()
+        public async Task<BaseResponse<List<ExtendMerchantStoreResponse>>> GetPendingMerchantStores()
         {
-            List<MerchantStore> merchantStoreList = null;
+            List<ExtendMerchantStoreResponse> merchantStoreResponses;
 
-            //get merchantStore from database
+            //get unverified create merchant Store from database
             try
             {
-                merchantStoreList = await _unitOfWork.MerchantStores.
-                                            GetPendingMerchantStoreIncludeResidentByUnverifiedStatus();
+                merchantStoreResponses = _mapper.Map<List<ExtendMerchantStoreResponse>>(
+                    await _unitOfWork.MerchantStores.GetUnverifiedMerchantStoreIncludeResident());
             }
             catch (Exception e)
             {
                 _logger.Error("[MerchantStoreService.GetPendingMerchantStores()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
+                    new BaseResponse<ExtendMerchantStoreResponse>
                     {
                         ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
                         ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
@@ -647,135 +632,16 @@ namespace BLL.Services
                     });
             }
 
-            List<MerchantStoreResponse> merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStoreList);
+            //get unverified update merchant Store from redis
+            List<ExtendMerchantStoreResponse> updateStore = _redisService.GetList<ExtendMerchantStoreResponse>(CACHE_KEY_FOR_UPDATE);
 
-            return new BaseResponse<List<MerchantStoreResponse>>
+            merchantStoreResponses.AddRange(updateStore);
+
+            return new BaseResponse<List<ExtendMerchantStoreResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = merchantStoreResponses
-            };
-        }
-
-
-        /// <summary>
-        /// Approve Merchant Store By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<BaseResponse<MerchantStoreResponse>> ApproveMerchantStoreById(string id)
-        {
-            MerchantStore merchantStore;
-
-            //Check id
-            try
-            {
-                merchantStore = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id));
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.ApproveMerchantStoreById()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
-                    {
-                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
-                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
-                        Data = default
-                    });
-            }
-
-            //Approve MerchantStore
-            try
-            {
-                merchantStore.Status = (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE;
-
-                _unitOfWork.MerchantStores.Update(merchantStore);
-
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.ApproveMerchantStoreById()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
-            }
-
-            //Create Response
-            MerchantStoreResponse merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
-
-            return new BaseResponse<MerchantStoreResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreResponse
-            };
-        }
-
-
-        /// <summary>
-        /// Decline Merchant Store By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<BaseResponse<MerchantStoreResponse>> DeclineMerchantStoreById(string id)
-        {
-            MerchantStore merchantStore;
-
-            //Check id
-            try
-            {
-                merchantStore = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id));
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.DeclineMerchantStoreById()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
-                    {
-                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
-                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
-                        Data = default
-                    });
-            }
-
-            //Approve MerchantStore
-            try
-            {
-                merchantStore.Status = (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE;
-
-                _unitOfWork.MerchantStores.Update(merchantStore);
-
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.DeclineMerchantStoreById()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
-            }
-
-            //Create Response
-            MerchantStoreResponse merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
-
-            return new BaseResponse<MerchantStoreResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreResponse
             };
         }
 
@@ -785,25 +651,25 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<MerchantStoreResponse>> GetMenusByStoreId(string id)
+        public async Task<BaseResponse<ExtendMerchantStoreResponse>> GetMenusByStoreId(string id)
         {
             //biz rule
 
-            MerchantStoreResponse merchantStoreResponse;
+            ExtendMerchantStoreResponse merchantStoreResponse;
 
             //Get MerchantStore From Database
             try
             {
                 MerchantStore merchantStore = await _unitOfWork.MerchantStores.GetMenusByStoreId(id);
 
-                merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
+                merchantStoreResponse = _mapper.Map<ExtendMerchantStoreResponse>(merchantStore);
             }
             catch (Exception e)
             {
                 _logger.Error("[MerchantStoreService.GetMenusByStoreId()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
+                    new BaseResponse<ExtendMerchantStoreResponse>
                     {
                         ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
                         ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
@@ -811,7 +677,64 @@ namespace BLL.Services
                     });
             }
 
-            return new BaseResponse<MerchantStoreResponse>
+            return new BaseResponse<ExtendMerchantStoreResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = merchantStoreResponse
+            };
+        }
+
+
+        /// <summary>
+        /// Verify Merchant Store
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="isCreate"></param>
+        /// <param name="isApprove"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<ExtendMerchantStoreResponse>> VerifyMerchantStore(string id, bool isCreate, bool isApprove)
+        {
+            ExtendMerchantStoreResponse merchantStoreResponse = null;
+            try
+            {
+                MerchantStore merchantStore = await _unitOfWork.MerchantStores.FindAsync(ms => ms.MerchantStoreId.Equals(id));
+
+                if (!isCreate)
+                {
+                    //get new data for merchant store from redis
+                    MerchantStoreUpdateRequest ms = _redisService.GetList<ExtendMerchantStoreResponse>(CACHE_KEY_FOR_UPDATE).Find(ms => ms.MerchantStoreId.Equals(id)).UpdatedMerchantStore;
+
+                    merchantStore = _mapper.Map<MerchantStore>(ms);
+                }
+
+                merchantStore.Status = isApprove ? (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE : (int)MerchantStoreStatus.REJECTED_MERCHANT_STORE;
+
+                _unitOfWork.MerchantStores.Update(merchantStore);
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.VerifyMerchantStore()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ExtendMerchantStoreResponse>
+                    {
+                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
+                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            //remove from redis
+            if (!isCreate)
+            {
+                _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
+                new Predicate<ExtendMerchantStoreResponse>(ms => ms.MerchantStoreId.Equals(merchantStoreResponse.MerchantStoreId)));
+            }
+
+            return new BaseResponse<ExtendMerchantStoreResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),

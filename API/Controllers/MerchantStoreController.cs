@@ -66,7 +66,7 @@ namespace API.Controllers
             watch.Start();
 
             //get MerchantStore
-            BaseResponse<MerchantStoreResponse> response = await _merchantStoreService.GetMerchantStoreById(id);
+            BaseResponse<ExtendMerchantStoreResponse> response = await _merchantStoreService.GetMerchantStoreById(id);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -93,7 +93,7 @@ namespace API.Controllers
             watch.Start();
 
             //update MerchantStore
-            BaseResponse<MerchantStoreResponse> response = await _merchantStoreService.UpdateMerchantStoreById(id, request);
+            BaseResponse<ExtendMerchantStoreResponse> response = await _merchantStoreService.RequestUpdateMerchantStoreById(id, request);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -356,7 +356,7 @@ namespace API.Controllers
             watch.Start();
 
             //get MerchantStore
-            BaseResponse<List<MerchantStoreResponse>> response =
+            BaseResponse<List<ExtendMerchantStoreResponse>> response =
                 await _merchantStoreService.GetAllMerchantStores();
 
             string json = JsonSerializer.Serialize(response);
@@ -369,7 +369,7 @@ namespace API.Controllers
             return Ok(json);
         }
 
-        
+
         /// <summary>
         /// Get Pending Merchant Stores
         /// </summary>
@@ -383,7 +383,7 @@ namespace API.Controllers
             watch.Start();
 
             //get pending merchantStore
-            BaseResponse<List<MerchantStoreResponse>> response =
+            BaseResponse<List<ExtendMerchantStoreResponse>> response =
                 await _merchantStoreService.GetPendingMerchantStores();
 
             string json = JsonSerializer.Serialize(response);
@@ -410,13 +410,113 @@ namespace API.Controllers
             watch.Start();
 
             //get menus
-            BaseResponse<MerchantStoreResponse> response = await _merchantStoreService.GetMenusByStoreId(id);
+            BaseResponse<ExtendMerchantStoreResponse> response = await _merchantStoreService.GetMenusByStoreId(id);
 
             string json = JsonSerializer.Serialize(response);
 
             watch.Stop();
 
             _logger.Information($"GET api/store/menu/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Approve Update Merchant Store With ID
+        /// </summary>
+        [HttpPut("approve/update/{id}")]
+        public async Task<IActionResult> ApproveUpdateMerchantStore(string id)
+        {
+            _logger.Information($"GET api/store/approve/update/{id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //approve MerchantStore
+            BaseResponse<ExtendMerchantStoreResponse> response = await _merchantStoreService.VerifyMerchantStore(id, false, true);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/store/approve/update/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Approve Create MerchantStore With ID
+        /// </summary>
+        [HttpPut("approve/create/{id}")]
+        public async Task<IActionResult> ApproveCreateMerchantStore(string id)
+        {
+            _logger.Information($"GET api/store/approve/create/{id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //approve MerchantStore
+            BaseResponse<ExtendMerchantStoreResponse> response = await _merchantStoreService.VerifyMerchantStore(id, true, true);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/store/approve/create/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Reject Update Merchant Store With ID
+        /// </summary>
+        [HttpPut("reject/update/{id}")]
+        public async Task<IActionResult> RejectUpdateMerchantStore(string id)
+        {
+            _logger.Information($"GET api/store/reject/update/{id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //reject MerchantStore
+            BaseResponse<ExtendMerchantStoreResponse> response = await _merchantStoreService.VerifyMerchantStore(id, false, false);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/store/reject/update/{id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Reject Create MerchantStore With ID
+        /// </summary>
+        [HttpPut("reject/create/{id}")]
+        public async Task<IActionResult> RejectCreateMerchantStore(string id)
+        {
+            _logger.Information($"GET api/store/reject/create/{id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //reject MerchantStore
+            BaseResponse<ExtendMerchantStoreResponse> response = await _merchantStoreService.VerifyMerchantStore(id, true, false);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/store/reject/create/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

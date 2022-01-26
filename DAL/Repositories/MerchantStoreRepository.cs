@@ -48,14 +48,13 @@ namespace DAL.Repositories
 
 
         /// <summary>
-        /// Get Merchant Store Include Resident By Unverified Status
+        /// Get Unverified Merchant Store Include Resident
         /// </summary>
         /// <returns></returns>
-        public async Task<List<MerchantStore>> GetPendingMerchantStoreIncludeResidentByUnverifiedStatus()
+        public async Task<List<MerchantStore>> GetUnverifiedMerchantStoreIncludeResident()
         {
             List<MerchantStore> merchantStores = await _context.MerchantStores
-                                                        .Where(ms => ms.Status == (int)MerchantStoreStatus.UNVERIFIED_CREATE_MERCHANT_STORE 
-                                                        || ms.Status == (int)MerchantStoreStatus.UNVERIFIED_UPDATE_MERCHANT_STORE)
+                                                        .Where(ms => ms.Status == (int)MerchantStoreStatus.UNVERIFIED_CREATE_MERCHANT_STORE)
                                                         .Include(ms => ms.Apartment)
                                                         .Include(ms => ms.Resident)
                                                         .OrderByDescending(ms => ms.CreatedDate)
@@ -65,6 +64,11 @@ namespace DAL.Repositories
         }
 
 
+        /// <summary>
+        /// Get Menus By Store Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<MerchantStore> GetMenusByStoreId(string id)
         {
             MerchantStore merchantStores = await _context.MerchantStores

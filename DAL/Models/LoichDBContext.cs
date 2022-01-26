@@ -42,7 +42,6 @@ namespace DAL.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=localhost;Database=LoichDB;Trusted_Connection=True;");
             }
         }
@@ -491,6 +490,8 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("ProductInMenuID");
 
+                entity.Property(e => e.Image).IsUnicode(false);
+
                 entity.Property(e => e.MenuId)
                     .HasMaxLength(20)
                     .IsUnicode(false)
@@ -505,6 +506,12 @@ namespace DAL.Models
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("ProductID");
+
+                entity.Property(e => e.ProductName).HasMaxLength(250);
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.Menu)
                     .WithMany(p => p.ProductInMenus)
