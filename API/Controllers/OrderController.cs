@@ -53,7 +53,7 @@ namespace API.Controllers
             watch.Start();
 
             //Create Order
-            BaseResponse<List<OrderResponse>> response = await
+            BaseResponse<List<ExtendOrderResponse>> response = await
             _orderService.CreateOrder(orderDetailRequests, residentId);
 
             string json = JsonSerializer.Serialize(response);
@@ -86,7 +86,7 @@ namespace API.Controllers
             watch.Start();
 
             //Get Order
-            BaseResponse<List<OrderResponse>> response = await
+            BaseResponse<List<ExtendOrderResponse>> response = await
             _orderService.GetOrderByResidentIdAndStatus(residentId, status);
 
             string json = JsonSerializer.Serialize(response);
@@ -120,7 +120,7 @@ namespace API.Controllers
             watch.Start();
 
             //Get Order
-            BaseResponse<List<OrderResponse>> response = await
+            BaseResponse<List<ExtendOrderResponse>> response = await
             _orderService.GetOrderByMerchantStoreId(merchantStoreId);
 
             string json = JsonSerializer.Serialize(response);
@@ -153,7 +153,7 @@ namespace API.Controllers
             watch.Start();
 
             //Delete Order
-            BaseResponse<OrderResponse> response = await
+            BaseResponse<ExtendOrderResponse> response = await
             _orderService.DeleteOrderByOrderIdAndResidentId(orderId, residentId);
 
             string json = JsonSerializer.Serialize(response);

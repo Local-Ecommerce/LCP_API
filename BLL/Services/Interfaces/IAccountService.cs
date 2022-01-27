@@ -9,9 +9,9 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Create Account
         /// </summary>
-        /// <param name="accountResponse"></param>
+        /// <param name="ExtendAccountResponse"></param>
         /// <returns></returns>
-        Task<BaseResponse<AccountResponse>> Register(AccountRegisterRequest accountRegisterRequest);
+        Task<BaseResponse<ExtendAccountResponse>> Register(AccountRegisterRequest accountRegisterRequest);
 
 
         /// <summary>
@@ -19,21 +19,21 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="accountLoginRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<AccountResponse>> Login(AccountLoginRequest accountLoginRequest);
+        Task<BaseResponse<ExtendAccountResponse>> Login(AccountLoginRequest accountLoginRequest);
 
         /// <summary>
         /// Get Account by Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<AccountResponse>> GetAccountById(string id);
+        Task<BaseResponse<ExtendAccountResponse>> GetAccountById(string id);
 
         /// <summary>
         /// Update Account
         /// </summary>
         /// <param name="accountRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<AccountResponse>> UpdateAccount(string id);
+        Task<BaseResponse<ExtendAccountResponse>> UpdateAccount(string id);
 
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<AccountResponse>> DeleteAccount(string id);
+        Task<BaseResponse<ExtendAccountResponse>> DeleteAccount(string id);
 
         /// <summary>
         /// Check valid confirm password
@@ -57,6 +57,6 @@ namespace BLL.Services.Interfaces
         /// <param name="accountId"></param>
         /// <param name="residentType"></param>
         /// <returns></returns>
-        Task<BaseResponse<AccountResponse>> ChangeResidentTypeByAccountId(string accountId, string residentType);
+        Task<BaseResponse<ExtendAccountResponse>> ChangeResidentTypeByAccountId(string accountId, string residentType);
     }
 }

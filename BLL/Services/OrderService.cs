@@ -48,9 +48,9 @@ namespace BLL.Services
         /// <param name="orderDetailRequests"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<OrderResponse>>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId)
+        public async Task<BaseResponse<List<ExtendOrderResponse>>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId)
         {
-            List<OrderResponse> orderResponses = new List<OrderResponse>();
+            List<ExtendOrderResponse> ExtendOrderResponses = new();
 
             try
             {
@@ -86,10 +86,10 @@ namespace BLL.Services
                     _unitOfWork.OrderDetails.Add(orderDetail);
 
                     //map to response
-                    OrderResponse orderResponse = _mapper.Map<OrderResponse>(order);
-                    orderResponse.OrderDetails = new Collection<OrderDetailResponse>();
-                    orderResponse.OrderDetails.Add(_mapper.Map<OrderDetailResponse>(orderDetail));
-                    orderResponses.Add(orderResponse);
+                    ExtendOrderResponse ExtendOrderResponse = _mapper.Map<ExtendOrderResponse>(order);
+                    ExtendOrderResponse.OrderDetails = new Collection<OrderDetailResponse>();
+                    ExtendOrderResponse.OrderDetails.Add(_mapper.Map<OrderDetailResponse>(orderDetail));
+                    ExtendOrderResponses.Add(ExtendOrderResponse);
 
                 }
 
@@ -100,7 +100,7 @@ namespace BLL.Services
                 _logger.Error("[OrderService.CreateOrder()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<OrderResponse>
+                    new BaseResponse<ExtendOrderResponse>
                     {
                         ResultCode = (int)OrderStatus.ORDER_NOT_FOUND,
                         ResultMessage = OrderStatus.ORDER_NOT_FOUND.ToString(),
@@ -108,11 +108,11 @@ namespace BLL.Services
                     });
             }
 
-            return new BaseResponse<List<OrderResponse>>
+            return new BaseResponse<List<ExtendOrderResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = orderResponses
+                Data = ExtendOrderResponses
             };
         }
 
@@ -123,12 +123,12 @@ namespace BLL.Services
         /// <param name="residentId"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<OrderResponse>>> GetOrderByResidentIdAndStatus(string residentId, int status)
+        public async Task<BaseResponse<List<ExtendOrderResponse>>> GetOrderByResidentIdAndStatus(string residentId, int status)
         {
-            List<OrderResponse> orderResponses;
+            List<ExtendOrderResponse> ExtendOrderResponses;
             try
             {
-                orderResponses = _mapper.Map<List<OrderResponse>>(
+                ExtendOrderResponses = _mapper.Map<List<ExtendOrderResponse>>(
                     await _unitOfWork.Orders.GetOrderByResidentIdAndStatus(residentId, status)
                 );
             }
@@ -137,7 +137,7 @@ namespace BLL.Services
                 _logger.Error("[OrderService.GetOrderByResidentIdAndStatus()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<OrderResponse>
+                    new BaseResponse<ExtendOrderResponse>
                     {
                         ResultCode = (int)OrderStatus.ORDER_NOT_FOUND,
                         ResultMessage = OrderStatus.ORDER_NOT_FOUND.ToString(),
@@ -145,11 +145,11 @@ namespace BLL.Services
                     });
             }
 
-            return new BaseResponse<List<OrderResponse>>
+            return new BaseResponse<List<ExtendOrderResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = orderResponses
+                Data = ExtendOrderResponses
             };
         }
 
@@ -159,12 +159,12 @@ namespace BLL.Services
         /// </summary>
         /// <param name="merchantStoreId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<OrderResponse>>> GetOrderByMerchantStoreId(string merchantStoreId)
+        public async Task<BaseResponse<List<ExtendOrderResponse>>> GetOrderByMerchantStoreId(string merchantStoreId)
         {
-            List<OrderResponse> orderResponses;
+            List<ExtendOrderResponse> ExtendOrderResponses;
             try
             {
-                orderResponses = _mapper.Map<List<OrderResponse>>(
+                ExtendOrderResponses = _mapper.Map<List<ExtendOrderResponse>>(
                     await _unitOfWork.Orders.GetOrdersByMerchantStoreId(merchantStoreId)
                 );
             }
@@ -173,7 +173,7 @@ namespace BLL.Services
                 _logger.Error("[OrderService.GetOrderByMerchantStoreId()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<OrderResponse>
+                    new BaseResponse<ExtendOrderResponse>
                     {
                         ResultCode = (int)OrderStatus.ORDER_NOT_FOUND,
                         ResultMessage = OrderStatus.ORDER_NOT_FOUND.ToString(),
@@ -181,11 +181,11 @@ namespace BLL.Services
                     });
             }
 
-            return new BaseResponse<List<OrderResponse>>
+            return new BaseResponse<List<ExtendOrderResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = orderResponses
+                Data = ExtendOrderResponses
             };
         }
 
@@ -196,7 +196,7 @@ namespace BLL.Services
         /// <param name="orderId"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<OrderResponse>> DeleteOrderByOrderIdAndResidentId(string orderId, string residentId)
+        public async Task<BaseResponse<ExtendOrderResponse>> DeleteOrderByOrderIdAndResidentId(string orderId, string residentId)
         {
             Order order;
             try
@@ -214,7 +214,7 @@ namespace BLL.Services
                 _logger.Error("[OrderService.DeleteOrderByOrderIdAndResidentId()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<OrderResponse>
+                    new BaseResponse<ExtendOrderResponse>
                     {
                         ResultCode = (int)OrderStatus.ORDER_NOT_FOUND,
                         ResultMessage = OrderStatus.ORDER_NOT_FOUND.ToString(),
@@ -223,13 +223,13 @@ namespace BLL.Services
             }
 
             //create response
-            OrderResponse orderResponse = _mapper.Map<OrderResponse>(order);
+            ExtendOrderResponse ExtendOrderResponse = _mapper.Map<ExtendOrderResponse>(order);
 
-            return new BaseResponse<OrderResponse>
+            return new BaseResponse<ExtendOrderResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = orderResponse
+                Data = ExtendOrderResponse
             };
         }
 

@@ -15,28 +15,28 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="poiRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<PoiResponse>> CreatePoi(PoiRequest poiRequest);
+        Task<BaseResponse<ExtendPoiResponse>> CreatePoi(PoiRequest poiRequest);
 
         /// <summary>
         /// Get POI by Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<PoiResponse>> GetPoiById(string id);
+        Task<BaseResponse<ExtendPoiResponse>> GetPoiById(string id);
 
         /// <summary>
         /// Get POI by ReleaseDate
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<PoiResponse>>> GetPoiByReleaseDate(DateTime date);
+        Task<BaseResponse<List<ExtendPoiResponse>>> GetPoiByReleaseDate(DateTime date);
 
         /// <summary>
         /// Get POI by apartmentId
         /// </summary>
         /// <param name="apartmentId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<PoiResponse>>> GetPoiByApartmentId(string apartmentId);
+        Task<BaseResponse<List<ExtendPoiResponse>>> GetPoiByApartmentId(string apartmentId);
 
 
         /// <summary>
@@ -45,14 +45,14 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="poiUpdateRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<PoiResponse>> UpdatePoiById(string id, PoiUpdateRequest poiUpdateRequest);
+        Task<BaseResponse<ExtendPoiResponse>> UpdatePoiById(string id, PoiUpdateRequest poiUpdateRequest);
 
         /// <summary>
         /// Delte POI by Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<PoiResponse>> DeletePoiById(string id);
+        Task<BaseResponse<ExtendPoiResponse>> DeletePoiById(string id);
 
 
         /// <summary>
@@ -60,12 +60,12 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<PoiResponse>>> GetPoisByStatus(int status);
+        Task<BaseResponse<List<ExtendPoiResponse>>> GetPoisByStatus(int status);
 
         /// <summary>
         /// Get All POI
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<PoiResponse>>> GetAllPoi();
+        Task<BaseResponse<List<ExtendPoiResponse>>> GetAllPoi();
     }
 }

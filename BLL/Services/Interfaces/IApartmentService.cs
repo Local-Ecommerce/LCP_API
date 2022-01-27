@@ -68,5 +68,13 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<BaseResponse<List<ApartmentResponse>>> GetAllApartments();
+
+
+        /// <summary>
+        /// Get Market Manager By Apartment Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<BaseResponse<ExtendApartmentResponse>> GetMarketManagerByApartmentId(string id);
     }
 }

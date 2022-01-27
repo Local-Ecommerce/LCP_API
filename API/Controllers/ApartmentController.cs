@@ -233,5 +233,31 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Get Market Manager By Apartment Id
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("resident/{apartmentId}")]
+        public async Task<IActionResult> GetMarketManagerByApartmentId(string apartmentId)
+        {
+            _logger.Information($"GET api/apartment/{apartmentId} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get Apartment
+            BaseResponse<ExtendApartmentResponse> response = await _apartmentService.GetMarketManagerByApartmentId(apartmentId);
+
+            string json = JsonSerializer.Serialize(response);
+
+            watch.Stop();
+
+            _logger.Information($"GET api/apartment/{apartmentId} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
     }
 }

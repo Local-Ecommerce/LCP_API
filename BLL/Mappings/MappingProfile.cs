@@ -3,22 +3,22 @@ using BLL.Dtos.Account;
 using BLL.Dtos.Apartment;
 using BLL.Dtos.Collection;
 using BLL.Dtos.CollectionMapping;
-using BLL.Dtos.MerchantStore;
-using BLL.Dtos.Product;
-using BLL.Dtos.ProductCategory;
-using BLL.Dtos.SystemCategory;
-using BLL.Dtos.News;
-using DAL.Models;
-using BLL.Dtos.POI;
 using BLL.Dtos.Menu;
-using BLL.Dtos.ProductInMenu;
-using BLL.Dtos.StoreMenuDetail;
+using BLL.Dtos.MerchantStore;
+using BLL.Dtos.News;
+using BLL.Dtos.Order;
+using BLL.Dtos.OrderDetail;
 using BLL.Dtos.Payment;
 using BLL.Dtos.PaymentMethod;
-using BLL.Dtos.Resident;
-using BLL.Dtos.OrderDetail;
-using BLL.Dtos.Order;
+using BLL.Dtos.POI;
+using BLL.Dtos.Product;
+using BLL.Dtos.ProductCategory;
 using BLL.Dtos.ProductCombination;
+using BLL.Dtos.ProductInMenu;
+using BLL.Dtos.Resident;
+using BLL.Dtos.StoreMenuDetail;
+using BLL.Dtos.SystemCategory;
+using DAL.Models;
 
 namespace BLL.Mappings
 {
@@ -36,11 +36,14 @@ namespace BLL.Mappings
             //Apartment Mapping
             CreateMap<ApartmentRequest, Apartment>();
             CreateMap<Apartment, ApartmentResponse>();
+            CreateMap<Apartment, ExtendApartmentResponse>();
+
 
             //Account Mapping
             CreateMap<AccountLoginRequest, Account>();
             CreateMap<AccountRegisterRequest, Account>();
             CreateMap<AccountResponse, Account>().ReverseMap();
+            CreateMap<Account, ExtendAccountResponse>();
 
             //SystemCategory Mapping
             CreateMap<SystemCategoryRequest, SystemCategory>();
@@ -57,6 +60,7 @@ namespace BLL.Mappings
             //ProCategory Mapping
             CreateMap<ProductCategoryRequest, ProductCategory>();
             CreateMap<ProductCategory, ProductCategoryResponse>().ReverseMap();
+            CreateMap<ProductCategory, ExtendProductCategoryResponse>();
 
             //Collection Mapping
             CreateMap<CollectionRequest, Collection>();
@@ -70,25 +74,29 @@ namespace BLL.Mappings
             CreateMap<NewsRequest, News>();
             CreateMap<NewsUpdateRequest, News>();
             CreateMap<News, NewsResponse>();
+            CreateMap<News, ExtendNewsResponse>();
 
             //POI Mapping
             CreateMap<PoiRequest, Poi>();
             CreateMap<PoiUpdateRequest, Poi>();
             CreateMap<Poi, PoiResponse>();
+            CreateMap<Poi, ExtendPoiResponse>();
 
             //Menu Mapping
             CreateMap<MenuRequest, Menu>();
             CreateMap<Menu, MenuResponse>();
             CreateMap<MenuUpdateRequest, Menu>();
-            CreateMap<Menu, MenuForStoreResponse>();
+            CreateMap<Menu, ExtendMenuResponses>();
 
             //Product In Menu Mapping
             CreateMap<ProductInMenuRequest, ProductInMenu>();
             CreateMap<ProductInMenu, ProductInMenuResponse>();
+            CreateMap<ProductInMenu, ExtendProductInMenuResponse>();
 
             //Store Menu Detail Mapping
             CreateMap<StoreMenuDetailRequest, StoreMenuDetail>();
             CreateMap<StoreMenuDetail, StoreMenuDetailResponse>();
+            CreateMap<StoreMenuDetail, ExtendStoreMenuDetailResponse>();
 
             //Payment Mapping
             CreateMap<PaymentRequest, Payment>();
@@ -102,12 +110,13 @@ namespace BLL.Mappings
             CreateMap<ResidentRequest, Resident>();
             CreateMap<ResidentUpdateRequest, Resident>();
             CreateMap<Resident, ResidentResponse>();
-            CreateMap<Resident, ResidentResponseForApartment>();
+            CreateMap<Resident, ExtendResidentResponse>();
 
             //Order & Order Detail Mapping
             CreateMap<OrderDetailRequest, OrderDetail>();
             CreateMap<OrderDetail, OrderDetailResponse>();
             CreateMap<Order, OrderResponse>();
+            CreateMap<Order, ExtendOrderResponse>();
 
             //Store Menu Detail Mapping
             CreateMap<StoreMenuDetailRequest, StoreMenuDetail>();

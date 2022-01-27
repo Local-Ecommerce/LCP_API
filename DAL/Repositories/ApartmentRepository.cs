@@ -41,5 +41,22 @@ namespace DAL.Repositories
 
             return apartments;
         }
+
+
+        /// <summary>
+        /// Get Market Manager By Apartment Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Apartment> GetMarketManagerByApartmentId (string id)
+        {
+             Apartment apartment = await _context.Apartments
+                                      .Where(ap => ap.ApartmentId.Equals(id))
+                                      .Include(ap => ap.Residents
+                                      .Where(res => res.Type.Equals(ResidentType.MARKET_MANAGER)))
+                                      .FirstOrDefaultAsync();
+
+            return apartment;
+        }
     }
 }

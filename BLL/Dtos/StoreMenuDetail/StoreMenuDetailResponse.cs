@@ -1,6 +1,4 @@
-﻿using BLL.Dtos.Menu;
-using System;
-using System.Text.Json.Serialization;
+﻿using System;
 
 namespace BLL.Dtos.StoreMenuDetail
 {
@@ -13,8 +11,5 @@ namespace BLL.Dtos.StoreMenuDetail
         public string RepeatDate { get; set; }
         public string MenuId { get; set; }
         public string MerchantStoreId { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public MenuForStoreResponse Menu { get; set; }
     }
 }

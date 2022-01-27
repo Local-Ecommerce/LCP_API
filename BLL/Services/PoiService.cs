@@ -38,7 +38,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="poiRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<PoiResponse>> CreatePoi(PoiRequest poiRequest)
+        public async Task<BaseResponse<ExtendPoiResponse>> CreatePoi(PoiRequest poiRequest)
         {
             Poi poi = _mapper.Map<Poi>(poiRequest);
 
@@ -56,7 +56,7 @@ namespace BLL.Services
             {
                 _logger.Error("[PoiService.CreatePoi()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<PoiResponse>
+                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ExtendPoiResponse>
                 {
                     ResultCode = (int)CommonResponse.ERROR,
                     ResultMessage = CommonResponse.ERROR.ToString(),
@@ -64,15 +64,15 @@ namespace BLL.Services
                 });
             }
             //Create Response
-            PoiResponse poiResponse = _mapper.Map<PoiResponse>(poi);
+            ExtendPoiResponse ExtendPoiResponse = _mapper.Map<ExtendPoiResponse>(poi);
 
             //Store Poi to Redis
 
-            return new BaseResponse<PoiResponse>
+            return new BaseResponse<ExtendPoiResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = poiResponse
+                Data = ExtendPoiResponse
             };
         }
 
@@ -82,19 +82,19 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<PoiResponse>> GetPoiById(string id)
+        public async Task<BaseResponse<ExtendPoiResponse>> GetPoiById(string id)
         {
-            PoiResponse poiResponse = null;
+            ExtendPoiResponse ExtendPoiResponse = null;
             //Get poi from Redis
 
             //Get poi from DB
-            if (poiResponse is null)
+            if (ExtendPoiResponse is null)
             {
                 try
                 {
                     Poi poi = await _unitOfWork.Pois.GetPoiIncludeResidentAndApartMentByPoiId(id);
 
-                    poiResponse = _mapper.Map<PoiResponse>(poi);
+                    ExtendPoiResponse = _mapper.Map<ExtendPoiResponse>(poi);
                 }
                 catch (Exception e)
                 {
@@ -109,11 +109,11 @@ namespace BLL.Services
                 }
             }
 
-            return new BaseResponse<PoiResponse>
+            return new BaseResponse<ExtendPoiResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = poiResponse
+                Data = ExtendPoiResponse
             };
         }
 
@@ -123,19 +123,19 @@ namespace BLL.Services
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<PoiResponse>>> GetPoiByReleaseDate(DateTime date)
+        public async Task<BaseResponse<List<ExtendPoiResponse>>> GetPoiByReleaseDate(DateTime date)
         {
-            List<PoiResponse> poiResponses = null;
+            List<ExtendPoiResponse> ExtendPoiResponses = null;
 
 
             //Get ApartmentId from DB
-            if (_utilService.IsNullOrEmpty(poiResponses))
+            if (_utilService.IsNullOrEmpty(ExtendPoiResponses))
             {
                 try
                 {
                     List<Poi> poi = await _unitOfWork.Pois.FindListAsync(poi => poi.ReleaseDate.Value.Date == date.Date);
 
-                    poiResponses = _mapper.Map<List<PoiResponse>>(poi);
+                    ExtendPoiResponses = _mapper.Map<List<ExtendPoiResponse>>(poi);
                 }
                 catch (Exception e)
                 {
@@ -150,11 +150,11 @@ namespace BLL.Services
                 }
             }
 
-            return new BaseResponse<List<PoiResponse>>
+            return new BaseResponse<List<ExtendPoiResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = poiResponses
+                Data = ExtendPoiResponses
             };
         }
 
@@ -164,20 +164,20 @@ namespace BLL.Services
         /// </summary>
         /// <param name="apartmentId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<PoiResponse>>> GetPoiByApartmentId(string apartmentId)
+        public async Task<BaseResponse<List<ExtendPoiResponse>>> GetPoiByApartmentId(string apartmentId)
         {
-            List<PoiResponse> poiResponses = null;
+            List<ExtendPoiResponse> ExtendPoiResponses = null;
 
             //Get Poi from Redis
 
             //Get ApartmentId from DB
-            if (_utilService.IsNullOrEmpty(poiResponses))
+            if (_utilService.IsNullOrEmpty(ExtendPoiResponses))
             {
                 try
                 {
                     List<Poi> poi = await _unitOfWork.Pois.FindListAsync(poi => poi.ApartmentId.Equals(apartmentId));
 
-                    poiResponses = _mapper.Map<List<PoiResponse>>(poi);
+                    ExtendPoiResponses = _mapper.Map<List<ExtendPoiResponse>>(poi);
                 }
                 catch (Exception e)
                 {
@@ -192,11 +192,11 @@ namespace BLL.Services
                 }
             }
 
-            return new BaseResponse<List<PoiResponse>>
+            return new BaseResponse<List<ExtendPoiResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = poiResponses
+                Data = ExtendPoiResponses
             };
         }
 
@@ -207,7 +207,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="poiUpdateRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<PoiResponse>> UpdatePoiById(string id, PoiUpdateRequest poiUpdateRequest)
+        public async Task<BaseResponse<ExtendPoiResponse>> UpdatePoiById(string id, PoiUpdateRequest poiUpdateRequest)
         {
             Poi poi;
             //Find Poi
@@ -249,15 +249,15 @@ namespace BLL.Services
             }
 
             //Create response
-            PoiResponse poiResponse = _mapper.Map<PoiResponse>(poi);
+            ExtendPoiResponse ExtendPoiResponse = _mapper.Map<ExtendPoiResponse>(poi);
 
             //Store to Redis
 
-            return new BaseResponse<PoiResponse>
+            return new BaseResponse<ExtendPoiResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = poiResponse
+                Data = ExtendPoiResponse
             };
         }
 
@@ -267,7 +267,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<PoiResponse>> DeletePoiById(string id)
+        public async Task<BaseResponse<ExtendPoiResponse>> DeletePoiById(string id)
         {
             //Check id
             Poi poi;
@@ -309,15 +309,15 @@ namespace BLL.Services
             }
 
             //Create response
-            PoiResponse poiResponse = _mapper.Map<PoiResponse>(poi);
+            ExtendPoiResponse ExtendPoiResponse = _mapper.Map<ExtendPoiResponse>(poi);
 
             //Store Poi to redis
 
-            return new BaseResponse<PoiResponse>
+            return new BaseResponse<ExtendPoiResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = poiResponse
+                Data = ExtendPoiResponse
             };
         }
 
@@ -328,14 +328,14 @@ namespace BLL.Services
         /// <param name="status"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<PoiResponse>>> GetPoisByStatus(int status)
+        public async Task<BaseResponse<List<ExtendPoiResponse>>> GetPoisByStatus(int status)
         {
-            List<PoiResponse> poiList = null;
+            List<ExtendPoiResponse> poiList = null;
 
             //get Poi from database
             try
             {
-                poiList = _mapper.Map<List<PoiResponse>>(
+                poiList = _mapper.Map<List<ExtendPoiResponse>>(
                     await _unitOfWork.Pois.FindListAsync(Poi => Poi.Status == status));
             }
             catch (Exception e)
@@ -343,7 +343,7 @@ namespace BLL.Services
                 _logger.Error("[PoiService.GetPoisByStatus()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<PoiResponse>
+                    new BaseResponse<ExtendPoiResponse>
                     {
                         ResultCode = (int)PoiStatus.POI_NOT_FOUND,
                         ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
@@ -351,7 +351,7 @@ namespace BLL.Services
                     });
             }
 
-            return new BaseResponse<List<PoiResponse>>
+            return new BaseResponse<List<ExtendPoiResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
@@ -363,7 +363,7 @@ namespace BLL.Services
         /// Get All Poi
         /// </summary>
         /// <returns></returns>
-        public async Task<BaseResponse<List<PoiResponse>>> GetAllPoi()
+        public async Task<BaseResponse<List<ExtendPoiResponse>>> GetAllPoi()
         {
             List<Poi> pois;
 
@@ -376,7 +376,7 @@ namespace BLL.Services
                 _logger.Error("[PoiService.GetAllPoi()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<PoiResponse>
+                    new BaseResponse<ExtendPoiResponse>
                     {
                         ResultCode = (int)PoiStatus.POI_NOT_FOUND,
                         ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
@@ -384,13 +384,13 @@ namespace BLL.Services
                     });
             }
 
-            List<PoiResponse> poiResponses = _mapper.Map<List<PoiResponse>>(pois);
+            List<ExtendPoiResponse> ExtendPoiResponses = _mapper.Map<List<ExtendPoiResponse>>(pois);
 
-            return new BaseResponse<List<PoiResponse>>
+            return new BaseResponse<List<ExtendPoiResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = poiResponses
+                Data = ExtendPoiResponses
             };
         }
     }

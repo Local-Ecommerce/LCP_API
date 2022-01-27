@@ -414,5 +414,47 @@ namespace BLL.Services
                 Data = apartmentResponses
             };
         }
+
+
+        /// <summary>
+        /// Get Market Manager By Apartment Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<BaseResponse<ExtendApartmentResponse>> GetMarketManagerByApartmentId(string id)
+        {
+            //biz rule
+
+
+            ExtendApartmentResponse apartmentResponse;
+
+            //Get Apartment From Database
+
+            try
+            {
+                Apartment apartment = await _unitOfWork.Apartments.GetMarketManagerByApartmentId(id);
+
+                apartmentResponse = _mapper.Map<ExtendApartmentResponse>(apartment);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ApartmentService.GetMarketManagerByApartmentId()]: " + e.Message);
+
+                throw new HttpStatusException(HttpStatusCode.OK,
+                    new BaseResponse<ApartmentResponse>
+                    {
+                        ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
+                        ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
+                        Data = default
+                    });
+            }
+
+            return new BaseResponse<ExtendApartmentResponse>
+            {
+                ResultCode = (int)CommonResponse.SUCCESS,
+                ResultMessage = CommonResponse.SUCCESS.ToString(),
+                Data = apartmentResponse
+            };
+        }
     }
 }
