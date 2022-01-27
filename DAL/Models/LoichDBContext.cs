@@ -491,6 +491,8 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("ProductInMenuID");
 
+                entity.Property(e => e.Image).IsUnicode(false);
+
                 entity.Property(e => e.MenuId)
                     .HasMaxLength(20)
                     .IsUnicode(false)
@@ -505,6 +507,12 @@ namespace DAL.Models
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("ProductID");
+
+                entity.Property(e => e.ProductName).HasMaxLength(250);
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.Menu)
                     .WithMany(p => p.ProductInMenus)

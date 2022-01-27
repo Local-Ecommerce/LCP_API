@@ -101,6 +101,7 @@ namespace BLL.Mappings
             CreateMap<ResidentRequest, Resident>();
             CreateMap<ResidentUpdateRequest, Resident>();
             CreateMap<Resident, ResidentResponse>();
+            CreateMap<Resident, ResidentResponseForApartment>();
 
             //Order & Order Detail Mapping
             CreateMap<OrderDetailRequest, OrderDetail>();
