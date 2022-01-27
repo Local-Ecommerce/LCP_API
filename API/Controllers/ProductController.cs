@@ -283,7 +283,7 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Approve Update Project With ID
+        /// Approve Update Product With ID
         /// </summary>
         [HttpPut("approve/update/{id}")]
         public async Task<IActionResult> ApproveUpdateProduct(string id)
@@ -333,7 +333,7 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Reject Update Project With ID
+        /// Reject Update Product With ID
         /// </summary>
         [HttpPut("reject/update/{id}")]
         public async Task<IActionResult> RejectUpdateProduct(string id)
