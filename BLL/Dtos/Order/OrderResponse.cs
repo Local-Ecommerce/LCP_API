@@ -1,7 +1,4 @@
-﻿using BLL.Dtos.OrderDetail;
-using System;
-using System.Collections.ObjectModel;
-
+﻿using System;
 namespace BLL.Dtos.Order
 {
     public class OrderResponse
@@ -14,6 +11,5 @@ namespace BLL.Dtos.Order
         public double? Discount { get; set; }
         public string ResidentId { get; set; }
         public string MerchantStoreId { get; set; }
-        public Collection<OrderDetailResponse> OrderDetails { get; set; }
     }
 }

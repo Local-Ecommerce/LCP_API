@@ -62,7 +62,7 @@ namespace API.Controllers
             watch.Start();
 
             //get productCategory
-            BaseResponse<ProductCategoryResponse> response = await _productCategoryService.GetProCategoryById(id);
+            BaseResponse<ExtendProductCategoryResponse> response = await _productCategoryService.GetProCategoryById(id);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -138,7 +138,7 @@ namespace API.Controllers
             watch.Start();
 
             //get Product
-            BaseResponse<List<ProductCategoryResponse>> response =
+            BaseResponse<List<ExtendProductCategoryResponse>> response =
                 await _productCategoryService.GetProductCategoriesByStatus(status);
 
             string json = JsonSerializer.Serialize(response);

@@ -93,7 +93,7 @@ namespace API.Controllers
             watch.Start();
 
             //get account
-            BaseResponse<AccountResponse> response = await _accountService.GetAccountById(id);
+            BaseResponse<ExtendAccountResponse> response = await _accountService.GetAccountById(id);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -118,7 +118,7 @@ namespace API.Controllers
             watch.Start();
 
             //update account
-            BaseResponse<AccountResponse> response = await _accountService.UpdateAccount(id);
+            BaseResponse<ExtendAccountResponse> response = await _accountService.UpdateAccount(id);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -168,7 +168,7 @@ namespace API.Controllers
             watch.Start();
 
             //change Role By Account
-            BaseResponse<AccountResponse> response = await _accountService.ChangeResidentTypeByAccountId(id, type);
+            BaseResponse<ExtendAccountResponse> response = await _accountService.ChangeResidentTypeByAccountId(id, type);
 
             string json = JsonSerializer.Serialize(response);
 

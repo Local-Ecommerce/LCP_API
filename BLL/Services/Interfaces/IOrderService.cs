@@ -15,7 +15,7 @@ namespace BLL.Services.Interfaces
         /// <param name="orderDetailRequests"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<OrderResponse>>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId);
+        Task<BaseResponse<List<ExtendOrderResponse>>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId);
 
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace BLL.Services.Interfaces
         /// <param name="residentId"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<OrderResponse>>> GetOrderByResidentIdAndStatus(string residentId, int status);
+        Task<BaseResponse<List<ExtendOrderResponse>>> GetOrderByResidentIdAndStatus(string residentId, int status);
 
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="merchantStoreId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<OrderResponse>>> GetOrderByMerchantStoreId(string merchantStoreId);
+        Task<BaseResponse<List<ExtendOrderResponse>>> GetOrderByMerchantStoreId(string merchantStoreId);
 
 
         /// <summary>

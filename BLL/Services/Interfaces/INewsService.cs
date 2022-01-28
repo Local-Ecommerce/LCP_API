@@ -21,7 +21,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<NewsResponse>> GetNewsById(string id);
+        Task<BaseResponse<ExtendNewsResponse>> GetNewsById(string id);
 
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<NewsResponse>>> GetNewsByReleaseDate(DateTime date);
+        Task<BaseResponse<List<ExtendNewsResponse>>> GetNewsByReleaseDate(DateTime date);
 
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="aparmentId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<NewsResponse>>> GetNewsByAparmentId(string apartmentId);
+        Task<BaseResponse<List<ExtendNewsResponse>>> GetNewsByAparmentId(string apartmentId);
 
 
         /// <summary>
@@ -62,13 +62,13 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<NewsResponse>>> GetNewsByStatus(int status);
+        Task<BaseResponse<List<ExtendNewsResponse>>> GetNewsByStatus(int status);
 
 
         /// <summary>
         /// Get All News
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<NewsResponse>>> GetAllNews();
+        Task<BaseResponse<List<ExtendNewsResponse>>> GetAllNews();
     }
 }

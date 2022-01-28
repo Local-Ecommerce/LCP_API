@@ -1,6 +1,4 @@
-﻿using BLL.Dtos.Resident;
-using System;
-using System.Text.Json.Serialization;
+﻿using System;
 
 namespace BLL.Dtos.ProductCategory
 {
@@ -14,8 +12,5 @@ namespace BLL.Dtos.ProductCategory
         public string ResidentId { get; set; }
         public string ProductId { get; set; }
         public string SystemCategoryId { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public ResidentResponse Resident { get; set; }
     }
 }

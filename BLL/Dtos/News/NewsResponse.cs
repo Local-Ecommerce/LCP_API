@@ -1,7 +1,4 @@
-﻿using BLL.Dtos.Apartment;
-using BLL.Dtos.Resident;
-using System;
-using System.Text.Json.Serialization;
+﻿using System;
 
 namespace BLL.Dtos.News
 {
@@ -14,10 +11,5 @@ namespace BLL.Dtos.News
         public int? Status { get; set; }
         public string ResidentId { get; set; }
         public string ApartmentId { get; set; }
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public ApartmentResponse Apartment { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public ResidentResponse Resident { get; set; }
     }
 }

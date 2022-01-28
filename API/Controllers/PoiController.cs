@@ -64,7 +64,7 @@ namespace API.Controllers
             watch.Start();
 
             //Get Poi
-            BaseResponse<PoiResponse> response = await _poiService.GetPoiById(id);
+            BaseResponse<ExtendPoiResponse> response = await _poiService.GetPoiById(id);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -90,7 +90,7 @@ namespace API.Controllers
             watch.Start();
 
             //Get Poi
-            BaseResponse<List<PoiResponse>> response = await _poiService.GetAllPoi();
+            BaseResponse<List<ExtendPoiResponse>> response = await _poiService.GetAllPoi();
 
             string json = JsonSerializer.Serialize(response);
 
@@ -164,7 +164,7 @@ namespace API.Controllers
             watch.Start();
 
             //Get Poi by ApartmentId
-            BaseResponse<List<PoiResponse>> response = await _poiService.GetPoiByApartmentId(apartmentId);
+            BaseResponse<List<ExtendPoiResponse>> response = await _poiService.GetPoiByApartmentId(apartmentId);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -190,7 +190,7 @@ namespace API.Controllers
             watch.Start();
 
             //Get Poi by RealeaseDate
-            BaseResponse<List<PoiResponse>> response = await _poiService.GetPoiByReleaseDate(date);
+            BaseResponse<List<ExtendPoiResponse>> response = await _poiService.GetPoiByReleaseDate(date);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -216,7 +216,7 @@ namespace API.Controllers
             watch.Start();
 
             //get Poi
-            BaseResponse<List<PoiResponse>> response =
+            BaseResponse<List<ExtendPoiResponse>> response =
                 await _poiService.GetPoisByStatus(status);
 
             string json = JsonSerializer.Serialize(response);

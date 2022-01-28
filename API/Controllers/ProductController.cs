@@ -34,7 +34,7 @@ namespace API.Controllers
         {
             _logger.Information($"POST api/product/create-base START Request: {JsonSerializer.Serialize(productRequest)}");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //create product

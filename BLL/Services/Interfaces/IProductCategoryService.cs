@@ -36,13 +36,13 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ProductCategoryResponse>> GetProCategoryById(string id);
+        Task<BaseResponse<ExtendProductCategoryResponse>> GetProCategoryById(string id);
 
 
         /// <summary>
         /// Get Product Categories By Status
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<ProductCategoryResponse>>> GetProductCategoriesByStatus(int status);
+        Task<BaseResponse<List<ExtendProductCategoryResponse>>> GetProductCategoriesByStatus(int status);
     }
 }

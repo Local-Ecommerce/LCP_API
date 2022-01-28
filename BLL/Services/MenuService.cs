@@ -42,7 +42,7 @@ namespace BLL.Services
         /// <summary>
         /// Create Menu
         /// </summary>
-        /// <param name="MenuRequest"></param>
+        /// <param name="menuRequest"></param>
         /// <returns></returns>
         public async Task<BaseResponse<MenuResponse>> CreateMenu(MenuRequest menuRequest)
         {
@@ -87,18 +87,18 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<MenuResponse>> GetMenuById(string id)
+        public async Task<BaseResponse<ExtendMenuResponses>> GetMenuById(string id)
         {
-            MenuResponse menuReponse = null;
+            ExtendMenuResponses menuReponse = null;
 
             //Get Menu from DB
             if (menuReponse is null)
             {
                 try
                 {
-                    Menu Menu = await _unitOfWork.Menus.GetMenuIncludeResidentById(id);
+                    Menu menu = await _unitOfWork.Menus.GetMenuIncludeResidentById(id);
 
-                    menuReponse = _mapper.Map<MenuResponse>(Menu);
+                    menuReponse = _mapper.Map<ExtendMenuResponses>(menu);
                 }
                 catch (Exception e)
                 {
@@ -113,7 +113,7 @@ namespace BLL.Services
                 }
             }
 
-            return new BaseResponse<MenuResponse>
+            return new BaseResponse<ExtendMenuResponses>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
@@ -126,7 +126,7 @@ namespace BLL.Services
         ///  Update Menu By Id
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="MenuRequest"></param>
+        /// <param name="menuUpdateRequest"></param>
         /// <returns></returns>
         public async Task<BaseResponse<MenuResponse>> UpdateMenuById(string id, MenuUpdateRequest menuUpdateRequest)
         {
@@ -246,7 +246,7 @@ namespace BLL.Services
         /// <param name="menuId"></param>
         /// <param name="productInMenuRequests"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<ProductInMenuResponse>>> AddProductsToMenu(string menuId,
+        public async Task<BaseResponse<List<ExtendProductInMenuResponse>>> AddProductsToMenu(string menuId,
             List<ProductInMenuRequest> productInMenuRequests)
         {
             //biz rule
@@ -271,7 +271,7 @@ namespace BLL.Services
             {
                 _logger.Error("[MenuService.AddProductsToMenu()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ProductInMenuResponse>
+                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ExtendProductInMenuResponse>
                 {
                     ResultCode = (int)CommonResponse.ERROR,
                     ResultMessage = CommonResponse.ERROR.ToString(),
@@ -280,13 +280,13 @@ namespace BLL.Services
             }
 
             //create response
-            List<ProductInMenuResponse> productInMenuResponses = _mapper.Map<List<ProductInMenuResponse>>(productInMenus);
+            List<ExtendProductInMenuResponse> ExtendProductInMenuResponses = _mapper.Map<List<ExtendProductInMenuResponse>>(productInMenus);
 
-            return new BaseResponse<List<ProductInMenuResponse>>
+            return new BaseResponse<List<ExtendProductInMenuResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productInMenuResponses
+                Data = ExtendProductInMenuResponses
             };
         }
 
@@ -297,7 +297,7 @@ namespace BLL.Services
         /// <param name="productInMenuId"></param>
         /// <param name="productInMenuUpdateRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ProductInMenuResponse>> UpdateProductInMenuById(string productInMenuId,
+        public async Task<BaseResponse<ExtendProductInMenuResponse>> UpdateProductInMenuById(string productInMenuId,
             ProductInMenuUpdateRequest productInMenuUpdateRequest)
         {
             ProductInMenu productInMenu;
@@ -340,13 +340,13 @@ namespace BLL.Services
             }
 
             //Create Response
-            ProductInMenuResponse productInMenuResponse = _mapper.Map<ProductInMenuResponse>(productInMenu);
+            ExtendProductInMenuResponse extendProductInMenuResponse = _mapper.Map<ExtendProductInMenuResponse>(productInMenu);
 
-            return new BaseResponse<ProductInMenuResponse>
+            return new BaseResponse<ExtendProductInMenuResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productInMenuResponse
+                Data = extendProductInMenuResponse
             };
         }
 
@@ -394,7 +394,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="productInMenuId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ProductInMenuResponse>> GetProductInMenuById(string productInMenuId)
+        public async Task<BaseResponse<ExtendProductInMenuResponse>> GetProductInMenuById(string productInMenuId)
         {
             ProductInMenu productInMenu;
 
@@ -415,13 +415,13 @@ namespace BLL.Services
             }
 
             //create response
-            ProductInMenuResponse productInMenuResponse = _mapper.Map<ProductInMenuResponse>(productInMenu);
+            ExtendProductInMenuResponse extendProductInMenuResponse = _mapper.Map<ExtendProductInMenuResponse>(productInMenu);
 
-            return new BaseResponse<ProductInMenuResponse>
+            return new BaseResponse<ExtendProductInMenuResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productInMenuResponse
+                Data = extendProductInMenuResponse
             };
         }
 
@@ -431,7 +431,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="menuId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<ProductInMenuResponse>>> GetProductsInMenuByMenuId(string menuId)
+        public async Task<BaseResponse<List<ExtendProductInMenuResponse>>> GetProductsInMenuByMenuId(string menuId)
         {
             List<ProductInMenu> productsInMenu;
             try
@@ -451,13 +451,13 @@ namespace BLL.Services
             }
 
             //create response
-            List<ProductInMenuResponse> productInMenuResponses = _mapper.Map<List<ProductInMenuResponse>>(productsInMenu);
+            List<ExtendProductInMenuResponse> extendProductInMenuResponses = _mapper.Map<List<ExtendProductInMenuResponse>>(productsInMenu);
 
-            return new BaseResponse<List<ProductInMenuResponse>>
+            return new BaseResponse<List<ExtendProductInMenuResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productInMenuResponses
+                Data = extendProductInMenuResponses
             };
         }
 
@@ -468,14 +468,14 @@ namespace BLL.Services
         /// <param name="status"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<MenuResponse>>> GetMenusByStatus(int status)
+        public async Task<BaseResponse<List<ExtendMenuResponses>>> GetMenusByStatus(int status)
         {
-            List<MenuResponse> menuList = null;
+            List<ExtendMenuResponses> menuList = null;
 
             //get Menu from database
             try
             {
-                menuList = _mapper.Map<List<MenuResponse>>(
+                menuList = _mapper.Map<List<ExtendMenuResponses>>(
                     await _unitOfWork.Menus
                                      .FindListAsync(me => me.Status == status));
             }
@@ -492,7 +492,7 @@ namespace BLL.Services
                     });
             }
 
-            return new BaseResponse<List<MenuResponse>>
+            return new BaseResponse<List<ExtendMenuResponses>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
@@ -506,7 +506,7 @@ namespace BLL.Services
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<MenuResponse>>> GetAllMenus()
+        public async Task<BaseResponse<List<ExtendMenuResponses>>> GetAllMenus()
         {
             List<Menu> menus;
 
@@ -528,9 +528,9 @@ namespace BLL.Services
                     });
             }
 
-            List<MenuResponse> menuResponses = _mapper.Map<List<MenuResponse>>(menus);
+            List<ExtendMenuResponses> menuResponses = _mapper.Map<List<ExtendMenuResponses>>(menus);
 
-            return new BaseResponse<List<MenuResponse>>
+            return new BaseResponse<List<ExtendMenuResponses>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
@@ -544,14 +544,14 @@ namespace BLL.Services
         /// </summary>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<MenuResponse>>> GetMenusByResidentId(string residentId)
+        public async Task<BaseResponse<List<ExtendMenuResponses>>> GetMenusByResidentId(string residentId)
         {
-            List<MenuResponse> menuResponses;
+            List<ExtendMenuResponses> menuResponses;
 
             //get menu from database
             try
             {
-                menuResponses = _mapper.Map<List<MenuResponse>>(
+                menuResponses = _mapper.Map<List<ExtendMenuResponses>>(
                     await _unitOfWork.Menus.GetMenusByResidentId(residentId));
             }
             catch (Exception e)
@@ -567,7 +567,7 @@ namespace BLL.Services
                     });
             }
 
-            return new BaseResponse<List<MenuResponse>>
+            return new BaseResponse<List<ExtendMenuResponses>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
@@ -597,7 +597,7 @@ namespace BLL.Services
 
             _unitOfWork.Menus.Add(menu);
 
-            MenuResponse menuResponse = _mapper.Map<MenuResponse>(menu);
+            ExtendMenuResponses menuResponse = _mapper.Map<ExtendMenuResponses>(menu);
             menuResponse.StoreMenuDetails = new Collection<StoreMenuDetailResponse>();
             menuResponse.StoreMenuDetails.Add(
                 _storeMenuDetailService.CreateDefaultStoreMenuDetail(menu.MenuId, merchantStoreId));

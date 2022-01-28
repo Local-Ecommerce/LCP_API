@@ -60,7 +60,7 @@ namespace BLL.Services
                 _logger.Error("[ProductCategoryService.CreateProductCategory()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductCategoryResponse>
+                    new BaseResponse<ExtendProductCategoryResponse>
                     {
                         ResultCode = (int)CommonResponse.ERROR,
                         ResultMessage = CommonResponse.ERROR.ToString(),
@@ -214,15 +214,15 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ProductCategoryResponse>> GetProCategoryById(string id)
+        public async Task<BaseResponse<ExtendProductCategoryResponse>> GetProCategoryById(string id)
         {
-            ProductCategoryResponse productCategoryResponse;
+            ExtendProductCategoryResponse extendProductCategoryResponse;
 
             //get productCategory from database
             try
             {
                 ProductCategory productCategory = await _unitOfWork.ProductCategories.FindAsync(p => p.ProductCategoryId.Equals(id));
-                productCategoryResponse = _mapper.Map<ProductCategoryResponse>(productCategory);
+                extendProductCategoryResponse = _mapper.Map<ExtendProductCategoryResponse>(productCategory);
 
             }
             catch (Exception e)
@@ -230,7 +230,7 @@ namespace BLL.Services
                 _logger.Error("[ProductCategoryService.GetProductCategoryById()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductCategoryResponse>
+                    new BaseResponse<ExtendProductCategoryResponse>
                     {
                         ResultCode = (int)ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND,
                         ResultMessage = ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND.ToString(),
@@ -238,11 +238,11 @@ namespace BLL.Services
                     });
             }
 
-            return new BaseResponse<ProductCategoryResponse>
+            return new BaseResponse<ExtendProductCategoryResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productCategoryResponse
+                Data = extendProductCategoryResponse
             };
         }
 
@@ -253,14 +253,14 @@ namespace BLL.Services
         /// <param name="status"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ProductCategoryResponse>>> GetProductCategoriesByStatus(int status)
+        public async Task<BaseResponse<List<ExtendProductCategoryResponse>>> GetProductCategoriesByStatus(int status)
         {
-            List<ProductCategoryResponse> productCategoryList = null;
+            List<ExtendProductCategoryResponse> productCategoryList = null;
 
             //get ProductCategory from database
             try
             {
-                productCategoryList = _mapper.Map<List<ProductCategoryResponse>>(
+                productCategoryList = _mapper.Map<List<ExtendProductCategoryResponse>>(
                     await _unitOfWork.ProductCategories.FindListAsync(ms => ms.Status == status));
             }
             catch (Exception e)
@@ -268,7 +268,7 @@ namespace BLL.Services
                 _logger.Error("[ProductCategoryService.GetProductCategorysByStatus()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductCategoryResponse>
+                    new BaseResponse<ExtendProductCategoryResponse>
                     {
                         ResultCode = (int)ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND,
                         ResultMessage = ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND.ToString(),
@@ -276,7 +276,7 @@ namespace BLL.Services
                     });
             }
 
-            return new BaseResponse<List<ProductCategoryResponse>>
+            return new BaseResponse<List<ExtendProductCategoryResponse>>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),

@@ -64,7 +64,7 @@ namespace API.Controllers
             watch.Start();
 
             //Get News
-            BaseResponse<NewsResponse> response = await _newsService.GetNewsById(id);
+            BaseResponse<ExtendNewsResponse> response = await _newsService.GetNewsById(id);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -89,7 +89,7 @@ namespace API.Controllers
             watch.Start();
 
             //get News
-            BaseResponse<List<NewsResponse>> response = await _newsService.GetAllNews();
+            BaseResponse<List<ExtendNewsResponse>> response = await _newsService.GetAllNews();
 
             string json = JsonSerializer.Serialize(response);
 
@@ -163,7 +163,7 @@ namespace API.Controllers
             watch.Start();
 
             //Get News by ApartmentId
-            BaseResponse<List<NewsResponse>> response = await _newsService.GetNewsByAparmentId(apartmentId);
+            BaseResponse<List<ExtendNewsResponse>> response = await _newsService.GetNewsByAparmentId(apartmentId);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -189,7 +189,7 @@ namespace API.Controllers
             watch.Start();
 
             //Get News by RealeaseDate
-            BaseResponse<List<NewsResponse>> response = await _newsService.GetNewsByReleaseDate(date);
+            BaseResponse<List<ExtendNewsResponse>> response = await _newsService.GetNewsByReleaseDate(date);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -215,7 +215,7 @@ namespace API.Controllers
             watch.Start();
 
             //get News
-            BaseResponse<List<NewsResponse>> response =
+            BaseResponse<List<ExtendNewsResponse>> response =
                 await _newsService.GetNewsByStatus(status);
 
             string json = JsonSerializer.Serialize(response);

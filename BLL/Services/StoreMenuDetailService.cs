@@ -122,7 +122,7 @@ namespace BLL.Services
                 _logger.Error("[StoreMenuDetailService.UpdateStoreMenuDetailById()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<StoreMenuDetailResponse>
+                    new BaseResponse<ExtendStoreMenuDetailResponse>
                     {
                         ResultCode = (int)CommonResponse.ERROR,
                         ResultMessage = CommonResponse.ERROR.ToString(),
@@ -164,7 +164,7 @@ namespace BLL.Services
                 _logger.Error("[StoreMenuDetailService.DeleteStoreMenuDetailById()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<StoreMenuDetailResponse>
+                    new BaseResponse<ExtendStoreMenuDetailResponse>
                     {
                         ResultCode = (int)CommonResponse.ERROR,
                         ResultMessage = CommonResponse.ERROR.ToString(),

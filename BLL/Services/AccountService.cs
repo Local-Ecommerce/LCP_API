@@ -60,7 +60,7 @@ namespace BLL.Services
             {
                 _logger.Error($"[Invalid Password : '{accountRegisterRequest.Password}']");
                 throw new HttpStatusException(HttpStatusCode.OK,
-                new BaseResponse<AccountResponse>
+                new BaseResponse<ExtendAccountResponse>
                 {
                     ResultCode = (int)AccountStatus.INVALID_PASSWORD,
                     ResultMessage = AccountStatus.INVALID_PASSWORD.ToString(),
@@ -72,7 +72,7 @@ namespace BLL.Services
             if (!IsValidConfirmPassword(accountRegisterRequest.Password, accountRegisterRequest.ConfirmPassword))
             {
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<AccountResponse>
+                    new BaseResponse<ExtendAccountResponse>
                     {
                         ResultCode = (int)AccountStatus.INVALID_CONFIRM_PASSWORD,
                         ResultMessage = AccountStatus.INVALID_CONFIRM_PASSWORD.ToString(),
@@ -230,23 +230,23 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<AccountResponse>> GetAccountById(string id)
+        public async Task<BaseResponse<ExtendAccountResponse>> GetAccountById(string id)
         {
-            AccountResponse accountResponse;
+            ExtendAccountResponse ExtendAccountResponse;
 
             //get account from database
             try
             {
                 Account account = await _unitOfWork.Accounts.FindAsync(acc => acc.AccountId.Equals(id));
 
-                accountResponse = _mapper.Map<AccountResponse>(account);
+                ExtendAccountResponse = _mapper.Map<ExtendAccountResponse>(account);
             }
             catch (Exception e)
             {
                 _logger.Error("[AccountService.GetAccountById()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<AccountResponse>
+                    new BaseResponse<ExtendAccountResponse>
                     {
                         ResultCode = (int)AccountStatus.ACCOUNT_NOT_FOUND,
                         ResultMessage = AccountStatus.ACCOUNT_NOT_FOUND.ToString(),
@@ -254,11 +254,11 @@ namespace BLL.Services
                     });
             }
 
-            return new BaseResponse<AccountResponse>
+            return new BaseResponse<ExtendAccountResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = accountResponse
+                Data = ExtendAccountResponse
             };
         }
 
@@ -324,7 +324,7 @@ namespace BLL.Services
             }
 
             //create response
-            AccountResponse accountResponse = _mapper.Map<AccountResponse>(account);
+            AccountResponse accountResponse = _mapper.Map<ExtendAccountResponse>(account);
 
             return new BaseResponse<AccountResponse>
             {
@@ -342,7 +342,7 @@ namespace BLL.Services
         /// <param name="accountImageForm"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<AccountResponse>> UpdateAccount(string id)
+        public async Task<BaseResponse<ExtendAccountResponse>> UpdateAccount(string id)
         {
             //biz rule
 
@@ -357,7 +357,7 @@ namespace BLL.Services
                 _logger.Error("[AccountService.UpdateAccount()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<AccountResponse>
+                    new BaseResponse<ExtendAccountResponse>
                     {
                         ResultCode = (int)AccountStatus.ACCOUNT_NOT_FOUND,
                         ResultMessage = AccountStatus.ACCOUNT_NOT_FOUND.ToString(),
@@ -379,7 +379,7 @@ namespace BLL.Services
                 _logger.Error("[AccountService.UpdateAccount()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<AccountResponse>
+                    new BaseResponse<ExtendAccountResponse>
                     {
                         ResultCode = (int)CommonResponse.ERROR,
                         ResultMessage = CommonResponse.ERROR.ToString(),
@@ -388,13 +388,13 @@ namespace BLL.Services
             }
 
             //create response
-            AccountResponse accountResponse = _mapper.Map<AccountResponse>(account);
+            ExtendAccountResponse ExtendAccountResponse = _mapper.Map<ExtendAccountResponse>(account);
 
-            return new BaseResponse<AccountResponse>
+            return new BaseResponse<ExtendAccountResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = accountResponse
+                Data = ExtendAccountResponse
             };
         }
 
@@ -415,7 +415,7 @@ namespace BLL.Services
         /// <param name="accountId"></param>
         /// <param name="residentType"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<AccountResponse>> ChangeResidentTypeByAccountId(string accountId, string residentType)
+        public async Task<BaseResponse<ExtendAccountResponse>> ChangeResidentTypeByAccountId(string accountId, string residentType)
         {
             TokenInfo tokenInfo;
             Account account;
@@ -454,17 +454,17 @@ namespace BLL.Services
             }
 
             //create response
-            AccountResponse accountResponse = _mapper.Map<AccountResponse>(account);
+            ExtendAccountResponse ExtendAccountResponse = _mapper.Map<ExtendAccountResponse>(account);
 
             //move old token to blacklist
             _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,
                 new Predicate<TokenInfo>(ti => ti.Token == tokenInfo.Token));
 
-            return new BaseResponse<AccountResponse>
+            return new BaseResponse<ExtendAccountResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = accountResponse
+                Data = ExtendAccountResponse
             };
         }
     }
