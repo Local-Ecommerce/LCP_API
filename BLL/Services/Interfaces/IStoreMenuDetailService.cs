@@ -11,7 +11,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendStoreMenuDetailResponse>> CreateStoreMenuDetail(StoreMenuDetailRequest request);
+        Task<BaseResponse<StoreMenuDetailResponse>> CreateStoreMenuDetail(StoreMenuDetailRequest request);
 
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace BLL.Services.Interfaces
         /// <param name="menuId"></param>
         /// <param name="merchantStoreId"></param>
         /// <returns></returns>
-        ExtendStoreMenuDetailResponse CreateDefaultStoreMenuDetail(string menuId, string merchantStoreId);
+        StoreMenuDetailResponse CreateDefaultStoreMenuDetail(string menuId, string merchantStoreId);
 
 
         /// <summary>
@@ -28,9 +28,9 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendStoreMenuDetailResponse>> UpdateStoreMenuDetailById(string id, StoreMenuDetailUpdateRequest request);
+        Task<BaseResponse<StoreMenuDetailResponse>> UpdateStoreMenuDetailById(string id, StoreMenuDetailUpdateRequest request);
 
 
-        Task<BaseResponse<ExtendStoreMenuDetailResponse>> DeleteStoreMenuDetailById(string id);
+        Task<BaseResponse<StoreMenuDetailResponse>> DeleteStoreMenuDetailById(string id);
     }
 }

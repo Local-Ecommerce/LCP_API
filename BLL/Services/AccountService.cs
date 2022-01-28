@@ -53,7 +53,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="accountRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendAccountResponse>> Register(AccountRegisterRequest accountRegisterRequest)
+        public async Task<BaseResponse<AccountResponse>> Register(AccountRegisterRequest accountRegisterRequest)
         {
             //check valid password
             if (!_validateDataService.IsValidPassword(accountRegisterRequest.Password))
@@ -91,7 +91,7 @@ namespace BLL.Services
                     _logger.Error($"[AccountService.Register()]: Username '{accountRegisterRequest.Username}' is already exists.");
 
                     throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<ExtendAccountResponse>
+                        new BaseResponse<AccountResponse>
                         {
                             ResultCode = (int)AccountStatus.ACCOUNT_ALREADY_EXISTS,
                             ResultMessage = AccountStatus.ACCOUNT_ALREADY_EXISTS.ToString(),
@@ -134,7 +134,7 @@ namespace BLL.Services
                 _logger.Error("[AccountService.Register()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendAccountResponse>
+                    new BaseResponse<AccountResponse>
                     {
                         ResultCode = (int)CommonResponse.ERROR,
                         ResultMessage = CommonResponse.ERROR.ToString(),
@@ -143,13 +143,13 @@ namespace BLL.Services
             }
 
             //create response
-            ExtendAccountResponse ExtendAccountResponse = _mapper.Map<ExtendAccountResponse>(account);
+            AccountResponse accountResponse = _mapper.Map<AccountResponse>(account);
 
-            return new BaseResponse<ExtendAccountResponse>
+            return new BaseResponse<AccountResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendAccountResponse
+                Data = accountResponse
             };
         }
 
@@ -159,7 +159,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendAccountResponse>> DeleteAccount(string id)
+        public async Task<BaseResponse<AccountResponse>> DeleteAccount(string id)
         {
             //biz rule
 
@@ -174,7 +174,7 @@ namespace BLL.Services
                 _logger.Error("[AccountService.DeleteAccount()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendAccountResponse>
+                    new BaseResponse<AccountResponse>
                     {
                         ResultCode = (int)AccountStatus.ACCOUNT_NOT_FOUND,
                         ResultMessage = AccountStatus.ACCOUNT_NOT_FOUND.ToString(),
@@ -197,7 +197,7 @@ namespace BLL.Services
                 _logger.Error("[AccountService.DeleteAccount()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendAccountResponse>
+                    new BaseResponse<AccountResponse>
                     {
                         ResultCode = (int)CommonResponse.ERROR,
                         ResultMessage = CommonResponse.ERROR.ToString(),
@@ -216,7 +216,7 @@ namespace BLL.Services
             _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,
                 new Predicate<TokenInfo>(ti => ti.Token == tokenInfo.Token));
 
-            return new BaseResponse<ExtendAccountResponse>
+            return new BaseResponse<AccountResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
@@ -268,7 +268,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="accountLoginRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendAccountResponse>> Login(AccountLoginRequest accountLoginRequest)
+        public async Task<BaseResponse<AccountResponse>> Login(AccountLoginRequest accountLoginRequest)
         {
             DateTime expiredDate = DateTime.Now;
             string residentId = "";
@@ -315,7 +315,7 @@ namespace BLL.Services
                 _logger.Error("[AccountService.Login()]: " + e.Message);
 
                 throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendAccountResponse>
+                    new BaseResponse<AccountResponse>
                     {
                         ResultCode = (int)AccountStatus.INVALID_USERNAME_PASSWORD,
                         ResultMessage = AccountStatus.INVALID_USERNAME_PASSWORD.ToString(),
@@ -324,13 +324,13 @@ namespace BLL.Services
             }
 
             //create response
-            ExtendAccountResponse ExtendAccountResponse = _mapper.Map<ExtendAccountResponse>(account);
+            AccountResponse accountResponse = _mapper.Map<ExtendAccountResponse>(account);
 
-            return new BaseResponse<ExtendAccountResponse>
+            return new BaseResponse<AccountResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendAccountResponse
+                Data = accountResponse
             };
         }
 

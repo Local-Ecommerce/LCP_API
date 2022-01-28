@@ -11,7 +11,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="ExtendAccountResponse"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendAccountResponse>> Register(AccountRegisterRequest accountRegisterRequest);
+        Task<BaseResponse<AccountResponse>> Register(AccountRegisterRequest accountRegisterRequest);
 
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="accountLoginRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendAccountResponse>> Login(AccountLoginRequest accountLoginRequest);
+        Task<BaseResponse<AccountResponse>> Login(AccountLoginRequest accountLoginRequest);
 
         /// <summary>
         /// Get Account by Id
@@ -41,7 +41,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendAccountResponse>> DeleteAccount(string id);
+        Task<BaseResponse<AccountResponse>> DeleteAccount(string id);
 
         /// <summary>
         /// Check valid confirm password

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace BLL.Dtos.Order
 {
-    public class ExtendOrderResponse
+    public class ExtendOrderResponse : OrderResponse
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public Collection<OrderDetailResponse> OrderDetails { get; set; }

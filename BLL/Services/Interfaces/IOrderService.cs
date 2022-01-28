@@ -41,7 +41,7 @@ namespace BLL.Services.Interfaces
         /// <param name="orderId"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendOrderResponse>> DeleteOrderByOrderIdAndResidentId(string orderId, string residentId);
+        Task<BaseResponse<OrderResponse>> DeleteOrderByOrderIdAndResidentId(string orderId, string residentId);
 
 
         /// <summary>

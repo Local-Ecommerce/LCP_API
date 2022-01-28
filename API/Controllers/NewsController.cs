@@ -39,7 +39,7 @@ namespace API.Controllers
             watch.Start();
 
             //Create News
-            BaseResponse<ExtendNewsResponse> response = await _newsService.CreateNews(newsRequest);
+            BaseResponse<NewsResponse> response = await _newsService.CreateNews(newsRequest);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -114,7 +114,7 @@ namespace API.Controllers
             watch.Start();
 
             //Update News
-            BaseResponse<ExtendNewsResponse> response = await _newsService.UpdateNewsById(id, newsRequest);
+            BaseResponse<NewsResponse> response = await _newsService.UpdateNewsById(id, newsRequest);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -138,7 +138,7 @@ namespace API.Controllers
             watch.Start();
 
             //Delete News
-            BaseResponse<ExtendNewsResponse> response = await _newsService.DeleteNewsById(id);
+            BaseResponse<NewsResponse> response = await _newsService.DeleteNewsById(id);
 
             string json = JsonSerializer.Serialize(response);
 

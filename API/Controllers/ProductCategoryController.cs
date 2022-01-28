@@ -37,7 +37,7 @@ namespace API.Controllers
             watch.Start();
 
             //create product Category
-            BaseResponse<ExtendProductCategoryResponse> response = await _productCategoryService.CreateProCategory(productCategoryRequest);
+            BaseResponse<ProductCategoryResponse> response = await _productCategoryService.CreateProCategory(productCategoryRequest);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -88,7 +88,7 @@ namespace API.Controllers
             watch.Start();
 
             //update productCategory
-            BaseResponse<ExtendProductCategoryResponse> response = await _productCategoryService.UpdateProCategory(id, productCategoryRequest);
+            BaseResponse<ProductCategoryResponse> response = await _productCategoryService.UpdateProCategory(id, productCategoryRequest);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -113,7 +113,7 @@ namespace API.Controllers
             watch.Start();
 
             //delete productCategory
-            BaseResponse<ExtendProductCategoryResponse> response = await _productCategoryService.DeleteProCategory(id);
+            BaseResponse<ProductCategoryResponse> response = await _productCategoryService.DeleteProCategory(id);
 
             string json = JsonSerializer.Serialize(response);
 

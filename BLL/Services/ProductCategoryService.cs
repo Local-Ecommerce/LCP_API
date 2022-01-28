@@ -38,7 +38,7 @@ namespace BLL.Services
         /// <param name="request"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ExtendProductCategoryResponse>> CreateProCategory(ProductCategoryRequest request)
+        public async Task<BaseResponse<ProductCategoryResponse>> CreateProCategory(ProductCategoryRequest request)
         {
             //biz rule
 
@@ -69,13 +69,13 @@ namespace BLL.Services
             }
 
             //create response
-            ExtendProductCategoryResponse ExtendProductCategoryResponse = _mapper.Map<ExtendProductCategoryResponse>(productCategory);
+            ProductCategoryResponse productCategoryResponse = _mapper.Map<ProductCategoryResponse>(productCategory);
 
-            return new BaseResponse<ExtendProductCategoryResponse>
+            return new BaseResponse<ProductCategoryResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendProductCategoryResponse
+                Data = productCategoryResponse
             };
         }
 
@@ -86,7 +86,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ExtendProductCategoryResponse>> DeleteProCategory(string id)
+        public async Task<BaseResponse<ProductCategoryResponse>> DeleteProCategory(string id)
         {
             //biz rule
 
@@ -131,13 +131,13 @@ namespace BLL.Services
             }
 
             //create response
-            ExtendProductCategoryResponse ExtendProductCategoryResponse = _mapper.Map<ExtendProductCategoryResponse>(productCategory);
+            ProductCategoryResponse productCategoryResponse = _mapper.Map<ProductCategoryResponse>(productCategory);
 
-            return new BaseResponse<ExtendProductCategoryResponse>
+            return new BaseResponse<ProductCategoryResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendProductCategoryResponse
+                Data = productCategoryResponse
             };
         }
 
@@ -149,7 +149,7 @@ namespace BLL.Services
         /// <param name="request"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ExtendProductCategoryResponse>> UpdateProCategory(string id, ProductCategoryRequest request)
+        public async Task<BaseResponse<ProductCategoryResponse>> UpdateProCategory(string id, ProductCategoryRequest request)
         {
             //biz rule
 
@@ -197,13 +197,13 @@ namespace BLL.Services
             }
 
             //create response
-            ExtendProductCategoryResponse ExtendProductCategoryResponse = _mapper.Map<ExtendProductCategoryResponse>(productCategory);
+            ProductCategoryResponse productCategoryResponse = _mapper.Map<ProductCategoryResponse>(productCategory);
 
-            return new BaseResponse<ExtendProductCategoryResponse>
+            return new BaseResponse<ProductCategoryResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendProductCategoryResponse
+                Data = productCategoryResponse
             };
         }
 
@@ -216,13 +216,13 @@ namespace BLL.Services
         /// <exception cref="HttpStatusException"></exception>
         public async Task<BaseResponse<ExtendProductCategoryResponse>> GetProCategoryById(string id)
         {
-            ExtendProductCategoryResponse ExtendProductCategoryResponse;
+            ExtendProductCategoryResponse extendProductCategoryResponse;
 
             //get productCategory from database
             try
             {
                 ProductCategory productCategory = await _unitOfWork.ProductCategories.FindAsync(p => p.ProductCategoryId.Equals(id));
-                ExtendProductCategoryResponse = _mapper.Map<ExtendProductCategoryResponse>(productCategory);
+                extendProductCategoryResponse = _mapper.Map<ExtendProductCategoryResponse>(productCategory);
 
             }
             catch (Exception e)
@@ -242,7 +242,7 @@ namespace BLL.Services
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendProductCategoryResponse
+                Data = extendProductCategoryResponse
             };
         }
 

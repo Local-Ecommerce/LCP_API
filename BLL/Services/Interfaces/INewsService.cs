@@ -13,7 +13,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="newsRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendNewsResponse>> CreateNews(NewsRequest newsRequest);
+        Task<BaseResponse<NewsResponse>> CreateNews(NewsRequest newsRequest);
 
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="newsUpdateRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendNewsResponse>> UpdateNewsById(string id, NewsUpdateRequest newsUpdateRequest);
+        Task<BaseResponse<NewsResponse>> UpdateNewsById(string id, NewsUpdateRequest newsUpdateRequest);
 
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendNewsResponse>> DeleteNewsById(string id);
+        Task<BaseResponse<NewsResponse>> DeleteNewsById(string id);
 
 
         /// <summary>

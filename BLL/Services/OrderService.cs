@@ -50,7 +50,7 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<List<ExtendOrderResponse>>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId)
         {
-            List<ExtendOrderResponse> ExtendOrderResponses = new();
+            List<ExtendOrderResponse> extendOrderResponses = new();
 
             try
             {
@@ -68,7 +68,7 @@ namespace BLL.Services
                     orderDetail.Status = orderDetailRequest.Status;
 
                     //create order
-                    Order order = new Order
+                    Order order = new()
                     {
                         OrderId = orderId,
                         DeliveryAddress = "",
@@ -86,10 +86,10 @@ namespace BLL.Services
                     _unitOfWork.OrderDetails.Add(orderDetail);
 
                     //map to response
-                    ExtendOrderResponse ExtendOrderResponse = _mapper.Map<ExtendOrderResponse>(order);
-                    ExtendOrderResponse.OrderDetails = new Collection<OrderDetailResponse>();
-                    ExtendOrderResponse.OrderDetails.Add(_mapper.Map<OrderDetailResponse>(orderDetail));
-                    ExtendOrderResponses.Add(ExtendOrderResponse);
+                    ExtendOrderResponse extendOrderResponse = _mapper.Map<ExtendOrderResponse>(order);
+                    extendOrderResponse.OrderDetails = new Collection<OrderDetailResponse>();
+                    extendOrderResponse.OrderDetails.Add(_mapper.Map<OrderDetailResponse>(orderDetail));
+                    extendOrderResponses.Add(extendOrderResponse);
 
                 }
 
@@ -112,7 +112,7 @@ namespace BLL.Services
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendOrderResponses
+                Data = extendOrderResponses
             };
         }
 
@@ -125,10 +125,10 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<List<ExtendOrderResponse>>> GetOrderByResidentIdAndStatus(string residentId, int status)
         {
-            List<ExtendOrderResponse> ExtendOrderResponses;
+            List<ExtendOrderResponse> extendOrderResponses;
             try
             {
-                ExtendOrderResponses = _mapper.Map<List<ExtendOrderResponse>>(
+                extendOrderResponses = _mapper.Map<List<ExtendOrderResponse>>(
                     await _unitOfWork.Orders.GetOrderByResidentIdAndStatus(residentId, status)
                 );
             }
@@ -149,7 +149,7 @@ namespace BLL.Services
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendOrderResponses
+                Data = extendOrderResponses
             };
         }
 
@@ -161,10 +161,10 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<BaseResponse<List<ExtendOrderResponse>>> GetOrderByMerchantStoreId(string merchantStoreId)
         {
-            List<ExtendOrderResponse> ExtendOrderResponses;
+            List<ExtendOrderResponse> extendOrderResponses;
             try
             {
-                ExtendOrderResponses = _mapper.Map<List<ExtendOrderResponse>>(
+                extendOrderResponses = _mapper.Map<List<ExtendOrderResponse>>(
                     await _unitOfWork.Orders.GetOrdersByMerchantStoreId(merchantStoreId)
                 );
             }
@@ -185,7 +185,7 @@ namespace BLL.Services
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendOrderResponses
+                Data = extendOrderResponses
             };
         }
 
@@ -196,7 +196,7 @@ namespace BLL.Services
         /// <param name="orderId"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendOrderResponse>> DeleteOrderByOrderIdAndResidentId(string orderId, string residentId)
+        public async Task<BaseResponse<OrderResponse>> DeleteOrderByOrderIdAndResidentId(string orderId, string residentId)
         {
             Order order;
             try
@@ -223,13 +223,13 @@ namespace BLL.Services
             }
 
             //create response
-            ExtendOrderResponse ExtendOrderResponse = _mapper.Map<ExtendOrderResponse>(order);
+            OrderResponse orderResponse = _mapper.Map<OrderResponse>(order);
 
-            return new BaseResponse<ExtendOrderResponse>
+            return new BaseResponse<OrderResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendOrderResponse
+                Data = orderResponse
             };
         }
 

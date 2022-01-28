@@ -15,7 +15,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="poiRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendPoiResponse>> CreatePoi(PoiRequest poiRequest);
+        Task<BaseResponse<PoiResponse>> CreatePoi(PoiRequest poiRequest);
 
         /// <summary>
         /// Get POI by Id
@@ -45,14 +45,14 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="poiUpdateRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendPoiResponse>> UpdatePoiById(string id, PoiUpdateRequest poiUpdateRequest);
+        Task<BaseResponse<PoiResponse>> UpdatePoiById(string id, PoiUpdateRequest poiUpdateRequest);
 
         /// <summary>
         /// Delte POI by Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendPoiResponse>> DeletePoiById(string id);
+        Task<BaseResponse<PoiResponse>> DeletePoiById(string id);
 
 
         /// <summary>

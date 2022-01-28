@@ -39,7 +39,7 @@ namespace API.Controllers
             watch.Start();
 
             //Create Poi
-            BaseResponse<ExtendPoiResponse> response = await _poiService.CreatePoi(poiRequest);
+            BaseResponse<PoiResponse> response = await _poiService.CreatePoi(poiRequest);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -115,7 +115,7 @@ namespace API.Controllers
             watch.Start();
 
             //Update Poi
-            BaseResponse<ExtendPoiResponse> response = await _poiService.UpdatePoiById(id, poiRequest);
+            BaseResponse<PoiResponse> response = await _poiService.UpdatePoiById(id, poiRequest);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -139,7 +139,7 @@ namespace API.Controllers
             watch.Start();
 
             //Delete Poi
-            BaseResponse<ExtendPoiResponse> response = await _poiService.DeletePoiById(id);
+            BaseResponse<PoiResponse> response = await _poiService.DeletePoiById(id);
 
             string json = JsonSerializer.Serialize(response);
 

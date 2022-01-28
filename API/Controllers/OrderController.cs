@@ -153,7 +153,7 @@ namespace API.Controllers
             watch.Start();
 
             //Delete Order
-            BaseResponse<ExtendOrderResponse> response = await
+            BaseResponse<OrderResponse> response = await
             _orderService.DeleteOrderByOrderIdAndResidentId(orderId, residentId);
 
             string json = JsonSerializer.Serialize(response);

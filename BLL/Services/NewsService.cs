@@ -38,7 +38,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="newsRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendNewsResponse>> CreateNews(NewsRequest newsRequest)
+        public async Task<BaseResponse<NewsResponse>> CreateNews(NewsRequest newsRequest)
         {
             News news = _mapper.Map<News>(newsRequest);
 
@@ -56,7 +56,7 @@ namespace BLL.Services
             {
                 _logger.Error("[NewsService.CreateNews()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ExtendNewsResponse>
+                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<NewsResponse>
                 {
                     ResultCode = (int)CommonResponse.ERROR,
                     ResultMessage = CommonResponse.ERROR.ToString(),
@@ -64,13 +64,13 @@ namespace BLL.Services
                 });
             }
             //Create Response
-            ExtendNewsResponse ExtendNewsResponse = _mapper.Map<ExtendNewsResponse>(news);
+            NewsResponse newsResponse = _mapper.Map<NewsResponse>(news);
 
-            return new BaseResponse<ExtendNewsResponse>
+            return new BaseResponse<NewsResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendNewsResponse
+                Data = newsResponse
             };
         }
 
@@ -191,7 +191,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="newsUpdateRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendNewsResponse>> UpdateNewsById(string id, NewsUpdateRequest newsUpdateRequest)
+        public async Task<BaseResponse<NewsResponse>> UpdateNewsById(string id, NewsUpdateRequest newsUpdateRequest)
         {
             News news;
             try
@@ -232,13 +232,13 @@ namespace BLL.Services
             }
 
             //Create Response
-            ExtendNewsResponse ExtendNewsResponse = _mapper.Map<ExtendNewsResponse>(news);
+            NewsResponse newsResponse = _mapper.Map<NewsResponse>(news);
 
-            return new BaseResponse<ExtendNewsResponse>
+            return new BaseResponse<NewsResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendNewsResponse
+                Data = newsResponse
             };
         }
 
@@ -247,7 +247,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendNewsResponse>> DeleteNewsById(string id)
+        public async Task<BaseResponse<NewsResponse>> DeleteNewsById(string id)
         {
             //Check id
             News news;
@@ -289,13 +289,13 @@ namespace BLL.Services
             }
 
             //Create Response
-            ExtendNewsResponse ExtendNewsResponse = _mapper.Map<ExtendNewsResponse>(news);
+            NewsResponse newsResponse = _mapper.Map<ExtendNewsResponse>(news);
 
-            return new BaseResponse<ExtendNewsResponse>
+            return new BaseResponse<NewsResponse>
             {
                 ResultCode = (int)CommonResponse.SUCCESS,
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendNewsResponse
+                Data = newsResponse
             };
         }
 

@@ -41,7 +41,7 @@ namespace API.Controllers
             watch.Start();
 
             //register account
-            BaseResponse<ExtendAccountResponse> response = await _accountService.Register(accountRegisterRequest);
+            BaseResponse<AccountResponse> response = await _accountService.Register(accountRegisterRequest);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -67,7 +67,7 @@ namespace API.Controllers
             watch.Start();
 
             //Login
-            BaseResponse<ExtendAccountResponse> response = await _accountService.Login(accountLoginRequest);
+            BaseResponse<AccountResponse> response = await _accountService.Login(accountLoginRequest);
 
             string json = JsonSerializer.Serialize(response);
 
@@ -143,7 +143,7 @@ namespace API.Controllers
             watch.Start();
 
             //delete account
-            BaseResponse<ExtendAccountResponse> response = await _accountService.DeleteAccount(id);
+            BaseResponse<AccountResponse> response = await _accountService.DeleteAccount(id);
 
             string json = JsonSerializer.Serialize(response);
 

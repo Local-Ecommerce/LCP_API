@@ -12,7 +12,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendProductCategoryResponse>> CreateProCategory(ProductCategoryRequest request);
+        Task<BaseResponse<ProductCategoryResponse>> CreateProCategory(ProductCategoryRequest request);
 
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendProductCategoryResponse>> UpdateProCategory(string id, ProductCategoryRequest request);
+        Task<BaseResponse<ProductCategoryResponse>> UpdateProCategory(string id, ProductCategoryRequest request);
 
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendProductCategoryResponse>> DeleteProCategory(string id);
+        Task<BaseResponse<ProductCategoryResponse>> DeleteProCategory(string id);
 
 
         /// <summary>
