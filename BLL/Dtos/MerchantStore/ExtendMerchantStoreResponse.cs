@@ -7,6 +7,7 @@ using BLL.Dtos.StoreMenuDetail;
 
 namespace BLL.Dtos.MerchantStore
 {
+    [Serializable]
     public class ExtendMerchantStoreResponse : MerchantStoreResponse
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
