@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace BLL.Dtos.Collection
 {
+    [Serializable]
     public class CollectionResponse
     {
         public string CollectionId { get; set; }

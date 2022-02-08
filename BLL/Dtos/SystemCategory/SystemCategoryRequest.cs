@@ -1,5 +1,8 @@
-﻿namespace BLL.Dtos.SystemCategory
+﻿using System;
+
+namespace BLL.Dtos.SystemCategory
 {
+    [Serializable]
     public class SystemCategoryRequest
     {
         public string SysCategoryName { get; set; }

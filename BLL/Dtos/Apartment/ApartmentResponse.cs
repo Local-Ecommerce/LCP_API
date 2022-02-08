@@ -1,5 +1,8 @@
-﻿namespace BLL.Dtos.Apartment
+﻿using System;
+
+namespace BLL.Dtos.Apartment
 {
+    [Serializable]
     public class ApartmentResponse
     {
         public string ApartmentId { get; set; }

@@ -2,6 +2,7 @@
 
 namespace BLL.Dtos.ProductCombination
 {
+    [Serializable]
     public class ProductCombinationResponse
     {
         public string ProductCombinationId { get; set; }

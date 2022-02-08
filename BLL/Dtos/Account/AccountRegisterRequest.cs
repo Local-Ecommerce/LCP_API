@@ -1,5 +1,8 @@
-﻿namespace BLL.Dtos.Account
+﻿using System;
+
+namespace BLL.Dtos.Account
 {
+    [Serializable]
     public class AccountRegisterRequest
     {
         public string Username { get; set; }

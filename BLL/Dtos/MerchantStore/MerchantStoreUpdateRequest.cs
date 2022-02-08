@@ -1,5 +1,8 @@
+using System;
+
 namespace BLL.Dtos.MerchantStore
 {
+    [Serializable]
     public class MerchantStoreUpdateRequest
     {
         public string StoreName { get; set; }

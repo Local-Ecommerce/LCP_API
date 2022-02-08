@@ -1,8 +1,11 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
+using BLL.Dtos.ProductCategory;
 
 namespace BLL.Dtos.Product
 {
+    [Serializable]
     public class ExtendProductResponse : ProductResponse
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -10,5 +13,8 @@ namespace BLL.Dtos.Product
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public UpdateProductRequest UpdatedProduct { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public Collection<ExtendProductCategoryResponse> ProductCategoryResponses { get; set; }
     }
 }

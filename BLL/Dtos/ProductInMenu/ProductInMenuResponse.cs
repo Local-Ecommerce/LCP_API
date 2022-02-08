@@ -2,6 +2,7 @@
 
 namespace BLL.Dtos.ProductInMenu
 {
+    [Serializable]
     public class ProductInMenuResponse
     {
         public string ProductInMenuId { get; set; }

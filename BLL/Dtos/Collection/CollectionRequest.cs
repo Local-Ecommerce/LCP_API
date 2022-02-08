@@ -1,5 +1,8 @@
-﻿namespace BLL.Dtos.Collection
+﻿using System;
+
+namespace BLL.Dtos.Collection
 {
+    [Serializable]
     public class CollectionRequest
     {
         public string CollectionName { get; set; }

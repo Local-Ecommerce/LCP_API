@@ -2,6 +2,7 @@
 
 namespace BLL.Dtos.MerchantStore
 {
+    [Serializable]
     public class MerchantStoreResponse
     {
         public string MerchantStoreId { get; set; }

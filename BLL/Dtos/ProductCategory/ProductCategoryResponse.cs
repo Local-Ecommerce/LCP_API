@@ -2,6 +2,7 @@
 
 namespace BLL.Dtos.ProductCategory
 {
+    [Serializable]
     public class ProductCategoryResponse
     {
         public string ProductCategoryId { get; set; }
