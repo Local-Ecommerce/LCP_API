@@ -2,6 +2,7 @@
 
 namespace BLL.Dtos.Resident
 {
+    [Serializable]
     public class ResidentUpdateRequest
     {
         public string ResidentName { get; set; }

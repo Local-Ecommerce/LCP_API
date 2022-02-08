@@ -2,6 +2,7 @@
 
 namespace BLL.Dtos.StoreMenuDetail
 {
+    [Serializable]
     public class StoreMenuDetailUpdateRequest
     {
         public TimeSpan? TimeStart { get; set; }

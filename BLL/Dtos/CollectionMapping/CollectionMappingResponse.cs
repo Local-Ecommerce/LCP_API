@@ -1,5 +1,8 @@
-﻿namespace BLL.Dtos.CollectionMapping
+﻿using System;
+
+namespace BLL.Dtos.CollectionMapping
 {
+    [Serializable]
     public class CollectionMappingResponse
     {
         public string CollectionId { get; set; }

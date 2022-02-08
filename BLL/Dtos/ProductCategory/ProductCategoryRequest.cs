@@ -1,5 +1,8 @@
-﻿namespace BLL.Dtos.ProductCategory
+﻿using System;
+
+namespace BLL.Dtos.ProductCategory
 {
+    [Serializable]
     public class ProductCategoryRequest
     {
         public string CategoryName { get; set; }

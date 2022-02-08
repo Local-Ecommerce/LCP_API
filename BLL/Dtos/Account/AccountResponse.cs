@@ -2,6 +2,7 @@
 
 namespace BLL.Dtos.Account
 {
+    [Serializable]
     public class AccountResponse
     {
         public string AccountId { get; set; }

@@ -1,8 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 
 namespace BLL.Dtos.SystemCategory
 {
+    [Serializable]
     public class SystemCategoryResponse
     {
         public string SystemCategoryId { get; set; }

@@ -1,5 +1,8 @@
-﻿namespace BLL.Dtos.Product
+﻿using System;
+
+namespace BLL.Dtos.Product
 {
+    [Serializable]
     public class ProductRequest
     {
         public string ProductCode { get; set; }
