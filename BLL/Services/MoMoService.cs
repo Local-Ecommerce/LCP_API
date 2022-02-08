@@ -28,8 +28,8 @@ namespace BLL.Services
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
-        public MoMoService(ILogger logger, 
-            ISecurityService securityService, 
+        public MoMoService(ILogger logger,
+            ISecurityService securityService,
             IConfiguration configuration,
             IMapper mapper,
             IUnitOfWork unitOfWork)
@@ -92,7 +92,7 @@ namespace BLL.Services
 
             _logger.Information($"[MoMoCaptureWallet] End request with data: {responseString}");
 
-            result = JsonSerializer.Deserialize <MoMoCaptureWalletResponse>(responseString);
+            result = JsonSerializer.Deserialize<MoMoCaptureWalletResponse>(responseString);
 
             return result;
         }
@@ -109,9 +109,11 @@ namespace BLL.Services
             // Validate signature
             List<string> ignoreFields = new List<string>() { "signature", "partnerName", "storeId", "lang" };
             string rawData = _securityService.GetRawDataSignature(momoIPNRequest, ignoreFields);
-            rawData = "accessKey=" + _configuration.GetValue<string>("MoMo:AccessKey") + "&" + rawData;
+            // rawData = "accessKey=" + _configuration.GetValue<string>("MoMo:AccessKey") + "&" + rawData;
+            rawData = "";
 
-            string merchantSignature = _securityService.SignHmacSHA256(rawData, _configuration.GetValue<string>("MoMo:SecretKey"));
+            // string merchantSignature = _securityService.SignHmacSHA256(rawData, _configuration.GetValue<string>("MoMo:SecretKey"));
+            string merchantSignature = "";
 
             _logger.Information($"[MoMo IPN] MoMo - Merchant signature: {momoIPNRequest.Signature} - {merchantSignature}");
 
