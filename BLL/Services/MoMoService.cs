@@ -97,6 +97,13 @@ namespace BLL.Services
             return result;
         }
 
+
+        /// <summary>
+        /// Process IPN
+        /// </summary>
+        /// <param name="momoIPNRequest"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpStatusException"></exception>
         public MoMoIPNResponse ProcessIPN(MoMoIPNRequest momoIPNRequest)
         {
             // Validate signature
