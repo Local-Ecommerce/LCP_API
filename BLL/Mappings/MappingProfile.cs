@@ -5,6 +5,7 @@ using BLL.Dtos.Collection;
 using BLL.Dtos.CollectionMapping;
 using BLL.Dtos.Menu;
 using BLL.Dtos.MerchantStore;
+using BLL.Dtos.MoMo.IPN;
 using BLL.Dtos.News;
 using BLL.Dtos.Order;
 using BLL.Dtos.OrderDetail;
@@ -126,6 +127,9 @@ namespace BLL.Mappings
             //Product Combination Mapping
             CreateMap<ProductCombinationRequest, ProductCombination>();
             CreateMap<ProductCombination, ProductCombinationResponse>();
+
+            //MoMo Mapping
+            CreateMap<MoMoIPNRequest, MoMoIPNResponse>();
         }
     }
 }

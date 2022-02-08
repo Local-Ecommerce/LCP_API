@@ -42,7 +42,9 @@ namespace API.Extensions
             services.AddScoped<IResidentService, ResidentService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IStoreMenuDetailService, StoreMenuDetailService>();
-            services.AddScoped<IProductCombinationService, ProductCombinationService>(); 
+            services.AddScoped<IProductCombinationService, ProductCombinationService>();
+            services.AddScoped<IMoMoService, MoMoService>();
+            services.AddScoped<ISecurityService, SecurityService>();
 
             return services;
         }

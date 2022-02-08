@@ -4,7 +4,8 @@
     {
         THIRTY_DAYS = 30,
         ONE_HOUR = 1,
-        TWENTY_FOUR_HOUR = 24
+        TWENTY_FOUR_HOUR = 24,
+        TIMEOUT_20_SEC = 20000
     }
 
     public enum CategoryLevel
@@ -216,5 +217,10 @@
         ACTIVE_PRODUCT_COMBINATION = 21001,
         INACTIVE_PRODUCT_COMBINATION = 21002,
         PRODUCT_COMBINATION_NOT_FOUND = 21003
+    }
+
+    public enum MoMoStatus
+    {
+        MOMO_IPN_SIGNATURE_NOT_MATCH = 22003
     }
 }
