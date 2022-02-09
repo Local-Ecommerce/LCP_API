@@ -150,7 +150,7 @@ namespace API
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            /*if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
@@ -160,6 +160,7 @@ namespace API
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "LCP v1");
                 });
             }
+            */
 
             app.UseHttpsRedirection();
 
