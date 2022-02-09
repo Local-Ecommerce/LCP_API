@@ -30,10 +30,10 @@ namespace API.Controllers
         /// <summary>
         /// Create a Resident
         /// </summary>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateResident([FromBody] ResidentRequest residentRequest)
         {
-            _logger.Information($"POST api/resident/create START Request: " +
+            _logger.Information($"POST api/resident START Request: " +
                 $"{JsonSerializer.Serialize(residentRequest)}");
 
             Stopwatch watch = new();
@@ -46,7 +46,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/resident/create END duration: " +
+            _logger.Information("POST api/resident END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -109,10 +109,10 @@ namespace API.Controllers
         /// <summary>
         /// Delete Resident
         /// </summary>
-        [HttpPut("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteResident(string id)
         {
-            _logger.Information($"PUT api/resident/delete/{id} START");
+            _logger.Information($"DELETE api/resident/{id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -124,7 +124,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/resident/delete/{id} END duration: " +
+            _logger.Information($"DELETE api/resident/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

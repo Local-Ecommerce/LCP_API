@@ -28,10 +28,10 @@ namespace API.Controllers
         /// <summary>
         /// Create Store Menu Detail
         /// </summary>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateStoreMenuDetail([FromBody] StoreMenuDetailRequest request)
         {
-            _logger.Information($"POST api/storeMenuDetail/create START Request: " +
+            _logger.Information($"POST api/storeMenuDetail START Request: " +
                 $"{JsonSerializer.Serialize(request)}");
 
             Stopwatch watch = new();
@@ -44,7 +44,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/storeMenuDetail/create END duration: " +
+            _logger.Information("POST api/storeMenuDetail END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -80,10 +80,10 @@ namespace API.Controllers
         /// <summary>
         /// Delete Store Menu Detail By Id
         /// </summary>
-        [HttpPut("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStoreMenuDetailById(string id)
         {
-            _logger.Information($"PUT api/storeMenuDetail/delete/{id} START Request: ");
+            _logger.Information($"PUT api/storeMenuDetail/{id} START Request: ");
 
             Stopwatch watch = new();
             watch.Start();
@@ -96,7 +96,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("PUT api/storeMenuDetail/delete/{id} END duration: " +
+            _logger.Information("PUT api/storeMenuDetail/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

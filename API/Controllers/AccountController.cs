@@ -31,13 +31,13 @@ namespace API.Controllers
         /// Register
         /// </summary>
         [AllowAnonymous]
-        [HttpPost("register")]
+        [HttpPost("signup")]
         public async Task<IActionResult> Register([FromBody] AccountRegisterRequest accountRegisterRequest)
         {
-            _logger.Information($"POST api/acccount/register START Request: " +
+            _logger.Information($"POST api/acccount/signup START Request: " +
                 $"{JsonSerializer.Serialize(accountRegisterRequest)}");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //register account
@@ -47,7 +47,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/account/register END duration: " +
+            _logger.Information("POST api/account/signup END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -63,7 +63,7 @@ namespace API.Controllers
         {
             _logger.Information($"GET api/acccount/login START Request: {JsonSerializer.Serialize(accountLoginRequest)}");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //Login
@@ -114,7 +114,7 @@ namespace API.Controllers
         {
             _logger.Information($"PUT api/acccount/{id} START Request: ");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //update account
@@ -134,12 +134,12 @@ namespace API.Controllers
         /// <summary>
         /// Delete Account
         /// </summary>
-        [HttpPut("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAccount(string id)
         {
-            _logger.Information($"PUT api/account/delete/{id} START");
+            _logger.Information($"DELETE api/account/{id} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //delete account
@@ -149,7 +149,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/account/delete/{id} END duration: " +
+            _logger.Information($"DELETE api/account/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -159,12 +159,12 @@ namespace API.Controllers
         /// <summary>
         /// Change Resident Type By Account Id
         /// </summary>
-        [HttpPut("{id}/residentType/{type}")]
+        [HttpPut("{id}/type/{type}")]
         public async Task<IActionResult> ChangeRoleByAccountId(string id, string type)
         {
-            _logger.Information($"PUT api/account/{id}/residentType/{type} START");
+            _logger.Information($"PUT api/account/{id}/type/{type} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //change Role By Account
@@ -174,7 +174,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/account/{id}/residentType/{type} END duration: " +
+            _logger.Information($"PUT api/account/{id}/type/{type} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

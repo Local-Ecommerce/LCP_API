@@ -37,7 +37,7 @@ namespace API.Controllers
         /// Create Order
         /// </summary>
         [Authorize(Roles = ResidentType.CUSTOMER)]
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] List<OrderDetailRequest> orderDetailRequests)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -46,7 +46,7 @@ namespace API.Controllers
             string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
             string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
-            _logger.Information($"POST api/order/create START Request: " +
+            _logger.Information($"POST api/order START Request: " +
                 $"{JsonSerializer.Serialize(orderDetailRequests)}" + $"Resident Id: {residentId}");
 
             Stopwatch watch = new Stopwatch();
@@ -60,7 +60,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/order/create END duration: " +
+            _logger.Information("POST api/order END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -105,7 +105,7 @@ namespace API.Controllers
         /// </summary>
         // [Authorize(Roles = ResidentType.CUSTOMER)]
         [AllowAnonymous]
-        [HttpGet("merchantStore/{merchantStoreId}")]
+        [HttpGet("store/{merchantStoreId}")]
         public async Task<IActionResult> GetOrderByMerchantStoreId(string merchantStoreId)
         {
             // var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -114,7 +114,7 @@ namespace API.Controllers
             // string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
             // string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
-            _logger.Information($"GET api/order/merchantStore/{merchantStoreId} START Request: ");
+            _logger.Information($"GET api/order/store/{merchantStoreId} START Request: ");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -127,7 +127,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/order/merchantStore/{merchantStoreId}  END duration: " +
+            _logger.Information($"GET api/order/store/{merchantStoreId}  END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -138,7 +138,7 @@ namespace API.Controllers
         /// Delete Order By Order Id And Resident Id
         /// </summary>
         [Authorize(Roles = ResidentType.CUSTOMER)]
-        [HttpPut("delete/{orderId}")]
+        [HttpDelete("{orderId}")]
         public async Task<IActionResult> DeleteOrderByOrderIdAndResidentId(string orderId)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -147,7 +147,7 @@ namespace API.Controllers
             string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
             string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
-            _logger.Information($"PUT api/order/delete/{orderId} START Request: " + $"Resident Id: {residentId}");
+            _logger.Information($"DELETE api/order/{orderId} START Request: " + $"Resident Id: {residentId}");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -160,7 +160,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/order/delete/{orderId}  END duration: " +
+            _logger.Information($"DELETE api/order/{orderId}  END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

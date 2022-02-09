@@ -31,7 +31,7 @@ namespace API.Controllers
         /// <summary>
         /// Create Collection
         /// </summary>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateCollection([FromBody] CollectionRequest collectionRequest)
         {
             _logger.Information($"POST api/collection/create START Request: " +
@@ -137,12 +137,12 @@ namespace API.Controllers
         /// <summary>
         /// Delete collection
         /// </summary>
-        [HttpPut("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCollection(string id)
         {
-            _logger.Information($"PUT api/collection/delete/{id} START");
+            _logger.Information($"DELETE api/collection/{id} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //delete Collection
@@ -152,7 +152,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/collection/delete/{id} END duration: " +
+            _logger.Information($"DELETE api/collection/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -162,10 +162,10 @@ namespace API.Controllers
         /// <summary>
         /// Add Product To Collection
         /// </summary>
-        [HttpPost("{collectionId}/add")]
+        [HttpPost("{collectionId}/products")]
         public async Task<IActionResult> AddProductToCollection(string collectionId, [FromBody] string[] productIds)
         {
-            _logger.Information($"POST api/collection/{collectionId}/add START Request: " +
+            _logger.Information($"POST api/collection/{collectionId}/products START Request: " +
                 $"{JsonSerializer.Serialize(productIds)}");
 
             Stopwatch watch = new();
@@ -179,7 +179,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"POST api/collection/{collectionId}/add END duration: " +
+            _logger.Information($"POST api/collection/{collectionId}/products END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -195,7 +195,7 @@ namespace API.Controllers
         {
             _logger.Information($"PUT api/collection/{id}/products START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //get products
@@ -215,11 +215,11 @@ namespace API.Controllers
         /// <summary>
         /// Update Product Status In Collection
         /// </summary>
-        [HttpPut("{collectionId}/update/{productId}/{status}")]
+        [HttpPut("{collectionId}/{productId}/{status}")]
         public async Task<IActionResult> UpdateProductStatusInCollection(
             string collectionId, string productId, int status)
         {
-            _logger.Information($"PUT api/collection/{collectionId}/update/{productId}/{status} START Request: " +
+            _logger.Information($"PUT api/collection/{collectionId}/{productId}/{status} START Request: " +
                 $"{JsonSerializer.Serialize(status)}");
 
             Stopwatch watch = new Stopwatch();
@@ -233,7 +233,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/collection/{collectionId}/update/{productId}/{status} END duration: " +
+            _logger.Information($"PUT api/collection/{collectionId}/{productId}/{status} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -243,12 +243,12 @@ namespace API.Controllers
         /// <summary>
         /// Remove Product From Collection
         /// </summary>
-        [HttpDelete("{collectionId}/delete/{productId}")]
+        [HttpDelete("{collectionId}/{productId}")]
         public async Task<IActionResult> RemoveProductFromCollection(string collectionId, string productId)
         {
-            _logger.Information($"PUT api/collection/{collectionId}/delete/{productId} START");
+            _logger.Information($"DELETE api/collection/{collectionId}/{productId} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //update product status in collection
@@ -259,7 +259,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/collection/{collectionId}/delete/{productId} END duration: " +
+            _logger.Information($"DELETE api/collection/{collectionId}/{productId} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

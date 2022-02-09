@@ -29,10 +29,10 @@ namespace API.Controllers
         /// <summary>
         /// Create news
         /// </summary>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateNews([FromBody] NewsRequest newsRequest)
         {
-            _logger.Information($"POST api/news/create START Request: " + 
+            _logger.Information($"POST api/news START Request: " + 
                 $"{JsonSerializer.Serialize(newsRequest)}");
 
             Stopwatch watch = new();
@@ -45,7 +45,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/news/create END duration: " + 
+            _logger.Information("POST api/news END duration: " + 
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -104,10 +104,10 @@ namespace API.Controllers
         /// <summary>
         /// Update news
         /// </summary>
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateNewsById(string id, [FromBody] NewsUpdateRequest newsRequest)
         {
-            _logger.Information($"PUT api/news/update/{id} START Request: " +
+            _logger.Information($"PUT api/news/{id} START Request: " +
                 $"{JsonSerializer.Serialize(newsRequest)}");
 
             Stopwatch watch = new();
@@ -120,7 +120,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/news/update/{id} END duration: " + 
+            _logger.Information($"PUT api/news/{id} END duration: " + 
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -129,10 +129,10 @@ namespace API.Controllers
         /// <summary>
         /// Delete news
         /// </summary>
-        [HttpPut("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNewsById(string id)
         {
-            _logger.Information($"PUT api/news/delete/{id} START");
+            _logger.Information($"DELETE api/news/{id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -144,7 +144,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/news/delete/{id} END duration: " + 
+            _logger.Information($"DELETE api/news/{id} END duration: " + 
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

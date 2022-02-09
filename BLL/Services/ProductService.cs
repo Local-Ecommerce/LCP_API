@@ -591,21 +591,34 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Verify Create Product By Id
+        /// Verify Product By Id
         /// </summary>
         /// <param name="productId"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ProductResponse>> VerifyCreateProductById(string productId, string type)
+        public async Task<BaseResponse<ProductResponse>> VerifyProductById(string productId, bool isApprove)
         {
             ProductResponse productResponse;
+            bool isUpdate = false;
+
             try
             {
+                //get old product from database
                 Product product = await _unitOfWork.Products.FindAsync(p => p.ProductId == productId);
 
+                //get new product from redis
+                ExtendProductResponse newProduct = _redisService.GetList<ExtendProductResponse>(CACHE_KEY_FOR_UPDATE)
+                    .Find(p => p.ProductId == productId);
+
+                if(newProduct != null)
+                {
+                    product = _mapper.Map<Product>(newProduct);
+                    isUpdate = true;
+                }
+
                 product.UpdatedDate = DateTime.Now;
-                product.Status = type.Equals("approve") ? (int)ProductStatus.VERIFIED_PRODUCT : (int)ProductStatus.REJECTED_PRODUCT;
-                product.ApproveBy = type.Equals("approve") ? "Han" : ""; //update later
+                product.Status = isApprove ? (int)ProductStatus.VERIFIED_PRODUCT : (int)ProductStatus.REJECTED_PRODUCT;
+                product.ApproveBy = isApprove ? "Han" : ""; //update later
 
                 _unitOfWork.Products.Update(product);
 
@@ -626,60 +639,10 @@ namespace BLL.Services
                     });
             }
 
-            return new BaseResponse<ProductResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productResponse
-            };
-        }
-
-
-        /// <summary>
-        /// Verify Update Product By Id
-        /// </summary>
-        /// <param name="productId"></param>
-        /// <returns></returns>
-        public async Task<BaseResponse<ProductResponse>> VerifyUpdateProductById(string productId, string type)
-        {
-            ProductResponse productResponse;
-            try
-            {
-                //get old product from database
-                Product product = await _unitOfWork.Products.FindAsync(p => p.ProductId == productId);
-
-                //get new product from redis
-                ExtendProductResponse newProduct = _redisService.GetList<ExtendProductResponse>(CACHE_KEY_FOR_UPDATE)
-                    .Find(p => p.ProductId == productId);
-
-                product = _mapper.Map<Product>(newProduct);
-
-                product.UpdatedDate = DateTime.Now;
-                product.Status = type.Equals("approve") ? (int)ProductStatus.VERIFIED_PRODUCT : (int)ProductStatus.REJECTED_PRODUCT;
-                product.ApproveBy = type.Equals("approve") ? "Han" : ""; //update later
-
-                _unitOfWork.Products.Update(product);
-
-                await _unitOfWork.SaveChangesAsync();
-
-                productResponse = _mapper.Map<ProductResponse>(product);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ProductService.VerifyUpdateProductById()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductResponse>
-                    {
-                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
-                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
-            }
-
-            //remove from redis
-            _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
-                new Predicate<ExtendProductResponse>(p => p.ProductId.Equals(productId)));
+            if(isUpdate)
+                //remove from redis
+                _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
+                    new Predicate<ExtendProductResponse>(p => p.ProductId.Equals(productId)));
 
             return new BaseResponse<ProductResponse>
             {
