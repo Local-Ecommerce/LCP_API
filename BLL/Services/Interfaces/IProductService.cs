@@ -88,20 +88,11 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Verify Create Product By Id
+        /// Verify Product By Id
         /// </summary>
         /// <param name="productId"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        Task<BaseResponse<ProductResponse>> VerifyCreateProductById(string productId, string type);
-
-
-        /// <summary>
-        /// Verify Update Product By Id
-        /// </summary>
-        /// <param name="productId"></param>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        Task<BaseResponse<ProductResponse>> VerifyUpdateProductById(string productId, string type);
+        Task<BaseResponse<ProductResponse>> VerifyProductById(string productId, bool isApprove);
     }
 }

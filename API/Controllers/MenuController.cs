@@ -31,10 +31,10 @@ namespace API.Controllers
         /// Create menu
         /// </summary>
 /*        [Authorize(Roles = ResidentType.MERCHANT)]*/
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateMenu([FromBody] MenuRequest menuRequest)
         {
-            _logger.Information($"POST api/menu/create START Request: " +
+            _logger.Information($"POST api/menu START Request: " +
                 $"{JsonSerializer.Serialize(menuRequest)}");
 
             Stopwatch watch = new();
@@ -47,7 +47,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/menu/create END duration: " +
+            _logger.Information("POST api/menu END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -82,10 +82,10 @@ namespace API.Controllers
         /// Update menu
         /// </summary>
 /*        [Authorize(Roles = ResidentType.MERCHANT)]*/
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMenuById(string id, [FromBody] MenuUpdateRequest menuUpdateRequest)
         {
-            _logger.Information($"PUT api/menu/update/{id} START Request: " +
+            _logger.Information($"PUT api/menu/{id} START Request: " +
                 $"{JsonSerializer.Serialize(menuUpdateRequest)}");
 
             Stopwatch watch = new();
@@ -98,7 +98,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/menu/update/{id} END duration: " +
+            _logger.Information($"PUT api/menu/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -108,10 +108,10 @@ namespace API.Controllers
         /// Delete menu
         /// </summary>
         // [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpPut("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMenuById(string id)
         {
-            _logger.Information($"PUT api/menu/delete/{id} START");
+            _logger.Information($"DELETE api/menu/{id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -123,7 +123,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/menu/delete/{id} END duration: " +
+            _logger.Information($"DELETE api/menu/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -134,11 +134,11 @@ namespace API.Controllers
         /// Add Products To Menu
         /// </summary>
 /*        [Authorize(Roles = ResidentType.MERCHANT)]*/
-        [HttpPost("{menuId}/add")]
+        [HttpPost("{menuId}/products")]
         public async Task<IActionResult> AddProductsToMenu(string menuId,
             [FromBody] List<ProductInMenuRequest> productInMenuRequests)
         {
-            _logger.Information($"POST api/menu/{menuId}/add START");
+            _logger.Information($"POST api/menu/{menuId}/products START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -150,7 +150,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"POST api/menu/merchant/{menuId}/add END duration: " +
+            _logger.Information($"POST api/menu/merchant/{menuId}/products END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -162,10 +162,10 @@ namespace API.Controllers
         /// </summary>
         // [Authorize(Roles = ResidentType.MERCHANT)]
         // [Authorize(Roles = RoleId.ADMIN)]
-        [HttpGet("{menuId}/product")]
+        [HttpGet("{menuId}/products")]
         public async Task<IActionResult> GetProductsInMenuByMenuId(string menuId)
         {
-            _logger.Information($"GET api/menu/{menuId}/product START");
+            _logger.Information($"GET api/menu/{menuId}/products START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -177,7 +177,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/menu/{menuId}/product END duration: " +
+            _logger.Information($"GET api/menu/{menuId}/products END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -189,10 +189,10 @@ namespace API.Controllers
         /// </summary>
         // [Authorize(Roles = ResidentType.MERCHANT)]
         // [Authorize(Roles = RoleId.ADMIN)]
-        [HttpGet("product/{productInMenuId}")]
+        [HttpGet("products/{productInMenuId}")]
         public async Task<IActionResult> GetProductInMenuById(string productInMenuId)
         {
-            _logger.Information($"GET api/menu/product/{productInMenuId} START");
+            _logger.Information($"GET api/menu/products/{productInMenuId} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -204,7 +204,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/menu/product/{productInMenuId} END duration: " +
+            _logger.Information($"GET api/menu/products/{productInMenuId} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -215,11 +215,11 @@ namespace API.Controllers
         /// Update Product In Menu By Id
         /// </summary>
 /*        [Authorize(Roles = ResidentType.MERCHANT)]*/
-        [HttpPut("product/{productInMenuId}")]
+        [HttpPut("products/{productInMenuId}")]
         public async Task<IActionResult> UpdateProductInMenuById(string productInMenuId,
             [FromBody] ProductInMenuUpdateRequest productInMenuUpdateRequest)
         {
-            _logger.Information($"PUT api/menu/product/{productInMenuId} START");
+            _logger.Information($"PUT api/menu/products/{productInMenuId} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -232,7 +232,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/menu/product/{productInMenuId} END duration: " +
+            _logger.Information($"PUT api/menu/products/{productInMenuId} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -243,10 +243,10 @@ namespace API.Controllers
         /// Delete Product In Menu By Id
         /// </summary>
 /*        [Authorize(Roles = ResidentType.MERCHANT)]*/
-        [HttpDelete("product/{productInMenuId}")]
+        [HttpDelete("products/{productInMenuId}")]
         public async Task<IActionResult> DeleteProductInMenuById(string productInMenuId)
         {
-            _logger.Information($"DELETE api/menu/product/{productInMenuId} START");
+            _logger.Information($"DELETE api/menu/products/{productInMenuId} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -258,7 +258,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"DELETE api/menu/product/{productInMenuId} END duration: " +
+            _logger.Information($"DELETE api/menu/products/{productInMenuId} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

@@ -30,10 +30,10 @@ namespace API.Controllers
         /// <summary>
         /// Create Apartment
         /// </summary>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateApartment([FromBody] ApartmentRequest apartmentRequest)
         {
-            _logger.Information($"POST api/apartment/create START Request: " +
+            _logger.Information($"POST api/apartment START Request: " +
                 $"{JsonSerializer.Serialize(apartmentRequest)}");
 
             Stopwatch watch = new();
@@ -46,7 +46,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/apartment/create END duration: " +
+            _logger.Information("POST api/apartment END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -110,10 +110,10 @@ namespace API.Controllers
         /// <summary>
         /// Delete apartment
         /// </summary>
-        [HttpPut("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteApartment(string id)
         {
-            _logger.Information($"PUT api/apartment/delete/{id} START");
+            _logger.Information($"DELETE api/apartment/{id} START");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -125,7 +125,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/apartment/delete/{id} END duration: " +
+            _logger.Information($"DELETE api/apartment/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

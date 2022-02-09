@@ -29,10 +29,10 @@ namespace API.Controllers
         /// <summary>
         /// Create a Product Combination
         /// </summary>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateProductCombination([FromBody] ProductCombinationRequest productCombinationRequest)
         {
-            _logger.Information($"POST api/combination/create START Request: " +
+            _logger.Information($"POST api/combination START Request: " +
                 $"{JsonSerializer.Serialize(productCombinationRequest)}");
 
             Stopwatch watch = new();
@@ -45,7 +45,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/combination/create END duration: " +
+            _logger.Information("POST api/combination END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -109,10 +109,10 @@ namespace API.Controllers
         /// <summary>
         /// Delete Product Combination
         /// </summary>
-        [HttpPut("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductCombination(string id)
         {
-            _logger.Information($"PUT api/combination/delete/{id} START");
+            _logger.Information($"PUT api/combination/{id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -124,7 +124,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/combination/delete/{id} END duration: " +
+            _logger.Information($"PUT api/combination/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -162,10 +162,10 @@ namespace API.Controllers
         /// Get Product Combinations By Product Id
         /// </summary>
         [AllowAnonymous]
-        [HttpGet("product/{id}")]
+        [HttpGet("products/{id}")]
         public async Task<IActionResult> GetProductCombinationByProductId(string id)
         {
-            _logger.Information($"GET api/combination/product/{id} START");
+            _logger.Information($"GET api/combination/products/{id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -178,7 +178,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/combination/product/{id} END duration: " +
+            _logger.Information($"GET api/combination/products/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

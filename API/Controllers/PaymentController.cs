@@ -29,10 +29,10 @@ namespace API.Controllers
         /// <summary>
         /// Create payment
         /// </summary>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreatePayment([FromBody] PaymentRequest paymentRequest)
         {
-            _logger.Information($"POST api/payment/create START Request: " +
+            _logger.Information($"POST api/payment START Request: " +
                 $"{JsonSerializer.Serialize(paymentRequest)}");
 
             Stopwatch watch = new();
@@ -45,7 +45,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/payment/create END duration: " +
+            _logger.Information("POST api/payment END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -80,10 +80,10 @@ namespace API.Controllers
         /// <summary>
         /// Update Payment By Id
         /// </summary>
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePaymentById(string id, [FromBody] PaymentRequest paymentRequest)
         {
-            _logger.Information($"PUT api/payment/update/{id} START Request: " +
+            _logger.Information($"PUT api/payment/{id} START Request: " +
                 $"{JsonSerializer.Serialize(paymentRequest)}");
 
             Stopwatch watch = new();
@@ -96,7 +96,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/payment/update/{id} END duration: " +
+            _logger.Information($"PUT api/payment/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -106,10 +106,10 @@ namespace API.Controllers
         /// <summary>
         /// Delete Payment By Id
         /// </summary>
-        [HttpPut("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePaymentById(string id)
         {
-            _logger.Information($"PUT api/payment/delete/{id} START");
+            _logger.Information($"DELETE api/payment/{id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -121,7 +121,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/payment/delete/{id} END duration: " +
+            _logger.Information($"DELETE api/payment/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -152,6 +152,7 @@ namespace API.Controllers
             return Ok(json);
         }
 
+
         /// <summary>
         /// Get Payment By Payment Method Id
         /// </summary>
@@ -175,6 +176,7 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
 
         /// <summary>
         /// Get Payment By Date

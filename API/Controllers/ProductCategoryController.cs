@@ -28,10 +28,10 @@ namespace API.Controllers
         /// <summary>
         /// Create a Product Category
         /// </summary>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateProductCategory([FromBody] ProductCategoryRequest productCategoryRequest)
         {
-            _logger.Information($"POST api/productCategory/create START Request: {JsonSerializer.Serialize(productCategoryRequest)}");
+            _logger.Information($"POST api/productCategory START Request: {JsonSerializer.Serialize(productCategoryRequest)}");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -43,7 +43,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/productCategory/create END duration: " +
+            _logger.Information("POST api/productCategory END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -104,10 +104,10 @@ namespace API.Controllers
         /// <summary>
         /// Delete ProductCategory by Id
         /// </summary>
-        [HttpPut("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductCategory(string id)
         {
-            _logger.Information($"PUT api/productCategory/delete/{id} START");
+            _logger.Information($"DELETE api/productCategory/{id} START");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -119,7 +119,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/productCategory/delete/{id} END duration: " +
+            _logger.Information($"DELETE api/productCategory/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

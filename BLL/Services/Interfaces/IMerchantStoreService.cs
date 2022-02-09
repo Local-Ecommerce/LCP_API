@@ -42,14 +42,6 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Merchant Store By Store Name
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        Task<BaseResponse<MerchantStoreResponse>> GetMerchantStoreByStoreName(string name);
-
-
-        /// <summary>
         /// Get Merchant By Account Id
         /// </summary>
         /// <param name="apartmentId"></param>
@@ -64,22 +56,6 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<BaseResponse<List<StoreMenuDetailResponse>>> AddStoreMenuDetailsToMerchantStore(string merchantStoreId,
             List<StoreMenuDetailRequest> storeMenuDetailRequest);
-
-
-        /// <summary>
-        /// Get Store Menu Details By Merchant Store Id
-        /// </summary>
-        /// <param name="merchantStoreId"></param>
-        /// <returns></returns>
-        Task<BaseResponse<List<StoreMenuDetailResponse>>> GetStoreMenuDetailsByMerchantStoreId(string merchantStoreId);
-
-
-        /// <summary>
-        /// Get Store Menu Detail By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<BaseResponse<StoreMenuDetailResponse>> GetStoreMenuDetailById(string storeMenuDetailId);
 
 
         /// <summary>
@@ -135,7 +111,7 @@ namespace BLL.Services.Interfaces
         /// <param name="isCreate"></param>
         /// <param name="isApprove"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendMerchantStoreResponse>> VerifyMerchantStore(string id, bool isCreate, bool isApprove);
+        Task<BaseResponse<ExtendMerchantStoreResponse>> VerifyMerchantStore(string id, bool isApprove);
     }
 
 }

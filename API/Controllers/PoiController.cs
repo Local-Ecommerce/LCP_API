@@ -29,10 +29,10 @@ namespace API.Controllers
         /// <summary>
         /// Create poi
         /// </summary>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreatePoi([FromBody] PoiRequest poiRequest)
         {
-            _logger.Information($"POST api/poi/create START Request: " +
+            _logger.Information($"POST api/poi START Request: " +
                 $"{JsonSerializer.Serialize(poiRequest)}");
 
             Stopwatch watch = new();
@@ -45,7 +45,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/poi/create END duration: " +
+            _logger.Information("POST api/poi END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -105,10 +105,10 @@ namespace API.Controllers
         /// <summary>
         /// Update Poi
         /// </summary>
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePoiById(string id, [FromBody] PoiUpdateRequest poiRequest)
         {
-            _logger.Information($"PUT api/poi/update/{id} START Request: " +
+            _logger.Information($"PUT api/poi/{id} START Request: " +
                 $"{JsonSerializer.Serialize(poiRequest)}");
 
             Stopwatch watch = new();
@@ -121,7 +121,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/poi/update/{id} END duration: " +
+            _logger.Information($"PUT api/poi/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -130,10 +130,10 @@ namespace API.Controllers
         /// <summary>
         /// Delete poi
         /// </summary>
-        [HttpPut("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePoisById(string id)
         {
-            _logger.Information($"PUT api/poi/delete/{id} START");
+            _logger.Information($"PUT api/poi/{id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -145,7 +145,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/poi/delete/{id} END duration: " +
+            _logger.Information($"PUT api/poi/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

@@ -29,10 +29,10 @@ namespace API.Controllers
         /// <summary>
         /// Create Product (base include related product)
         /// </summary>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateBaseProduct([FromBody] BaseProductRequest productRequest)
         {
-            _logger.Information($"POST api/product/create-base START Request: {JsonSerializer.Serialize(productRequest)}");
+            _logger.Information($"POST api/product START Request: {JsonSerializer.Serialize(productRequest)}");
 
             Stopwatch watch = new();
             watch.Start();
@@ -44,7 +44,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/product/create-base END duration: " +
+            _logger.Information("POST api/product END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -54,10 +54,10 @@ namespace API.Controllers
         /// <summary>
         /// Add Related Product
         /// </summary>
-        [HttpPost("addRelated/{id}")]
+        [HttpPost("related/{id}")]
         public async Task<IActionResult> AddRelatedProduct(string id, [FromBody] List<ProductRequest> relatedProductRequest)
         {
-            _logger.Information($"POST api/product/addRelated/{id} START Request: {JsonSerializer.Serialize(relatedProductRequest)}");
+            _logger.Information($"POST api/product/related/{id} START Request: {JsonSerializer.Serialize(relatedProductRequest)}");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -69,7 +69,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"POST api/product/addRelated/{id} END duration: " +
+            _logger.Information($"POST api/product/related/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -157,7 +157,7 @@ namespace API.Controllers
         /// <summary>
         /// Request Update Product
         /// </summary>
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> RequestUpdateProduct(string id,
             [FromBody] ProductRequest productRequest)
         {
@@ -183,12 +183,12 @@ namespace API.Controllers
         /// <summary>
         /// Delete Base Product by Id
         /// </summary>
-        [HttpPut("delete/base/{id}")]
+        [HttpDelete("base/{id}")]
         public async Task<IActionResult> DeleteBaseProduct(string id)
         {
-            _logger.Information($"PUT api/product/delete/base/{id} START");
+            _logger.Information($"DELETE api/product/base/{id} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //delete product
@@ -198,7 +198,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/product/delete/base/{id} END duration: " +
+            _logger.Information($"DELETE api/product/base/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -208,12 +208,12 @@ namespace API.Controllers
         /// <summary>
         /// Delete Related Product by Id
         /// </summary>
-        [HttpPut("delete/related/{id}")]
+        [HttpDelete("related/{id}")]
         public async Task<IActionResult> DeleteRelatedProduct(string id)
         {
-            _logger.Information($"PUT api/product/delete/related/{id} START");
+            _logger.Information($"DELETE api/product/related/{id} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //delete product
@@ -223,7 +223,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/product/delete/related/{id} END duration: " +
+            _logger.Information($"DELETE api/product/related/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -283,24 +283,24 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Approve Update Product With ID
+        /// Approve  Product With ID
         /// </summary>
-        [HttpPut("approve/update/{id}")]
-        public async Task<IActionResult> ApproveUpdateProduct(string id)
+        [HttpPut("approval/{id}")]
+        public async Task<IActionResult> ApproveProduct(string id)
         {
-            _logger.Information($"GET api/product/approve/update/{id} START");
+            _logger.Information($"PUT api/product/approval/{id} START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //approve Product
-            BaseResponse<ProductResponse> response = await _productService.VerifyUpdateProductById(id, "approve");
+            BaseResponse<ProductResponse> response = await _productService.VerifyProductById(id, true);
 
             string json = JsonSerializer.Serialize(response);
 
             watch.Stop();
 
-            _logger.Information($"GET api/product/approve/update/{id} END duration: " +
+            _logger.Information($"PUT api/product/approval/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -308,74 +308,24 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Approve Create Product With ID
+        /// Reject Product With ID
         /// </summary>
-        [HttpPut("approve/create/{id}")]
-        public async Task<IActionResult> ApproveCreateProduct(string id)
-        {
-            _logger.Information($"GET api/product/approve/create/{id} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //approve Product
-            BaseResponse<ProductResponse> response = await _productService.VerifyCreateProductById(id, "approve");
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information($"GET api/product/approve/create/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Reject Update Product With ID
-        /// </summary>
-        [HttpPut("reject/update/{id}")]
-        public async Task<IActionResult> RejectUpdateProduct(string id)
-        {
-            _logger.Information($"GET api/product/reject/update/{id} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //reject Product
-            BaseResponse<ProductResponse> response = await _productService.VerifyUpdateProductById(id, "reject");
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information($"GET api/product/reject/update/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Reject Create Product With ID
-        /// </summary>
-        [HttpPut("reject/create/{id}")]
+        [HttpPut("rejection/{id}")]
         public async Task<IActionResult> RejectCreateProduct(string id)
         {
-            _logger.Information($"GET api/product/reject/create/{id} START");
+            _logger.Information($"PUT api/product/rejection/{id} START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //reject Product
-            BaseResponse<ProductResponse> response = await _productService.VerifyCreateProductById(id, "reject");
+            BaseResponse<ProductResponse> response = await _productService.VerifyProductById(id, false);
 
             string json = JsonSerializer.Serialize(response);
 
             watch.Stop();
 
-            _logger.Information($"GET api/product/reject/create/{id} END duration: " +
+            _logger.Information($"GET api/product/rejection/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

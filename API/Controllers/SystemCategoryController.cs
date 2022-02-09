@@ -29,12 +29,12 @@ namespace API.Controllers
         /// <summary>
         /// Create a System Category
         /// </summary>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateSystemCategory([FromBody] SystemCategoryRequest systemCategoryRequest)
         {
-            _logger.Information($"POST api/systemCategory/create START Request: {JsonSerializer.Serialize(systemCategoryRequest)}");
+            _logger.Information($"POST api/systemCategory START Request: {JsonSerializer.Serialize(systemCategoryRequest)}");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //create system Category
@@ -44,7 +44,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/systemCategory/create END duration: " +
+            _logger.Information("POST api/systemCategory END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -112,7 +112,7 @@ namespace API.Controllers
         {
             _logger.Information($"GET api/systemCategory/all START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //get systemCategory
@@ -157,12 +157,12 @@ namespace API.Controllers
         /// <summary>
         /// Delete SystemCategory by Id
         /// </summary>
-        [HttpPut("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSystemCategory(string id)
         {
-            _logger.Information($"PUT api/systemCategory/delete/{id} START");
+            _logger.Information($"DELETE api/systemCategory/{id} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //delete systemCategory
@@ -172,7 +172,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/systemCategory/delete/{id} END duration: " +
+            _logger.Information($"DELETE api/systemCategory/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
