@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using BLL.Dtos.MoMo.CaptureWallet;
 using BLL.Dtos.MoMo.IPN;
 using System.Net;
-using AutoMapper.Configuration;
+using Microsoft.Extensions.Configuration;
 using AutoMapper;
 using DAL.UnitOfWork;
 using System.Text.Json;
@@ -109,11 +109,9 @@ namespace BLL.Services
             // Validate signature
             List<string> ignoreFields = new List<string>() { "signature", "partnerName", "storeId", "lang" };
             string rawData = _securityService.GetRawDataSignature(momoIPNRequest, ignoreFields);
-            // rawData = "accessKey=" + _configuration.GetValue<string>("MoMo:AccessKey") + "&" + rawData;
-            rawData = "";
+            rawData = "accessKey=" + _configuration.GetValue<string>("MoMo:AccessKey") + "&" + rawData;
 
-            // string merchantSignature = _securityService.SignHmacSHA256(rawData, _configuration.GetValue<string>("MoMo:SecretKey"));
-            string merchantSignature = "";
+            string merchantSignature = _securityService.SignHmacSHA256(rawData, _configuration.GetValue<string>("MoMo:SecretKey"));
 
             _logger.Information($"[MoMo IPN] MoMo - Merchant signature: {momoIPNRequest.Signature} - {merchantSignature}");
 
