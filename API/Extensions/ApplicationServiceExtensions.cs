@@ -32,7 +32,6 @@ namespace API.Extensions
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<IApartmentService, ApartmentService>();
             services.AddScoped<IMerchantStoreService, MerchantStoreService>();
-            services.AddScoped<ICollectionService, CollectionService>();
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IPoiService, PoiService>();
             services.AddScoped<IMenuService, MenuService>();

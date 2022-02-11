@@ -15,6 +15,7 @@ namespace DAL.Models
 
         public string MenuId { get; set; }
         public string MenuName { get; set; }
+        public string MenuDescription { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public int? Status { get; set; }

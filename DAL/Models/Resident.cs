@@ -9,13 +9,13 @@ namespace DAL.Models
     {
         public Resident()
         {
-            Collections = new HashSet<Collection>();
             Menus = new HashSet<Menu>();
             MerchantStores = new HashSet<MerchantStore>();
             News = new HashSet<News>();
             Orders = new HashSet<Order>();
             Pois = new HashSet<Poi>();
             ProductCategories = new HashSet<ProductCategory>();
+            Products = new HashSet<Product>();
         }
 
         public string ResidentId { get; set; }
@@ -34,12 +34,12 @@ namespace DAL.Models
 
         public virtual Account Account { get; set; }
         public virtual Apartment Apartment { get; set; }
-        public virtual ICollection<Collection> Collections { get; set; }
         public virtual ICollection<Menu> Menus { get; set; }
         public virtual ICollection<MerchantStore> MerchantStores { get; set; }
         public virtual ICollection<News> News { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Poi> Pois { get; set; }
         public virtual ICollection<ProductCategory> ProductCategories { get; set; }
+        public virtual ICollection<Product> Products { get; set; }
     }
 }
