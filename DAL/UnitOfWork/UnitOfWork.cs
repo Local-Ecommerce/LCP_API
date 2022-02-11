@@ -12,7 +12,6 @@ namespace DAL.UnitOfWork
 
         public IAccountRepository Accounts { get; private set; }
         public IApartmentRepository Apartments { get; private set; }
-        public ICollectionRepository Collections { get; private set; }
         public ICollectionMappingRepository CollectionMappings { get; private set; }
         public IMenuRepository Menus { get; private set; }
         public IMerchantStoreRepository MerchantStores { get; private set; }
@@ -36,7 +35,6 @@ namespace DAL.UnitOfWork
             _context = context;
             Accounts = new AccountRepository(context);
             Apartments = new ApartmentRepository(context);
-            Collections = new CollectionRepository(context);
             CollectionMappings = new CollectionMappingRepository(context);
             Menus = new MenuRepository(context);
             MerchantStores = new MerchantStoreRepository(context);

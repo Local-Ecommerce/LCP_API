@@ -13,14 +13,10 @@ namespace DAL.Models
         }
 
         public string ProductInMenuId { get; set; }
-        public string ProductName { get; set; }
-        public string BriefDescription { get; set; }
-        public string Description { get; set; }
-        public string Type { get; set; }
-        public string Image { get; set; }
         public double? Price { get; set; }
         public double? UnitCost { get; set; }
         public DateTime? CreatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
         public int? Status { get; set; }
         public string ProductId { get; set; }
         public string ProductCombinationId { get; set; }

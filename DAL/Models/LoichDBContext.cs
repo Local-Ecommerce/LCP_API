@@ -19,8 +19,6 @@ namespace DAL.Models
 
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<Apartment> Apartments { get; set; }
-        public virtual DbSet<Collection> Collections { get; set; }
-        public virtual DbSet<CollectionMapping> CollectionMappings { get; set; }
         public virtual DbSet<Menu> Menus { get; set; }
         public virtual DbSet<MerchantStore> MerchantStores { get; set; }
         public virtual DbSet<News> News { get; set; }
@@ -42,6 +40,7 @@ namespace DAL.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=localhost;Database=LoichDB;Trusted_Connection=True;");
             }
         }
@@ -96,56 +95,6 @@ namespace DAL.Models
                 entity.Property(e => e.Address).HasMaxLength(250);
             });
 
-            modelBuilder.Entity<Collection>(entity =>
-            {
-                entity.ToTable("Collection");
-
-                entity.Property(e => e.CollectionId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("CollectionID");
-
-                entity.Property(e => e.ResidentId)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("ResidentID");
-
-                entity.HasOne(d => d.Resident)
-                    .WithMany(p => p.Collections)
-                    .HasForeignKey(d => d.ResidentId)
-                    .HasConstraintName("FK_Collection_Resident");
-            });
-
-            modelBuilder.Entity<CollectionMapping>(entity =>
-            {
-                entity.HasKey(e => new { e.CollectionId, e.ProductId })
-                    .HasName("PK_tblCollectionMapping");
-
-                entity.ToTable("CollectionMapping");
-
-                entity.Property(e => e.CollectionId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("CollectionID");
-
-                entity.Property(e => e.ProductId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("ProductID");
-
-                entity.HasOne(d => d.Collection)
-                    .WithMany(p => p.CollectionMappings)
-                    .HasForeignKey(d => d.CollectionId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_tblCollectionMapping_tblCollection");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.CollectionMappings)
-                    .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_tblCollectionMapping_tblProduct");
-            });
-
             modelBuilder.Entity<Menu>(entity =>
             {
                 entity.ToTable("Menu");
@@ -154,6 +103,8 @@ namespace DAL.Models
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("MenuID");
+
+                entity.Property(e => e.MenuDescription).HasMaxLength(500);
 
                 entity.Property(e => e.MenuName).HasMaxLength(250);
 
@@ -379,7 +330,11 @@ namespace DAL.Models
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
+                entity.Property(e => e.BriefDescription).HasMaxLength(500);
+
                 entity.Property(e => e.Color).HasMaxLength(250);
+
+                entity.Property(e => e.Description).HasMaxLength(500);
 
                 entity.Property(e => e.Image).IsUnicode(false);
 
@@ -391,12 +346,22 @@ namespace DAL.Models
 
                 entity.Property(e => e.ProductName).HasMaxLength(250);
 
+                entity.Property(e => e.ResidentId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("ResidentID");
+
                 entity.Property(e => e.Size).HasMaxLength(250);
 
                 entity.HasOne(d => d.BelongToNavigation)
                     .WithMany(p => p.InverseBelongToNavigation)
                     .HasForeignKey(d => d.BelongTo)
                     .HasConstraintName("FK_Product_Product1");
+
+                entity.HasOne(d => d.Resident)
+                    .WithMany(p => p.Products)
+                    .HasForeignKey(d => d.ResidentId)
+                    .HasConstraintName("FK_Product_Resident");
             });
 
             modelBuilder.Entity<ProductCategory>(entity =>
@@ -490,8 +455,6 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("ProductInMenuID");
 
-                entity.Property(e => e.Image).IsUnicode(false);
-
                 entity.Property(e => e.MenuId)
                     .HasMaxLength(20)
                     .IsUnicode(false)
@@ -506,12 +469,6 @@ namespace DAL.Models
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("ProductID");
-
-                entity.Property(e => e.ProductName).HasMaxLength(250);
-
-                entity.Property(e => e.Type)
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
 
                 entity.HasOne(d => d.Menu)
                     .WithMany(p => p.ProductInMenus)
