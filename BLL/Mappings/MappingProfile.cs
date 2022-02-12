@@ -41,10 +41,9 @@ namespace BLL.Mappings
 
 
             //Account Mapping
-            CreateMap<AccountLoginRequest, Account>();
-            CreateMap<AccountRegisterRequest, Account>();
+            CreateMap<AccountRequest, Account>();
             CreateMap<AccountResponse, Account>().ReverseMap();
-            CreateMap<Account, ExtendAccountResponse>();
+            CreateMap<Account, ExtendAccountResponse>().ReverseMap();
 
             //SystemCategory Mapping
             CreateMap<SystemCategoryRequest, SystemCategory>();
@@ -110,8 +109,8 @@ namespace BLL.Mappings
             //Resident Mapping
             CreateMap<ResidentRequest, Resident>();
             CreateMap<ResidentUpdateRequest, Resident>();
-            CreateMap<Resident, ResidentResponse>();
-            CreateMap<Resident, ExtendResidentResponse>();
+            CreateMap<Resident, ResidentResponse>().ReverseMap();
+            CreateMap<Resident, ExtendResidentResponse>().ReverseMap();
 
             //Order & Order Detail Mapping
             CreateMap<OrderDetailRequest, OrderDetail>();

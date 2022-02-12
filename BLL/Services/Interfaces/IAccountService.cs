@@ -1,5 +1,6 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.Account;
+using DAL.Models;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -9,17 +10,18 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Create Account
         /// </summary>
-        /// <param name="ExtendAccountResponse"></param>
+        /// <param name="account"></param>
+        /// <param name="uid"></param>
         /// <returns></returns>
-        Task<BaseResponse<AccountResponse>> Register(AccountRegisterRequest accountRegisterRequest);
+        Task<Account> Register(Account account, string uid);
 
 
         /// <summary>
         /// Login
         /// </summary>
-        /// <param name="accountLoginRequest"></param>
+        /// <param name="accountRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<AccountResponse>> Login(AccountLoginRequest accountLoginRequest);
+        Task<BaseResponse<AccountResponse>> Login(AccountRequest accountRequest);
 
         /// <summary>
         /// Get Account by Id
@@ -42,13 +44,6 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<BaseResponse<AccountResponse>> DeleteAccount(string id);
-
-        /// <summary>
-        /// Check valid confirm password
-        /// </summary>
-        /// <param name="password"></param>
-        /// <param name="confirmPassword"></param>
-        bool IsValidConfirmPassword(string password, string confirmPassword);
 
 
         /// <summary>

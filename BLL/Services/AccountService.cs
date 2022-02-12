@@ -5,7 +5,6 @@ using BLL.Dtos.Account;
 using BLL.Dtos.Exception;
 using BLL.Services.Interfaces;
 using DAL.Models;
-using BCryptNet = BCrypt.Net.BCrypt;
 using DAL.UnitOfWork;
 using System;
 using System.Net;
@@ -20,137 +19,39 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IUtilService _utilService;
         private readonly IRedisService _redisService;
-        private readonly IFirebaseService _uploadFirebaseService;
+        private readonly IFirebaseService _firebaseService;
         private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
-        private readonly IValidateDataService _validateDataService;
-        private const string PREFIX = "ACC_";
-        private const string TYPE = "Account";
         private const string TOKEN_BLACKLIST_KEY = "Token Blacklist";
 
         public AccountService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IUtilService utilService,
             IRedisService redisService,
-            IFirebaseService uploadFirebaseService,
-            IJwtAuthenticationManager jwtAuthenticationManager,
-            IValidateDataService validateDataService)
+            IFirebaseService firebaseService,
+            IJwtAuthenticationManager jwtAuthenticationManager)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _utilService = utilService;
             _redisService = redisService;
-            _uploadFirebaseService = uploadFirebaseService;
+            _firebaseService = firebaseService;
             _jwtAuthenticationManager = jwtAuthenticationManager;
-            _validateDataService = validateDataService;
         }
 
         /// <summary>
         /// Create Account
         /// </summary>
-        /// <param name="accountRequest"></param>
+        /// <param name="account"></param>
+        /// <param name="uid"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<AccountResponse>> Register(AccountRegisterRequest accountRegisterRequest)
+        public async Task<Account> Register(Account account, string uid)
         {
-            //check valid password
-            if (!_validateDataService.IsValidPassword(accountRegisterRequest.Password))
-            {
-                _logger.Error($"[Invalid Password : '{accountRegisterRequest.Password}']");
-                throw new HttpStatusException(HttpStatusCode.OK,
-                new BaseResponse<ExtendAccountResponse>
-                {
-                    ResultCode = (int)AccountStatus.INVALID_PASSWORD,
-                    ResultMessage = AccountStatus.INVALID_PASSWORD.ToString(),
-                    Data = default
-                });
-            }
+            //Get data from firestore database
+            ExtendAccountResponse extendAccountResponse = await _firebaseService.GetUserDataFromFirestoreByUID(uid);
+            account = _mapper.Map<Account>(extendAccountResponse);
 
-            //check valid confirm password
-            if (!IsValidConfirmPassword(accountRegisterRequest.Password, accountRegisterRequest.ConfirmPassword))
-            {
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendAccountResponse>
-                    {
-                        ResultCode = (int)AccountStatus.INVALID_CONFIRM_PASSWORD,
-                        ResultMessage = AccountStatus.INVALID_CONFIRM_PASSWORD.ToString(),
-                        Data = default
-                    });
-            }
-
-            Account account;
-
-            try
-            {
-                //check if username exists
-                account = await _unitOfWork.Accounts.FindAsync(acc => acc.Username.Equals(accountRegisterRequest.Username));
-                if (account != null)
-                {
-                    _logger.Error($"[AccountService.Register()]: Username '{accountRegisterRequest.Username}' is already exists.");
-
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<AccountResponse>
-                        {
-                            ResultCode = (int)AccountStatus.ACCOUNT_ALREADY_EXISTS,
-                            ResultMessage = AccountStatus.ACCOUNT_ALREADY_EXISTS.ToString(),
-                            Data = default
-                        });
-                }
-
-                string accountId = _utilService.CreateId(PREFIX);
-
-                //upload image
-                string profileImageUrl = _uploadFirebaseService
-                    .UploadFileToFirebase(accountRegisterRequest.ProfileImage, TYPE, accountId, "profileImage").Result;
-                string avatarImageUrl = _uploadFirebaseService
-                    .UploadFileToFirebase(accountRegisterRequest.AvatarImage, TYPE, accountId, "avatarImage").Result;
-
-                //store account to database
-                account = _mapper.Map<Account>(accountRegisterRequest);
-
-                account.AccountId = accountId;
-                account.Password = BCryptNet.HashPassword(accountRegisterRequest.Password);
-                account.ProfileImage = profileImageUrl;
-                account.AvatarImage = avatarImageUrl;
-                account.CreatedDate = DateTime.Now;
-                account.UpdatedDate = DateTime.Now;
-                account.RoleId = RoleId.APARTMENT;
-                account.Token = null;
-                account.TokenExpiredDate = null;
-                account.Status = (int)AccountStatus.ACTIVE_ACCOUNT;
-
-                _unitOfWork.Accounts.Add(account);
-
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (HttpStatusException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[AccountService.Register()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<AccountResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
-            }
-
-            //create response
-            AccountResponse accountResponse = _mapper.Map<AccountResponse>(account);
-
-            return new BaseResponse<AccountResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = accountResponse
-            };
+            return account;
         }
 
 
@@ -266,49 +167,61 @@ namespace BLL.Services
         /// <summary>
         /// Login
         /// </summary>
-        /// <param name="accountLoginRequest"></param>
+        /// <param name="accountRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<AccountResponse>> Login(AccountLoginRequest accountLoginRequest)
+        public async Task<BaseResponse<AccountResponse>> Login(AccountRequest accountRequest)
         {
-            DateTime expiredDate = DateTime.Now;
-            string residentId = "";
-            string roleId = "";
+            DateTime expiredDate;
             Account account;
+            bool isCreate = false;
+
+            //check valid user
+            string uid = await _firebaseService.GetUIDByToken(accountRequest.FirebaseToken);
+
             try
             {
-                account = await _unitOfWork.Accounts.GetAccountIncludeResidentByUsername(accountLoginRequest.Username);
+                //check if user exists
+                account = await _unitOfWork.Accounts.GetAccountIncludeResidentByAccountId(uid);
 
-                //check account from db and verify password
-                if (!BCryptNet.Verify(accountLoginRequest.Password, account.Password))
+                //create new account if account is not existed yet
+                if(account == null)
                 {
-                    throw new Exception();
+                    account = await Register(account, uid);
+                    isCreate = true;
                 }
 
-                //find resident role
-                if (account.RoleId.Equals(RoleId.ADMIN))
+                if(account.TokenExpiredDate == null || account.TokenExpiredDate < DateTime.Now)
                 {
-                    //is admin
-                    residentId = account.AccountId;
-                    expiredDate = DateTime.Now.AddHours((double)TimeUnit.ONE_HOUR);
-                    roleId = account.RoleId;
-                }
-                else
-                {
-                    Resident resident = account.Residents.FirstOrDefault();
-
-                    if (resident.Type.Equals(ResidentType.MARKET_MANAGER))
+                    string roleId;
+                    //find resident role
+                    if (account.RoleId.Equals(RoleId.ADMIN))
+                    {
+                        //is admin
                         expiredDate = DateTime.Now.AddHours((double)TimeUnit.ONE_HOUR);
+                        roleId = account.RoleId;
+                    }
                     else
-                        expiredDate = DateTime.Now.AddDays((double)TimeUnit.THIRTY_DAYS);
+                    {
+                        Resident resident = account.Residents.FirstOrDefault();
 
-                    residentId = resident.ResidentId;
-                    roleId = resident.Type;
+                        if (resident.Type.Equals(ResidentType.MARKET_MANAGER))
+                            expiredDate = DateTime.Now.AddHours((double)TimeUnit.ONE_HOUR);
+                        else
+                            expiredDate = DateTime.Now.AddDays((double)TimeUnit.THIRTY_DAYS);
+
+                        roleId = resident.Type;
+                    }
+
+                    account.Token = _jwtAuthenticationManager.Authenticate(account.AccountId, roleId, expiredDate);
+                    account.TokenExpiredDate = expiredDate;
+
+                    if (isCreate)
+                        _unitOfWork.Accounts.Add(account);
+                    else
+                        _unitOfWork.Accounts.Update(account);
+
+                    await _unitOfWork.SaveChangesAsync();
                 }
-
-                account.Token = _jwtAuthenticationManager.Authenticate(residentId, roleId, expiredDate);
-                account.TokenExpiredDate = expiredDate;
-
-                await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -317,8 +230,8 @@ namespace BLL.Services
                 throw new HttpStatusException(HttpStatusCode.OK,
                     new BaseResponse<AccountResponse>
                     {
-                        ResultCode = (int)AccountStatus.INVALID_USERNAME_PASSWORD,
-                        ResultMessage = AccountStatus.INVALID_USERNAME_PASSWORD.ToString(),
+                        ResultCode = (int)AccountStatus.UNAUTHORIZED_ACCOUNT,
+                        ResultMessage = AccountStatus.UNAUTHORIZED_ACCOUNT.ToString(),
                         Data = default
                     });
             }
@@ -396,16 +309,6 @@ namespace BLL.Services
                 ResultMessage = CommonResponse.SUCCESS.ToString(),
                 Data = ExtendAccountResponse
             };
-        }
-
-        /// <summary>
-        /// Check valid confirm password
-        /// </summary>
-        /// <param name="password"></param>
-        /// <param name="confirmPassword"></param>
-        public bool IsValidConfirmPassword(string password, string confirmPassword)
-        {
-            return password.Equals(confirmPassword);
         }
 
 

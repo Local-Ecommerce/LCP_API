@@ -93,6 +93,8 @@ namespace DAL.Models
                     .HasColumnName("ApartmentID");
 
                 entity.Property(e => e.Address).HasMaxLength(250);
+
+                entity.Property(e => e.ApartmentName).HasMaxLength(250);
             });
 
             modelBuilder.Entity<Menu>(entity =>

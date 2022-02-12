@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using BLL.Dtos.Account;
+using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
 {
@@ -25,5 +26,21 @@ namespace BLL.Services.Interfaces
         /// <param name="order"></param>
         /// <returns></returns>
         Task<string> UploadFilesToFirebase(string[] files, string type, string parent, string fileName, int order);
+
+
+        /// <summary>
+        /// Get UID By Token
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task<string> GetUIDByToken(string token);
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        Task<ExtendAccountResponse> GetUserDataFromFirestoreByUID(string uid);
     }
 }
