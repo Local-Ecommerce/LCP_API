@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -100,9 +99,9 @@ namespace API
             });
 
             //Add JWT Authentication
-            var key = _configuration.GetValue<string>("SecretKey");
+            var key = _configuration.GetValue<string>("Jwt:Custom:Key");
 
-            //Jwt Authentication
+            //Custom Jwt Authentication
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -146,6 +145,11 @@ namespace API
 
             //add application service extensions
             services.AddApplicationServices(_configuration);
+
+            //setting environment
+            string startupPath = System.IO.Directory.GetCurrentDirectory();
+            string credential_path = startupPath + "\\firebase_auth.json";
+            System.Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credential_path);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -22,7 +22,6 @@ namespace DAL.Models
         public double? DefaultPrice { get; set; }
         public string BriefDescription { get; set; }
         public string Description { get; set; }
-        public int? Type { get; set; }
         public string Image { get; set; }
         public int? Status { get; set; }
         public DateTime? CreatedDate { get; set; }

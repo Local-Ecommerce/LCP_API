@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BLL.Dtos.Resident;
+using System;
+using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 
 namespace BLL.Dtos.Account
@@ -7,6 +9,6 @@ namespace BLL.Dtos.Account
     public class ExtendAccountResponse : AccountResponse
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public string ResidentId { get; set; }
+        public Collection<ResidentResponse> Residents { get; set; }
     }
 }

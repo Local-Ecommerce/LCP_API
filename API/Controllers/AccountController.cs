@@ -1,5 +1,4 @@
-﻿using DAL.Constants;
-using BLL.Dtos;
+﻿using BLL.Dtos;
 using BLL.Dtos.Account;
 using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -28,46 +27,19 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Register
-        /// </summary>
-        [AllowAnonymous]
-        [HttpPost("signup")]
-        public async Task<IActionResult> Register([FromBody] AccountRegisterRequest accountRegisterRequest)
-        {
-            _logger.Information($"POST api/acccount/signup START Request: " +
-                $"{JsonSerializer.Serialize(accountRegisterRequest)}");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //register account
-            BaseResponse<AccountResponse> response = await _accountService.Register(accountRegisterRequest);
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information("POST api/account/signup END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
         /// Login
         /// </summary>
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] AccountLoginRequest accountLoginRequest)
+        public async Task<IActionResult> Login([FromBody] AccountRequest accountRequest)
         {
-            _logger.Information($"GET api/acccount/login START Request: {JsonSerializer.Serialize(accountLoginRequest)}");
+            _logger.Information($"GET api/acccount/login START Request: {JsonSerializer.Serialize(accountRequest)}");
 
             Stopwatch watch = new();
             watch.Start();
 
             //Login
-            BaseResponse<AccountResponse> response = await _accountService.Login(accountLoginRequest);
+            BaseResponse<AccountResponse> response = await _accountService.Login(accountRequest);
 
             string json = JsonSerializer.Serialize(response);
 
