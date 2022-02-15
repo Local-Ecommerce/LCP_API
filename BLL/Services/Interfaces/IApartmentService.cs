@@ -1,5 +1,4 @@
-﻿using BLL.Dtos;
-using BLL.Dtos.Apartment;
+﻿using BLL.Dtos.Apartment;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,7 +12,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="apartmentRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<ApartmentResponse>> CreateApartment(ApartmentRequest apartmentRequest);
+        Task<ApartmentResponse> CreateApartment(ApartmentRequest apartmentRequest);
 
 
         /// <summary>
@@ -21,7 +20,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ApartmentResponse>> GetApartmentById(string id);
+        Task<ApartmentResponse> GetApartmentById(string id);
 
 
         /// <summary>
@@ -30,7 +29,7 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="apartmentRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<ApartmentResponse>> UpdateApartmentById(string id, ApartmentRequest apartmentRequest);
+        Task<ApartmentResponse> UpdateApartmentById(string id, ApartmentRequest apartmentRequest);
 
 
         /// <summary>
@@ -38,7 +37,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ApartmentResponse>> DeleteApartment(string id);
+        Task<ApartmentResponse> DeleteApartment(string id);
 
 
         /// <summary>
@@ -46,28 +45,28 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
-        Task<BaseResponse<ApartmentResponse>> GetApartmentByAddress(string address);
+        Task<ApartmentResponse> GetApartmentByAddress(string address);
 
 
         /// <summary>
         /// Get Apartment By Status
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<ApartmentResponse>>> GetApartmentsByStatus(int status);
+        Task<List<ApartmentResponse>> GetApartmentsByStatus(int status);
 
 
         /// <summary>
         /// Get Apartment For Auto Complete
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<ApartmentResponse>>> GetApartmentForAutoComplete();
+        Task<List<ApartmentResponse>> GetApartmentForAutoComplete();
         
         
         /// <summary>
         /// Get Apartment For Auto Complete
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<ApartmentResponse>>> GetAllApartments();
+        Task<List<ApartmentResponse>> GetAllApartments();
 
 
         /// <summary>
@@ -75,6 +74,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendApartmentResponse>> GetMarketManagerByApartmentId(string id);
+        Task<ExtendApartmentResponse> GetMarketManagerByApartmentId(string id);
     }
 }

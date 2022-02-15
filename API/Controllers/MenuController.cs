@@ -41,9 +41,9 @@ namespace API.Controllers
             watch.Start();
 
             //Create Menu
-            BaseResponse<MenuResponse> response = await _menuService.CreateMenu(menuRequest);
+            MenuResponse response = await _menuService.CreateMenu(menuRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
 
             watch.Stop();
 
@@ -66,9 +66,9 @@ namespace API.Controllers
             watch.Start();
 
             //Get Menu
-            BaseResponse<ExtendMenuResponses> response = await _menuService.GetMenuById(id);
+            ExtendMenuResponse response = await _menuService.GetMenuById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
 
             watch.Stop();
 
@@ -92,9 +92,9 @@ namespace API.Controllers
             watch.Start();
 
             //Update Menu
-            BaseResponse<MenuResponse> response = await _menuService.UpdateMenuById(id, menuUpdateRequest);
+            MenuResponse response = await _menuService.UpdateMenuById(id, menuUpdateRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
 
             watch.Stop();
 
@@ -117,9 +117,9 @@ namespace API.Controllers
             watch.Start();
 
             //Delete Menu
-            BaseResponse<MenuResponse> response = await _menuService.DeleteMenuById(id);
+            MenuResponse response = await _menuService.DeleteMenuById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
 
             watch.Stop();
 
@@ -144,9 +144,9 @@ namespace API.Controllers
             watch.Start();
 
             //Add Products To Menu
-            BaseResponse<List<ExtendProductInMenuResponse>> response = await _menuService.AddProductsToMenu(menuId, productInMenuRequests);
+            List<ExtendProductInMenuResponse> response = await _menuService.AddProductsToMenu(menuId, productInMenuRequests);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -172,9 +172,9 @@ namespace API.Controllers
             watch.Start();
 
             //Get Product in Menu by Menu Id
-            BaseResponse<List<ExtendProductInMenuResponse>> response = await _menuService.GetProductsInMenuByMenuId(menuId);
+            List<ExtendProductInMenuResponse> response = await _menuService.GetProductsInMenuByMenuId(menuId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -200,9 +200,9 @@ namespace API.Controllers
             watch.Start();
 
             //Get Product in Menu by Menu Id
-            BaseResponse<ExtendProductInMenuResponse> response = await _menuService.GetProductInMenuById(productInMenuId);
+            ExtendProductInMenuResponse response = await _menuService.GetProductInMenuById(productInMenuId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductInMenuResponse>.Success(response));
 
             watch.Stop();
 
@@ -227,10 +227,10 @@ namespace API.Controllers
             watch.Start();
 
             //Update Product In Menu By Id
-            BaseResponse<ExtendProductInMenuResponse> response = await _menuService
+            ExtendProductInMenuResponse response = await _menuService
                 .UpdateProductInMenuById(productInMenuId, productInMenuUpdateRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductInMenuResponse>.Success(response));
 
             watch.Stop();
 
@@ -254,9 +254,9 @@ namespace API.Controllers
             watch.Start();
 
             //Update Product In Menu By Id
-            BaseResponse<string> response = await _menuService.DeleteProductInMenuById(productInMenuId);
+            string response = await _menuService.DeleteProductInMenuById(productInMenuId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<string>.Success(response));
 
             watch.Stop();
 
@@ -281,10 +281,10 @@ namespace API.Controllers
             watch.Start();
 
             //get Menu
-            BaseResponse<List<ExtendMenuResponses>> response =
+            List<ExtendMenuResponse> response =
                 await _menuService.GetMenusByStatus(status);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -309,10 +309,10 @@ namespace API.Controllers
             watch.Start();
 
             //get Menu
-            BaseResponse<List<ExtendMenuResponses>> response =
+            List<ExtendMenuResponse> response =
                 await _menuService.GetAllMenus();
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 

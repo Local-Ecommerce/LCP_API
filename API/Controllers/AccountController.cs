@@ -40,9 +40,9 @@ namespace API.Controllers
             watch.Start();
 
             //Login
-            BaseResponse<AccountResponse> response = await _accountService.Login(accountRequest);
+            AccountResponse response = await _accountService.Login(accountRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<AccountResponse>.Success(response));
 
             watch.Stop();
 
@@ -67,9 +67,9 @@ namespace API.Controllers
             watch.Start();
 
             //get account
-            BaseResponse<ExtendAccountResponse> response = await _accountService.GetAccountById(id);
+            ExtendAccountResponse response = await _accountService.GetAccountById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendAccountResponse>.Success(response));
 
             watch.Stop();
 
@@ -93,9 +93,9 @@ namespace API.Controllers
             watch.Start();
 
             //update account
-            BaseResponse<ExtendAccountResponse> response = await _accountService.UpdateAccount(id);
+            ExtendAccountResponse response = await _accountService.UpdateAccount(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendAccountResponse>.Success(response));
 
             watch.Stop();
 
@@ -119,9 +119,9 @@ namespace API.Controllers
             watch.Start();
 
             //delete account
-            BaseResponse<AccountResponse> response = await _accountService.DeleteAccount(id);
+            AccountResponse response = await _accountService.DeleteAccount(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<AccountResponse>.Success(response));
 
             watch.Stop();
 
@@ -145,9 +145,9 @@ namespace API.Controllers
             watch.Start();
 
             //change Role By Account
-            BaseResponse<ExtendAccountResponse> response = await _accountService.ChangeResidentTypeByAccountId(id, type);
+            ExtendAccountResponse response = await _accountService.ChangeResidentTypeByAccountId(id, type);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendAccountResponse>.Success(response));
 
             watch.Stop();
 

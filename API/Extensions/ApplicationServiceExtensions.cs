@@ -18,9 +18,6 @@ namespace API.Extensions
             //Add Unit Of Work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            //Add Logger
-            services.AddSingleton<ILogger, LogNLog>();
-
             //Add service
             services.AddScoped<IRedisService, RedisService>();
             services.AddScoped<IValidateDataService, ValidateDataService>();
