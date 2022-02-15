@@ -28,9 +28,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create menu
+        /// Create menu (Merchant)
         /// </summary>
-/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPost]
         public async Task<IActionResult> CreateMenu([FromBody] MenuRequest menuRequest)
         {
@@ -54,9 +54,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Get menu by id
+        /// Get menu by id (Merchant)
         /// </summary>
-/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMenuById(string id)
         {
@@ -79,9 +79,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Update menu
+        /// Update menu (Merchant)
         /// </summary>
-/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMenuById(string id, [FromBody] MenuUpdateRequest menuUpdateRequest)
         {
@@ -105,9 +105,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Delete menu
+        /// Delete menu (Merchant)
         /// </summary>
-        // [Authorize(Roles = ResidentType.MERCHANT)]
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMenuById(string id)
         {
@@ -131,9 +131,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Add Products To Menu
+        /// Add Products To Menu (Merchant)
         /// </summary>
-/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPost("{menuId}/products")]
         public async Task<IActionResult> AddProductsToMenu(string menuId,
             [FromBody] List<ProductInMenuRequest> productInMenuRequests)
@@ -158,10 +158,11 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Products In Menu By Menu Id
+        /// Get Products In Menu By Menu Id (Merchant, Market Manager, Admin)
         /// </summary>
-        // [Authorize(Roles = ResidentType.MERCHANT)]
-        // [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MERCHANT)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("{menuId}/products")]
         public async Task<IActionResult> GetProductsInMenuByMenuId(string menuId)
         {
@@ -185,10 +186,11 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Product In Menu By Id
+        /// Get Product In Menu By Id (Merchant, Market Manager, Admin)
         /// </summary>
-        // [Authorize(Roles = ResidentType.MERCHANT)]
-        // [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = ResidentType.MERCHANT)]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("products/{productInMenuId}")]
         public async Task<IActionResult> GetProductInMenuById(string productInMenuId)
         {
@@ -212,9 +214,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Product In Menu By Id
+        /// Update Product In Menu By Id (Merchant)
         /// </summary>
-/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut("products/{productInMenuId}")]
         public async Task<IActionResult> UpdateProductInMenuById(string productInMenuId,
             [FromBody] ProductInMenuUpdateRequest productInMenuUpdateRequest)
@@ -240,9 +242,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Product In Menu By Id
+        /// Delete Product In Menu By Id (Merchant)
         /// </summary>
-/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete("products/{productInMenuId}")]
         public async Task<IActionResult> DeleteProductInMenuById(string productInMenuId)
         {
@@ -266,9 +268,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Menu By Status
+        /// Get Menu By Status (Admin, Maket Manager)
         /// </summary>
-        // [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetMenuByStatus(int status)
         {
@@ -293,9 +296,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get All Menus
+        /// Get All Menus (Admin, Maket Manager)
         /// </summary>
-        // [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllMenus()
         {

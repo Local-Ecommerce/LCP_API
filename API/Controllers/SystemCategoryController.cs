@@ -1,6 +1,7 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.SystemCategory;
 using BLL.Services.Interfaces;
+using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create a System Category
+        /// Create a System Category (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPost]
         public async Task<IActionResult> CreateSystemCategory([FromBody] SystemCategoryRequest systemCategoryRequest)
         {
@@ -52,9 +54,8 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get System Category By Id
+        /// Get System Category By Id (Authentication required)
         /// </summary>
-        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSystemCategoryById(string id)
         {
@@ -129,8 +130,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Update SystemCategory By Id
+        /// Update SystemCategory By Id (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateSystemCategory(string id,
             [FromBody] SystemCategoryUpdateRequest systemCategoryRequest)
@@ -180,9 +182,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get System Categories By Status
+        /// Get System Categories By Status (Admin)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetSystemCategoriesByStatus(int status)
         {

@@ -34,7 +34,7 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Create Order
+        /// Create Order (Customer)
         /// </summary>
         [Authorize(Roles = ResidentType.CUSTOMER)]
         [HttpPost]
@@ -68,7 +68,7 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Order By Resident Id And Status
+        /// Get Order By Resident Id And Status (Customer)
         /// </summary>
         [Authorize(Roles = ResidentType.CUSTOMER)]
         [HttpGet("status/{status}")]
@@ -101,10 +101,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Order By Merchant Store Id
+        /// Get Order By Merchant Store Id (Customer, Merchant)
         /// </summary>
-        // [Authorize(Roles = ResidentType.CUSTOMER)]
-        [AllowAnonymous]
+        [Authorize(Roles = ResidentType.CUSTOMER)]
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpGet("store/{merchantStoreId}")]
         public async Task<IActionResult> GetOrderByMerchantStoreId(string merchantStoreId)
         {
@@ -135,7 +135,7 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Order By Order Id And Resident Id
+        /// Delete Order By Order Id And Resident Id (Customer)
         /// </summary>
         [Authorize(Roles = ResidentType.CUSTOMER)]
         [HttpDelete("{orderId}")]

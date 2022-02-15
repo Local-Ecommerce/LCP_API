@@ -1,6 +1,7 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.PaymentMethod;
 using BLL.Services.Interfaces;
+using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Create Payment Method
+        /// Create Payment Method (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPost]
         public async Task<IActionResult> CreatePaymentMethod([FromBody] PaymentMethodRequest paymentMethodRequest)
         {
@@ -79,8 +81,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Payment Method By Id
+        /// Update Payment Method By Id (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePaymentMethodById(string id, [FromBody] PaymentMethodRequest paymentMethodRequest)
         {
@@ -105,8 +108,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Payment Method By Id
+        /// Delete Payment Method By Id (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePaymentMethodById(string id)
         {
