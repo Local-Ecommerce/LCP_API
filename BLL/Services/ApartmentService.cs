@@ -38,14 +38,9 @@ namespace BLL.Services
         /// </summary>
         /// <param name="apartmentRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ApartmentResponse>> CreateApartment(ApartmentRequest apartmentRequest)
+        public async Task<ApartmentResponse> CreateApartment(ApartmentRequest apartmentRequest)
         {
-
-            //biz rule
-
-            //Store Apartment To Dabatabase
             Apartment apartment = _mapper.Map<Apartment>(apartmentRequest);
-
             try
             {
                 apartment.ApartmentId = _utilService.CreateId(PREFIX);
@@ -58,26 +53,10 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[ApartmentService.CreateApartment()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ApartmentResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //Create Response
-            ApartmentResponse apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
-
-            return new BaseResponse<ApartmentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = apartmentResponse
-            };
-
+            return _mapper.Map<ApartmentResponse>(apartment);
         }
 
 
@@ -86,10 +65,8 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ApartmentResponse>> DeleteApartment(string id)
+        public async Task<ApartmentResponse> DeleteApartment(string id)
         {
-            //biz rule
-
             //Check id
             Apartment apartment;
             try
@@ -100,13 +77,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ApartmentService.DeleteApartment()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<Apartment>
-                    {
-                        ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
-                        ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Apartment), id);
             }
 
             //Delete Apartment
@@ -121,26 +92,10 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[ApartmentService.DeleteApartment()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<Apartment>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //Create Response
-            ApartmentResponse apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
-
-            return new BaseResponse<ApartmentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = apartmentResponse
-            };
-
+            return _mapper.Map<ApartmentResponse>(apartment);
         }
 
 
@@ -149,15 +104,9 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ApartmentResponse>> GetApartmentById(string id)
+        public async Task<ApartmentResponse> GetApartmentById(string id)
         {
-            //biz rule
-
-
             ApartmentResponse apartmentResponse;
-
-            //Get Apartment From Database
-
             try
             {
                 Apartment apartment = await _unitOfWork.Apartments.FindAsync(ap => ap.ApartmentId.Equals(id));
@@ -168,21 +117,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ApartmentService.GetApartmentById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ApartmentResponse>
-                    {
-                        ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
-                        ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Apartment), id);
             }
 
-            return new BaseResponse<ApartmentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = apartmentResponse
-            };
+            return apartmentResponse;
         }
 
 
@@ -192,7 +130,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="apartmentRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ApartmentResponse>> UpdateApartmentById(string id, ApartmentRequest apartmentRequest)
+        public async Task<ApartmentResponse> UpdateApartmentById(string id, ApartmentRequest apartmentRequest)
         {
             //biz ruie
 
@@ -206,12 +144,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ApartmentService.UpdateApartment()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ApartmentResponse>
-                {
-                    ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
-                    ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(Apartment), id);
             }
 
             //Update Apartment To DB
@@ -226,24 +159,10 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[ApartmentService.UpdateApartment()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ApartmentResponse>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
 
-            //Create Response
-            ApartmentResponse apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
-
-            return new BaseResponse<ApartmentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = apartmentResponse
-            };
+            return _mapper.Map<ApartmentResponse>(apartment);
         }
 
 
@@ -252,16 +171,9 @@ namespace BLL.Services
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ApartmentResponse>> GetApartmentByAddress(string address)
+        public async Task<ApartmentResponse> GetApartmentByAddress(string address)
         {
-            //biz rule
-
-
             ApartmentResponse apartmentResponse;
-
-            //Get Apartment From Database
-
             try
             {
                 Apartment apartment = await _unitOfWork.Apartments.FindAsync(ap => ap.Address.Equals(address));
@@ -272,21 +184,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ApartmentService.GetApartmentByAddress()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ApartmentResponse>
-                    {
-                        ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
-                        ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Apartment), address);
             }
 
-            return new BaseResponse<ApartmentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = apartmentResponse
-            };
+            return apartmentResponse;
         }
 
 
@@ -295,15 +196,9 @@ namespace BLL.Services
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ApartmentResponse>>> GetApartmentsByStatus(int status)
+        public async Task<List<ApartmentResponse>> GetApartmentsByStatus(int status)
         {
-            //biz rule
-
-
             List<ApartmentResponse> apartmentResponses;
-
-            //Get Apartment From Database
-
             try
             {
                 List<Apartment> apartments = await _unitOfWork.Apartments.FindListAsync(ap => ap.Status == status);
@@ -314,21 +209,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ApartmentService.GetApartmentsByStatus()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ApartmentResponse>
-                    {
-                        ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
-                        ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Apartment), status);
             }
 
-            return new BaseResponse<List<ApartmentResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = apartmentResponses
-            };
+            return apartmentResponses;
         }
 
 
@@ -336,16 +220,9 @@ namespace BLL.Services
         /// Get Apartment For Auto Complete
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ApartmentResponse>>> GetApartmentForAutoComplete()
+        public async Task<List<ApartmentResponse>> GetApartmentForAutoComplete()
         {
-            //biz rule
-
-
             List<ApartmentResponse> apartmentResponses;
-
-            //Get Apartment From Database
-
             try
             {
                 List<Apartment> apartments = await _unitOfWork.Apartments.GetAllActiveApartment();
@@ -356,21 +233,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ApartmentService.GetApartmentForAutoComplete()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ApartmentResponse>
-                    {
-                        ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
-                        ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Apartment), "autocomplete");
             }
 
-            return new BaseResponse<List<ApartmentResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = apartmentResponses
-            };
+            return apartmentResponses;
         }
 
 
@@ -378,16 +244,9 @@ namespace BLL.Services
         /// Get All Apartments
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ApartmentResponse>>> GetAllApartments()
+        public async Task<List<ApartmentResponse>> GetAllApartments()
         {
-            //biz rule
-
-
             List<ApartmentResponse> apartmentResponses;
-
-            //Get Apartment From Database
-
             try
             {
                 List<Apartment> apartments = await _unitOfWork.Apartments.GetAllApartment();
@@ -398,21 +257,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ApartmentService.GetAllApartments()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ApartmentResponse>
-                    {
-                        ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
-                        ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Apartment), "all");
             }
 
-            return new BaseResponse<List<ApartmentResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = apartmentResponses
-            };
+            return apartmentResponses;
         }
 
 
@@ -421,15 +269,9 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendApartmentResponse>> GetMarketManagerByApartmentId(string id)
+        public async Task<ExtendApartmentResponse> GetMarketManagerByApartmentId(string id)
         {
-            //biz rule
-
-
             ExtendApartmentResponse apartmentResponse;
-
-            //Get Apartment From Database
-
             try
             {
                 Apartment apartment = await _unitOfWork.Apartments.GetMarketManagerByApartmentId(id);
@@ -440,21 +282,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ApartmentService.GetMarketManagerByApartmentId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ApartmentResponse>
-                    {
-                        ResultCode = (int)ApartmentStatus.APARTMENT_NOT_FOUND,
-                        ResultMessage = ApartmentStatus.APARTMENT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Resident), id);
             }
 
-            return new BaseResponse<ExtendApartmentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = apartmentResponse
-            };
+            return apartmentResponse;
         }
     }
 }

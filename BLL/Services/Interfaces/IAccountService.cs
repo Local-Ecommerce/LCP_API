@@ -1,5 +1,4 @@
-﻿using BLL.Dtos;
-using BLL.Dtos.Account;
+﻿using BLL.Dtos.Account;
 using DAL.Models;
 using System.Threading.Tasks;
 
@@ -21,21 +20,23 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="accountRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<AccountResponse>> Login(AccountRequest accountRequest);
+        Task<AccountResponse> Login(AccountRequest accountRequest);
+
 
         /// <summary>
         /// Get Account by Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendAccountResponse>> GetAccountById(string id);
+        Task<ExtendAccountResponse> GetAccountById(string id);
+
 
         /// <summary>
         /// Update Account
         /// </summary>
         /// <param name="accountRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendAccountResponse>> UpdateAccount(string id);
+        Task<ExtendAccountResponse> UpdateAccount(string id);
 
 
         /// <summary>
@@ -43,7 +44,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<AccountResponse>> DeleteAccount(string id);
+        Task<AccountResponse> DeleteAccount(string id);
 
 
         /// <summary>
@@ -52,6 +53,6 @@ namespace BLL.Services.Interfaces
         /// <param name="accountId"></param>
         /// <param name="residentType"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendAccountResponse>> ChangeResidentTypeByAccountId(string accountId, string residentType);
+        Task<ExtendAccountResponse> ChangeResidentTypeByAccountId(string accountId, string residentType);
     }
 }

@@ -1,6 +1,4 @@
-﻿using BLL.Dtos;
-using BLL.Dtos.Menu;
-using BLL.Dtos.MerchantStore;
+﻿using BLL.Dtos.Menu;
 using BLL.Dtos.ProductInMenu;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,7 +12,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="menuRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<MenuResponse>> CreateMenu(MenuRequest menuRequest);
+        Task<MenuResponse> CreateMenu(MenuRequest menuRequest);
 
 
         /// <summary>
@@ -32,7 +30,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="menuId"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendMenuResponses>> GetMenuById(string menuId);
+        Task<ExtendMenuResponse> GetMenuById(string menuId);
 
 
         /// <summary>
@@ -41,7 +39,7 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="menuRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<MenuResponse>> UpdateMenuById(string id, MenuUpdateRequest menuUpdateRequest);
+        Task<MenuResponse> UpdateMenuById(string id, MenuUpdateRequest menuUpdateRequest);
 
 
         /// <summary>
@@ -49,7 +47,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<MenuResponse>> DeleteMenuById(string id);
+        Task<MenuResponse> DeleteMenuById(string id);
 
 
         /// <summary>
@@ -57,7 +55,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="productInMenuRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ExtendProductInMenuResponse>>> AddProductsToMenu(string menuId,
+        Task<List<ExtendProductInMenuResponse>> AddProductsToMenu(string menuId,
             List<ProductInMenuRequest> productInMenuRequests);
 
 
@@ -66,7 +64,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="productInMenuId"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendProductInMenuResponse>> GetProductInMenuById(string productInMenuId);
+        Task<ExtendProductInMenuResponse> GetProductInMenuById(string productInMenuId);
 
 
         /// <summary>
@@ -74,7 +72,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="menuId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ExtendProductInMenuResponse>>> GetProductsInMenuByMenuId(string menuId);
+        Task<List<ExtendProductInMenuResponse>> GetProductsInMenuByMenuId(string menuId);
 
 
         /// <summary>
@@ -83,7 +81,7 @@ namespace BLL.Services.Interfaces
         /// <param name="productInMenuId"></param>
         /// <param name="productInMenuUpdateRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendProductInMenuResponse>> UpdateProductInMenuById(string productInMenuId,
+        Task<ExtendProductInMenuResponse> UpdateProductInMenuById(string productInMenuId,
             ProductInMenuUpdateRequest productInMenuUpdateRequest);
 
 
@@ -92,7 +90,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="productInMenuId"></param>
         /// <returns></returns>
-        Task<BaseResponse<string>> DeleteProductInMenuById(string productInMenuId);
+        Task<string> DeleteProductInMenuById(string productInMenuId);
 
 
         /// <summary>
@@ -100,14 +98,14 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ExtendMenuResponses>>> GetMenusByStatus(int status);
+        Task<List<ExtendMenuResponse>> GetMenusByStatus(int status);
 
 
         /// <summary>
         /// Get All Menus
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<ExtendMenuResponses>>> GetAllMenus();
+        Task<List<ExtendMenuResponse>> GetAllMenus();
 
 
         /// <summary>
@@ -115,6 +113,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ExtendMenuResponses>>> GetMenusByResidentId(string residentId);
+        Task<List<ExtendMenuResponse>> GetMenusByResidentId(string residentId);
     }
 }

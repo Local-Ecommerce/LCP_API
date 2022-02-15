@@ -92,6 +92,10 @@ namespace API
             services.AddDbContext<LoichDBContext>(opt => opt.UseSqlServer(
                 _configuration.GetConnectionString("DatabaseConnection")));
 
+
+            //Add Logger
+            services.AddSingleton<ILogger, LogNLog>();
+
             //Add Error Handler
             services.AddMvc(options =>
             {

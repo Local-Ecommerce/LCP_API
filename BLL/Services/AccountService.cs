@@ -60,7 +60,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<AccountResponse>> DeleteAccount(string id)
+        public async Task<AccountResponse> DeleteAccount(string id)
         {
             //biz rule
 
@@ -73,14 +73,7 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[AccountService.DeleteAccount()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<AccountResponse>
-                    {
-                        ResultCode = (int)AccountStatus.ACCOUNT_NOT_FOUND,
-                        ResultMessage = AccountStatus.ACCOUNT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
             //delete account
@@ -96,14 +89,7 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[AccountService.DeleteAccount()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<AccountResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
             //revoke token here
@@ -117,12 +103,7 @@ namespace BLL.Services
             _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,
                 new Predicate<TokenInfo>(ti => ti.Token == tokenInfo.Token));
 
-            return new BaseResponse<AccountResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = default
-            };
+            return default;
         }
 
 
@@ -131,36 +112,25 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendAccountResponse>> GetAccountById(string id)
+        public async Task<ExtendAccountResponse> GetAccountById(string id)
         {
-            ExtendAccountResponse ExtendAccountResponse;
+            ExtendAccountResponse extendAccountResponse;
 
             //get account from database
             try
             {
                 Account account = await _unitOfWork.Accounts.FindAsync(acc => acc.AccountId.Equals(id));
 
-                ExtendAccountResponse = _mapper.Map<ExtendAccountResponse>(account);
+                extendAccountResponse = _mapper.Map<ExtendAccountResponse>(account);
             }
             catch (Exception e)
             {
                 _logger.Error("[AccountService.GetAccountById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendAccountResponse>
-                    {
-                        ResultCode = (int)AccountStatus.ACCOUNT_NOT_FOUND,
-                        ResultMessage = AccountStatus.ACCOUNT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Account), id);
             }
 
-            return new BaseResponse<ExtendAccountResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendAccountResponse
-            };
+            return extendAccountResponse;
         }
 
 
@@ -169,7 +139,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="accountRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<AccountResponse>> Login(AccountRequest accountRequest)
+        public async Task<AccountResponse> Login(AccountRequest accountRequest)
         {
             DateTime expiredDate;
             Account account;
@@ -229,24 +199,10 @@ namespace BLL.Services
             {
                 _logger.Error("[AccountService.Login()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<AccountResponse>
-                    {
-                        ResultCode = (int)AccountStatus.UNAUTHORIZED_ACCOUNT,
-                        ResultMessage = AccountStatus.UNAUTHORIZED_ACCOUNT.ToString(),
-                        Data = default
-                    });
+                throw new UnauthorizedAccessException();
             }
 
-            //create response
-            AccountResponse accountResponse = _mapper.Map<ExtendAccountResponse>(account);
-
-            return new BaseResponse<AccountResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = accountResponse
-            };
+            return _mapper.Map<ExtendAccountResponse>(account);
         }
 
 
@@ -257,7 +213,7 @@ namespace BLL.Services
         /// <param name="accountImageForm"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ExtendAccountResponse>> UpdateAccount(string id)
+        public async Task<ExtendAccountResponse> UpdateAccount(string id)
         {
             //biz rule
 
@@ -271,13 +227,7 @@ namespace BLL.Services
             {
                 _logger.Error("[AccountService.UpdateAccount()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendAccountResponse>
-                    {
-                        ResultCode = (int)AccountStatus.ACCOUNT_NOT_FOUND,
-                        ResultMessage = AccountStatus.ACCOUNT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Account), id);
             }
 
             //update data
@@ -293,24 +243,10 @@ namespace BLL.Services
             {
                 _logger.Error("[AccountService.UpdateAccount()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendAccountResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //create response
-            ExtendAccountResponse ExtendAccountResponse = _mapper.Map<ExtendAccountResponse>(account);
-
-            return new BaseResponse<ExtendAccountResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendAccountResponse
-            };
+            return _mapper.Map<ExtendAccountResponse>(account);
         }
 
 
@@ -320,7 +256,7 @@ namespace BLL.Services
         /// <param name="accountId"></param>
         /// <param name="residentType"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendAccountResponse>> ChangeResidentTypeByAccountId(string accountId, string residentType)
+        public async Task<ExtendAccountResponse> ChangeResidentTypeByAccountId(string accountId, string residentType)
         {
             TokenInfo tokenInfo;
             Account account;
@@ -349,28 +285,17 @@ namespace BLL.Services
             {
                 _logger.Error("[AccountService.ChangeResidentTypeByAccountId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<Account>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
             //create response
-            ExtendAccountResponse ExtendAccountResponse = _mapper.Map<ExtendAccountResponse>(account);
+
 
             //move old token to blacklist
             _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,
                 new Predicate<TokenInfo>(ti => ti.Token == tokenInfo.Token));
 
-            return new BaseResponse<ExtendAccountResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendAccountResponse
-            };
+            return _mapper.Map<ExtendAccountResponse>(account);
         }
     }
 }
