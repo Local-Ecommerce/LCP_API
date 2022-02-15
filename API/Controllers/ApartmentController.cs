@@ -1,6 +1,7 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.Apartment;
 using BLL.Services.Interfaces;
+using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -28,8 +29,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Create Apartment
+        /// Create Apartment (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPost]
         public async Task<IActionResult> CreateApartment([FromBody] ApartmentRequest apartmentRequest)
         {
@@ -81,8 +83,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Apartment
+        /// Update Apartment (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateApartmentById(string id,
                                               [FromBody] ApartmentRequest apartmentRequest)
@@ -108,8 +111,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete apartment
+        /// Delete apartment (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteApartment(string id)
         {
@@ -158,9 +162,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Apartments By Status
+        /// Get Apartments By Status (Admin)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetApartmentsByStatus(int status)
         {
@@ -236,9 +240,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Market Manager By Apartment Id
+        /// Get Market Manager By Apartment Id (Admin)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("resident/{apartmentId}")]
         public async Task<IActionResult> GetMarketManagerByApartmentId(string apartmentId)
         {

@@ -1,6 +1,7 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.Account;
 using BLL.Services.Interfaces;
+using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -52,10 +53,11 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Get Account By Id
+        /// Get Account By Id (Authentication required)
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAccountById(string id)
         {
@@ -79,8 +81,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Account
+        /// Update Account (Authentication required)
         /// </summary>
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAccount(string id)
         {
@@ -104,8 +107,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Account
+        /// Delete Account (Authentication required)
         /// </summary>
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAccount(string id)
         {
@@ -129,8 +133,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Change Resident Type By Account Id
+        /// Change Resident Type By Account Id (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPut("{id}/type/{type}")]
         public async Task<IActionResult> ChangeRoleByAccountId(string id, string type)
         {

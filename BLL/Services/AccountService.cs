@@ -192,13 +192,14 @@ namespace BLL.Services
 
                 if(account.TokenExpiredDate == null || account.TokenExpiredDate < DateTime.Now)
                 {
-                    string roleId;
+                    string roleId, apartmentId;
                     //find resident role
                     if (account.RoleId.Equals(RoleId.ADMIN))
                     {
                         //is admin
                         expiredDate = DateTime.Now.AddHours((double)TimeUnit.ONE_HOUR);
                         roleId = account.RoleId;
+                        apartmentId = null;
                     }
                     else
                     {
@@ -210,9 +211,10 @@ namespace BLL.Services
                             expiredDate = DateTime.Now.AddDays((double)TimeUnit.THIRTY_DAYS);
 
                         roleId = resident.Type;
+                        apartmentId = resident.ApartmentId;
                     }
 
-                    account.Token = _jwtAuthenticationManager.Authenticate(account.AccountId, roleId, expiredDate);
+                    account.Token = _jwtAuthenticationManager.Authenticate(account.AccountId, roleId, apartmentId, expiredDate);
                     account.TokenExpiredDate = expiredDate;
 
                     if (isCreate)

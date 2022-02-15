@@ -1,6 +1,8 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.ProductCategory;
 using BLL.Services.Interfaces;
+using DAL.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -26,14 +28,15 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create a Product Category
+        /// Create a Product Category (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPost]
         public async Task<IActionResult> CreateProductCategory([FromBody] ProductCategoryRequest productCategoryRequest)
         {
             _logger.Information($"POST api/productCategory START Request: {JsonSerializer.Serialize(productCategoryRequest)}");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new ();
             watch.Start();
 
             //create product Category
@@ -51,14 +54,15 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Product Category By Id
+        /// Get Product Category By Id (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductCategoryById(string id)
         {
             _logger.Information($"GET api/productCategory/{id} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new ();
             watch.Start();
 
             //get productCategory
@@ -76,8 +80,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Product Category
+        /// Update Product Category (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProductCategory(string id,
             [FromBody] ProductCategoryRequest productCategoryRequest)
@@ -102,8 +107,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete ProductCategory by Id
+        /// Delete ProductCategory by Id (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductCategory(string id)
         {

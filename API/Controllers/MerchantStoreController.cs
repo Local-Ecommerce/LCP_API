@@ -2,6 +2,7 @@
 using BLL.Dtos.MerchantStore;
 using BLL.Dtos.StoreMenuDetail;
 using BLL.Services.Interfaces;
+using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -28,8 +29,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create a Merchant Store
+        /// Create a Merchant Store (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPost]
         public async Task<IActionResult> CreateMerchantStore([FromBody] MerchantStoreRequest merchantStoreRequest)
         {
@@ -80,8 +82,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Merchant Store
+        /// Update Merchant Store (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMerchantStore(string id,
                                                       [FromBody] MerchantStoreUpdateRequest request)
@@ -159,8 +162,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Add Store Menu Details To Merchant Store
+        /// Add Store Menu Details To Merchant Store (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPost("{id}/menus")]
         public async Task<IActionResult> AddStoreMenuDetailsToMerchantStore(string id,
             List<StoreMenuDetailRequest> storeMenuDetailRequest)
@@ -186,8 +190,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Store Menu Detail By Id
+        /// Update Store Menu Detail By Id (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut("menus/{id}")]
         public async Task<IActionResult> UpdateStoreMenuDetailById(string id,
             StoreMenuDetailUpdateRequest storeMenuDetailUpdateRequest)
@@ -213,8 +218,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Store Menu Detail By Id
+        /// Delete Store Menu Detail By Id (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete("menus/{id}")]
         public async Task<IActionResult> DeleteStoreMenuDetailById(string id)
         {
@@ -239,9 +245,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Merchant Stores By Status
+        /// Get Merchant Stores By Status (Admin)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetMerchantStoreByStatus(int status)
         {
@@ -266,9 +272,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get All Merchant Stores
+        /// Get All Merchant Stores (Admin)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllMerchantStore()
         {
@@ -293,9 +299,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Pending Merchant Stores
+        /// Get Pending Merchant Stores (Admin)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("pending")]
         public async Task<IActionResult> GetPendingMerchantStores()
         {
@@ -320,9 +326,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Menus By Store Id
+        /// Get Menus By Store Id (Merchant, Market Manager)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = ResidentType.MERCHANT)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpGet("{id}/menus")]
         public async Task<IActionResult> GetMenusByStoreId(string id)
         {
@@ -346,8 +353,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Approve MerchantStore With ID
+        /// Approve MerchantStore With ID (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPut("approval/{id}")]
         public async Task<IActionResult> ApproveMerchantStore(string id)
         {
@@ -371,8 +379,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Reject MerchantStore With ID
+        /// Reject MerchantStore With ID (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPut("rejection/{id}")]
         public async Task<IActionResult> RejectCreateMerchantStore(string id)
         {

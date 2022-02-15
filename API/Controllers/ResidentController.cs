@@ -1,6 +1,7 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.Resident;
 using BLL.Services.Interfaces;
+using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -28,8 +29,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Create a Resident
+        /// Create a Resident (Apartment Roles)
         /// </summary>
+        [Authorize(Roles = RoleId.APARTMENT)]
         [HttpPost]
         public async Task<IActionResult> CreateResident([FromBody] ResidentRequest residentRequest)
         {
@@ -80,8 +82,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Resident
+        /// Update Resident (Apartment Roles)
         /// </summary>
+        [Authorize(Roles = RoleId.APARTMENT)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateResident(string id,
                                                       [FromBody] ResidentUpdateRequest residentUpdateRequest)
@@ -107,8 +110,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Resident
+        /// Delete Resident (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteResident(string id)
         {
@@ -132,9 +136,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Resident By Apartment Id
+        /// Get Resident By Apartment Id (Admin)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("apartment/{apartmentId}")]
         public async Task<IActionResult> GetResidentByApartmentId(string apartmentId)
         {
@@ -159,9 +163,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Resident By Account Id
+        /// Get Resident By Account Id (Admin)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("account/{accountId}")]
         public async Task<IActionResult> GetResidentByAccountId(string accountId)
         {
@@ -183,12 +187,12 @@ namespace API.Controllers
 
             return Ok(json);
         }
-        
-        
+
+
         /// <summary>
-        /// Get All Residents
+        /// Get All Residents (Admin)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllResidents()
         {

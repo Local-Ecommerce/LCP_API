@@ -1,6 +1,7 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.ProductCombination;
 using BLL.Services.Interfaces;
+using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create a Product Combination
+        /// Create a Product Combination (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPost]
         public async Task<IActionResult> CreateProductCombination([FromBody] ProductCombinationRequest productCombinationRequest)
         {
@@ -80,8 +82,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Product Combination
+        /// Update Product Combination (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProductCombination(string id,
                                                       [FromBody] ProductCombinationRequest request)
@@ -107,8 +110,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Product Combination
+        /// Delete Product Combination (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductCombination(string id)
         {
