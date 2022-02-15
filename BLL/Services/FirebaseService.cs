@@ -118,23 +118,18 @@ namespace BLL.Services
             FirebaseToken decodedToken;
             try
             {
-                FirebaseApp.Create(new AppOptions()
-                {
-                    Credential = GoogleCredential.GetApplicationDefault(),
-                });
+                if (FirebaseApp.DefaultInstance == null)
+                    FirebaseApp.Create(new AppOptions()
+                    {
+                        Credential = GoogleCredential.GetApplicationDefault(),
+                    });
                 decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
             }
             catch (Exception e)
             {
                 _logger.Error("[FirenbaseService.GetUIDByToken()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<string>
-                    {
-                        ResultCode = (int)AccountStatus.INVALID_FIREBASE_TOKEN,
-                        ResultMessage = AccountStatus.INVALID_FIREBASE_TOKEN.ToString(),
-                        Data = default
-                    });
+                throw new UnauthorizedAccessException();
             }
 
             return decodedToken.Uid;
