@@ -1,11 +1,12 @@
-﻿using BLL.Dtos.Exception;
+﻿using BLL.Dtos;
+using BLL.Dtos.Exception;
+using BLL.Services.Interfaces;
+using DAL.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -15,15 +16,34 @@ namespace BLL.Filters
     {
         public override void OnException(ExceptionContext context)
         {
-            if (context.Exception is HttpStatusException statusException)
+            var exception = context.Exception;
+            var apiResponse = ApiResponse<string>.Fail(exception.Message);
+            HttpResponseMessage response;
+            switch (exception)
             {
-                var response = new HttpResponseMessage(statusException.Status)
-                {
-                    Content = new StringContent(JsonSerializer.Serialize(statusException.Response))
-                };
-                context.Result = new HttpResponseMessageResult(response);
-                base.OnException(context);
+                case BusinessException:
+                    var businessException = (BusinessException)exception;
+                    apiResponse.ResultCode = businessException.ErrorCode;
+                    response = new HttpResponseMessage(HttpStatusCode.OK);
+                    break;
+                case EntityNotFoundException:
+                    response = new HttpResponseMessage(HttpStatusCode.NotFound);
+                    break;
+                case UnauthorizedAccessException:
+                    apiResponse.ResultMessage = "Authentication failed";
+                    response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+                    break;
+                default:
+                    response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+                    apiResponse.ResultMessage = CommonResponse.ERROR.ToString();
+                    apiResponse.ResultCode = (int)CommonResponse.ERROR;
+                    break;
             }
+
+
+            response.Content = new StringContent(JsonSerializer.Serialize(apiResponse));
+            context.Result = new HttpResponseMessageResult(response);
+            base.OnException(context);
         }
     }
 
@@ -39,11 +59,9 @@ namespace BLL.Filters
         public async Task ExecuteResultAsync(ActionContext context)
         {
             context.HttpContext.Response.StatusCode = (int)_responseMessage.StatusCode;
-            using (var stream = await _responseMessage.Content.ReadAsStreamAsync())
-            {
-                await stream.CopyToAsync(context.HttpContext.Response.Body);
-                await context.HttpContext.Response.Body.FlushAsync();
-            }
+            using var stream = await _responseMessage.Content.ReadAsStreamAsync();
+            await stream.CopyToAsync(context.HttpContext.Response.Body);
+            await context.HttpContext.Response.Body.FlushAsync();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace BLL.Services
             _key = key;
         }
 
-        public string Authenticate(string residentId, string roleName, DateTime expiredDate)
+        public string Authenticate(string residentId, string roleName, string apartmentId, DateTime expiredDate)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.ASCII.GetBytes(_key);
@@ -25,7 +25,8 @@ namespace BLL.Services
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, residentId),
-                    new Claim(ClaimTypes.Role, roleName)
+                    new Claim(ClaimTypes.Role, roleName),
+                    new Claim("ApartmentId", apartmentId)
                 }),
                 Expires = expiredDate,
 

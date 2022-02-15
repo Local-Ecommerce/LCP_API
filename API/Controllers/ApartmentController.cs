@@ -1,6 +1,7 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.Apartment;
 using BLL.Services.Interfaces;
+using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -28,8 +29,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Create Apartment
+        /// Create Apartment (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPost]
         public async Task<IActionResult> CreateApartment([FromBody] ApartmentRequest apartmentRequest)
         {
@@ -40,9 +42,9 @@ namespace API.Controllers
             watch.Start();
 
             //create Apartment
-            BaseResponse<ApartmentResponse> response = await _apartmentService.CreateApartment(apartmentRequest);
+            ApartmentResponse response = await _apartmentService.CreateApartment(apartmentRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ApartmentResponse>.Success(response));
 
             watch.Stop();
 
@@ -51,7 +53,6 @@ namespace API.Controllers
 
             return Ok(json);
         }
-
 
 
         /// <summary>
@@ -67,9 +68,9 @@ namespace API.Controllers
             watch.Start();
 
             //get Apartment
-            BaseResponse<ApartmentResponse> response = await _apartmentService.GetApartmentById(id);
+            ApartmentResponse response = await _apartmentService.GetApartmentById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ApartmentResponse>.Success(response));
 
             watch.Stop();
 
@@ -81,8 +82,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Apartment
+        /// Update Apartment (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateApartmentById(string id,
                                               [FromBody] ApartmentRequest apartmentRequest)
@@ -94,9 +96,9 @@ namespace API.Controllers
             watch.Start();
 
             //update Apartment
-            BaseResponse<ApartmentResponse> response = await _apartmentService.UpdateApartmentById(id, apartmentRequest);
+            ApartmentResponse response = await _apartmentService.UpdateApartmentById(id, apartmentRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ApartmentResponse>.Success(response));
 
             watch.Stop();
 
@@ -108,20 +110,21 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete apartment
+        /// Delete apartment (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteApartment(string id)
         {
             _logger.Information($"DELETE api/apartment/{id} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //delete Apartment
-            BaseResponse<ApartmentResponse> response = await _apartmentService.DeleteApartment(id);
+            ApartmentResponse response = await _apartmentService.DeleteApartment(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ApartmentResponse>.Success(response));
 
             watch.Stop();
 
@@ -144,9 +147,9 @@ namespace API.Controllers
             watch.Start();
 
             //get Apartment
-            BaseResponse<ApartmentResponse> response = await _apartmentService.GetApartmentByAddress(address);
+            ApartmentResponse response = await _apartmentService.GetApartmentByAddress(address);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ApartmentResponse>.Success(response));
 
             watch.Stop();
 
@@ -158,9 +161,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Apartments By Status
+        /// Get Apartments By Status (Admin)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetApartmentsByStatus(int status)
         {
@@ -170,9 +173,9 @@ namespace API.Controllers
             watch.Start();
 
             //get Apartment
-            BaseResponse<List<ApartmentResponse>> responses = await _apartmentService.GetApartmentsByStatus(status);
+            List<ApartmentResponse> responses = await _apartmentService.GetApartmentsByStatus(status);
 
-            string json = JsonSerializer.Serialize(responses);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 
             watch.Stop();
 
@@ -196,9 +199,9 @@ namespace API.Controllers
             watch.Start();
 
             //get Apartment
-            BaseResponse<List<ApartmentResponse>> responses = await _apartmentService.GetApartmentForAutoComplete();
+            List<ApartmentResponse> responses = await _apartmentService.GetApartmentForAutoComplete();
 
-            string json = JsonSerializer.Serialize(responses);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 
             watch.Stop();
 
@@ -222,9 +225,9 @@ namespace API.Controllers
             watch.Start();
 
             //get Apartment
-            BaseResponse<List<ApartmentResponse>> responses = await _apartmentService.GetAllApartments();
+            List<ApartmentResponse> responses = await _apartmentService.GetAllApartments();
 
-            string json = JsonSerializer.Serialize(responses);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 
             watch.Stop();
 
@@ -236,9 +239,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Market Manager By Apartment Id
+        /// Get Market Manager By Apartment Id (Admin)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("resident/{apartmentId}")]
         public async Task<IActionResult> GetMarketManagerByApartmentId(string apartmentId)
         {
@@ -248,9 +251,9 @@ namespace API.Controllers
             watch.Start();
 
             //get Apartment
-            BaseResponse<ExtendApartmentResponse> response = await _apartmentService.GetMarketManagerByApartmentId(apartmentId);
+            ExtendApartmentResponse response = await _apartmentService.GetMarketManagerByApartmentId(apartmentId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendApartmentResponse>.Success(response));
 
             watch.Stop();
 

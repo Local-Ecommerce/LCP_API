@@ -28,9 +28,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create menu
+        /// Create menu (Merchant)
         /// </summary>
-/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPost]
         public async Task<IActionResult> CreateMenu([FromBody] MenuRequest menuRequest)
         {
@@ -41,9 +41,9 @@ namespace API.Controllers
             watch.Start();
 
             //Create Menu
-            BaseResponse<MenuResponse> response = await _menuService.CreateMenu(menuRequest);
+            MenuResponse response = await _menuService.CreateMenu(menuRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
 
             watch.Stop();
 
@@ -54,9 +54,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Get menu by id
+        /// Get menu by id (Merchant)
         /// </summary>
-/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMenuById(string id)
         {
@@ -66,9 +66,9 @@ namespace API.Controllers
             watch.Start();
 
             //Get Menu
-            BaseResponse<ExtendMenuResponses> response = await _menuService.GetMenuById(id);
+            ExtendMenuResponse response = await _menuService.GetMenuById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
 
             watch.Stop();
 
@@ -79,9 +79,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Update menu
+        /// Update menu (Merchant)
         /// </summary>
-/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMenuById(string id, [FromBody] MenuUpdateRequest menuUpdateRequest)
         {
@@ -92,9 +92,9 @@ namespace API.Controllers
             watch.Start();
 
             //Update Menu
-            BaseResponse<MenuResponse> response = await _menuService.UpdateMenuById(id, menuUpdateRequest);
+            MenuResponse response = await _menuService.UpdateMenuById(id, menuUpdateRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
 
             watch.Stop();
 
@@ -105,9 +105,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Delete menu
+        /// Delete menu (Merchant)
         /// </summary>
-        // [Authorize(Roles = ResidentType.MERCHANT)]
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMenuById(string id)
         {
@@ -117,9 +117,9 @@ namespace API.Controllers
             watch.Start();
 
             //Delete Menu
-            BaseResponse<MenuResponse> response = await _menuService.DeleteMenuById(id);
+            MenuResponse response = await _menuService.DeleteMenuById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
 
             watch.Stop();
 
@@ -131,9 +131,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Add Products To Menu
+        /// Add Products To Menu (Merchant)
         /// </summary>
-/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPost("{menuId}/products")]
         public async Task<IActionResult> AddProductsToMenu(string menuId,
             [FromBody] List<ProductInMenuRequest> productInMenuRequests)
@@ -144,9 +144,9 @@ namespace API.Controllers
             watch.Start();
 
             //Add Products To Menu
-            BaseResponse<List<ExtendProductInMenuResponse>> response = await _menuService.AddProductsToMenu(menuId, productInMenuRequests);
+            List<ExtendProductInMenuResponse> response = await _menuService.AddProductsToMenu(menuId, productInMenuRequests);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -158,10 +158,11 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Products In Menu By Menu Id
+        /// Get Products In Menu By Menu Id (Merchant, Market Manager, Admin)
         /// </summary>
-        // [Authorize(Roles = ResidentType.MERCHANT)]
-        // [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MERCHANT)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("{menuId}/products")]
         public async Task<IActionResult> GetProductsInMenuByMenuId(string menuId)
         {
@@ -171,9 +172,9 @@ namespace API.Controllers
             watch.Start();
 
             //Get Product in Menu by Menu Id
-            BaseResponse<List<ExtendProductInMenuResponse>> response = await _menuService.GetProductsInMenuByMenuId(menuId);
+            List<ExtendProductInMenuResponse> response = await _menuService.GetProductsInMenuByMenuId(menuId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -185,10 +186,11 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Product In Menu By Id
+        /// Get Product In Menu By Id (Merchant, Market Manager, Admin)
         /// </summary>
-        // [Authorize(Roles = ResidentType.MERCHANT)]
-        // [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = ResidentType.MERCHANT)]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("products/{productInMenuId}")]
         public async Task<IActionResult> GetProductInMenuById(string productInMenuId)
         {
@@ -198,9 +200,9 @@ namespace API.Controllers
             watch.Start();
 
             //Get Product in Menu by Menu Id
-            BaseResponse<ExtendProductInMenuResponse> response = await _menuService.GetProductInMenuById(productInMenuId);
+            ExtendProductInMenuResponse response = await _menuService.GetProductInMenuById(productInMenuId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductInMenuResponse>.Success(response));
 
             watch.Stop();
 
@@ -212,9 +214,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Product In Menu By Id
+        /// Update Product In Menu By Id (Merchant)
         /// </summary>
-/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut("products/{productInMenuId}")]
         public async Task<IActionResult> UpdateProductInMenuById(string productInMenuId,
             [FromBody] ProductInMenuUpdateRequest productInMenuUpdateRequest)
@@ -225,10 +227,10 @@ namespace API.Controllers
             watch.Start();
 
             //Update Product In Menu By Id
-            BaseResponse<ExtendProductInMenuResponse> response = await _menuService
+            ExtendProductInMenuResponse response = await _menuService
                 .UpdateProductInMenuById(productInMenuId, productInMenuUpdateRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductInMenuResponse>.Success(response));
 
             watch.Stop();
 
@@ -240,9 +242,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Product In Menu By Id
+        /// Delete Product In Menu By Id (Merchant)
         /// </summary>
-/*        [Authorize(Roles = ResidentType.MERCHANT)]*/
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete("products/{productInMenuId}")]
         public async Task<IActionResult> DeleteProductInMenuById(string productInMenuId)
         {
@@ -252,9 +254,9 @@ namespace API.Controllers
             watch.Start();
 
             //Update Product In Menu By Id
-            BaseResponse<string> response = await _menuService.DeleteProductInMenuById(productInMenuId);
+            string response = await _menuService.DeleteProductInMenuById(productInMenuId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<string>.Success(response));
 
             watch.Stop();
 
@@ -266,9 +268,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Menu By Status
+        /// Get Menu By Status (Admin, Maket Manager)
         /// </summary>
-        // [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetMenuByStatus(int status)
         {
@@ -278,10 +281,10 @@ namespace API.Controllers
             watch.Start();
 
             //get Menu
-            BaseResponse<List<ExtendMenuResponses>> response =
+            List<ExtendMenuResponse> response =
                 await _menuService.GetMenusByStatus(status);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -293,9 +296,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get All Menus
+        /// Get All Menus (Admin, Maket Manager)
         /// </summary>
-        // [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllMenus()
         {
@@ -305,10 +309,10 @@ namespace API.Controllers
             watch.Start();
 
             //get Menu
-            BaseResponse<List<ExtendMenuResponses>> response =
+            List<ExtendMenuResponse> response =
                 await _menuService.GetAllMenus();
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 

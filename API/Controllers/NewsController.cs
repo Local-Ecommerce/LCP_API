@@ -1,6 +1,7 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.News;
 using BLL.Services.Interfaces;
+using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create news
+        /// Create news (Maket Manager)
         /// </summary>
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpPost]
         public async Task<IActionResult> CreateNews([FromBody] NewsRequest newsRequest)
         {
@@ -102,8 +104,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Update news
+        /// Update news (Market Manager)
         /// </summary>
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateNewsById(string id, [FromBody] NewsUpdateRequest newsRequest)
         {
@@ -127,8 +130,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Delete news
+        /// Delete news (Market Manager)
         /// </summary>
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNewsById(string id)
         {
@@ -203,9 +207,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get News By Status
+        /// Get News By Status (Market Manager)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetNewsByStatus(int status)
         {

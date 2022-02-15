@@ -24,21 +24,5 @@ namespace DAL.Repositories
 
             return account;
         }
-
-
-        /// <summary>
-        /// Get Account Include Resident By Username
-        /// </summary>
-        /// <param name="username"></param>
-        /// <returns></returns>
-        public async Task<Account> GetAccountIncludeResidentByUsername(string username)
-        {
-            Account account = await _context.Accounts
-                                        .Where(acc => acc.Username.Equals(username))
-                                        .Include(acc => acc.Residents)
-                                        .FirstOrDefaultAsync();
-
-            return account;
-        }
     }
 }

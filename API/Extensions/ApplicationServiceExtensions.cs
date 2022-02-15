@@ -18,9 +18,6 @@ namespace API.Extensions
             //Add Unit Of Work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            //Add Logger
-            services.AddSingleton<ILogger, LogNLog>();
-
             //Add service
             services.AddScoped<IRedisService, RedisService>();
             services.AddScoped<IValidateDataService, ValidateDataService>();
@@ -32,7 +29,6 @@ namespace API.Extensions
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<IApartmentService, ApartmentService>();
             services.AddScoped<IMerchantStoreService, MerchantStoreService>();
-            services.AddScoped<ICollectionService, CollectionService>();
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IPoiService, PoiService>();
             services.AddScoped<IMenuService, MenuService>();

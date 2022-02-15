@@ -1,7 +1,7 @@
-﻿using DAL.Constants;
-using BLL.Dtos;
+﻿using BLL.Dtos;
 using BLL.Dtos.Account;
 using BLL.Services.Interfaces;
+using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -28,48 +28,21 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Register
-        /// </summary>
-        [AllowAnonymous]
-        [HttpPost("signup")]
-        public async Task<IActionResult> Register([FromBody] AccountRegisterRequest accountRegisterRequest)
-        {
-            _logger.Information($"POST api/acccount/signup START Request: " +
-                $"{JsonSerializer.Serialize(accountRegisterRequest)}");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //register account
-            BaseResponse<AccountResponse> response = await _accountService.Register(accountRegisterRequest);
-
-            string json = JsonSerializer.Serialize(response);
-
-            watch.Stop();
-
-            _logger.Information("POST api/account/signup END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
         /// Login
         /// </summary>
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] AccountLoginRequest accountLoginRequest)
+        public async Task<IActionResult> Login([FromBody] AccountRequest accountRequest)
         {
-            _logger.Information($"GET api/acccount/login START Request: {JsonSerializer.Serialize(accountLoginRequest)}");
+            _logger.Information($"GET api/acccount/login START Request: {JsonSerializer.Serialize(accountRequest)}");
 
             Stopwatch watch = new();
             watch.Start();
 
             //Login
-            BaseResponse<AccountResponse> response = await _accountService.Login(accountLoginRequest);
+            AccountResponse response = await _accountService.Login(accountRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<AccountResponse>.Success(response));
 
             watch.Stop();
 
@@ -80,10 +53,11 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Get Account By Id
+        /// Get Account By Id (Authentication required)
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAccountById(string id)
         {
@@ -93,9 +67,9 @@ namespace API.Controllers
             watch.Start();
 
             //get account
-            BaseResponse<ExtendAccountResponse> response = await _accountService.GetAccountById(id);
+            ExtendAccountResponse response = await _accountService.GetAccountById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendAccountResponse>.Success(response));
 
             watch.Stop();
 
@@ -107,8 +81,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Account
+        /// Update Account (Authentication required)
         /// </summary>
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAccount(string id)
         {
@@ -118,9 +93,9 @@ namespace API.Controllers
             watch.Start();
 
             //update account
-            BaseResponse<ExtendAccountResponse> response = await _accountService.UpdateAccount(id);
+            ExtendAccountResponse response = await _accountService.UpdateAccount(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendAccountResponse>.Success(response));
 
             watch.Stop();
 
@@ -132,8 +107,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Account
+        /// Delete Account (Authentication required)
         /// </summary>
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAccount(string id)
         {
@@ -143,9 +119,9 @@ namespace API.Controllers
             watch.Start();
 
             //delete account
-            BaseResponse<AccountResponse> response = await _accountService.DeleteAccount(id);
+            AccountResponse response = await _accountService.DeleteAccount(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<AccountResponse>.Success(response));
 
             watch.Stop();
 
@@ -157,8 +133,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Change Resident Type By Account Id
+        /// Change Resident Type By Account Id (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPut("{id}/type/{type}")]
         public async Task<IActionResult> ChangeRoleByAccountId(string id, string type)
         {
@@ -168,9 +145,9 @@ namespace API.Controllers
             watch.Start();
 
             //change Role By Account
-            BaseResponse<ExtendAccountResponse> response = await _accountService.ChangeResidentTypeByAccountId(id, type);
+            ExtendAccountResponse response = await _accountService.ChangeResidentTypeByAccountId(id, type);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendAccountResponse>.Success(response));
 
             watch.Stop();
 

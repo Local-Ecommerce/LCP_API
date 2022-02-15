@@ -1,6 +1,7 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.Product;
 using BLL.Services.Interfaces;
+using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,10 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create Product (base include related product)
+        /// Create Product (base include related product) (Merchant, Admin)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPost]
         public async Task<IActionResult> CreateBaseProduct([FromBody] BaseProductRequest productRequest)
         {
@@ -52,9 +55,11 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Add Related Product
+        /// Add Related Product (Merchant, Admin)
         /// </summary>
         [HttpPost("related/{id}")]
+        [Authorize(Roles = ResidentType.MERCHANT)]
+        [Authorize(Roles = RoleId.ADMIN)]
         public async Task<IActionResult> AddRelatedProduct(string id, [FromBody] List<ProductRequest> relatedProductRequest)
         {
             _logger.Information($"POST api/product/related/{id} START Request: {JsonSerializer.Serialize(relatedProductRequest)}");
@@ -155,8 +160,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Request Update Product
+        /// Request Update Product (Merchant, Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut("{id}")]
         public async Task<IActionResult> RequestUpdateProduct(string id,
             [FromBody] ProductRequest productRequest)
@@ -181,8 +188,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Base Product by Id
+        /// Delete Base Product by Id (Merchant, Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete("base/{id}")]
         public async Task<IActionResult> DeleteBaseProduct(string id)
         {
@@ -258,8 +267,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Pendings Products
+        /// Get Pendings Products (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("pending")]
         public async Task<IActionResult> GetPendingProducts()
         {
@@ -283,8 +293,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Approve  Product With ID
+        /// Approve  Product With ID (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPut("approval/{id}")]
         public async Task<IActionResult> ApproveProduct(string id)
         {
@@ -308,8 +319,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Reject Product With ID
+        /// Reject Product With ID (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPut("rejection/{id}")]
         public async Task<IActionResult> RejectCreateProduct(string id)
         {

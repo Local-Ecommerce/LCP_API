@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using BLL.Dtos;
 using BLL.Dtos.StoreMenuDetail;
 using BLL.Services.Interfaces;
+using DAL.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,8 +28,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create Store Menu Detail
+        /// Create Store Menu Detail (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPost]
         public async Task<IActionResult> CreateStoreMenuDetail([FromBody] StoreMenuDetailRequest request)
         {
@@ -50,9 +53,11 @@ namespace API.Controllers
             return Ok(json);
         }
 
+
         /// <summary>
-        /// Update Store Menu Detail By Id
+        /// Update Store Menu Detail By Id (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateStoreMenuDetailById(string id, [FromBody] StoreMenuDetailUpdateRequest request)
         {
@@ -78,8 +83,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Store Menu Detail By Id
+        /// Delete Store Menu Detail By Id (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStoreMenuDetailById(string id)
         {

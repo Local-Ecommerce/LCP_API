@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DAL.Constants;
-using BLL.Dtos;
 using BLL.Dtos.Exception;
 using BLL.Dtos.Menu;
 using BLL.Dtos.ProductInMenu;
@@ -44,10 +43,9 @@ namespace BLL.Services
         /// </summary>
         /// <param name="menuRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<MenuResponse>> CreateMenu(MenuRequest menuRequest)
+        public async Task<MenuResponse> CreateMenu(MenuRequest menuRequest)
         {
             Menu menu = _mapper.Map<Menu>(menuRequest);
-
             try
             {
                 menu.MenuId = _utilService.CreateId(PREFIX);
@@ -62,23 +60,9 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[MenuService.CreateMenu()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<MenuResponse>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
-            //Create Response
-            MenuResponse menuResponse = _mapper.Map<MenuResponse>(menu);
-
-            return new BaseResponse<MenuResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = menuResponse
-            };
+            return _mapper.Map<MenuResponse>(menu);
         }
 
 
@@ -87,38 +71,20 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendMenuResponses>> GetMenuById(string id)
+        public async Task<ExtendMenuResponse> GetMenuById(string id)
         {
-            ExtendMenuResponses menuReponse = null;
-
-            //Get Menu from DB
-            if (menuReponse is null)
+            Menu menu;
+            try
             {
-                try
-                {
-                    Menu menu = await _unitOfWork.Menus.GetMenuIncludeResidentById(id);
-
-                    menuReponse = _mapper.Map<ExtendMenuResponses>(menu);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[MenuService.GetMenuById()]: " + e.Message);
-
-                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Menu>
-                    {
-                        ResultCode = (int)MenuStatus.MENU_NOT_FOUND,
-                        ResultMessage = MenuStatus.MENU_NOT_FOUND.ToString(),
-                        Data = default
-                    });
-                }
+                menu = await _unitOfWork.Menus.GetMenuIncludeResidentById(id);
             }
-
-            return new BaseResponse<ExtendMenuResponses>
+            catch (Exception e)
             {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = menuReponse
-            };
+                _logger.Error("[MenuService.GetMenuById()]: " + e.Message);
+
+                throw new EntityNotFoundException(typeof(Menu), id);
+            }
+            return _mapper.Map<ExtendMenuResponse>(menu);
         }
 
 
@@ -128,7 +94,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="menuUpdateRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<MenuResponse>> UpdateMenuById(string id, MenuUpdateRequest menuUpdateRequest)
+        public async Task<MenuResponse> UpdateMenuById(string id, MenuUpdateRequest menuUpdateRequest)
         {
             Menu menu;
             try
@@ -139,12 +105,7 @@ namespace BLL.Services
             {
                 _logger.Error("[MenuService.UpdateMenuById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Menu>
-                {
-                    ResultCode = (int)MenuStatus.MENU_NOT_FOUND,
-                    ResultMessage = MenuStatus.MENU_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(Menu), id);
             }
 
             //Update Menu to DB
@@ -160,24 +121,10 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[MenuService.UpdateMenuById()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Menu>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
 
-            //Create Response
-            MenuResponse menuResponse = _mapper.Map<MenuResponse>(menu);
-
-            return new BaseResponse<MenuResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = menuResponse
-            };
+            return _mapper.Map<MenuResponse>(menu);
         }
 
 
@@ -186,7 +133,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<MenuResponse>> DeleteMenuById(string id)
+        public async Task<MenuResponse> DeleteMenuById(string id)
         {
             //Check id
             Menu menu;
@@ -198,12 +145,7 @@ namespace BLL.Services
             {
                 _logger.Error("[MenuService.DeleteMenuById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Menu>
-                {
-                    ResultCode = (int)MenuStatus.MENU_NOT_FOUND,
-                    ResultMessage = MenuStatus.MENU_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(Menu), id);
             }
 
             //Delete Menu
@@ -219,24 +161,10 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[MenuService.DeleteMenuById()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Menu>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
 
-            //Create Response
-            MenuResponse menuResponse = _mapper.Map<MenuResponse>(menu);
-
-            return new BaseResponse<MenuResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = menuResponse
-            };
+            return _mapper.Map<MenuResponse>(menu);
         }
 
 
@@ -246,7 +174,7 @@ namespace BLL.Services
         /// <param name="menuId"></param>
         /// <param name="productInMenuRequests"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<ExtendProductInMenuResponse>>> AddProductsToMenu(string menuId,
+        public async Task<List<ExtendProductInMenuResponse>> AddProductsToMenu(string menuId,
             List<ProductInMenuRequest> productInMenuRequests)
         {
             //biz rule
@@ -259,6 +187,7 @@ namespace BLL.Services
                     productInMenu.ProductInMenuId = _utilService.CreateId(PREFIX);
                     productInMenu.MenuId = menuId;
                     productInMenu.CreatedDate = DateTime.Now;
+                    productInMenu.UpdatedDate = DateTime.Now;
                     productInMenu.Status = (int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU;
 
                     _unitOfWork.ProductInMenus.Add(productInMenu);
@@ -270,24 +199,10 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[MenuService.AddProductsToMenu()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ExtendProductInMenuResponse>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
 
-            //create response
-            List<ExtendProductInMenuResponse> ExtendProductInMenuResponses = _mapper.Map<List<ExtendProductInMenuResponse>>(productInMenus);
-
-            return new BaseResponse<List<ExtendProductInMenuResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = ExtendProductInMenuResponses
-            };
+            return _mapper.Map<List<ExtendProductInMenuResponse>>(productInMenus);
         }
 
 
@@ -297,7 +212,7 @@ namespace BLL.Services
         /// <param name="productInMenuId"></param>
         /// <param name="productInMenuUpdateRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendProductInMenuResponse>> UpdateProductInMenuById(string productInMenuId,
+        public async Task<ExtendProductInMenuResponse> UpdateProductInMenuById(string productInMenuId,
             ProductInMenuUpdateRequest productInMenuUpdateRequest)
         {
             ProductInMenu productInMenu;
@@ -309,19 +224,15 @@ namespace BLL.Services
             {
                 _logger.Error("[MenuService.UpdateProductInMenuById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Menu>
-                {
-                    ResultCode = (int)MenuStatus.MENU_NOT_FOUND,
-                    ResultMessage = MenuStatus.MENU_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(ProductInMenu), productInMenuId);
             }
 
-            //Update Product In Menu to DB
+            //Update Product In Menu
             try
             {
                 productInMenu.Status = productInMenuUpdateRequest.Status;
                 productInMenu.Price = productInMenuUpdateRequest.Price;
+                productInMenu.UpdatedDate = DateTime.Now;
 
                 _unitOfWork.ProductInMenus.Update(productInMenu);
 
@@ -330,24 +241,10 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[MenuService.UpdateProductInMenuById()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ProductInMenu>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
 
-            //Create Response
-            ExtendProductInMenuResponse extendProductInMenuResponse = _mapper.Map<ExtendProductInMenuResponse>(productInMenu);
-
-            return new BaseResponse<ExtendProductInMenuResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendProductInMenuResponse
-            };
+            return _mapper.Map<ExtendProductInMenuResponse>(productInMenu);
         }
 
 
@@ -356,7 +253,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="productInMenuId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<string>> DeleteProductInMenuById(string productInMenuId)
+        public async Task<string> DeleteProductInMenuById(string productInMenuId)
         {
             ProductInMenu productInMenu;
             try
@@ -371,21 +268,10 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[MenuService.DeleteProductInMenuById()]: " + e.Message);
-
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ProductInMenu>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
 
-            return new BaseResponse<string>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productInMenu.MenuId.ToString()
-            };
+            return null;
         }
 
 
@@ -394,7 +280,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="productInMenuId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendProductInMenuResponse>> GetProductInMenuById(string productInMenuId)
+        public async Task<ExtendProductInMenuResponse> GetProductInMenuById(string productInMenuId)
         {
             ProductInMenu productInMenu;
 
@@ -406,23 +292,10 @@ namespace BLL.Services
             {
                 _logger.Error("[MenuService.GetProductInMenuById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ProductInMenu>
-                {
-                    ResultCode = (int)ProductInMenuStatus.PRODUCT_IN_MENU_NOT_FOUND,
-                    ResultMessage = ProductInMenuStatus.PRODUCT_IN_MENU_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(ProductInMenu), productInMenuId);
             }
 
-            //create response
-            ExtendProductInMenuResponse extendProductInMenuResponse = _mapper.Map<ExtendProductInMenuResponse>(productInMenu);
-
-            return new BaseResponse<ExtendProductInMenuResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendProductInMenuResponse
-            };
+            return _mapper.Map<ExtendProductInMenuResponse>(productInMenu);
         }
 
 
@@ -431,7 +304,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="menuId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<ExtendProductInMenuResponse>>> GetProductsInMenuByMenuId(string menuId)
+        public async Task<List<ExtendProductInMenuResponse>> GetProductsInMenuByMenuId(string menuId)
         {
             List<ProductInMenu> productsInMenu;
             try
@@ -442,23 +315,10 @@ namespace BLL.Services
             {
                 _logger.Error("[MenuService.GetProductsInMenuByMenuId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ProductInMenu>
-                {
-                    ResultCode = (int)ProductInMenuStatus.PRODUCT_IN_MENU_NOT_FOUND,
-                    ResultMessage = ProductInMenuStatus.PRODUCT_IN_MENU_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(ProductInMenu), menuId);
             }
 
-            //create response
-            List<ExtendProductInMenuResponse> extendProductInMenuResponses = _mapper.Map<List<ExtendProductInMenuResponse>>(productsInMenu);
-
-            return new BaseResponse<List<ExtendProductInMenuResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendProductInMenuResponses
-            };
+            return _mapper.Map<List<ExtendProductInMenuResponse>>(productsInMenu);
         }
 
 
@@ -467,37 +327,23 @@ namespace BLL.Services
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ExtendMenuResponses>>> GetMenusByStatus(int status)
+        public async Task<List<ExtendMenuResponse>> GetMenusByStatus(int status)
         {
-            List<ExtendMenuResponses> menuList = null;
+            List<ExtendMenuResponse> menuList;
 
             //get Menu from database
             try
             {
-                menuList = _mapper.Map<List<ExtendMenuResponses>>(
-                    await _unitOfWork.Menus
-                                     .FindListAsync(me => me.Status == status));
+                menuList = _mapper.Map<List<ExtendMenuResponse>>(
+                    await _unitOfWork.Menus.FindListAsync(me => me.Status == status));
             }
             catch (Exception e)
             {
                 _logger.Error("[MenuService.GetMenusByStatus()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MenuResponse>
-                    {
-                        ResultCode = (int)MenuStatus.MENU_NOT_FOUND,
-                        ResultMessage = MenuStatus.MENU_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Menu), status);
             }
-
-            return new BaseResponse<List<ExtendMenuResponses>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = menuList
-            };
+            return menuList;
         }
 
 
@@ -505,12 +351,9 @@ namespace BLL.Services
         /// Get All Menus
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ExtendMenuResponses>>> GetAllMenus()
+        public async Task<List<ExtendMenuResponse>> GetAllMenus()
         {
             List<Menu> menus;
-
-            //get menu from database
             try
             {
                 menus = await _unitOfWork.Menus.GetAllMenusIncludeResident();
@@ -519,23 +362,10 @@ namespace BLL.Services
             {
                 _logger.Error("[MenuService.GetAllMenus()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MenuResponse>
-                    {
-                        ResultCode = (int)MenuStatus.MENU_NOT_FOUND,
-                        ResultMessage = MenuStatus.MENU_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Menu), "all");
             }
 
-            List<ExtendMenuResponses> menuResponses = _mapper.Map<List<ExtendMenuResponses>>(menus);
-
-            return new BaseResponse<List<ExtendMenuResponses>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = menuResponses
-            };
+            return _mapper.Map<List<ExtendMenuResponse>>(menus);
         }
 
 
@@ -544,35 +374,23 @@ namespace BLL.Services
         /// </summary>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<ExtendMenuResponses>>> GetMenusByResidentId(string residentId)
+        public async Task<List<ExtendMenuResponse>> GetMenusByResidentId(string residentId)
         {
-            List<ExtendMenuResponses> menuResponses;
+            List<ExtendMenuResponse> menuResponses;
 
-            //get menu from database
             try
             {
-                menuResponses = _mapper.Map<List<ExtendMenuResponses>>(
+                menuResponses = _mapper.Map<List<ExtendMenuResponse>>(
                     await _unitOfWork.Menus.GetMenusByResidentId(residentId));
             }
             catch (Exception e)
             {
                 _logger.Error("[MenuService.GetMenusByResidentId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MenuResponse>
-                    {
-                        ResultCode = (int)MenuStatus.MENU_NOT_FOUND,
-                        ResultMessage = MenuStatus.MENU_NOT_FOUND.ToString(),
-                        Data = default
-                    });
-            }
+                throw new EntityNotFoundException(typeof(Menu), residentId);
 
-            return new BaseResponse<List<ExtendMenuResponses>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = menuResponses
-            };
+            }
+            return menuResponses;
         }
 
 
@@ -585,7 +403,7 @@ namespace BLL.Services
         /// <returns></returns>
         public MenuResponse CreateDefaultMenu(string residentId, string storeName, string merchantStoreId)
         {
-            Menu menu = new Menu
+            Menu menu = new()
             {
                 MenuId = _utilService.CreateId(PREFIX),
                 MenuName = "Bảng giá của " + storeName,
@@ -597,7 +415,7 @@ namespace BLL.Services
 
             _unitOfWork.Menus.Add(menu);
 
-            ExtendMenuResponses menuResponse = _mapper.Map<ExtendMenuResponses>(menu);
+            ExtendMenuResponse menuResponse = _mapper.Map<ExtendMenuResponse>(menu);
             menuResponse.StoreMenuDetails = new Collection<StoreMenuDetailResponse>();
             menuResponse.StoreMenuDetails.Add(
                 _storeMenuDetailService.CreateDefaultStoreMenuDetail(menu.MenuId, merchantStoreId));

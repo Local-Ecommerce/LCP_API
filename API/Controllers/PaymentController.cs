@@ -1,6 +1,8 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.Payment;
 using BLL.Services.Interfaces;
+using DAL.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -27,8 +29,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Create payment
+        /// Create payment (Customer)
         /// </summary>
+        [Authorize(Roles = ResidentType.CUSTOMER)]
         [HttpPost]
         public async Task<IActionResult> CreatePayment([FromBody] PaymentRequest paymentRequest)
         {
@@ -53,8 +56,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Payment By Id
+        /// Get Payment By Id (Customer)
         /// </summary>
+        [Authorize(Roles = ResidentType.CUSTOMER)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPaymentById(string id)
         {
@@ -78,8 +82,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Payment By Id
+        /// Update Payment By Id (Customer)
         /// </summary>
+        [Authorize(Roles = ResidentType.CUSTOMER)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePaymentById(string id, [FromBody] PaymentRequest paymentRequest)
         {
@@ -104,8 +109,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Payment By Id
+        /// Delete Payment By Id (Customer)
         /// </summary>
+        [Authorize(Roles = ResidentType.CUSTOMER)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePaymentById(string id)
         {
@@ -129,8 +135,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Payment By Order Id
+        /// Get Payment By Order Id (Customer)
         /// </summary>
+        [Authorize(Roles = ResidentType.CUSTOMER)]
         [HttpGet("order/{orderId}")]
         public async Task<IActionResult> GetPaymentByOrderId(string orderId)
         {
@@ -154,8 +161,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Payment By Payment Method Id
+        /// Get Payment By Payment Method Id (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("paymentMethod/{paymentMethodId}")]
         public async Task<IActionResult> GetPaymentByPaymentMethodId(string paymentMethodId)
         {
@@ -179,8 +187,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Payment By Date
+        /// Get Payment By Date (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("bydate/{date}")]
         public async Task<IActionResult> GetPaymentByDate(DateTime date)
         {

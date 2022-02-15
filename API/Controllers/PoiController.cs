@@ -1,6 +1,7 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.POI;
 using BLL.Services.Interfaces;
+using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create poi
+        /// Create poi (Market Manager)
         /// </summary>
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpPost]
         public async Task<IActionResult> CreatePoi([FromBody] PoiRequest poiRequest)
         {
@@ -103,8 +105,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Update Poi
+        /// Update Poi (Market Manager)
         /// </summary>
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePoiById(string id, [FromBody] PoiUpdateRequest poiRequest)
         {
@@ -128,8 +131,9 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Delete poi
+        /// Delete poi (Market Manager)
         /// </summary>
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePoisById(string id)
         {
@@ -204,9 +208,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Poi By Status
+        /// Get Poi By Status (Market Manager)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetPoiByStatus(int status)
         {
