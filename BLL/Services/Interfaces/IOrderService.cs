@@ -1,5 +1,4 @@
-﻿using BLL.Dtos;
-using BLL.Dtos.Order;
+﻿using BLL.Dtos.Order;
 using BLL.Dtos.OrderDetail;
 using DAL.Models;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace BLL.Services.Interfaces
         /// <param name="orderDetailRequests"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ExtendOrderResponse>>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId);
+        Task<List<ExtendOrderResponse>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId);
 
 
         /// <summary>
@@ -24,7 +23,7 @@ namespace BLL.Services.Interfaces
         /// <param name="residentId"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ExtendOrderResponse>>> GetOrderByResidentIdAndStatus(string residentId, int status);
+        Task<List<ExtendOrderResponse>> GetOrderByResidentIdAndStatus(string residentId, int status);
 
 
         /// <summary>
@@ -32,7 +31,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="merchantStoreId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ExtendOrderResponse>>> GetOrderByMerchantStoreId(string merchantStoreId);
+        Task<List<ExtendOrderResponse>> GetOrderByMerchantStoreId(string merchantStoreId);
 
 
         /// <summary>
@@ -41,7 +40,7 @@ namespace BLL.Services.Interfaces
         /// <param name="orderId"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<BaseResponse<OrderResponse>> DeleteOrderByOrderIdAndResidentId(string orderId, string residentId);
+        Task<OrderResponse> DeleteOrderByOrderIdAndResidentId(string orderId, string residentId);
 
 
         /// <summary>

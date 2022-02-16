@@ -49,14 +49,14 @@ namespace API.Controllers
             _logger.Information($"POST api/order START Request: " +
                 $"{JsonSerializer.Serialize(orderDetailRequests)}" + $"Resident Id: {residentId}");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //Create Order
-            BaseResponse<List<ExtendOrderResponse>> response = await
+            List<ExtendOrderResponse> response = await
             _orderService.CreateOrder(orderDetailRequests, residentId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -82,14 +82,14 @@ namespace API.Controllers
 
             _logger.Information($"GET api/order/status/{status} START Request: " + $"Resident Id: {residentId}");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //Get Order
-            BaseResponse<List<ExtendOrderResponse>> response = await
+            List<ExtendOrderResponse> response = await
             _orderService.GetOrderByResidentIdAndStatus(residentId, status);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -116,14 +116,14 @@ namespace API.Controllers
 
             _logger.Information($"GET api/order/store/{merchantStoreId} START Request: ");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //Get Order
-            BaseResponse<List<ExtendOrderResponse>> response = await
+            List<ExtendOrderResponse> response = await
             _orderService.GetOrderByMerchantStoreId(merchantStoreId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -149,14 +149,14 @@ namespace API.Controllers
 
             _logger.Information($"DELETE api/order/{orderId} START Request: " + $"Resident Id: {residentId}");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //Delete Order
-            BaseResponse<OrderResponse> response = await
+            OrderResponse response = await
             _orderService.DeleteOrderByOrderIdAndResidentId(orderId, residentId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<OrderResponse>.Success(response));
 
             watch.Stop();
 

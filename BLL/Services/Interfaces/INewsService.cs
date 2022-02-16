@@ -1,5 +1,4 @@
-﻿using BLL.Dtos;
-using BLL.Dtos.News;
+﻿using BLL.Dtos.News;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,7 +12,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="newsRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<NewsResponse>> CreateNews(NewsRequest newsRequest);
+        Task<NewsResponse> CreateNews(NewsRequest newsRequest);
 
 
         /// <summary>
@@ -21,7 +20,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendNewsResponse>> GetNewsById(string id);
+        Task<ExtendNewsResponse> GetNewsById(string id);
 
 
         /// <summary>
@@ -29,7 +28,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ExtendNewsResponse>>> GetNewsByReleaseDate(DateTime date);
+        Task<List<ExtendNewsResponse>> GetNewsByReleaseDate(DateTime date);
 
 
         /// <summary>
@@ -37,7 +36,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="aparmentId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ExtendNewsResponse>>> GetNewsByAparmentId(string apartmentId);
+        Task<List<ExtendNewsResponse>> GetNewsByAparmentId(string apartmentId);
 
 
         /// <summary>
@@ -46,7 +45,7 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="newsUpdateRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<NewsResponse>> UpdateNewsById(string id, NewsUpdateRequest newsUpdateRequest);
+        Task<NewsResponse> UpdateNewsById(string id, NewsUpdateRequest newsUpdateRequest);
 
 
         /// <summary>
@@ -54,7 +53,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<NewsResponse>> DeleteNewsById(string id);
+        Task<NewsResponse> DeleteNewsById(string id);
 
 
         /// <summary>
@@ -62,13 +61,13 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ExtendNewsResponse>>> GetNewsByStatus(int status);
+        Task<List<ExtendNewsResponse>> GetNewsByStatus(int status);
 
 
         /// <summary>
         /// Get All News
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<ExtendNewsResponse>>> GetAllNews();
+        Task<List<ExtendNewsResponse>> GetAllNews();
     }
 }

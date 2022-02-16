@@ -42,9 +42,9 @@ namespace API.Controllers
             watch.Start();
 
             //create MerchantStore
-            BaseResponse<MerchantStoreResponse> response = await _merchantStoreService.CreateMerchantStore(merchantStoreRequest);
+            MerchantStoreResponse response = await _merchantStoreService.CreateMerchantStore(merchantStoreRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<MerchantStoreResponse>.Success(response));
 
             watch.Stop();
 
@@ -68,9 +68,9 @@ namespace API.Controllers
             watch.Start();
 
             //get MerchantStore
-            BaseResponse<ExtendMerchantStoreResponse> response = await _merchantStoreService.GetMerchantStoreById(id);
+            ExtendMerchantStoreResponse response = await _merchantStoreService.GetMerchantStoreById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendMerchantStoreResponse>.Success(response));
 
             watch.Stop();
 
@@ -96,9 +96,9 @@ namespace API.Controllers
             watch.Start();
 
             //update MerchantStore
-            BaseResponse<ExtendMerchantStoreResponse> response = await _merchantStoreService.RequestUpdateMerchantStoreById(id, request);
+            ExtendMerchantStoreResponse response = await _merchantStoreService.RequestUpdateMerchantStoreById(id, request);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendMerchantStoreResponse>.Success(response));
 
             watch.Stop();
 
@@ -121,9 +121,9 @@ namespace API.Controllers
             watch.Start();
 
             //delete MerchantStore
-            BaseResponse<MerchantStoreResponse> response = await _merchantStoreService.DeleteMerchantStore(id);
+            MerchantStoreResponse response = await _merchantStoreService.DeleteMerchantStore(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<MerchantStoreResponse>.Success(response));
 
             watch.Stop();
 
@@ -147,10 +147,10 @@ namespace API.Controllers
             watch.Start();
 
             //get MerchantStore
-            BaseResponse<List<MerchantStoreResponse>> response =
+            List<MerchantStoreResponse> response =
                 await _merchantStoreService.GetMerchantStoreByApartmentId(apartmentId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -175,10 +175,10 @@ namespace API.Controllers
             watch.Start();
 
             //get MerchantStore
-            BaseResponse<List<StoreMenuDetailResponse>> response =
+            List<StoreMenuDetailResponse> response =
                 await _merchantStoreService.AddStoreMenuDetailsToMerchantStore(id, storeMenuDetailRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -203,10 +203,10 @@ namespace API.Controllers
             watch.Start();
 
             //get MerchantStore
-            BaseResponse<StoreMenuDetailResponse> response =
+            StoreMenuDetailResponse response =
                 await _merchantStoreService.UpdateStoreMenuDetailById(id, storeMenuDetailUpdateRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<StoreMenuDetailResponse>.Success(response));
 
             watch.Stop();
 
@@ -230,10 +230,10 @@ namespace API.Controllers
             watch.Start();
 
             //get MerchantStore
-            BaseResponse<StoreMenuDetailResponse> response =
+            StoreMenuDetailResponse response =
                 await _merchantStoreService.DeleteStoreMenuDetailById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<StoreMenuDetailResponse>.Success(response));
 
             watch.Stop();
 
@@ -257,10 +257,10 @@ namespace API.Controllers
             watch.Start();
 
             //get MerchantStore
-            BaseResponse<List<MerchantStoreResponse>> response =
+            List<MerchantStoreResponse> response =
                 await _merchantStoreService.GetMerchantStoresByStatus(status);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -284,10 +284,10 @@ namespace API.Controllers
             watch.Start();
 
             //get MerchantStore
-            BaseResponse<List<ExtendMerchantStoreResponse>> response =
+            List<ExtendMerchantStoreResponse> response =
                 await _merchantStoreService.GetAllMerchantStores();
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -311,10 +311,10 @@ namespace API.Controllers
             watch.Start();
 
             //get pending merchantStore
-            BaseResponse<List<ExtendMerchantStoreResponse>> response =
+            List<ExtendMerchantStoreResponse> response =
                 await _merchantStoreService.GetPendingMerchantStores();
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -339,9 +339,9 @@ namespace API.Controllers
             watch.Start();
 
             //get menus
-            BaseResponse<ExtendMerchantStoreResponse> response = await _merchantStoreService.GetMenusByStoreId(id);
+            ExtendMerchantStoreResponse response = await _merchantStoreService.GetMenusByStoreId(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendMerchantStoreResponse>.Success(response));
 
             watch.Stop();
 
@@ -365,9 +365,9 @@ namespace API.Controllers
             watch.Start();
 
             //approve MerchantStore
-            BaseResponse<ExtendMerchantStoreResponse> response = await _merchantStoreService.VerifyMerchantStore(id, true);
+            ExtendMerchantStoreResponse response = await _merchantStoreService.VerifyMerchantStore(id, true);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendMerchantStoreResponse>.Success(response));
 
             watch.Stop();
 
@@ -391,9 +391,9 @@ namespace API.Controllers
             watch.Start();
 
             //reject MerchantStore
-            BaseResponse<ExtendMerchantStoreResponse> response = await _merchantStoreService.VerifyMerchantStore(id, false);
+            ExtendMerchantStoreResponse response = await _merchantStoreService.VerifyMerchantStore(id, false);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendMerchantStoreResponse>.Success(response));
 
             watch.Stop();
 

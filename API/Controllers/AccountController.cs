@@ -63,7 +63,7 @@ namespace API.Controllers
         {
             _logger.Information($"GET api/account/{id} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //get account

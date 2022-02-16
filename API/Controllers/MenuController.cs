@@ -68,7 +68,7 @@ namespace API.Controllers
             //Get Menu
             ExtendMenuResponse response = await _menuService.GetMenuById(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendMenuResponse>.Success(response));
 
             watch.Stop();
 
