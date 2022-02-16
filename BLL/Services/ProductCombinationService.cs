@@ -38,7 +38,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="productCombinationRequest"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ProductCombinationResponse> CreateProductCombination(ProductCombinationRequest productCombinationRequest)
         {
 
@@ -69,7 +68,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ProductCombinationResponse> DeleteProductCombinationById(string id)
         {
             //Check id
@@ -110,7 +108,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ProductCombinationResponse> GetProductCombinationById(string id)
         {
             ProductCombinationResponse productCombinationReponse = null;
@@ -141,7 +138,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ProductCombinationResponse>> GetProductCombinationsByBaseProductId(string id)
         {
             List<ProductCombinationResponse> productCombinationList = null;
@@ -169,7 +165,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ProductCombinationResponse>> GetProductCombinationsByProductId(string id)
         {
             List<ProductCombinationResponse> productCombinationList = null;
@@ -197,7 +192,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ProductCombinationResponse>> GetProductCombinationsByStatus(int status)
         {
             List<ProductCombinationResponse> productCombinationList = null;
@@ -226,7 +220,6 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="productCombinationRequest"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ProductCombinationResponse> UpdateProductCombinationById(string id, ProductCombinationRequest productCombinationRequest)
         {
             ProductCombination productCombination;

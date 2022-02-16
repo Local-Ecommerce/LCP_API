@@ -160,14 +160,13 @@ namespace BLL.Services
 
                 if(account.TokenExpiredDate == null || account.TokenExpiredDate < DateTime.Now)
                 {
-                    string roleId, apartmentId;
+                    string roleId;
                     //find resident role
                     if (account.RoleId.Equals(RoleId.ADMIN))
                     {
                         //is admin
                         expiredDate = DateTime.Now.AddHours((double)TimeUnit.ONE_HOUR);
                         roleId = account.RoleId;
-                        apartmentId = null;
                     }
                     else
                     {
@@ -179,10 +178,9 @@ namespace BLL.Services
                             expiredDate = DateTime.Now.AddDays((double)TimeUnit.THIRTY_DAYS);
 
                         roleId = resident.Type;
-                        apartmentId = resident.ApartmentId;
                     }
 
-                    account.Token = _jwtAuthenticationManager.Authenticate(account.AccountId, roleId, apartmentId, expiredDate);
+                    account.Token = _jwtAuthenticationManager.Authenticate(account.AccountId, roleId, expiredDate);
                     account.TokenExpiredDate = expiredDate;
 
                     if (isCreate)
@@ -210,7 +208,6 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="accountImageForm"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ExtendAccountResponse> UpdateAccount(string id)
         {
             //biz rule

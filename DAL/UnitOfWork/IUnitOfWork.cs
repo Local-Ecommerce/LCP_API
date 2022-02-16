@@ -8,7 +8,6 @@ namespace DAL.UnitOfWork
     {
         IAccountRepository Accounts { get; }
         IApartmentRepository Apartments { get; }
-        ICollectionMappingRepository CollectionMappings { get; }
         IMenuRepository Menus { get; }
         IMerchantStoreRepository MerchantStores { get; }
         INewsRepository News { get; }

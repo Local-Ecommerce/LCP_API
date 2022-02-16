@@ -1,6 +1,5 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.Exception;
-using BLL.Services.Interfaces;
 using DAL.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -20,7 +19,6 @@ namespace BLL.Filters
             var apiResponse = ApiResponse<string>.Fail(exception.Message);
             HttpResponseMessage response;
 
-            HttpStatusException hException = null; //replace later
             switch (exception)
             {
                 case BusinessException:
@@ -35,10 +33,6 @@ namespace BLL.Filters
                     apiResponse.ResultMessage = "Authentication failed";
                     response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
                     break;
-                case HttpStatusException: //replace later
-                    hException = (HttpStatusException)exception;
-                    response = new HttpResponseMessage(hException.Status);
-                    break;
                 default:
                     response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
                     apiResponse.ResultMessage = CommonResponse.ERROR.ToString();
@@ -46,7 +40,7 @@ namespace BLL.Filters
                     break;
             }
 
-            response.Content = exception is HttpStatusException ? new StringContent(JsonSerializer.Serialize(hException.Response)) : new StringContent(JsonSerializer.Serialize(apiResponse));
+            response.Content = new StringContent(JsonSerializer.Serialize(apiResponse));
             context.Result = new HttpResponseMessageResult(response);
             base.OnException(context);
         }

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BLL.Dtos;
 using DAL.Constants;
 using BLL.Dtos.Exception;
 using BLL.Dtos.MerchantStore;
@@ -7,7 +6,6 @@ using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using BLL.Dtos.StoreMenuDetail;
@@ -309,7 +307,6 @@ namespace BLL.Services
         /// Get Merchant Stores By Status
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<MerchantStoreResponse>> GetMerchantStoresByStatus(int status)
         {
             List<MerchantStoreResponse> merchantStoreList = null;
@@ -335,7 +332,6 @@ namespace BLL.Services
         /// Get All Merchant Stores
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ExtendMerchantStoreResponse>> GetAllMerchantStores()
         {
             //Get MerchantStore from database
@@ -359,7 +355,6 @@ namespace BLL.Services
         /// Get Pending Merchant Stores
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ExtendMerchantStoreResponse>> GetPendingMerchantStores()
         {
             List<ExtendMerchantStoreResponse> merchantStoreResponses;

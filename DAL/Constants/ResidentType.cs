@@ -9,7 +9,7 @@ namespace DAL.Constants
 
     public class RoleId
     {
-        public const string ADMIN = "R001";
-        public const string APARTMENT = "R002";
+        public const string ADMIN = "R002";
+        public const string APARTMENT = "R001";
     }
 }

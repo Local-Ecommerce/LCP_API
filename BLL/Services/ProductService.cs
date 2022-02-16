@@ -353,7 +353,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ProductResponse> DeleteRelatedProduct(string id)
         {
             //biz rule
@@ -405,7 +404,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ProductResponse>> GetProductsByStatus(int status)
         {
             //biz rule
@@ -436,7 +434,6 @@ namespace BLL.Services
         /// Get Pending Products
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ExtendProductResponse>> GetPendingProducts()
         {
             List<ExtendProductResponse> productResponses;

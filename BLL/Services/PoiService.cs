@@ -245,7 +245,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ExtendPoiResponse>> GetPoisByStatus(int status)
         {
             List<ExtendPoiResponse> poiList = null;

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BLL.Dtos;
 using DAL.Constants;
 using BLL.Dtos.Exception;
 using BLL.Dtos.SystemCategory;
@@ -8,7 +7,6 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 
@@ -21,7 +19,6 @@ namespace BLL.Services
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
         private const string PREFIX = "SC_";
-        private const string CACHE_KEY = "System Category";
 
         public SystemCategoryService(IUnitOfWork unitOfWork,
             ILogger logger,
@@ -39,7 +36,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<SystemCategoryResponse> CreateSystemCategory(SystemCategoryRequest request)
         {
             //biz rule
@@ -60,16 +56,7 @@ namespace BLL.Services
                                             sc.SystemCategoryId.Equals(systemCategory.BelongTo))).CategoryLevel;
 
                     if (parentLevel == (int?)CategoryLevel.THREE)
-                    {
-                        _logger.Error("[SystemCategoryService.CreateSystemCategory()]: Max level has been reached.");
-
-                        throw new HttpStatusException(HttpStatusCode.OK,
-                            new ApiResponseFailed<SystemCategoryResponse>
-                            {
-                                ResultCode = (int)SystemCategoryStatus.MAXED_OUT_LEVEL,
-                                ResultMessage = SystemCategoryStatus.MAXED_OUT_LEVEL.ToString()
-                            });
-                    }
+                        throw new BusinessException(SystemCategoryStatus.MAXED_OUT_LEVEL.ToString(), (int)SystemCategoryStatus.MAXED_OUT_LEVEL);
                     else
                         level = parentLevel + 1;
                 }
@@ -82,14 +69,9 @@ namespace BLL.Services
 
                 await _unitOfWork.SaveChangesAsync();
             }
-            catch (HttpStatusException)
-            {
-                throw;
-            }
             catch (Exception e)
             {
                 _logger.Error("[SystemCategoryService.CreateSystemCategory()]: " + e.Message);
-
                 throw;
             }
 
@@ -108,7 +90,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<SystemCategoryResponse> DeleteSystemCategory(string id)
         {
             //biz rule
@@ -177,7 +158,6 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<SystemCategoryResponse> UpdateSystemCategory(string id,
             SystemCategoryUpdateRequest request)
         {
@@ -223,7 +203,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<SystemCategoryResponse> GetSystemCategoryById(string id)
         {
             SystemCategory systemCategory;
@@ -250,7 +229,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<SystemCategoryResponse> GetSystemCategoryAndOneLevelDownInverseBelongToById(string id)
         {
             SystemCategory systemCategory;
@@ -277,7 +255,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<SystemCategoryResponse>> GetSystemCategoriesByStatus(int status)
         {
             List<SystemCategoryResponse> systemCategoryList = null;
@@ -304,7 +281,6 @@ namespace BLL.Services
         /// Get System Categories For Auto Complete
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<SystemCategoryForAutoCompleteResponse>> GetSystemCategoriesForAutoComplete()
         {
             List<SystemCategoryForAutoCompleteResponse> systemCategoryList = null;

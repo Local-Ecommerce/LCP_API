@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BLL.Dtos;
 using BLL.Dtos.Resident;
 using BLL.Services.Interfaces;
 using DAL.UnitOfWork;
@@ -8,7 +7,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Models;
 using BLL.Dtos.Exception;
-using System.Net;
 using DAL.Constants;
 
 namespace BLL.Services
@@ -42,7 +40,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="residentRequest"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ResidentResponse> CreateResident(ResidentRequest residentRequest)
         {
             //biz rule
@@ -113,7 +110,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ResidentResponse> GetResidentById(string id)
         {
             //biz rule
@@ -143,7 +139,6 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="residentUpdateRequest"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ResidentResponse> UpdateResidentById(string id, ResidentUpdateRequest residentUpdateRequest)
         {
             Resident resident;
@@ -213,7 +208,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ResidentResponse> DeleteResident(string id)
         {
             //biz rule
@@ -256,7 +250,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="apartmentId"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ResidentResponse>> GetResidentByApartmentId(string apartmentId)
         {
             List<ResidentResponse> residentResponses;
@@ -285,7 +278,6 @@ namespace BLL.Services
         /// Get All Residents
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ResidentResponse>> GetAllResidents()
         {
             List<ResidentResponse> residentResponses;
@@ -315,7 +307,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ResidentResponse>> GetResidentByAccountId(string accountId)
         {
             List<ResidentResponse> residentResponses;
