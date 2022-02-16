@@ -37,7 +37,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="paymentRequest"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<PaymentResponse> CreatePayment(PaymentRequest paymentRequest)
         {
             Payment Payment = _mapper.Map<Payment>(paymentRequest);
@@ -68,7 +67,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<PaymentResponse> DeletePaymentById(string id)
         {
             //Check id
@@ -109,7 +107,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<PaymentResponse>> GetPaymentByDate(DateTime date)
         {
             List<PaymentResponse> paymentResponses;
@@ -138,7 +135,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<PaymentResponse> GetPaymentById(string id)
         {
             PaymentResponse paymentReponse;
@@ -167,7 +163,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<PaymentResponse>> GetPaymentByOrderId(string orderId)
         {
             List<PaymentResponse> paymentResponses;
@@ -196,7 +191,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="amount"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<PaymentResponse>> GetPaymentByPaymentAmount(string amount)
         {
             List<PaymentResponse> paymentResponses;
@@ -225,7 +219,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="paymentMethodId"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<PaymentResponse>> GetPaymentByPaymentMethodId(string paymentMethodId)
         {
             List<PaymentResponse> paymentResponses;
@@ -255,7 +248,6 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="paymentRequest"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<PaymentResponse> UpdatePaymentById(string id, PaymentRequest paymentRequest)
         {
             Payment payment;

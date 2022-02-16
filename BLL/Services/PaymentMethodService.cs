@@ -36,7 +36,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="paymentMethodRequest"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<PaymentMethodResponse> CreatePaymentMethod(PaymentMethodRequest paymentMethodRequest)
         {
             //biz rule
@@ -69,7 +68,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<PaymentMethodResponse> DeletePaymentMethod(string id)
         {
             //biz rule
@@ -112,7 +110,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<PaymentMethodResponse> GetPaymentMethodById(string id)
         {
             //biz rule
@@ -144,7 +141,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<PaymentMethodResponse>> GetAllPaymentMethod()
         {
             //biz rule
@@ -176,7 +172,6 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="paymentMethodRequest"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<PaymentMethodResponse> UpdatePaymentMethodById(string id, PaymentMethodRequest paymentMethodRequest)
         {
             //biz ruie

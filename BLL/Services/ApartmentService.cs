@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BLL.Dtos;
 using DAL.Constants;
 using BLL.Dtos.Exception;
 using BLL.Dtos.Apartment;
@@ -7,7 +6,6 @@ using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -195,7 +193,6 @@ namespace BLL.Services
         /// Get Apartments By Status
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ApartmentResponse>> GetApartmentsByStatus(int status)
         {
             List<ApartmentResponse> apartmentResponses;
