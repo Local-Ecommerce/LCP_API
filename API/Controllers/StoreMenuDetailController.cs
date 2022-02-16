@@ -41,9 +41,9 @@ namespace API.Controllers
             watch.Start();
 
             //create
-            BaseResponse<StoreMenuDetailResponse> response = await _storeMenuDetailService.CreateStoreMenuDetail(request);
+            StoreMenuDetailResponse response = await _storeMenuDetailService.CreateStoreMenuDetail(request);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<StoreMenuDetailResponse>.Success(response));
 
             watch.Stop();
 
@@ -68,10 +68,10 @@ namespace API.Controllers
             watch.Start();
 
             //update
-            BaseResponse<StoreMenuDetailResponse> response = 
+            StoreMenuDetailResponse response = 
                 await _storeMenuDetailService.UpdateStoreMenuDetailById(id, request);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<StoreMenuDetailResponse>.Success(response));
 
             watch.Stop();
 
@@ -95,10 +95,10 @@ namespace API.Controllers
             watch.Start();
 
             //delete
-            BaseResponse<StoreMenuDetailResponse> response =
+            StoreMenuDetailResponse response =
                 await _storeMenuDetailService.DeleteStoreMenuDetailById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<StoreMenuDetailResponse>.Success(response));
 
             watch.Stop();
 

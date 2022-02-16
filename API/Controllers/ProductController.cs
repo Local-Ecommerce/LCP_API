@@ -41,9 +41,9 @@ namespace API.Controllers
             watch.Start();
 
             //create product
-            BaseResponse<ExtendProductResponse> response = await _productService.CreateProduct(productRequest);
+            ExtendProductResponse response = await _productService.CreateProduct(productRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
 
             watch.Stop();
 
@@ -68,9 +68,9 @@ namespace API.Controllers
             watch.Start();
 
             //create product
-            BaseResponse<ProductResponse> response = await _productService.AddRelatedProduct(id, relatedProductRequest);
+            ProductResponse response = await _productService.AddRelatedProduct(id, relatedProductRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ProductResponse>.Success(response));
 
             watch.Stop();
 
@@ -94,9 +94,9 @@ namespace API.Controllers
             watch.Start();
 
             //get base product
-            BaseResponse<ExtendProductResponse> response = await _productService.GetBaseProductById(id);
+            ExtendProductResponse response = await _productService.GetBaseProductById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
 
             watch.Stop();
 
@@ -120,9 +120,9 @@ namespace API.Controllers
             watch.Start();
 
             //get base product
-            BaseResponse<List<ExtendProductResponse>> response = await _productService.GetAllBaseProduct();
+            List<ExtendProductResponse> response = await _productService.GetAllBaseProduct();
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -146,9 +146,9 @@ namespace API.Controllers
             watch.Start();
 
             //get related product
-            BaseResponse<ProductResponse> response = await _productService.GetRelatedProductById(id);
+            ProductResponse response = await _productService.GetRelatedProductById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ProductResponse>.Success(response));
 
             watch.Stop();
 
@@ -174,9 +174,9 @@ namespace API.Controllers
             watch.Start();
 
             //update product
-            BaseResponse<ExtendProductResponse> response = await _productService.RequestUpdateProduct(id, productRequest);
+            ExtendProductResponse response = await _productService.RequestUpdateProduct(id, productRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
 
             watch.Stop();
 
@@ -201,9 +201,9 @@ namespace API.Controllers
             watch.Start();
 
             //delete product
-            BaseResponse<ExtendProductResponse> response = await _productService.DeleteBaseProduct(id);
+            ExtendProductResponse response = await _productService.DeleteBaseProduct(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
 
             watch.Stop();
 
@@ -226,9 +226,9 @@ namespace API.Controllers
             watch.Start();
 
             //delete product
-            BaseResponse<ProductResponse> response = await _productService.DeleteRelatedProduct(id);
+            ProductResponse response = await _productService.DeleteRelatedProduct(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ProductResponse>.Success(response));
 
             watch.Stop();
 
@@ -252,10 +252,10 @@ namespace API.Controllers
             watch.Start();
 
             //get Product
-            BaseResponse<List<ProductResponse>> response =
+            List<ProductResponse> response =
                 await _productService.GetProductsByStatus(status);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -279,9 +279,9 @@ namespace API.Controllers
             watch.Start();
 
             //get Product
-            BaseResponse<List<ExtendProductResponse>> response = await _productService.GetPendingProducts();
+            List<ExtendProductResponse> response = await _productService.GetPendingProducts();
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -305,9 +305,9 @@ namespace API.Controllers
             watch.Start();
 
             //approve Product
-            BaseResponse<ProductResponse> response = await _productService.VerifyProductById(id, true);
+            ProductResponse response = await _productService.VerifyProductById(id, true);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ProductResponse>.Success(response));
 
             watch.Stop();
 
@@ -331,9 +331,9 @@ namespace API.Controllers
             watch.Start();
 
             //reject Product
-            BaseResponse<ProductResponse> response = await _productService.VerifyProductById(id, false);
+            ProductResponse response = await _productService.VerifyProductById(id, false);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ProductResponse>.Success(response));
 
             watch.Stop();
 

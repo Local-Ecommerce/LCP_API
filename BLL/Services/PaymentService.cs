@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DAL.Constants;
-using BLL.Dtos;
 using BLL.Dtos.Exception;
 using BLL.Dtos.Payment;
 using BLL.Services.Interfaces;
@@ -8,7 +7,6 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace BLL.Services
@@ -40,7 +38,7 @@ namespace BLL.Services
         /// <param name="paymentRequest"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<PaymentResponse>> CreatePayment(PaymentRequest paymentRequest)
+        public async Task<PaymentResponse> CreatePayment(PaymentRequest paymentRequest)
         {
             Payment Payment = _mapper.Map<Payment>(paymentRequest);
 
@@ -58,22 +56,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentService.CreatePayment()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<PaymentResponse>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
-            //Create Response
-            PaymentResponse PaymentResponse = _mapper.Map<PaymentResponse>(Payment);
 
-            return new BaseResponse<PaymentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = PaymentResponse
-            };
+            return _mapper.Map<PaymentResponse>(Payment);
         }
 
 
@@ -83,7 +69,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<PaymentResponse>> DeletePaymentById(string id)
+        public async Task<PaymentResponse> DeletePaymentById(string id)
         {
             //Check id
             Payment payment;
@@ -95,12 +81,7 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentService.DeletePaymentById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Payment>
-                {
-                    ResultCode = (int)PaymentStatus.PAYMENT_NOT_FOUND,
-                    ResultMessage = PaymentStatus.PAYMENT_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(Payment), id);
             }
 
             //Delete Payment
@@ -116,23 +97,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentService.DeletePaymentById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Payment>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
 
-            //Create Response
-            PaymentResponse PaymentResponse = _mapper.Map<PaymentResponse>(payment);
-
-            return new BaseResponse<PaymentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = PaymentResponse
-            };
+            return _mapper.Map<PaymentResponse>(payment);
         }
 
 
@@ -142,7 +110,7 @@ namespace BLL.Services
         /// <param name="date"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<PaymentResponse>>> GetPaymentByDate(DateTime date)
+        public async Task<List<PaymentResponse>> GetPaymentByDate(DateTime date)
         {
             List<PaymentResponse> paymentResponses;
 
@@ -158,20 +126,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentService.GetPaymentByDate()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Payment>
-                {
-                    ResultCode = (int)PaymentStatus.PAYMENT_NOT_FOUND,
-                    ResultMessage = PaymentStatus.PAYMENT_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(Payment), date);
             }
 
-            return new BaseResponse<List<PaymentResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = paymentResponses
-            };
+            return paymentResponses;
         }
 
 
@@ -181,7 +139,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<PaymentResponse>> GetPaymentById(string id)
+        public async Task<PaymentResponse> GetPaymentById(string id)
         {
             PaymentResponse paymentReponse;
 
@@ -197,20 +155,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentService.GetPaymentById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Payment>
-                {
-                    ResultCode = (int)PaymentStatus.PAYMENT_NOT_FOUND,
-                    ResultMessage = PaymentStatus.PAYMENT_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(Payment), id);
             }
 
-            return new BaseResponse<PaymentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = paymentReponse
-            };
+            return paymentReponse;
         }
 
 
@@ -220,7 +168,7 @@ namespace BLL.Services
         /// <param name="orderId"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<PaymentResponse>>> GetPaymentByOrderId(string orderId)
+        public async Task<List<PaymentResponse>> GetPaymentByOrderId(string orderId)
         {
             List<PaymentResponse> paymentResponses;
 
@@ -236,20 +184,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentService.GetPaymentByOrderId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Payment>
-                {
-                    ResultCode = (int)PaymentStatus.PAYMENT_NOT_FOUND,
-                    ResultMessage = PaymentStatus.PAYMENT_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(Payment), orderId);
             }
 
-            return new BaseResponse<List<PaymentResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = paymentResponses
-            };
+            return paymentResponses;
         }
 
 
@@ -259,7 +197,7 @@ namespace BLL.Services
         /// <param name="amount"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<PaymentResponse>>> GetPaymentByPaymentAmount(string amount)
+        public async Task<List<PaymentResponse>> GetPaymentByPaymentAmount(string amount)
         {
             List<PaymentResponse> paymentResponses;
 
@@ -275,20 +213,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentService.GetPaymentByPaymentAmount()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Payment>
-                {
-                    ResultCode = (int)PaymentStatus.PAYMENT_NOT_FOUND,
-                    ResultMessage = PaymentStatus.PAYMENT_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(Payment), amount);
             }
 
-            return new BaseResponse<List<PaymentResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = paymentResponses
-            };
+            return paymentResponses;
         }
 
 
@@ -298,7 +226,7 @@ namespace BLL.Services
         /// <param name="paymentMethodId"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<PaymentResponse>>> GetPaymentByPaymentMethodId(string paymentMethodId)
+        public async Task<List<PaymentResponse>> GetPaymentByPaymentMethodId(string paymentMethodId)
         {
             List<PaymentResponse> paymentResponses;
 
@@ -314,20 +242,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentService.GetPaymentByPaymentMethodId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Payment>
-                {
-                    ResultCode = (int)PaymentStatus.PAYMENT_NOT_FOUND,
-                    ResultMessage = PaymentStatus.PAYMENT_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(Payment), paymentMethodId);
             }
 
-            return new BaseResponse<List<PaymentResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = paymentResponses
-            };
+            return paymentResponses;
         }
 
 
@@ -338,7 +256,7 @@ namespace BLL.Services
         /// <param name="paymentRequest"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<PaymentResponse>> UpdatePaymentById(string id, PaymentRequest paymentRequest)
+        public async Task<PaymentResponse> UpdatePaymentById(string id, PaymentRequest paymentRequest)
         {
             Payment payment;
             try
@@ -349,12 +267,7 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentService.UpdatePaymentById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Payment>
-                {
-                    ResultCode = (int)PaymentStatus.PAYMENT_NOT_FOUND,
-                    ResultMessage = PaymentStatus.PAYMENT_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(Payment), id);
             }
 
             //Update Payment to DB
@@ -370,23 +283,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentService.UpdatePaymentById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Payment>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
 
-            //Create Response
-            PaymentResponse PaymentResponse = _mapper.Map<PaymentResponse>(payment);
-
-            return new BaseResponse<PaymentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = PaymentResponse
-            };
+            return _mapper.Map<PaymentResponse>(payment);
         }
     }
 }

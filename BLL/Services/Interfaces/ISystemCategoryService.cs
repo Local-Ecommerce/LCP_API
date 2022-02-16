@@ -1,5 +1,4 @@
-﻿using BLL.Dtos;
-using BLL.Dtos.SystemCategory;
+﻿using BLL.Dtos.SystemCategory;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,7 +11,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<BaseResponse<SystemCategoryResponse>> CreateSystemCategory(SystemCategoryRequest request);
+        Task<SystemCategoryResponse> CreateSystemCategory(SystemCategoryRequest request);
 
 
         /// <summary>
@@ -20,7 +19,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<BaseResponse<SystemCategoryResponse>> UpdateSystemCategory(string id, SystemCategoryUpdateRequest request);
+        Task<SystemCategoryResponse> UpdateSystemCategory(string id, SystemCategoryUpdateRequest request);
 
 
         /// <summary>
@@ -28,14 +27,14 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<SystemCategoryResponse>> DeleteSystemCategory(string id);
+        Task<SystemCategoryResponse> DeleteSystemCategory(string id);
 
 
         /// <summary>
         /// Get All System Category
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<SystemCategoryResponse>>> GetAllSystemCategory();
+        Task<List<SystemCategoryResponse>> GetAllSystemCategory();
 
 
         /// <summary>
@@ -43,7 +42,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<SystemCategoryResponse>> GetSystemCategoryById(string id);
+        Task<SystemCategoryResponse> GetSystemCategoryById(string id);
 
 
         /// <summary>
@@ -51,14 +50,14 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<SystemCategoryResponse>>> GetSystemCategoriesByStatus(int status);
+        Task<List<SystemCategoryResponse>> GetSystemCategoriesByStatus(int status);
 
 
         /// <summary>
         /// Get System Categories By Status
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<SystemCategoryForAutoCompleteResponse>>> GetSystemCategoriesForAutoComplete();
+        Task<List<SystemCategoryForAutoCompleteResponse>> GetSystemCategoriesForAutoComplete();
 
 
         /// <summary>
@@ -66,6 +65,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<SystemCategoryResponse>> GetSystemCategoryAndOneLevelDownInverseBelongToById(string id);
+        Task<SystemCategoryResponse> GetSystemCategoryAndOneLevelDownInverseBelongToById(string id);
     }
 }

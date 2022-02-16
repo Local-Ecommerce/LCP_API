@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DAL.Constants;
-using BLL.Dtos;
 using BLL.Dtos.Exception;
 using BLL.Dtos.PaymentMethod;
 using BLL.Services.Interfaces;
@@ -8,7 +7,6 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace BLL.Services
@@ -39,7 +37,7 @@ namespace BLL.Services
         /// <param name="paymentMethodRequest"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<PaymentMethodResponse>> CreatePaymentMethod(PaymentMethodRequest paymentMethodRequest)
+        public async Task<PaymentMethodResponse> CreatePaymentMethod(PaymentMethodRequest paymentMethodRequest)
         {
             //biz rule
 
@@ -59,24 +57,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentMethodService.CreatePaymentMethod()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<PaymentMethodResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //Create Response
-            PaymentMethodResponse paymentMethodResponse = _mapper.Map<PaymentMethodResponse>(paymentMethod);
-
-            return new BaseResponse<PaymentMethodResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = paymentMethodResponse
-            };
+            return _mapper.Map<PaymentMethodResponse>(paymentMethod);
         }
 
 
@@ -86,7 +70,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<PaymentMethodResponse>> DeletePaymentMethod(string id)
+        public async Task<PaymentMethodResponse> DeletePaymentMethod(string id)
         {
             //biz rule
 
@@ -100,13 +84,7 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentMethodService.DeletePaymentMethod()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<PaymentMethod>
-                    {
-                        ResultCode = (int)PaymentMethodStatus.PAYMENT_METHOD_NOT_FOUND,
-                        ResultMessage = PaymentMethodStatus.PAYMENT_METHOD_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(PaymentMethod), id);
             }
 
             //Delete PaymentMethod
@@ -122,24 +100,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentMethodService.DeletePaymentMethod()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<PaymentMethod>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //Create Response
-            PaymentMethodResponse PaymentMethodResponse = _mapper.Map<PaymentMethodResponse>(paymentMethod);
-
-            return new BaseResponse<PaymentMethodResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = PaymentMethodResponse
-            };
+            return _mapper.Map<PaymentMethodResponse>(paymentMethod);
         }
 
 
@@ -149,7 +113,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<PaymentMethodResponse>> GetPaymentMethodById(string id)
+        public async Task<PaymentMethodResponse> GetPaymentMethodById(string id)
         {
             //biz rule
 
@@ -168,21 +132,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentMethodService.GetPaymentMethodById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<PaymentMethodResponse>
-                    {
-                        ResultCode = (int)PaymentMethodStatus.PAYMENT_METHOD_NOT_FOUND,
-                        ResultMessage = PaymentMethodStatus.PAYMENT_METHOD_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(PaymentMethod), id);
             }
 
-            return new BaseResponse<PaymentMethodResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = paymentMethodResponse
-            };
+            return paymentMethodResponse;
         }
 
 
@@ -192,7 +145,7 @@ namespace BLL.Services
         /// <param name="name"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<PaymentMethodResponse>>> GetAllPaymentMethod()
+        public async Task<List<PaymentMethodResponse>> GetAllPaymentMethod()
         {
             //biz rule
 
@@ -210,21 +163,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentMethodService.GetAllPaymentMethod()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<PaymentMethodResponse>
-                    {
-                        ResultCode = (int)PaymentMethodStatus.PAYMENT_METHOD_NOT_FOUND,
-                        ResultMessage = PaymentMethodStatus.PAYMENT_METHOD_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(PaymentMethod), "all");
             }
 
-            return new BaseResponse<List<PaymentMethodResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = paymentMethodResponses
-            };
+            return paymentMethodResponses;
         }
 
 
@@ -235,7 +177,7 @@ namespace BLL.Services
         /// <param name="paymentMethodRequest"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<PaymentMethodResponse>> UpdatePaymentMethodById(string id, PaymentMethodRequest paymentMethodRequest)
+        public async Task<PaymentMethodResponse> UpdatePaymentMethodById(string id, PaymentMethodRequest paymentMethodRequest)
         {
             //biz ruie
 
@@ -249,12 +191,7 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentMethodService.UpdatePaymentMethodById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<PaymentMethodResponse>
-                {
-                    ResultCode = (int)PaymentMethodStatus.PAYMENT_METHOD_NOT_FOUND,
-                    ResultMessage = PaymentMethodStatus.PAYMENT_METHOD_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(PaymentMethod), id);
             }
 
             //Update PaymentMethod To DB
@@ -271,23 +208,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PaymentMethodService.UpdatePaymentMethodById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<PaymentMethodResponse>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
 
-            //Create Response
-            PaymentMethodResponse paymentMethodResponse = _mapper.Map<PaymentMethodResponse>(paymentMethod);
-
-            return new BaseResponse<PaymentMethodResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = paymentMethodResponse
-            };
+            return _mapper.Map<PaymentMethodResponse>(paymentMethod);
         }
     }
 }

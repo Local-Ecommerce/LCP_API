@@ -43,7 +43,7 @@ namespace BLL.Services
         /// <param name="residentRequest"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ResidentResponse>> CreateResident(ResidentRequest residentRequest)
+        public async Task<ResidentResponse> CreateResident(ResidentRequest residentRequest)
         {
             //biz rule
 
@@ -51,13 +51,9 @@ namespace BLL.Services
             if (!_validateDataService.IsValidName(residentRequest.ResidentName))
             {
                 _logger.Error($"[Invalid Name : '{residentRequest.ResidentName}']");
-                throw new HttpStatusException(HttpStatusCode.OK,
-                new BaseResponse<ResidentResponse>
-                {
-                    ResultCode = (int)ResidentStatus.INVALID_NAME_RESIDENT,
-                    ResultMessage = ResidentStatus.INVALID_NAME_RESIDENT.ToString(),
-                    Data = default
-                });
+
+                throw new BusinessException(ResidentStatus.INVALID_NAME_RESIDENT.ToString(), (int)ResidentStatus.INVALID_NAME_RESIDENT);
+
             }
 
             //check valid Resident's Type
@@ -66,39 +62,27 @@ namespace BLL.Services
                 && !residentRequest.Type.Equals(ResidentType.CUSTOMER))
             {
                 _logger.Error($"[Invalid Resident Type : '{residentRequest.Type}']");
-                throw new HttpStatusException(HttpStatusCode.OK,
-                new BaseResponse<ResidentResponse>
-                {
-                    ResultCode = (int)ResidentStatus.INVALID_TYPE_RESIDENT,
-                    ResultMessage = ResidentStatus.INVALID_TYPE_RESIDENT.ToString(),
-                    Data = default
-                });
+
+                throw new BusinessException(ResidentStatus.INVALID_TYPE_RESIDENT.ToString(), (int)ResidentStatus.INVALID_TYPE_RESIDENT);
+
             }
 
             //check valid Resident's PhoneNumber
             if (!_validateDataService.IsValidPhoneNumber(residentRequest.PhoneNumber))
             {
                 _logger.Error($"[Invalid PhoneNumber : '{residentRequest.PhoneNumber}']");
-                throw new HttpStatusException(HttpStatusCode.OK,
-                new BaseResponse<ResidentResponse>
-                {
-                    ResultCode = (int)ResidentStatus.INVALID_PHONE_NUMBER_RESIDENT,
-                    ResultMessage = ResidentStatus.INVALID_PHONE_NUMBER_RESIDENT.ToString(),
-                    Data = default
-                });
+
+                throw new BusinessException(ResidentStatus.INVALID_PHONE_NUMBER_RESIDENT.ToString(), (int)ResidentStatus.INVALID_PHONE_NUMBER_RESIDENT);
+
             }
 
             //check valid dob
             if (!_validateDataService.IsLaterThanPresent(residentRequest.DateOfBirth))
             {
                 _logger.Error($"[Invalid Date Of Birth : '{residentRequest.DateOfBirth}']");
-                throw new HttpStatusException(HttpStatusCode.OK,
-                new BaseResponse<ResidentResponse>
-                {
-                    ResultCode = (int)ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT,
-                    ResultMessage = ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT.ToString(),
-                    Data = default
-                });
+
+                throw new BusinessException(ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT.ToString(), (int)ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT);
+
             }
 
             //Store Resident To Database
@@ -117,24 +101,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ResidentService.CreateResident()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ResidentResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //Create response
-            ResidentResponse residentResponse = _mapper.Map<ResidentResponse>(resident);
-
-            return new BaseResponse<ResidentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = residentResponse
-            };
+            return _mapper.Map<ResidentResponse>(resident);
         }
 
 
@@ -144,7 +114,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ResidentResponse>> GetResidentById(string id)
+        public async Task<ResidentResponse> GetResidentById(string id)
         {
             //biz rule
 
@@ -160,21 +130,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ResidentService.GetResidentById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ResidentResponse>
-                    {
-                        ResultCode = (int)ResidentStatus.RESIDENT_NOT_FOUND,
-                        ResultMessage = ResidentStatus.RESIDENT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Resident), id);
             }
 
-            return new BaseResponse<ResidentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = residentResponse
-            };
+            return residentResponse;
         }
 
 
@@ -185,7 +144,7 @@ namespace BLL.Services
         /// <param name="residentUpdateRequest"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ResidentResponse>> UpdateResidentById(string id, ResidentUpdateRequest residentUpdateRequest)
+        public async Task<ResidentResponse> UpdateResidentById(string id, ResidentUpdateRequest residentUpdateRequest)
         {
             Resident resident;
 
@@ -193,39 +152,27 @@ namespace BLL.Services
             if (!_validateDataService.IsValidName(residentUpdateRequest.ResidentName))
             {
                 _logger.Error($"[Invalid Name : '{residentUpdateRequest.ResidentName}']");
-                throw new HttpStatusException(HttpStatusCode.OK,
-                new BaseResponse<ResidentResponse>
-                {
-                    ResultCode = (int)ResidentStatus.INVALID_NAME_RESIDENT,
-                    ResultMessage = ResidentStatus.INVALID_NAME_RESIDENT.ToString(),
-                    Data = default
-                });
+
+                throw new BusinessException(ResidentStatus.INVALID_NAME_RESIDENT.ToString(), (int)ResidentStatus.INVALID_NAME_RESIDENT);
+
             }
 
             //check valid Resident's PhoneNumber
             if (!_validateDataService.IsValidPhoneNumber(residentUpdateRequest.PhoneNumber))
             {
                 _logger.Error($"[Invalid PhoneNumber : '{residentUpdateRequest.PhoneNumber}']");
-                throw new HttpStatusException(HttpStatusCode.OK,
-                new BaseResponse<ResidentResponse>
-                {
-                    ResultCode = (int)ResidentStatus.INVALID_PHONE_NUMBER_RESIDENT,
-                    ResultMessage = ResidentStatus.INVALID_PHONE_NUMBER_RESIDENT.ToString(),
-                    Data = default
-                });
+
+                throw new BusinessException(ResidentStatus.INVALID_PHONE_NUMBER_RESIDENT.ToString(), (int)ResidentStatus.INVALID_PHONE_NUMBER_RESIDENT);
+
             }
 
             //check valid dob
             if (!_validateDataService.IsLaterThanPresent(residentUpdateRequest.DateOfBirth))
             {
                 _logger.Error($"[Invalid Date Of Birth : '{residentUpdateRequest.DateOfBirth}']");
-                throw new HttpStatusException(HttpStatusCode.OK,
-                new BaseResponse<ResidentResponse>
-                {
-                    ResultCode = (int)ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT,
-                    ResultMessage = ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT.ToString(),
-                    Data = default
-                });
+
+                throw new BusinessException(ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT.ToString(), (int)ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT);
+
             }
 
             //Check id
@@ -237,13 +184,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ResidentService.UpdateResidentById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ResidentResponse>
-                    {
-                        ResultCode = (int)ResidentStatus.RESIDENT_NOT_FOUND,
-                        ResultMessage = ResidentStatus.RESIDENT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Resident), id);
             }
 
             //update Resident
@@ -260,24 +201,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ResidentService.UpdateMerchantById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ResidentResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //Create Response
-            ResidentResponse residentResponse = _mapper.Map<ResidentResponse>(resident);
-
-            return new BaseResponse<ResidentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = residentResponse
-            };
+            return _mapper.Map<ResidentResponse>(resident);
         }
 
 
@@ -287,7 +214,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ResidentResponse>> DeleteResident(string id)
+        public async Task<ResidentResponse> DeleteResident(string id)
         {
             //biz rule
 
@@ -301,13 +228,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ResidentService.DeleteResident()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ResidentResponse>
-                    {
-                        ResultCode = (int)ResidentStatus.RESIDENT_NOT_FOUND,
-                        ResultMessage = ResidentStatus.RESIDENT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Resident), id);
             }
 
             //Delete Resident
@@ -323,24 +244,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ResidentService.DeleteResident()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ResidentResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //Create Response
-            ResidentResponse residentResponse = _mapper.Map<ResidentResponse>(resident);
-
-            return new BaseResponse<ResidentResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = residentResponse
-            };
+            return _mapper.Map<ResidentResponse>(resident);
         }
 
 
@@ -350,7 +257,7 @@ namespace BLL.Services
         /// <param name="apartmentId"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ResidentResponse>>> GetResidentByApartmentId(string apartmentId)
+        public async Task<List<ResidentResponse>> GetResidentByApartmentId(string apartmentId)
         {
             List<ResidentResponse> residentResponses;
 
@@ -367,21 +274,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ResidentService.GetResidentByAppartmentId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ResidentResponse>
-                    {
-                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
-                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Resident), apartmentId);
             }
 
-            return new BaseResponse<List<ResidentResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = residentResponses
-            };
+            return residentResponses;
         }
 
 
@@ -390,7 +286,7 @@ namespace BLL.Services
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ResidentResponse>>> GetAllResidents()
+        public async Task<List<ResidentResponse>> GetAllResidents()
         {
             List<ResidentResponse> residentResponses;
 
@@ -407,21 +303,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ResidentService.GetAllResidents()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ResidentResponse>
-                    {
-                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
-                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Resident), "all");
             }
 
-            return new BaseResponse<List<ResidentResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = residentResponses
-            };
+            return residentResponses;
         }
 
 
@@ -431,7 +316,7 @@ namespace BLL.Services
         /// <param name="accountId"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ResidentResponse>>> GetResidentByAccountId(string accountId)
+        public async Task<List<ResidentResponse>> GetResidentByAccountId(string accountId)
         {
             List<ResidentResponse> residentResponses;
 
@@ -448,21 +333,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ResidentService.GetResidentByAccountId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ResidentResponse>
-                    {
-                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
-                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Resident), accountId);
             }
 
-            return new BaseResponse<List<ResidentResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = residentResponses
-            };
+            return residentResponses;
         }
     }
 }

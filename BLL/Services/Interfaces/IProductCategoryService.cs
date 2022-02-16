@@ -1,5 +1,4 @@
-﻿using BLL.Dtos;
-using BLL.Dtos.ProductCategory;
+﻿using BLL.Dtos.ProductCategory;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,7 +11,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<BaseResponse<ProductCategoryResponse>> CreateProCategory(ProductCategoryRequest request);
+        Task<ProductCategoryResponse> CreateProCategory(ProductCategoryRequest request);
 
 
         /// <summary>
@@ -20,7 +19,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<BaseResponse<ProductCategoryResponse>> UpdateProCategory(string id, ProductCategoryRequest request);
+        Task<ProductCategoryResponse> UpdateProCategory(string id, ProductCategoryRequest request);
 
 
         /// <summary>
@@ -28,7 +27,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ProductCategoryResponse>> DeleteProCategory(string id);
+        Task<ProductCategoryResponse> DeleteProCategory(string id);
 
 
         /// <summary>
@@ -36,13 +35,13 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ExtendProductCategoryResponse>> GetProCategoryById(string id);
+        Task<ExtendProductCategoryResponse> GetProCategoryById(string id);
 
 
         /// <summary>
         /// Get Product Categories By Status
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<ExtendProductCategoryResponse>>> GetProductCategoriesByStatus(int status);
+        Task<List<ExtendProductCategoryResponse>> GetProductCategoriesByStatus(int status);
     }
 }

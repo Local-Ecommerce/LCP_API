@@ -1,9 +1,5 @@
-﻿using BLL.Dtos;
-using BLL.Dtos.Resident;
-using System;
+﻿using BLL.Dtos.Resident;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -15,7 +11,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="residentRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<ResidentResponse>> CreateResident(ResidentRequest residentRequest);
+        Task<ResidentResponse> CreateResident(ResidentRequest residentRequest);
 
 
         /// <summary>
@@ -23,7 +19,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ResidentResponse>> GetResidentById(string id);
+        Task<ResidentResponse> GetResidentById(string id);
 
 
         /// <summary>
@@ -32,7 +28,7 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="residentRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<ResidentResponse>> UpdateResidentById(string id, ResidentUpdateRequest residentRequest);
+        Task<ResidentResponse> UpdateResidentById(string id, ResidentUpdateRequest residentRequest);
 
 
         /// <summary>
@@ -40,7 +36,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<ResidentResponse>> DeleteResident(string id);
+        Task<ResidentResponse> DeleteResident(string id);
 
 
         /// <summary>
@@ -48,14 +44,14 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="apartmentId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ResidentResponse>>> GetResidentByApartmentId(string apartmentId);
+        Task<List<ResidentResponse>> GetResidentByApartmentId(string apartmentId);
 
 
         /// <summary>
         /// Get All Residents
         /// </summary>
         /// <returns></returns>
-        Task<BaseResponse<List<ResidentResponse>>> GetAllResidents();
+        Task<List<ResidentResponse>> GetAllResidents();
 
 
         /// <summary>
@@ -63,6 +59,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<ResidentResponse>>> GetResidentByAccountId(string accountId);
+        Task<List<ResidentResponse>> GetResidentByAccountId(string accountId);
     }
 }

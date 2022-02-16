@@ -1,5 +1,4 @@
-﻿using BLL.Dtos;
-using BLL.Dtos.PaymentMethod;
+﻿using BLL.Dtos.PaymentMethod;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,7 +11,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="paymentMethodRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<PaymentMethodResponse>> CreatePaymentMethod(PaymentMethodRequest paymentMethodRequest);
+        Task<PaymentMethodResponse> CreatePaymentMethod(PaymentMethodRequest paymentMethodRequest);
 
 
         /// <summary>
@@ -20,7 +19,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<PaymentMethodResponse>> GetPaymentMethodById(string id);
+        Task<PaymentMethodResponse> GetPaymentMethodById(string id);
 
 
         /// <summary>
@@ -29,7 +28,7 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="paymentMethodRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<PaymentMethodResponse>> UpdatePaymentMethodById(string id, PaymentMethodRequest paymentMethodRequest);
+        Task<PaymentMethodResponse> UpdatePaymentMethodById(string id, PaymentMethodRequest paymentMethodRequest);
 
 
         /// <summary>
@@ -37,7 +36,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<PaymentMethodResponse>> DeletePaymentMethod(string id);
+        Task<PaymentMethodResponse> DeletePaymentMethod(string id);
 
 
         /// <summary>
@@ -45,6 +44,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<PaymentMethodResponse>>> GetAllPaymentMethod();
+        Task<List<PaymentMethodResponse>> GetAllPaymentMethod();
     }
 }

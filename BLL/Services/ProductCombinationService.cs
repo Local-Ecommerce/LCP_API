@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DAL.Constants;
-using BLL.Dtos;
 using BLL.Dtos.Exception;
 using BLL.Dtos.ProductCombination;
 using BLL.Services.Interfaces;
@@ -8,7 +7,6 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace BLL.Services
@@ -41,7 +39,7 @@ namespace BLL.Services
         /// <param name="productCombinationRequest"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ProductCombinationResponse>> CreateProductCombination(ProductCombinationRequest productCombinationRequest)
+        public async Task<ProductCombinationResponse> CreateProductCombination(ProductCombinationRequest productCombinationRequest)
         {
 
             ProductCombination productCombination = _mapper.Map<ProductCombination>(productCombinationRequest);
@@ -59,22 +57,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCombinationService.CreateProductCombination()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ProductCombinationResponse>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
-            //Create Response
-            ProductCombinationResponse productCombinationResponse = _mapper.Map<ProductCombinationResponse>(productCombination);
 
-            return new BaseResponse<ProductCombinationResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productCombinationResponse
-            };
+            return _mapper.Map<ProductCombinationResponse>(productCombination);
         }
 
 
@@ -84,7 +70,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ProductCombinationResponse>> DeleteProductCombinationById(string id)
+        public async Task<ProductCombinationResponse> DeleteProductCombinationById(string id)
         {
             //Check id
             ProductCombination productCombination;
@@ -96,12 +82,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCombinationService.DeleteProductCombinationById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ProductCombination>
-                {
-                    ResultCode = (int)ProductCombinationStatus.PRODUCT_COMBINATION_NOT_FOUND,
-                    ResultMessage = ProductCombinationStatus.PRODUCT_COMBINATION_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(ProductCombination), id);
             }
 
             //Delete Product Combination
@@ -117,23 +98,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCombinationService.DeleteProductCombinationById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ProductCombination>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
 
-            //Create Response
-            ProductCombinationResponse productCombinationResponse = _mapper.Map<ProductCombinationResponse>(productCombination);
-
-            return new BaseResponse<ProductCombinationResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productCombinationResponse
-            };
+            return _mapper.Map<ProductCombinationResponse>(productCombination);
         }
 
 
@@ -143,7 +111,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ProductCombinationResponse>> GetProductCombinationById(string id)
+        public async Task<ProductCombinationResponse> GetProductCombinationById(string id)
         {
             ProductCombinationResponse productCombinationReponse = null;
 
@@ -160,21 +128,11 @@ namespace BLL.Services
                 {
                     _logger.Error("[ProductCombinationService.GetProductCombinationById()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ProductCombination>
-                    {
-                        ResultCode = (int)ProductCombinationStatus.PRODUCT_COMBINATION_NOT_FOUND,
-                        ResultMessage = ProductCombinationStatus.PRODUCT_COMBINATION_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                    throw new EntityNotFoundException(typeof(ProductCombination), id);
                 }
             }
 
-            return new BaseResponse<ProductCombinationResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productCombinationReponse
-            };
+            return productCombinationReponse;
         }
 
 
@@ -184,7 +142,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ProductCombinationResponse>>> GetProductCombinationsByBaseProductId(string id)
+        public async Task<List<ProductCombinationResponse>> GetProductCombinationsByBaseProductId(string id)
         {
             List<ProductCombinationResponse> productCombinationList = null;
 
@@ -199,21 +157,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCombinationService.GetProductCombinationsByBaseProductId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductCombinationResponse>
-                    {
-                        ResultCode = (int)ProductCombinationStatus.PRODUCT_COMBINATION_NOT_FOUND,
-                        ResultMessage = ProductCombinationStatus.PRODUCT_COMBINATION_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(ProductCombination), id);
             }
 
-            return new BaseResponse<List<ProductCombinationResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productCombinationList
-            };
+            return productCombinationList;
         }
 
 
@@ -223,7 +170,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ProductCombinationResponse>>> GetProductCombinationsByProductId(string id)
+        public async Task<List<ProductCombinationResponse>> GetProductCombinationsByProductId(string id)
         {
             List<ProductCombinationResponse> productCombinationList = null;
 
@@ -238,21 +185,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCombinationService.GetProductCombinationsByProductId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductCombinationResponse>
-                    {
-                        ResultCode = (int)ProductCombinationStatus.PRODUCT_COMBINATION_NOT_FOUND,
-                        ResultMessage = ProductCombinationStatus.PRODUCT_COMBINATION_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(ProductCombination), id);
             }
 
-            return new BaseResponse<List<ProductCombinationResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productCombinationList
-            };
+            return productCombinationList;
         }
 
 
@@ -262,7 +198,7 @@ namespace BLL.Services
         /// <param name="status"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ProductCombinationResponse>>> GetProductCombinationsByStatus(int status)
+        public async Task<List<ProductCombinationResponse>> GetProductCombinationsByStatus(int status)
         {
             List<ProductCombinationResponse> productCombinationList = null;
 
@@ -277,21 +213,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCombinationService.GetProductCombinationsByStatus()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductCombinationResponse>
-                    {
-                        ResultCode = (int)ProductCombinationStatus.PRODUCT_COMBINATION_NOT_FOUND,
-                        ResultMessage = ProductCombinationStatus.PRODUCT_COMBINATION_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(ProductCombination), status);
             }
 
-            return new BaseResponse<List<ProductCombinationResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productCombinationList
-            };
+            return productCombinationList;
         }
 
 
@@ -302,7 +227,7 @@ namespace BLL.Services
         /// <param name="productCombinationRequest"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ProductCombinationResponse>> UpdateProductCombinationById(string id, ProductCombinationRequest productCombinationRequest)
+        public async Task<ProductCombinationResponse> UpdateProductCombinationById(string id, ProductCombinationRequest productCombinationRequest)
         {
             ProductCombination productCombination;
             try
@@ -313,13 +238,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCombinationService.UpdateProductCombinationById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ProductCombination>
-                {
-                    ResultCode = (int)ProductCombinationStatus.PRODUCT_COMBINATION_NOT_FOUND
-,
-                    ResultMessage = ProductCombinationStatus.PRODUCT_COMBINATION_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(ProductCombination), id);
 
             }
 
@@ -336,23 +255,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCombinationService.UpdateProductCombinationById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ProductCombination>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
 
-            //Create Response
-            ProductCombinationResponse productCombinationResponse = _mapper.Map<ProductCombinationResponse>(productCombination);
-
-            return new BaseResponse<ProductCombinationResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productCombinationResponse
-            };
+            return _mapper.Map<ProductCombinationResponse>(productCombination);
         }
     }
 }

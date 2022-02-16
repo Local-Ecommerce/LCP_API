@@ -40,7 +40,7 @@ namespace BLL.Services
         /// <param name="request"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<SystemCategoryResponse>> CreateSystemCategory(SystemCategoryRequest request)
+        public async Task<SystemCategoryResponse> CreateSystemCategory(SystemCategoryRequest request)
         {
             //biz rule
 
@@ -64,11 +64,10 @@ namespace BLL.Services
                         _logger.Error("[SystemCategoryService.CreateSystemCategory()]: Max level has been reached.");
 
                         throw new HttpStatusException(HttpStatusCode.OK,
-                            new BaseResponse<SystemCategoryResponse>
+                            new ApiResponseFailed<SystemCategoryResponse>
                             {
                                 ResultCode = (int)SystemCategoryStatus.MAXED_OUT_LEVEL,
-                                ResultMessage = SystemCategoryStatus.MAXED_OUT_LEVEL.ToString(),
-                                Data = default
+                                ResultMessage = SystemCategoryStatus.MAXED_OUT_LEVEL.ToString()
                             });
                     }
                     else
@@ -91,13 +90,7 @@ namespace BLL.Services
             {
                 _logger.Error("[SystemCategoryService.CreateSystemCategory()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<SystemCategoryResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
             //create response
@@ -106,12 +99,7 @@ namespace BLL.Services
             if (systemCategoryResponse.CategoryLevel != (int)CategoryLevel.THREE)
                 systemCategoryResponse.InverseBelongToNavigation = new Collection<SystemCategoryResponse>();
 
-            return new BaseResponse<SystemCategoryResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = systemCategoryResponse
-            };
+            return systemCategoryResponse;
         }
 
 
@@ -121,7 +109,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<SystemCategoryResponse>> DeleteSystemCategory(string id)
+        public async Task<SystemCategoryResponse> DeleteSystemCategory(string id)
         {
             //biz rule
 
@@ -135,13 +123,7 @@ namespace BLL.Services
             {
                 _logger.Error("[SystemCategoryService.DeleteSystemCategory()]" + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<SystemCategory>
-                    {
-                        ResultCode = (int)SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND,
-                        ResultMessage = SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(SystemCategory), id);
             }
 
             //delete systemCategory
@@ -158,24 +140,10 @@ namespace BLL.Services
             {
                 _logger.Error("[SystemCategoryService.DeleteSystemCategory()]" + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<SystemCategory>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //create response
-            SystemCategoryResponse systemCategoryResponse = _mapper.Map<SystemCategoryResponse>(systemCategory);
-
-            return new BaseResponse<SystemCategoryResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = default
-            };
+            return _mapper.Map<SystemCategoryResponse>(systemCategory);
         }
 
 
@@ -183,7 +151,7 @@ namespace BLL.Services
         /// Get All System Category
         /// </summary>
         /// <returns></returns>
-        public async Task<BaseResponse<List<SystemCategoryResponse>>> GetAllSystemCategory()
+        public async Task<List<SystemCategoryResponse>> GetAllSystemCategory()
         {
             List<SystemCategory> systemCategories;
 
@@ -196,23 +164,10 @@ namespace BLL.Services
             {
                 _logger.Error("[SystemCategoryService.GetAllSystemCategory()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<SystemCategoryResponse>
-                    {
-                        ResultCode = (int)SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND,
-                        ResultMessage = SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(SystemCategory), "all");
             }
 
-            List<SystemCategoryResponse> systemCategoryResponses = _mapper.Map<List<SystemCategoryResponse>>(systemCategories);
-
-            return new BaseResponse<List<SystemCategoryResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = systemCategoryResponses
-            };
+            return _mapper.Map<List<SystemCategoryResponse>>(systemCategories);
         }
 
 
@@ -223,7 +178,7 @@ namespace BLL.Services
         /// <param name="request"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<SystemCategoryResponse>> UpdateSystemCategory(string id,
+        public async Task<SystemCategoryResponse> UpdateSystemCategory(string id,
             SystemCategoryUpdateRequest request)
         {
             //biz rule
@@ -239,13 +194,7 @@ namespace BLL.Services
             {
                 _logger.Error("[SystemCategoryService.UpdateSystemCategory()]" + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<SystemCategory>
-                    {
-                        ResultCode = (int)SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND,
-                        ResultMessage = SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(SystemCategory), id);
             }
 
             //update data
@@ -262,24 +211,10 @@ namespace BLL.Services
             {
                 _logger.Error("[SystemCategoryService.UpdateSystemCategory()]" + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<SystemCategory>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //create response
-            SystemCategoryResponse systemCategoryResponse = _mapper.Map<SystemCategoryResponse>(systemCategory);
-
-            return new BaseResponse<SystemCategoryResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = systemCategoryResponse
-            };
+            return _mapper.Map<SystemCategoryResponse>(systemCategory);
         }
 
 
@@ -289,7 +224,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<SystemCategoryResponse>> GetSystemCategoryById(string id)
+        public async Task<SystemCategoryResponse> GetSystemCategoryById(string id)
         {
             SystemCategory systemCategory;
             //get systemCategory from database
@@ -303,23 +238,10 @@ namespace BLL.Services
             {
                 _logger.Error("[SystemCategoryService.GetSystemCategoryById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<SystemCategoryResponse>
-                    {
-                        ResultCode = (int)SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND,
-                        ResultMessage = SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(SystemCategory), id);
             }
 
-            SystemCategoryResponse systemCategoryResponse = _mapper.Map<SystemCategoryResponse>(systemCategory);
-
-            return new BaseResponse<SystemCategoryResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = systemCategoryResponse
-            };
+            return _mapper.Map<SystemCategoryResponse>(systemCategory);
         }
 
 
@@ -329,7 +251,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<SystemCategoryResponse>> GetSystemCategoryAndOneLevelDownInverseBelongToById(string id)
+        public async Task<SystemCategoryResponse> GetSystemCategoryAndOneLevelDownInverseBelongToById(string id)
         {
             SystemCategory systemCategory;
             //get systemCategory from database
@@ -343,23 +265,10 @@ namespace BLL.Services
             {
                 _logger.Error("[SystemCategoryService.GetSystemCategoryById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<SystemCategoryResponse>
-                    {
-                        ResultCode = (int)SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND,
-                        ResultMessage = SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(SystemCategory), id);
             }
 
-            SystemCategoryResponse systemCategoryResponse = _mapper.Map<SystemCategoryResponse>(systemCategory);
-
-            return new BaseResponse<SystemCategoryResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = systemCategoryResponse
-            };
+            return _mapper.Map<SystemCategoryResponse>(systemCategory);
         }
 
 
@@ -369,7 +278,7 @@ namespace BLL.Services
         /// <param name="status"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<SystemCategoryResponse>>> GetSystemCategoriesByStatus(int status)
+        public async Task<List<SystemCategoryResponse>> GetSystemCategoriesByStatus(int status)
         {
             List<SystemCategoryResponse> systemCategoryList = null;
 
@@ -384,21 +293,10 @@ namespace BLL.Services
             {
                 _logger.Error("[SystemCategoryService.GetSystemCategorysByStatus()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<SystemCategoryResponse>
-                    {
-                        ResultCode = (int)SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND,
-                        ResultMessage = SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(SystemCategory), status);
             }
 
-            return new BaseResponse<List<SystemCategoryResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = systemCategoryList
-            };
+            return systemCategoryList;
         }
 
 
@@ -407,7 +305,7 @@ namespace BLL.Services
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<SystemCategoryForAutoCompleteResponse>>> GetSystemCategoriesForAutoComplete()
+        public async Task<List<SystemCategoryForAutoCompleteResponse>> GetSystemCategoriesForAutoComplete()
         {
             List<SystemCategoryForAutoCompleteResponse> systemCategoryList = null;
 
@@ -421,21 +319,10 @@ namespace BLL.Services
             {
                 _logger.Error("[SystemCategoryService.GetSystemCategoriesForAutoComplete()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<SystemCategoryResponse>
-                    {
-                        ResultCode = (int)SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND,
-                        ResultMessage = SystemCategoryStatus.SYSTEM_CATEGORY_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(SystemCategory), "autoComplete");
             }
 
-            return new BaseResponse<List<SystemCategoryForAutoCompleteResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = systemCategoryList
-            };
+            return systemCategoryList;
         }
     }
 }

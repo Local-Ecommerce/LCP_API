@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using DAL.Constants;
-using BLL.Dtos;
 using BLL.Dtos.Account;
 using BLL.Dtos.Exception;
 using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 using BLL.Dtos.JWT;
 using System.Linq;

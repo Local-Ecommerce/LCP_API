@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DAL.Constants;
-using BLL.Dtos;
 using BLL.Dtos.Exception;
 using BLL.Dtos.Order;
 using BLL.Dtos.OrderDetail;
@@ -11,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace BLL.Services
@@ -48,7 +46,7 @@ namespace BLL.Services
         /// <param name="orderDetailRequests"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<ExtendOrderResponse>>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId)
+        public async Task<List<ExtendOrderResponse>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId)
         {
             List<ExtendOrderResponse> extendOrderResponses = new();
 
@@ -99,21 +97,10 @@ namespace BLL.Services
             {
                 _logger.Error("[OrderService.CreateOrder()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendOrderResponse>
-                    {
-                        ResultCode = (int)OrderStatus.ORDER_NOT_FOUND,
-                        ResultMessage = OrderStatus.ORDER_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Order), residentId);
             }
 
-            return new BaseResponse<List<ExtendOrderResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendOrderResponses
-            };
+            return extendOrderResponses;
         }
 
 
@@ -123,7 +110,7 @@ namespace BLL.Services
         /// <param name="residentId"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<ExtendOrderResponse>>> GetOrderByResidentIdAndStatus(string residentId, int status)
+        public async Task<List<ExtendOrderResponse>> GetOrderByResidentIdAndStatus(string residentId, int status)
         {
             List<ExtendOrderResponse> extendOrderResponses;
             try
@@ -136,21 +123,10 @@ namespace BLL.Services
             {
                 _logger.Error("[OrderService.GetOrderByResidentIdAndStatus()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendOrderResponse>
-                    {
-                        ResultCode = (int)OrderStatus.ORDER_NOT_FOUND,
-                        ResultMessage = OrderStatus.ORDER_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Order), residentId);
             }
 
-            return new BaseResponse<List<ExtendOrderResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendOrderResponses
-            };
+            return extendOrderResponses;
         }
 
 
@@ -159,7 +135,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="merchantStoreId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<ExtendOrderResponse>>> GetOrderByMerchantStoreId(string merchantStoreId)
+        public async Task<List<ExtendOrderResponse>> GetOrderByMerchantStoreId(string merchantStoreId)
         {
             List<ExtendOrderResponse> extendOrderResponses;
             try
@@ -172,21 +148,10 @@ namespace BLL.Services
             {
                 _logger.Error("[OrderService.GetOrderByMerchantStoreId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendOrderResponse>
-                    {
-                        ResultCode = (int)OrderStatus.ORDER_NOT_FOUND,
-                        ResultMessage = OrderStatus.ORDER_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Order), merchantStoreId);
             }
 
-            return new BaseResponse<List<ExtendOrderResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendOrderResponses
-            };
+            return extendOrderResponses;
         }
 
 
@@ -196,7 +161,7 @@ namespace BLL.Services
         /// <param name="orderId"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<OrderResponse>> DeleteOrderByOrderIdAndResidentId(string orderId, string residentId)
+        public async Task<OrderResponse> DeleteOrderByOrderIdAndResidentId(string orderId, string residentId)
         {
             Order order;
             try
@@ -213,24 +178,13 @@ namespace BLL.Services
             {
                 _logger.Error("[OrderService.DeleteOrderByOrderIdAndResidentId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendOrderResponse>
-                    {
-                        ResultCode = (int)OrderStatus.ORDER_NOT_FOUND,
-                        ResultMessage = OrderStatus.ORDER_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Order), orderId);
             }
 
             //create response
             OrderResponse orderResponse = _mapper.Map<OrderResponse>(order);
 
-            return new BaseResponse<OrderResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = orderResponse
-            };
+            return _mapper.Map<OrderResponse>(order);
         }
 
         /// <summary>

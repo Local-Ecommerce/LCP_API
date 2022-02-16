@@ -42,9 +42,9 @@ namespace API.Controllers
             watch.Start();
 
             //Create payment
-            BaseResponse<PaymentResponse> response = await _paymentService.CreatePayment(paymentRequest);
+            PaymentResponse response = await _paymentService.CreatePayment(paymentRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<PaymentResponse>.Success(response));
 
             watch.Stop();
 
@@ -68,9 +68,9 @@ namespace API.Controllers
             watch.Start();
 
             //Get payment
-            BaseResponse<PaymentResponse> response = await _paymentService.GetPaymentById(id);
+            PaymentResponse response = await _paymentService.GetPaymentById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<PaymentResponse>.Success(response));
 
             watch.Stop();
 
@@ -95,9 +95,9 @@ namespace API.Controllers
             watch.Start();
 
             //Update payment
-            BaseResponse<PaymentResponse> response = await _paymentService.UpdatePaymentById(id, paymentRequest);
+            PaymentResponse response = await _paymentService.UpdatePaymentById(id, paymentRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<PaymentResponse>.Success(response));
 
             watch.Stop();
 
@@ -121,9 +121,9 @@ namespace API.Controllers
             watch.Start();
 
             //Delete payment
-            BaseResponse<PaymentResponse> response = await _paymentService.DeletePaymentById(id);
+            PaymentResponse response = await _paymentService.DeletePaymentById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<PaymentResponse>.Success(response));
 
             watch.Stop();
 
@@ -147,9 +147,9 @@ namespace API.Controllers
             watch.Start();
 
             //Get payment by OrderId
-            BaseResponse<List<PaymentResponse>> response = await _paymentService.GetPaymentByOrderId(orderId);
+            List<PaymentResponse> response = await _paymentService.GetPaymentByOrderId(orderId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -173,9 +173,9 @@ namespace API.Controllers
             watch.Start();
 
             //Get payment by paymentMethod
-            BaseResponse<List<PaymentResponse>> response = await _paymentService.GetPaymentByPaymentMethodId(paymentMethodId);
+            List<PaymentResponse> response = await _paymentService.GetPaymentByPaymentMethodId(paymentMethodId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -199,9 +199,9 @@ namespace API.Controllers
             watch.Start();
 
             //Get payment by RealeaseDate
-            BaseResponse<List<PaymentResponse>> response = await _paymentService.GetPaymentByDate(date);
+            List<PaymentResponse> response = await _paymentService.GetPaymentByDate(date);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 

@@ -49,7 +49,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="merchantStoreRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<MerchantStoreResponse>> CreateMerchantStore(MerchantStoreRequest merchantStoreRequest)
+        public async Task<MerchantStoreResponse> CreateMerchantStore(MerchantStoreRequest merchantStoreRequest)
         {
             //biz rule
 
@@ -72,24 +72,10 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.CreateMerchantStore()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //Create response
-            MerchantStoreResponse merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
-
-            return new BaseResponse<MerchantStoreResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreResponse
-            };
+            return _mapper.Map<MerchantStoreResponse>(merchantStore);
         }
 
 
@@ -98,7 +84,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<MerchantStoreResponse>> DeleteMerchantStore(string id)
+        public async Task<MerchantStoreResponse> DeleteMerchantStore(string id)
         {
             //biz rule
 
@@ -112,13 +98,7 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.DeleteMerchantStore()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
-                    {
-                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
-                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(MerchantStore),id);
             }
 
             //Delete MerchantStore
@@ -134,24 +114,10 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.DeleteMerchantStore()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //Create Response
-            MerchantStoreResponse merchantStoreResponse = _mapper.Map<MerchantStoreResponse>(merchantStore);
-
-            return new BaseResponse<MerchantStoreResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreResponse
-            };
+            return _mapper.Map<MerchantStoreResponse>(merchantStore);
         }
 
 
@@ -160,7 +126,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendMerchantStoreResponse>> GetMerchantStoreById(string id)
+        public async Task<ExtendMerchantStoreResponse> GetMerchantStoreById(string id)
         {
             //biz rule
 
@@ -176,21 +142,10 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.GetMerchantById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
-                    {
-                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
-                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(MerchantStore), id);
             }
 
-            return new BaseResponse<ExtendMerchantStoreResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreResponse
-            };
+            return merchantStoreResponse;
         }
 
 
@@ -200,7 +155,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendMerchantStoreResponse>> RequestUpdateMerchantStoreById(string id,
+        public async Task<ExtendMerchantStoreResponse> RequestUpdateMerchantStoreById(string id,
             MerchantStoreUpdateRequest request)
         {
             ExtendMerchantStoreResponse merchantStoreResponse;
@@ -217,25 +172,14 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.RequestUpdateMerchantStoreById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendMerchantStoreResponse>
-                    {
-                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
-                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(MerchantStore), id);
             }
 
             //store to Redis
             _redisService.StoreToList(CACHE_KEY_FOR_UPDATE, merchantStoreResponse,
                 new Predicate<MerchantStoreResponse>(ms => ms.MerchantStoreId.Equals(merchantStoreResponse.MerchantStoreId)));
 
-            return new BaseResponse<ExtendMerchantStoreResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreResponse
-            };
+            return merchantStoreResponse;
         }
 
 
@@ -244,7 +188,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="apartmentId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoreByApartmentId(string apartmentId)
+        public async Task<List<MerchantStoreResponse>> GetMerchantStoreByApartmentId(string apartmentId)
         {
             List<MerchantStoreResponse> merchantStoreResponses;
 
@@ -261,21 +205,10 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.GetMerchantStoreByAppartmentId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
-                    {
-                        ResultCode = (int)MerchantStatus.MERCHANT_NOT_FOUND,
-                        ResultMessage = MerchantStatus.MERCHANT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(MerchantStore), apartmentId);
             }
 
-            return new BaseResponse<List<MerchantStoreResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreResponses
-            };
+            return merchantStoreResponses;
         }
 
 
@@ -285,7 +218,7 @@ namespace BLL.Services
         /// <param name="merchantStoreId"></param>
         /// <param name="storeMenuDetailRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<StoreMenuDetailResponse>>> AddStoreMenuDetailsToMerchantStore(string merchantStoreId,
+        public async Task<List<StoreMenuDetailResponse>> AddStoreMenuDetailsToMerchantStore(string merchantStoreId,
             List<StoreMenuDetailRequest> storeMenuDetailRequest)
         {
             List<StoreMenuDetail> storeMenuDetails = _mapper.Map<List<StoreMenuDetail>>(storeMenuDetailRequest);
@@ -307,24 +240,10 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.AddStoreMenuDetailsToMerchantStore()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<StoreMenuDetailResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //Create response
-            List<StoreMenuDetailResponse> storeMenuDetailResponses = _mapper.Map<List<StoreMenuDetailResponse>>(storeMenuDetails);
-
-            return new BaseResponse<List<StoreMenuDetailResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = storeMenuDetailResponses
-            };
+            return _mapper.Map<List<StoreMenuDetailResponse>>(storeMenuDetails);
         }
 
 
@@ -334,7 +253,7 @@ namespace BLL.Services
         /// <param name="storeMenuDetailId"></param>
         /// <param name="storeMenuDetailUpdateRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<StoreMenuDetailResponse>> UpdateStoreMenuDetailById(string storeMenuDetailId,
+        public async Task<StoreMenuDetailResponse> UpdateStoreMenuDetailById(string storeMenuDetailId,
             StoreMenuDetailUpdateRequest storeMenuDetailUpdateRequest)
         {
             StoreMenuDetail storeMenuDetail;
@@ -351,24 +270,10 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.UpdateStoreMenuDetailById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<StoreMenuDetailResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //Create response
-            StoreMenuDetailResponse storeMenuDetailResponse = _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
-
-            return new BaseResponse<StoreMenuDetailResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = storeMenuDetailResponse
-            };
+            return _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
         }
 
 
@@ -377,7 +282,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="storeMenuDetailId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<StoreMenuDetailResponse>> DeleteStoreMenuDetailById(string storeMenuDetailId)
+        public async Task<StoreMenuDetailResponse> DeleteStoreMenuDetailById(string storeMenuDetailId)
         {
             StoreMenuDetail storeMenuDetail;
             try
@@ -393,24 +298,10 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.DeleteStoreMenuDetailById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<StoreMenuDetailResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //Create response
-            StoreMenuDetailResponse storeMenuDetailResponse = _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
-
-            return new BaseResponse<StoreMenuDetailResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = storeMenuDetailResponse
-            };
+            return _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
         }
 
 
@@ -419,7 +310,7 @@ namespace BLL.Services
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<MerchantStoreResponse>>> GetMerchantStoresByStatus(int status)
+        public async Task<List<MerchantStoreResponse>> GetMerchantStoresByStatus(int status)
         {
             List<MerchantStoreResponse> merchantStoreList = null;
 
@@ -433,21 +324,10 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.GetMerchantStoresByStatus()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
-                    {
-                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
-                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(MerchantStore), status);
             }
 
-            return new BaseResponse<List<MerchantStoreResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreList
-            };
+            return merchantStoreList;
         }
 
 
@@ -456,7 +336,7 @@ namespace BLL.Services
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ExtendMerchantStoreResponse>>> GetAllMerchantStores()
+        public async Task<List<ExtendMerchantStoreResponse>> GetAllMerchantStores()
         {
             //Get MerchantStore from database
             List<MerchantStore> merchantStores;
@@ -468,23 +348,10 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.GetAllMerchantStores()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<MerchantStoreResponse>
-                    {
-                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
-                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(MerchantStore), "all");
             }
 
-            List<ExtendMerchantStoreResponse> merchantStoreResponses = _mapper.Map<List<ExtendMerchantStoreResponse>>(merchantStores);
-
-            return new BaseResponse<List<ExtendMerchantStoreResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreResponses
-            };
+            return _mapper.Map<List<ExtendMerchantStoreResponse>>(merchantStores);
         }
 
 
@@ -493,7 +360,7 @@ namespace BLL.Services
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ExtendMerchantStoreResponse>>> GetPendingMerchantStores()
+        public async Task<List<ExtendMerchantStoreResponse>> GetPendingMerchantStores()
         {
             List<ExtendMerchantStoreResponse> merchantStoreResponses;
 
@@ -507,13 +374,7 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.GetPendingMerchantStores()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendMerchantStoreResponse>
-                    {
-                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
-                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(MerchantStore), "pending");
             }
 
             //get unverified update merchant Store from redis
@@ -521,12 +382,7 @@ namespace BLL.Services
 
             merchantStoreResponses.AddRange(updateStore);
 
-            return new BaseResponse<List<ExtendMerchantStoreResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreResponses
-            };
+            return merchantStoreResponses;
         }
 
 
@@ -535,7 +391,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendMerchantStoreResponse>> GetMenusByStoreId(string id)
+        public async Task<ExtendMerchantStoreResponse> GetMenusByStoreId(string id)
         {
             //biz rule
 
@@ -552,21 +408,10 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.GetMenusByStoreId()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendMerchantStoreResponse>
-                    {
-                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
-                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(MerchantStore), id);
             }
 
-            return new BaseResponse<ExtendMerchantStoreResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreResponse
-            };
+            return merchantStoreResponse;
         }
 
 
@@ -577,7 +422,7 @@ namespace BLL.Services
         /// <param name="isCreate"></param>
         /// <param name="isApprove"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendMerchantStoreResponse>> VerifyMerchantStore(string id, bool isApprove)
+        public async Task<ExtendMerchantStoreResponse> VerifyMerchantStore(string id, bool isApprove)
         {
             ExtendMerchantStoreResponse merchantStoreResponse = null;
             bool isUpdate = false;
@@ -606,13 +451,7 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.VerifyMerchantStore()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendMerchantStoreResponse>
-                    {
-                        ResultCode = (int)MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND,
-                        ResultMessage = MerchantStoreStatus.MERCHANT_STORE_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(MerchantStore), id);
             }
 
             //remove from redis
@@ -622,12 +461,7 @@ namespace BLL.Services
                 new Predicate<ExtendMerchantStoreResponse>(ms => ms.MerchantStoreId.Equals(merchantStoreResponse.MerchantStoreId)));
             }
 
-            return new BaseResponse<ExtendMerchantStoreResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = merchantStoreResponse
-            };
+            return merchantStoreResponse;
         }
     }
 }
