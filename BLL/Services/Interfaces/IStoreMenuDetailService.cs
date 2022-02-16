@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using BLL.Dtos;
 using BLL.Dtos.StoreMenuDetail;
 
 namespace BLL.Services.Interfaces
@@ -11,7 +10,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<BaseResponse<StoreMenuDetailResponse>> CreateStoreMenuDetail(StoreMenuDetailRequest request);
+        Task<StoreMenuDetailResponse> CreateStoreMenuDetail(StoreMenuDetailRequest request);
 
 
         /// <summary>
@@ -28,9 +27,14 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<BaseResponse<StoreMenuDetailResponse>> UpdateStoreMenuDetailById(string id, StoreMenuDetailUpdateRequest request);
+        Task<StoreMenuDetailResponse> UpdateStoreMenuDetailById(string id, StoreMenuDetailUpdateRequest request);
 
 
-        Task<BaseResponse<StoreMenuDetailResponse>> DeleteStoreMenuDetailById(string id);
+        /// <summary>
+        /// Delete Store Menu Detail By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<StoreMenuDetailResponse> DeleteStoreMenuDetailById(string id);
     }
 }

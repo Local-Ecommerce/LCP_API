@@ -41,9 +41,9 @@ namespace API.Controllers
             watch.Start();
 
             //create Product Combination
-            BaseResponse<ProductCombinationResponse> response = await _ProductCombinationService.CreateProductCombination(productCombinationRequest);
+            ProductCombinationResponse response = await _ProductCombinationService.CreateProductCombination(productCombinationRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ProductCombinationResponse>.Success(response));
 
             watch.Stop();
 
@@ -68,9 +68,9 @@ namespace API.Controllers
             watch.Start();
 
             //get ProductCombination
-            BaseResponse<ProductCombinationResponse> response = await _ProductCombinationService.GetProductCombinationById(id);
+            ProductCombinationResponse response = await _ProductCombinationService.GetProductCombinationById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ProductCombinationResponse>.Success(response));
 
             watch.Stop();
 
@@ -96,9 +96,9 @@ namespace API.Controllers
             watch.Start();
 
             //update ProductCombination
-            BaseResponse<ProductCombinationResponse> response = await _ProductCombinationService.UpdateProductCombinationById(id, request);
+            ProductCombinationResponse response = await _ProductCombinationService.UpdateProductCombinationById(id, request);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ProductCombinationResponse>.Success(response));
 
             watch.Stop();
 
@@ -122,9 +122,9 @@ namespace API.Controllers
             watch.Start();
 
             //delete ProductCombination
-            BaseResponse<ProductCombinationResponse> response = await _ProductCombinationService.DeleteProductCombinationById(id);
+            ProductCombinationResponse response = await _ProductCombinationService.DeleteProductCombinationById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ProductCombinationResponse>.Success(response));
 
             watch.Stop();
 
@@ -148,10 +148,10 @@ namespace API.Controllers
             watch.Start();
 
             //get Product Combination
-            BaseResponse<List<ProductCombinationResponse>> response =
+            List<ProductCombinationResponse> response =
                 await _ProductCombinationService.GetProductCombinationsByStatus(status);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -175,10 +175,10 @@ namespace API.Controllers
             watch.Start();
 
             //get Product Combination
-            BaseResponse<List<ProductCombinationResponse>> response =
+            List<ProductCombinationResponse> response =
                 await _ProductCombinationService.GetProductCombinationsByProductId(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -202,10 +202,10 @@ namespace API.Controllers
             watch.Start();
 
             //get Product Combination
-            BaseResponse<List<ProductCombinationResponse>> response =
+            List<ProductCombinationResponse> response =
                 await _ProductCombinationService.GetProductCombinationsByBaseProductId(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 

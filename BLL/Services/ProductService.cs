@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BLL.Dtos;
 using DAL.Constants;
 using BLL.Dtos.Exception;
 using BLL.Dtos.Product;
@@ -7,7 +6,6 @@ using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -49,7 +47,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="baseProductRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendProductResponse>> CreateProduct(BaseProductRequest baseProductRequest)
+        public async Task<ExtendProductResponse> CreateProduct(BaseProductRequest baseProductRequest)
         {
             //biz rule
 
@@ -95,24 +93,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductService.CreateBaseProduct()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            ExtendProductResponse productResponse = _mapper.Map<ExtendProductResponse>(product);
-
-
-            return new BaseResponse<ExtendProductResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productResponse
-            };
+            return _mapper.Map<ExtendProductResponse>(product);
         }
 
 
@@ -121,7 +105,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="productRequests"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ProductResponse>> AddRelatedProduct(string baseProductId,
+        public async Task<ProductResponse> AddRelatedProduct(string baseProductId,
             List<ProductRequest> productRequests)
         {
             try
@@ -153,24 +137,13 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductService.CreateRelatedProduct()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
             //create response
-            ProductResponse productResponse = GetBaseProductById(baseProductId).Result.Data;
+            ProductResponse productResponse = GetBaseProductById(baseProductId).Result;
 
-            return new BaseResponse<ProductResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productResponse
-            };
+            return productResponse;
         }
 
 
@@ -179,7 +152,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendProductResponse>> GetBaseProductById(string id)
+        public async Task<ExtendProductResponse> GetBaseProductById(string id)
         {
             //get product from redis
             ExtendProductResponse baseProductResponse = _redisService.GetList<ExtendProductResponse>(CACHE_KEY)
@@ -198,22 +171,11 @@ namespace BLL.Services
                 {
                     _logger.Error("[ProductService.GetBaseProductById()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<ExtendProductResponse>
-                        {
-                            ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
-                            ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
+                    throw new EntityNotFoundException(typeof(Product), id);
                 }
             }
 
-            return new BaseResponse<ExtendProductResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = baseProductResponse
-            };
+            return baseProductResponse;
         }
 
 
@@ -221,7 +183,7 @@ namespace BLL.Services
         /// Get All Base Product
         /// </summary>
         /// <returns></returns>
-        public async Task<BaseResponse<List<ExtendProductResponse>>> GetAllBaseProduct()
+        public async Task<List<ExtendProductResponse>> GetAllBaseProduct()
         {
             //get products from redis
             List<ExtendProductResponse> extendProductResponses = _redisService.GetList<ExtendProductResponse>(CACHE_KEY);
@@ -242,22 +204,11 @@ namespace BLL.Services
                 {
                     _logger.Error("[ProductService.GetAllBaseProduct()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK,
-                        new BaseResponse<ExtendProductResponse>
-                        {
-                            ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
-                            ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
-                            Data = default
-                        });
+                    throw new EntityNotFoundException(typeof(Product), "all");
                 }
             }
 
-            return new BaseResponse<List<ExtendProductResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendProductResponses
-            };
+            return extendProductResponses;
         }
 
 
@@ -266,7 +217,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ProductResponse>> GetRelatedProductById(string id)
+        public async Task<ProductResponse> GetRelatedProductById(string id)
         {
             ProductResponse productResponse;
 
@@ -282,21 +233,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductService.GetRelatedProductById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductResponse>
-                    {
-                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
-                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Product), id);
             }
 
-            return new BaseResponse<ProductResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productResponse
-            };
+            return productResponse;
         }
 
 
@@ -306,7 +246,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="productRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendProductResponse>> RequestUpdateProduct(string id, ProductRequest productRequest)
+        public async Task<ExtendProductResponse> RequestUpdateProduct(string id, ProductRequest productRequest)
         {
             //validate id
             Product product;
@@ -318,13 +258,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductService.UpdateProduct()]" + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<Product>
-                    {
-                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
-                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Product), id);
             }
 
             //get the order of the last photo
@@ -345,12 +279,7 @@ namespace BLL.Services
                 new Predicate<ExtendProductResponse>(up => up.ProductId.Equals(extendProductResponse.ProductId)));
 
 
-            return new BaseResponse<ExtendProductResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendProductResponse
-            };
+            return extendProductResponse;
         }
 
 
@@ -359,7 +288,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendProductResponse>> DeleteBaseProduct(string id)
+        public async Task<ExtendProductResponse> DeleteBaseProduct(string id)
         {
             //biz rule
 
@@ -374,13 +303,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductService.DeleteBaseProduct()]" + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<Product>
-                    {
-                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
-                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Product), id);
             }
 
             //delete product
@@ -401,13 +324,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductService.DeleteBaseProduct()]" + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<Product>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
             //update product in Redis and create response
@@ -427,12 +344,7 @@ namespace BLL.Services
 
             productResponses.Remove(productResponses.Find(p => p.ProductId.Equals(id)));
 
-            return new BaseResponse<ExtendProductResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendProductResponse
-            };
+            return extendProductResponse;
         }
 
 
@@ -442,7 +354,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ProductResponse>> DeleteRelatedProduct(string id)
+        public async Task<ProductResponse> DeleteRelatedProduct(string id)
         {
             //biz rule
 
@@ -456,13 +368,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductService.DeleteRelatedProduct()]" + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<Product>
-                    {
-                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
-                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Product), id);
             }
 
             //update data
@@ -480,13 +386,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductService.DeleteRelatedProduct()]" + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<Product>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
             //create response
@@ -496,12 +396,7 @@ namespace BLL.Services
             _redisService.StoreToList(CACHE_KEY, productResponse,
                     new Predicate<ProductResponse>(a => a.ProductId == productResponse.ProductId));
 
-            return new BaseResponse<ProductResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productResponse
-            };
+            return productResponse;
         }
 
 
@@ -511,7 +406,7 @@ namespace BLL.Services
         /// <param name="status"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ProductResponse>>> GetProductsByStatus(int status)
+        public async Task<List<ProductResponse>> GetProductsByStatus(int status)
         {
             //biz rule
 
@@ -530,21 +425,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductService.GetProductsByStatus()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductResponse>
-                    {
-                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
-                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Product), status);
             }
 
-            return new BaseResponse<List<ProductResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productResponses
-            };
+            return productResponses;
         }
 
 
@@ -553,7 +437,7 @@ namespace BLL.Services
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ExtendProductResponse>>> GetPendingProducts()
+        public async Task<List<ExtendProductResponse>> GetPendingProducts()
         {
             List<ExtendProductResponse> productResponses;
 
@@ -568,25 +452,14 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductService.GetPendingProducts()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductResponse>
-                    {
-                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
-                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Product), "pending");
             }
 
             //Get Unverified Update Product From Redis
             List<ExtendProductResponse> unverifiedUpdateProducts = _redisService.GetList<ExtendProductResponse>(CACHE_KEY_FOR_UPDATE);
             productResponses.AddRange(unverifiedUpdateProducts);
 
-            return new BaseResponse<List<ExtendProductResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productResponses
-            };
+            return productResponses;
         }
 
 
@@ -596,7 +469,7 @@ namespace BLL.Services
         /// <param name="productId"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ProductResponse>> VerifyProductById(string productId, bool isApprove)
+        public async Task<ProductResponse> VerifyProductById(string productId, bool isApprove)
         {
             ProductResponse productResponse;
             bool isUpdate = false;
@@ -630,13 +503,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductService.VerifyCreateProductById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductResponse>
-                    {
-                        ResultCode = (int)ProductStatus.PRODUCT_NOT_FOUND,
-                        ResultMessage = ProductStatus.PRODUCT_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Product), productId);
             }
 
             if(isUpdate)
@@ -644,12 +511,7 @@ namespace BLL.Services
                 _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
                     new Predicate<ExtendProductResponse>(p => p.ProductId.Equals(productId)));
 
-            return new BaseResponse<ProductResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productResponse
-            };
+            return productResponse;
         }
     }
 }

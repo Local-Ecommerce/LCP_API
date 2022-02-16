@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DAL.Constants;
-using BLL.Dtos;
 using BLL.Dtos.Exception;
 using BLL.Dtos.ProductCategory;
 using BLL.Services.Interfaces;
@@ -8,7 +7,6 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace BLL.Services
@@ -38,7 +36,7 @@ namespace BLL.Services
         /// <param name="request"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ProductCategoryResponse>> CreateProCategory(ProductCategoryRequest request)
+        public async Task<ProductCategoryResponse> CreateProCategory(ProductCategoryRequest request)
         {
             //biz rule
 
@@ -59,24 +57,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCategoryService.CreateProductCategory()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendProductCategoryResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //create response
-            ProductCategoryResponse productCategoryResponse = _mapper.Map<ProductCategoryResponse>(productCategory);
-
-            return new BaseResponse<ProductCategoryResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productCategoryResponse
-            };
+            return _mapper.Map<ProductCategoryResponse>(productCategory);
         }
 
 
@@ -86,7 +70,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ProductCategoryResponse>> DeleteProCategory(string id)
+        public async Task<ProductCategoryResponse> DeleteProCategory(string id)
         {
             //biz rule
 
@@ -100,13 +84,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCategoryService.DeleteProductCategory()]" + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductCategory>
-                    {
-                        ResultCode = (int)ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND,
-                        ResultMessage = ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(ProductCategory), id);
             }
 
             //delete productCategory
@@ -121,24 +99,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCategoryService.DeleteProductCategory()]" + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductCategory>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //create response
-            ProductCategoryResponse productCategoryResponse = _mapper.Map<ProductCategoryResponse>(productCategory);
-
-            return new BaseResponse<ProductCategoryResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productCategoryResponse
-            };
+            return _mapper.Map<ProductCategoryResponse>(productCategory);
         }
 
 
@@ -149,7 +113,7 @@ namespace BLL.Services
         /// <param name="request"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ProductCategoryResponse>> UpdateProCategory(string id, ProductCategoryRequest request)
+        public async Task<ProductCategoryResponse> UpdateProCategory(string id, ProductCategoryRequest request)
         {
             //biz rule
 
@@ -163,13 +127,7 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCategoryService.UpdateProductCategory()]" + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductCategory>
-                    {
-                        ResultCode = (int)ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND,
-                        ResultMessage = ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(ProductCategory), id);
             }
 
             //update data
@@ -187,24 +145,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCategoryService.UpdateProductCategory()]" + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ProductCategory>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            //create response
-            ProductCategoryResponse productCategoryResponse = _mapper.Map<ProductCategoryResponse>(productCategory);
-
-            return new BaseResponse<ProductCategoryResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productCategoryResponse
-            };
+            return _mapper.Map<ProductCategoryResponse>(productCategory);
         }
 
 
@@ -214,7 +158,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<ExtendProductCategoryResponse>> GetProCategoryById(string id)
+        public async Task<ExtendProductCategoryResponse> GetProCategoryById(string id)
         {
             ExtendProductCategoryResponse extendProductCategoryResponse;
 
@@ -229,21 +173,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCategoryService.GetProductCategoryById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendProductCategoryResponse>
-                    {
-                        ResultCode = (int)ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND,
-                        ResultMessage = ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(ProductCategory), id);
             }
 
-            return new BaseResponse<ExtendProductCategoryResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendProductCategoryResponse
-            };
+            return extendProductCategoryResponse;
         }
 
 
@@ -253,7 +186,7 @@ namespace BLL.Services
         /// <param name="status"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ExtendProductCategoryResponse>>> GetProductCategoriesByStatus(int status)
+        public async Task<List<ExtendProductCategoryResponse>> GetProductCategoriesByStatus(int status)
         {
             List<ExtendProductCategoryResponse> productCategoryList = null;
 
@@ -267,21 +200,10 @@ namespace BLL.Services
             {
                 _logger.Error("[ProductCategoryService.GetProductCategorysByStatus()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendProductCategoryResponse>
-                    {
-                        ResultCode = (int)ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND,
-                        ResultMessage = ProductCategoryStatus.PRODUCT_CATEGORY_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(ProductCategory), status);
             }
 
-            return new BaseResponse<List<ExtendProductCategoryResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = productCategoryList
-            };
+            return productCategoryList;
         }
     }
 }

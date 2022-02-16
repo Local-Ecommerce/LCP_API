@@ -1,5 +1,4 @@
-﻿using BLL.Dtos;
-using BLL.Dtos.Payment;
+﻿using BLL.Dtos.Payment;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,7 +12,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="paymentRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<PaymentResponse>> CreatePayment(PaymentRequest paymentRequest);
+        Task<PaymentResponse> CreatePayment(PaymentRequest paymentRequest);
 
 
         /// <summary>
@@ -21,7 +20,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<PaymentResponse>> GetPaymentById(string id);
+        Task<PaymentResponse> GetPaymentById(string id);
 
 
         /// <summary>
@@ -29,7 +28,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<PaymentResponse>>> GetPaymentByDate(DateTime date);
+        Task<List<PaymentResponse>> GetPaymentByDate(DateTime date);
 
 
         /// <summary>
@@ -37,7 +36,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<PaymentResponse>>> GetPaymentByOrderId(string orderId);
+        Task<List<PaymentResponse>> GetPaymentByOrderId(string orderId);
 
 
         /// <summary>
@@ -45,7 +44,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="paymentMethodId"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<PaymentResponse>>> GetPaymentByPaymentMethodId(string paymentMethodId);
+        Task<List<PaymentResponse>> GetPaymentByPaymentMethodId(string paymentMethodId);
 
 
         /// <summary>
@@ -54,7 +53,7 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="PaymentRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<PaymentResponse>> UpdatePaymentById(string id, PaymentRequest PaymentRequest);
+        Task<PaymentResponse> UpdatePaymentById(string id, PaymentRequest PaymentRequest);
 
 
         /// <summary>
@@ -62,7 +61,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BaseResponse<PaymentResponse>> DeletePaymentById(string id);
+        Task<PaymentResponse> DeletePaymentById(string id);
 
 
         /// <summary>
@@ -70,6 +69,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="amount"></param>
         /// <returns></returns>
-        Task<BaseResponse<List<PaymentResponse>>> GetPaymentByPaymentAmount(string amount);
+        Task<List<PaymentResponse>> GetPaymentByPaymentAmount(string amount);
     }
 }

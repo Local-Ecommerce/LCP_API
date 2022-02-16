@@ -1,10 +1,7 @@
 using System;
-using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using DAL.Constants;
-using BLL.Dtos;
-using BLL.Dtos.Exception;
 using BLL.Dtos.StoreMenuDetail;
 using BLL.Services.Interfaces;
 using DAL.Models;
@@ -63,7 +60,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<StoreMenuDetailResponse>> CreateStoreMenuDetail(StoreMenuDetailRequest request)
+        public async Task<StoreMenuDetailResponse> CreateStoreMenuDetail(StoreMenuDetailRequest request)
         {
             StoreMenuDetail storeMenuDetail;
 
@@ -80,21 +77,10 @@ namespace BLL.Services
             {
                 _logger.Error("[StoreMenuDetailService.CreateStoreMenuDetail()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<StoreMenuDetailResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            return new BaseResponse<StoreMenuDetailResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail)
-            };
+            return _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
         }
 
 
@@ -103,7 +89,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<StoreMenuDetailResponse>> UpdateStoreMenuDetailById(string id, StoreMenuDetailUpdateRequest request)
+        public async Task<StoreMenuDetailResponse> UpdateStoreMenuDetailById(string id, StoreMenuDetailUpdateRequest request)
         {
             StoreMenuDetail storeMenuDetail;
 
@@ -121,21 +107,10 @@ namespace BLL.Services
             {
                 _logger.Error("[StoreMenuDetailService.UpdateStoreMenuDetailById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendStoreMenuDetailResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            return new BaseResponse<StoreMenuDetailResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail)
-            };
+            return _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
         }
 
 
@@ -145,7 +120,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<BaseResponse<StoreMenuDetailResponse>> DeleteStoreMenuDetailById(string id)
+        public async Task<StoreMenuDetailResponse> DeleteStoreMenuDetailById(string id)
         {
             StoreMenuDetail storeMenuDetail;
 
@@ -163,21 +138,10 @@ namespace BLL.Services
             {
                 _logger.Error("[StoreMenuDetailService.DeleteStoreMenuDetailById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendStoreMenuDetailResponse>
-                    {
-                        ResultCode = (int)CommonResponse.ERROR,
-                        ResultMessage = CommonResponse.ERROR.ToString(),
-                        Data = default
-                    });
+                throw;
             }
 
-            return new BaseResponse<StoreMenuDetailResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail)
-            };
+            return _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
         }
     }
 }

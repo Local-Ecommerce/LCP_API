@@ -40,9 +40,9 @@ namespace API.Controllers
             watch.Start();
 
             //create system Category
-            BaseResponse<SystemCategoryResponse> response = await _systemCategoryService.CreateSystemCategory(systemCategoryRequest);
+            SystemCategoryResponse response = await _systemCategoryService.CreateSystemCategory(systemCategoryRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<SystemCategoryResponse>.Success(response));
 
             watch.Stop();
 
@@ -65,9 +65,9 @@ namespace API.Controllers
             watch.Start();
 
             //get systemCategory
-            BaseResponse<SystemCategoryResponse> response = await _systemCategoryService.GetSystemCategoryById(id);
+            SystemCategoryResponse response = await _systemCategoryService.GetSystemCategoryById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<SystemCategoryResponse>.Success(response));
 
             watch.Stop();
 
@@ -91,9 +91,9 @@ namespace API.Controllers
             watch.Start();
 
             //get systemCategory
-            BaseResponse<SystemCategoryResponse> response = await _systemCategoryService.GetSystemCategoryAndOneLevelDownInverseBelongToById(id);
+            SystemCategoryResponse response = await _systemCategoryService.GetSystemCategoryAndOneLevelDownInverseBelongToById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<SystemCategoryResponse>.Success(response));
 
             watch.Stop();
 
@@ -117,9 +117,9 @@ namespace API.Controllers
             watch.Start();
 
             //get systemCategory
-            BaseResponse<List<SystemCategoryResponse>> response = await _systemCategoryService.GetAllSystemCategory();
+            List<SystemCategoryResponse> response = await _systemCategoryService.GetAllSystemCategory();
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -143,9 +143,9 @@ namespace API.Controllers
             watch.Start();
 
             //update systemCategory
-            BaseResponse<SystemCategoryResponse> response = await _systemCategoryService.UpdateSystemCategory(id, systemCategoryRequest);
+            SystemCategoryResponse response = await _systemCategoryService.UpdateSystemCategory(id, systemCategoryRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<SystemCategoryResponse>.Success(response));
 
             watch.Stop();
 
@@ -168,9 +168,9 @@ namespace API.Controllers
             watch.Start();
 
             //delete systemCategory
-            BaseResponse<SystemCategoryResponse> response = await _systemCategoryService.DeleteSystemCategory(id);
+            SystemCategoryResponse response = await _systemCategoryService.DeleteSystemCategory(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<SystemCategoryResponse>.Success(response));
 
             watch.Stop();
 
@@ -194,10 +194,10 @@ namespace API.Controllers
             watch.Start();
 
             //get SystemCategory
-            BaseResponse<List<SystemCategoryResponse>> response =
+            List<SystemCategoryResponse> response =
                 await _systemCategoryService.GetSystemCategoriesByStatus(status);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -221,10 +221,10 @@ namespace API.Controllers
             watch.Start();
 
             //get SystemCategory
-            BaseResponse<List<SystemCategoryForAutoCompleteResponse>> response =
+            List<SystemCategoryForAutoCompleteResponse> response =
                 await _systemCategoryService.GetSystemCategoriesForAutoComplete();
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 

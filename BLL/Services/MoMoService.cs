@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
 using BLL.Services.Interfaces;
-using System.Threading.Tasks;
 using BLL.Dtos.MoMo.CaptureWallet;
 using BLL.Dtos.MoMo.IPN;
 using System.Net;
@@ -119,11 +116,8 @@ namespace BLL.Services
             {
                 _logger.Error("[MoMoIPN] Signature not match!");
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<MoMoIPNResponse>
-                {
-                    ResultCode = (int)MoMoStatus.MOMO_IPN_SIGNATURE_NOT_MATCH,
-                    ResultMessage = MoMoStatus.MOMO_IPN_SIGNATURE_NOT_MATCH.ToString()
-                });
+                throw new BusinessException(MoMoStatus.MOMO_IPN_SIGNATURE_NOT_MATCH.ToString(), (int)MoMoStatus.MOMO_IPN_SIGNATURE_NOT_MATCH);
+
             }
 
             // update data donate and response to client

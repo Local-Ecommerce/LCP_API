@@ -42,9 +42,9 @@ namespace API.Controllers
             watch.Start();
 
             //create Resident
-            BaseResponse<ResidentResponse> response = await _residentService.CreateResident(residentRequest);
+            ResidentResponse response = await _residentService.CreateResident(residentRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success(response));
 
             watch.Stop();
 
@@ -68,9 +68,9 @@ namespace API.Controllers
             watch.Start();
 
             //get Resident
-            BaseResponse<ResidentResponse> response = await _residentService.GetResidentById(id);
+            ResidentResponse response = await _residentService.GetResidentById(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success(response));
 
             watch.Stop();
 
@@ -96,9 +96,9 @@ namespace API.Controllers
             watch.Start();
 
             //update Resident
-            BaseResponse<ResidentResponse> response = await _residentService.UpdateResidentById(id, residentUpdateRequest);
+            ResidentResponse response = await _residentService.UpdateResidentById(id, residentUpdateRequest);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success(response));
 
             watch.Stop();
 
@@ -122,9 +122,9 @@ namespace API.Controllers
             watch.Start();
 
             //delete Resident
-            BaseResponse<ResidentResponse> response = await _residentService.DeleteResident(id);
+            ResidentResponse response = await _residentService.DeleteResident(id);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success(response));
 
             watch.Stop();
 
@@ -148,10 +148,10 @@ namespace API.Controllers
             watch.Start();
 
             //get Resident
-            BaseResponse<List<ResidentResponse>> response =
+            List<ResidentResponse> response =
                 await _residentService.GetResidentByApartmentId(apartmentId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -175,10 +175,10 @@ namespace API.Controllers
             watch.Start();
 
             //get Resident
-            BaseResponse<List<ResidentResponse>> response =
+            List<ResidentResponse> response =
                 await _residentService.GetResidentByAccountId(accountId);
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
@@ -202,10 +202,10 @@ namespace API.Controllers
             watch.Start();
 
             //get Resident
-            BaseResponse<List<ResidentResponse>> response =
+            List<ResidentResponse> response =
                 await _residentService.GetAllResidents();
 
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DAL.Constants;
-using BLL.Dtos;
 using BLL.Dtos.Exception;
 using BLL.Dtos.POI;
 using BLL.Services.Interfaces;
@@ -8,7 +7,6 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace BLL.Services
@@ -38,7 +36,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="poiRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<PoiResponse>> CreatePoi(PoiRequest poiRequest)
+        public async Task<PoiResponse> CreatePoi(PoiRequest poiRequest)
         {
             Poi poi = _mapper.Map<Poi>(poiRequest);
 
@@ -56,24 +54,14 @@ namespace BLL.Services
             {
                 _logger.Error("[PoiService.CreatePoi()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<ExtendPoiResponse>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
             //Create Response
             PoiResponse poiResponse = _mapper.Map<PoiResponse>(poi);
 
             //Store Poi to Redis
 
-            return new BaseResponse<PoiResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = poiResponse
-            };
+            return _mapper.Map<PoiResponse>(poi);
         }
 
 
@@ -82,7 +70,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<ExtendPoiResponse>> GetPoiById(string id)
+        public async Task<ExtendPoiResponse> GetPoiById(string id)
         {
             ExtendPoiResponse extendPoiResponses = null;
             //Get poi from Redis
@@ -100,21 +88,11 @@ namespace BLL.Services
                 {
                     _logger.Error("[PoiService.GetPoiById()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
-                    {
-                        ResultCode = (int)PoiStatus.POI_NOT_FOUND,
-                        ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                    throw new EntityNotFoundException(typeof(Poi), id);
                 }
             }
 
-            return new BaseResponse<ExtendPoiResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendPoiResponses
-            };
+            return extendPoiResponses;
         }
 
 
@@ -123,7 +101,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<ExtendPoiResponse>>> GetPoiByReleaseDate(DateTime date)
+        public async Task<List<ExtendPoiResponse>> GetPoiByReleaseDate(DateTime date)
         {
             List<ExtendPoiResponse> extendPoiResponses = null;
 
@@ -141,21 +119,11 @@ namespace BLL.Services
                 {
                     _logger.Error("[PoiService.GetPoiByReleasedDate()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
-                    {
-                        ResultCode = (int)PoiStatus.POI_NOT_FOUND,
-                        ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                    throw new EntityNotFoundException(typeof(Poi), date);
                 }
             }
 
-            return new BaseResponse<List<ExtendPoiResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendPoiResponses
-            };
+            return extendPoiResponses;
         }
 
 
@@ -164,7 +132,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="apartmentId"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<List<ExtendPoiResponse>>> GetPoiByApartmentId(string apartmentId)
+        public async Task<List<ExtendPoiResponse>> GetPoiByApartmentId(string apartmentId)
         {
             List<ExtendPoiResponse> extendPoiResponses = null;
 
@@ -183,21 +151,11 @@ namespace BLL.Services
                 {
                     _logger.Error("[PoiService.GetPoiByApartmentId()]: " + e.Message);
 
-                    throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
-                    {
-                        ResultCode = (int)PoiStatus.POI_NOT_FOUND,
-                        ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                    throw new EntityNotFoundException(typeof(Poi), apartmentId);
                 }
             }
 
-            return new BaseResponse<List<ExtendPoiResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendPoiResponses
-            };
+            return extendPoiResponses;
         }
 
 
@@ -207,7 +165,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="poiUpdateRequest"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<PoiResponse>> UpdatePoiById(string id, PoiUpdateRequest poiUpdateRequest)
+        public async Task<PoiResponse> UpdatePoiById(string id, PoiUpdateRequest poiUpdateRequest)
         {
             Poi poi;
             //Find Poi
@@ -219,12 +177,7 @@ namespace BLL.Services
             {
                 _logger.Error("[PoiService.UpdatePoiById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
-                {
-                    ResultCode = (int)PoiStatus.POI_NOT_FOUND,
-                    ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(Poi), id);
             }
 
             //Update Poi to DB
@@ -240,25 +193,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PoiService.UpdatePoiById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
 
-            //Create response
-            PoiResponse poiResponse = _mapper.Map<PoiResponse>(poi);
-
-            //Store to Redis
-
-            return new BaseResponse<PoiResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = poiResponse
-            };
+            return _mapper.Map<PoiResponse>(poi);
         }
 
 
@@ -267,7 +205,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<BaseResponse<PoiResponse>> DeletePoiById(string id)
+        public async Task<PoiResponse> DeletePoiById(string id)
         {
             //Check id
             Poi poi;
@@ -279,12 +217,7 @@ namespace BLL.Services
             {
                 _logger.Error("[PoiService.DeletePoiById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
-                {
-                    ResultCode = (int)PoiStatus.POI_NOT_FOUND,
-                    ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
-                    Data = default
-                });
+                throw new EntityNotFoundException(typeof(Poi), id);
             }
 
             //Delete Poi
@@ -300,25 +233,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PoiService.DeletePoiById()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK, new BaseResponse<Poi>
-                {
-                    ResultCode = (int)CommonResponse.ERROR,
-                    ResultMessage = CommonResponse.ERROR.ToString(),
-                    Data = default
-                });
+                throw;
             }
 
-            //Create response
-            PoiResponse poiResponse = _mapper.Map<PoiResponse>(poi);
-
-            //Store Poi to redis
-
-            return new BaseResponse<PoiResponse>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = poiResponse
-            };
+            return _mapper.Map<PoiResponse>(poi);
         }
 
 
@@ -328,7 +246,7 @@ namespace BLL.Services
         /// <param name="status"></param>
         /// <returns></returns>
         /// <exception cref="HttpStatusException"></exception>
-        public async Task<BaseResponse<List<ExtendPoiResponse>>> GetPoisByStatus(int status)
+        public async Task<List<ExtendPoiResponse>> GetPoisByStatus(int status)
         {
             List<ExtendPoiResponse> poiList = null;
 
@@ -342,28 +260,17 @@ namespace BLL.Services
             {
                 _logger.Error("[PoiService.GetPoisByStatus()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendPoiResponse>
-                    {
-                        ResultCode = (int)PoiStatus.POI_NOT_FOUND,
-                        ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Poi), status);
             }
 
-            return new BaseResponse<List<ExtendPoiResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = poiList
-            };
+            return poiList;
         }
 
         /// <summary>
         /// Get All Poi
         /// </summary>
         /// <returns></returns>
-        public async Task<BaseResponse<List<ExtendPoiResponse>>> GetAllPoi()
+        public async Task<List<ExtendPoiResponse>> GetAllPoi()
         {
             List<Poi> pois;
 
@@ -375,23 +282,10 @@ namespace BLL.Services
             {
                 _logger.Error("[PoiService.GetAllPoi()]: " + e.Message);
 
-                throw new HttpStatusException(HttpStatusCode.OK,
-                    new BaseResponse<ExtendPoiResponse>
-                    {
-                        ResultCode = (int)PoiStatus.POI_NOT_FOUND,
-                        ResultMessage = PoiStatus.POI_NOT_FOUND.ToString(),
-                        Data = default
-                    });
+                throw new EntityNotFoundException(typeof(Poi), "all");
             }
 
-            List<ExtendPoiResponse> extendPoiResponses = _mapper.Map<List<ExtendPoiResponse>>(pois);
-
-            return new BaseResponse<List<ExtendPoiResponse>>
-            {
-                ResultCode = (int)CommonResponse.SUCCESS,
-                ResultMessage = CommonResponse.SUCCESS.ToString(),
-                Data = extendPoiResponses
-            };
+            return _mapper.Map<List<ExtendPoiResponse>>(pois);
         }
     }
 }

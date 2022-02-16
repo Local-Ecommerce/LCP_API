@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DAL.Constants;
-using BLL.Dtos;
 using BLL.Dtos.Exception;
 using BLL.Dtos.Order;
 using BLL.Dtos.OrderDetail;
@@ -11,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace BLL.Services
