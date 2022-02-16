@@ -2,7 +2,6 @@
 using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace API.Middleware
@@ -25,7 +24,7 @@ namespace API.Middleware
             try
             {
                 string JWTtoken = context.Request.Headers["Authorization"];
-                string token = JWTtoken != null ? JWTtoken.Substring(7) : null;
+                string token = JWTtoken?[7..];
 
                 if (!string.IsNullOrEmpty(token))
                 {
@@ -34,30 +33,16 @@ namespace API.Middleware
                         new Predicate<TokenInfo>(ti => DateTime.Compare((DateTime)ti.ExpiredDate, DateTime.Now) <= 0));
 
                     if (_redisService.GetList<TokenInfo>(TOKEN_BLACKLIST_KEY).Find(ti => ti.Token.Equals(token)) != null)
-                    {
-                        await HandleError(context, "Invalid Token");
-                    }
+                        throw new UnauthorizedAccessException();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                await HandleError(context, e.Message);
+                _logger.Error("[CheckBlacklistTokenMiddleware]: Token is in blacklist.");
+                throw;
             }
-            
 
             await next(context);
-        }
-
-        public async Task HandleError(HttpContext context, string message)
-        {
-            if (!context.Response.HasStarted)
-            {
-                string json = JsonSerializer.Serialize(new { error = message });
-                context.Response.ContentType = "application/json";
-                context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                await context.Response.WriteAsync(json);
-            } else
-                await context.Response.WriteAsync(string.Empty);
         }
     }
 }
