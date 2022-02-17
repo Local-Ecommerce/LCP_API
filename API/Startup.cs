@@ -42,7 +42,9 @@ namespace API
             {
                 options.AddPolicy(name: "MyPolicy", builder =>
                 {
-                    builder.AllowAnyOrigin();
+                    builder.AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
                 });
             });
 
