@@ -25,11 +25,11 @@ namespace API
 {
     public class Startup
     {
-        private IConfiguration _configuration { get; }
+        private IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
         {
-            _configuration = configuration;
+            Configuration = configuration;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -42,7 +42,8 @@ namespace API
             {
                 options.AddPolicy(name: "MyPolicy", builder =>
                 {
-                    builder.WithOrigins(_configuration.GetValue<string>("ServerLink"))
+                    builder.WithOrigins(Configuration.GetValue<string>("CorsOrigin:Backend"), 
+                        Configuration.GetValue<string>("CorsOrigin:Frontend"), Configuration.GetValue<string>("CorsOrigin:Server"))
                            .AllowAnyHeader()
                            .AllowAnyMethod();
                 });
@@ -51,7 +52,7 @@ namespace API
             //Add Swagger
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Local Commerce Platform", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Local Commerce Platform", Version = "v1.9" });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
@@ -84,13 +85,13 @@ namespace API
             //Add Redis
             services.AddStackExchangeRedisCache(opt =>
             {
-                opt.Configuration = _configuration.GetValue<string>
+                opt.Configuration = Configuration.GetValue<string>
                 ("CacheSettings:ConnectionString");
             });
 
             //Add DB connection
             services.AddDbContext<LoichDBContext>(opt => opt.UseSqlServer(
-                _configuration.GetConnectionString("DatabaseConnection")));
+                Configuration.GetConnectionString("DatabaseConnection")));
 
 
             //Add Logger
@@ -103,7 +104,7 @@ namespace API
             });
 
             //Add JWT Authentication
-            var key = _configuration.GetValue<string>("Jwt:Custom:Key");
+            var key = Configuration.GetValue<string>("Jwt:Custom:Key");
 
             //Custom Jwt Authentication
             services.AddAuthentication(x =>
@@ -145,7 +146,7 @@ namespace API
             services.AddTransient<CheckBlacklistTokenMiddleware>();
 
             //add application service extensions
-            services.AddApplicationServices(_configuration);
+            services.AddApplicationServices(Configuration);
 
             //setting environment
             string startupPath = System.IO.Directory.GetCurrentDirectory();
