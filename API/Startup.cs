@@ -44,9 +44,7 @@ namespace API
                 {
                     builder.WithOrigins(_configuration.GetValue<string>("ServerLink"))
                            .AllowAnyHeader()
-                           .AllowAnyMethod()
-                           .AllowAnyOrigin();
-
+                           .AllowAnyMethod();
                 });
             });
 

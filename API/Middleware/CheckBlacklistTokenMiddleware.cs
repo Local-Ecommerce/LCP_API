@@ -35,10 +35,10 @@ namespace API.Middleware
                 {
                     _logger.Error("[CheckBlacklistTokenMiddleware]: Token is in blacklist.");
                     await HandleError(context, "Invalid Token");
+                    return;
                 }
-                else
-                    await next(context);
             }
+            await next(context);
         }
 
         public async Task HandleError(HttpContext context, string message)
