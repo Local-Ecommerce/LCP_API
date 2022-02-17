@@ -163,7 +163,7 @@ namespace API
                 app.UseSwaggerUI(c =>
                 {
                     c.RoutePrefix = "";
-                    c.SwaggerEndpoint("/swagger/v1.9/swagger.json", "LCP v1");
+                    c.SwaggerEndpoint("/swagger/v1.9/swagger.json", "LCP v1.9");
                 });
             //}
 
