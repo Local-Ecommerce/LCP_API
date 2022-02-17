@@ -8,50 +8,189 @@ namespace DAL.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly LoichDBContext _context;
+        private LoichDBContext _context;
+        private IAccountRepository _accountRepository;
+        private IApartmentRepository _apartmentRepository;
+        private IMenuRepository _menuRepository;
+        private IOrderRepository _orderRepository;
+        private IMerchantStoreRepository _merchantStoreRepository;
+        private IProductRepository _productRepository;
+        private INewsRepository _newsRepository;
+        private IOrderDetailRepository _orderDetailRepository;
+        private IPaymentMethodRepository _paymentMethodRepository;
+        private IPaymentRepository _paymentRepository;
+        private IPoiRepository _poiRepository;
+        private IProductCategoryRepository _productCategoryRepository;
+        private IProductCombinationRepository _productCombinationRepository;
+        private IProductInMenuRepository _productInMenuRepository;
+        private IResidentRepository _residentRepository;
+        private IRoleRepository _roleRepository;
+        private IStoreMenuDetailRepository _storeMenuDetailRepository;
+        private ISystemCategoryRepository _systemCategoryRepository;
 
-        public IAccountRepository Accounts { get; private set; }
-        public IApartmentRepository Apartments { get; private set; }
-        public ICollectionMappingRepository CollectionMappings { get; private set; }
-        public IMenuRepository Menus { get; private set; }
-        public IMerchantStoreRepository MerchantStores { get; private set; }
-        public INewsRepository News { get; private set; }
-        public IOrderDetailRepository OrderDetails { get; private set; }
-        public IOrderRepository Orders { get; private set; }
-        public IPaymentRepository Payments { get; private set; }
-        public IPaymentMethodRepository PaymentMethods { get; private set; }
-        public IPoiRepository Pois { get; private set; }
-        public IProductRepository Products { get; private set; }
-        public IProductCategoryRepository ProductCategories { get; private set; }
-        public IProductCombinationRepository ProductCombinations { get; private set; }
-        public IProductInMenuRepository ProductInMenus { get; private set; }
-        public IResidentRepository Residents { get; private set; }
-        public IRoleRepository Roles { get; private set; }
-        public IStoreMenuDetailRepository StoreMenuDetails { get; private set; }
-        public ISystemCategoryRepository SystemCategories { get; private set; }
+        public IAccountRepository Accounts
+        {
+            get
+            {
+                if (_accountRepository == null) _accountRepository = new AccountRepository(_context);
+                return _accountRepository;
+            }
+        }
+
+        public IApartmentRepository Apartments
+        {
+            get
+            {
+                if (_apartmentRepository == null) _apartmentRepository = new ApartmentRepository(_context);
+                return _apartmentRepository;
+            }
+        }
+
+        public IMenuRepository Menus
+        {
+            get
+            {
+                if (_menuRepository == null) _menuRepository = new MenuRepository(_context);
+                return _menuRepository;
+            }
+        }
+
+        public IMerchantStoreRepository MerchantStores
+        {
+            get
+            {
+                if (_merchantStoreRepository == null) _merchantStoreRepository = new MerchantStoreRepository(_context);
+                return _merchantStoreRepository;
+            }
+        }
+
+        public INewsRepository News
+        {
+            get
+            {
+                if (_newsRepository == null) _newsRepository = new NewsRepository(_context);
+                return _newsRepository;
+            }
+        }
+
+        public IOrderDetailRepository OrderDetails
+        {
+            get
+            {
+                if (_orderDetailRepository == null) _orderDetailRepository = new OrderDetailRepository(_context);
+                return _orderDetailRepository;
+            }
+        }
+
+        public IOrderRepository Orders
+        {
+            get
+            {
+                if (_orderRepository == null) _orderRepository = new OrderRepository(_context);
+                return _orderRepository;
+            }
+        }
+
+        public IPaymentRepository Payments
+        {
+            get
+            {
+                if (_paymentRepository == null) _paymentRepository = new PaymentRepository(_context);
+                return _paymentRepository;
+            }
+        }
+
+        public IPaymentMethodRepository PaymentMethods
+        {
+            get
+            {
+                if (_paymentMethodRepository == null) _paymentMethodRepository = new PaymentMethodRepository(_context);
+                return _paymentMethodRepository;
+            }
+        }
+
+        public IPoiRepository Pois
+        {
+            get
+            {
+                if (_poiRepository == null) _poiRepository = new PoiRepository(_context);
+                return _poiRepository;
+            }
+        }
+
+        public IProductRepository Products
+        {
+            get
+            {
+                if (_productRepository == null) _productRepository = new ProductRepository(_context);
+                return _productRepository;
+            }
+        }
+
+        public IProductCategoryRepository ProductCategories
+        {
+            get
+            {
+                if (_productCategoryRepository == null) _productCategoryRepository = new ProductCategoryRepository(_context);
+                return _productCategoryRepository;
+            }
+        }
+
+        public IProductCombinationRepository ProductCombinations
+        {
+            get
+            {
+                if (_productCombinationRepository == null) _productCombinationRepository = new ProductCombinationRepository(_context);
+                return _productCombinationRepository;
+            }
+        }
+
+        public IProductInMenuRepository ProductInMenus
+        {
+            get
+            {
+                if (_productInMenuRepository == null) _productInMenuRepository = new ProductInMenuRepository(_context);
+                return _productInMenuRepository;
+            }
+        }
+        public IResidentRepository Residents
+        {
+            get
+            {
+                if (_residentRepository == null) _residentRepository = new ResidentRepository(_context);
+                return _residentRepository;
+            }
+        }
+        public IRoleRepository Roles
+        {
+            get
+            {
+                if (_roleRepository == null) _roleRepository = new RoleRepository(_context);
+                return _roleRepository;
+            }
+        }
+        public IStoreMenuDetailRepository StoreMenuDetails
+        {
+            get
+            {
+                if (_storeMenuDetailRepository == null) _storeMenuDetailRepository = new StoreMenuDetailRepository(_context);
+                return _storeMenuDetailRepository;
+            }
+        }
+
+        public ISystemCategoryRepository SystemCategories
+        {
+            get
+            {
+                if (_systemCategoryRepository == null)
+                    _systemCategoryRepository = new SystemCategoryRepository(_context);
+                return _systemCategoryRepository;
+            }
+        }
 
         public UnitOfWork(LoichDBContext context)
         {
             _context = context;
-            Accounts = new AccountRepository(context);
-            Apartments = new ApartmentRepository(context);
-            CollectionMappings = new CollectionMappingRepository(context);
-            Menus = new MenuRepository(context);
-            MerchantStores = new MerchantStoreRepository(context);
-            News = new NewsRepository(context);
-            Orders = new OrderRepository(context);
-            OrderDetails = new OrderDetailRepository(context);
-            Payments = new PaymentRepository(context);
-            PaymentMethods = new PaymentMethodRepository(context);
-            Pois = new PoiRepository(context);
-            Products = new ProductRepository(context);
-            ProductCategories = new ProductCategoryRepository(context);
-            ProductCombinations = new ProductCombinationRepository(context);
-            ProductInMenus = new ProductInMenuRepository(context);
-            Residents = new ResidentRepository(context);
-            Roles = new RoleRepository(context);
-            StoreMenuDetails = new StoreMenuDetailRepository(context);
-            SystemCategories = new SystemCategoryRepository(context);
         }
 
         /// <summary>

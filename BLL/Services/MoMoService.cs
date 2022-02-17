@@ -11,7 +11,6 @@ using System.Text.Json;
 using DAL.Constants;
 using System.IO;
 using BLL.Dtos.Exception;
-using BLL.Dtos;
 
 namespace BLL.Services
 {
@@ -100,7 +99,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="momoIPNRequest"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public MoMoIPNResponse ProcessIPN(MoMoIPNRequest momoIPNRequest)
         {
             // Validate signature

@@ -22,30 +22,23 @@ namespace API.Middleware
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            try
-            {
-                string JWTtoken = context.Request.Headers["Authorization"];
-                string token = JWTtoken != null ? JWTtoken.Substring(7) : null;
+            string JWTtoken = context.Request.Headers["Authorization"];
+            string token = JWTtoken?[7..];
 
-                if (!string.IsNullOrEmpty(token))
+            if (!string.IsNullOrEmpty(token))
+            {
+                //remove expired token from blacklist
+                _redisService.DeleteFromList<TokenInfo>(TOKEN_BLACKLIST_KEY,
+                    new Predicate<TokenInfo>(ti => DateTime.Compare((DateTime)ti.ExpiredDate, DateTime.Now) <= 0));
+
+                if (_redisService.GetList<TokenInfo>(TOKEN_BLACKLIST_KEY).Find(ti => ti.Token.Equals(token)) != null)
                 {
-                    //remove expired token from blacklist
-                    _redisService.DeleteFromList<TokenInfo>(TOKEN_BLACKLIST_KEY,
-                        new Predicate<TokenInfo>(ti => DateTime.Compare((DateTime)ti.ExpiredDate, DateTime.Now) <= 0));
-
-                    if (_redisService.GetList<TokenInfo>(TOKEN_BLACKLIST_KEY).Find(ti => ti.Token.Equals(token)) != null)
-                    {
-                        await HandleError(context, "Invalid Token");
-                    }
+                    _logger.Error("[CheckBlacklistTokenMiddleware]: Token is in blacklist.");
+                    await HandleError(context, "Invalid Token");
                 }
+                else
+                    await next(context);
             }
-            catch (Exception e)
-            {
-                await HandleError(context, e.Message);
-            }
-            
-
-            await next(context);
         }
 
         public async Task HandleError(HttpContext context, string message)
@@ -56,7 +49,8 @@ namespace API.Middleware
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = StatusCodes.Status403Forbidden;
                 await context.Response.WriteAsync(json);
-            } else
+            }
+            else
                 await context.Response.WriteAsync(string.Empty);
         }
     }

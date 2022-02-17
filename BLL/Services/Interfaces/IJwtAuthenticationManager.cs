@@ -10,9 +10,8 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="residentId"></param>
         /// <param name="roleName"></param>
-        /// <param name="apartmentId"></param>
         /// <param name="expiredDate"></param>
         /// <returns></returns>
-        string Authenticate(string residentId, string roleName, string apartmentId, DateTime expiredDate);
+        string Authenticate(string residentId, string roleName, DateTime expiredDate);
     }
 }

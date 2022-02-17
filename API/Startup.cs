@@ -133,12 +133,9 @@ namespace API
 
                         // Write to the response
                         context.Response.StatusCode = 401;
-                        BaseResponse<string> response = new()
-                        {
-                            ResultCode = (int)AccountStatus.UNAUTHORIZED_ACCOUNT,
-                            ResultMessage = AccountStatus.UNAUTHORIZED_ACCOUNT.ToString()
-                        };
-                        await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+                        string response = JsonSerializer.Serialize(
+                            ApiResponse<string>.Fail((int)AccountStatus.UNAUTHORIZED_ACCOUNT, AccountStatus.UNAUTHORIZED_ACCOUNT.ToString()));
+                        await context.Response.WriteAsync(response);
                     }
                 };
             });

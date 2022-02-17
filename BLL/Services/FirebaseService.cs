@@ -12,9 +12,6 @@ using DAL.Constants;
 using BLL.Dtos.Resident;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
-using BLL.Dtos.Exception;
-using BLL.Dtos;
-using System.Net;
 using System.Collections.ObjectModel;
 
 namespace BLL.Services
@@ -157,10 +154,9 @@ namespace BLL.Services
                     ResidentResponse residentResponse = new ResidentResponse
                     {
                         ResidentId = document.Id,
-                        ResidentName = (string)documentDictionary["fullname"],
-                        Gender = (string)documentDictionary["gender"],
-                        DeliveryAddress = (string)documentDictionary["deliveryAddress"],
-                        ApartmentId = (string)documentDictionary["apartmentId"],
+                        ResidentName = documentDictionary.ContainsKey("fullname") ? (string)documentDictionary["fullname"] : default,
+                        Gender = documentDictionary.ContainsKey("gender") ? (string)documentDictionary["gender"] : default,
+                        DeliveryAddress = documentDictionary.ContainsKey("deliveryAddress") ? (string)documentDictionary["deliveryAddress"] : default,
                         DateOfBirth = (DateTime?)documentDictionary["dob"],
                         Type = ResidentType.CUSTOMER,
                         AccountId = document.Id,
@@ -172,7 +168,7 @@ namespace BLL.Services
                     extendAccountResponse = new ExtendAccountResponse
                     {
                         AccountId = document.Id,
-                        Username = (string)documentDictionary["username"],
+                        Username = documentDictionary.ContainsKey("username") ? (string)documentDictionary["username"] : default,
                         ProfileImage = "",
                         AvatarImage = "",
                         CreatedDate = DateTime.Now,

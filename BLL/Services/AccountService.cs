@@ -91,11 +91,11 @@ namespace BLL.Services
             }
 
             //revoke token here
-            TokenInfo tokenInfo = new TokenInfo
+            TokenInfo tokenInfo = new()
             {
                 Token = account.Token,
                 ExpiredDate = account.TokenExpiredDate,
-                RoleId = account.RoleId
+                ResidentId = account.RoleId
             };
 
             _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,
@@ -160,14 +160,13 @@ namespace BLL.Services
 
                 if(account.TokenExpiredDate == null || account.TokenExpiredDate < DateTime.Now)
                 {
-                    string roleId, apartmentId;
+                    string roleId;
                     //find resident role
                     if (account.RoleId.Equals(RoleId.ADMIN))
                     {
                         //is admin
                         expiredDate = DateTime.Now.AddHours((double)TimeUnit.ONE_HOUR);
                         roleId = account.RoleId;
-                        apartmentId = null;
                     }
                     else
                     {
@@ -179,10 +178,9 @@ namespace BLL.Services
                             expiredDate = DateTime.Now.AddDays((double)TimeUnit.THIRTY_DAYS);
 
                         roleId = resident.Type;
-                        apartmentId = resident.ApartmentId;
                     }
 
-                    account.Token = _jwtAuthenticationManager.Authenticate(account.AccountId, roleId, apartmentId, expiredDate);
+                    account.Token = _jwtAuthenticationManager.Authenticate(account.AccountId, roleId, expiredDate);
                     account.TokenExpiredDate = expiredDate;
 
                     if (isCreate)
@@ -210,7 +208,6 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="accountImageForm"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ExtendAccountResponse> UpdateAccount(string id)
         {
             //biz rule
@@ -264,10 +261,10 @@ namespace BLL.Services
 
                 Resident resident = account.Residents.FirstOrDefault();
 
-                tokenInfo = new TokenInfo
+                tokenInfo = new()
                 {
                     Token = account.Token,
-                    RoleId = resident.ResidentId,
+                    ResidentId = resident.ResidentId,
                     ExpiredDate = account.TokenExpiredDate
                 };
 
@@ -282,12 +279,8 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[AccountService.ChangeResidentTypeByAccountId()]: " + e.Message);
-
                 throw;
             }
-
-            //create response
-
 
             //move old token to blacklist
             _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,

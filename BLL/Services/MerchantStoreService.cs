@@ -307,7 +307,6 @@ namespace BLL.Services
         /// Get Merchant Stores By Status
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<MerchantStoreResponse>> GetMerchantStoresByStatus(int status)
         {
             List<MerchantStoreResponse> merchantStoreList = null;
@@ -333,7 +332,6 @@ namespace BLL.Services
         /// Get All Merchant Stores
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ExtendMerchantStoreResponse>> GetAllMerchantStores()
         {
             //Get MerchantStore from database
@@ -357,7 +355,6 @@ namespace BLL.Services
         /// Get Pending Merchant Stores
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ExtendMerchantStoreResponse>> GetPendingMerchantStores()
         {
             List<ExtendMerchantStoreResponse> merchantStoreResponses;

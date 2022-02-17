@@ -35,7 +35,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ProductCategoryResponse> CreateProCategory(ProductCategoryRequest request)
         {
             //biz rule
@@ -69,7 +68,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ProductCategoryResponse> DeleteProCategory(string id)
         {
             //biz rule
@@ -112,7 +110,6 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ProductCategoryResponse> UpdateProCategory(string id, ProductCategoryRequest request)
         {
             //biz rule
@@ -157,7 +154,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<ExtendProductCategoryResponse> GetProCategoryById(string id)
         {
             ExtendProductCategoryResponse extendProductCategoryResponse;
@@ -185,7 +181,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ExtendProductCategoryResponse>> GetProductCategoriesByStatus(int status)
         {
             List<ExtendProductCategoryResponse> productCategoryList = null;

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DAL.Constants;
-using BLL.Dtos;
 using BLL.Dtos.Exception;
 using BLL.Dtos.News;
 using BLL.Services.Interfaces;
@@ -8,7 +7,6 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace BLL.Services
@@ -227,7 +225,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        /// <exception cref="HttpStatusException"></exception>
         public async Task<List<ExtendNewsResponse>> GetNewsByStatus(int status)
         {
             List<ExtendNewsResponse> newsList = null;
