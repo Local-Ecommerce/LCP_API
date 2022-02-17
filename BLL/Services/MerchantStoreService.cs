@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BLL.Dtos;
 using DAL.Constants;
 using BLL.Dtos.Exception;
 using BLL.Dtos.MerchantStore;
@@ -7,7 +6,6 @@ using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using BLL.Dtos.StoreMenuDetail;
