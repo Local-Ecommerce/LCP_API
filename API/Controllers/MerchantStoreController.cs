@@ -110,8 +110,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Merchant Store
+        /// Delete Merchant Store (Merchant)
         /// </summary>
+
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMerchantStore(string id)
         {
@@ -299,9 +301,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Pending Merchant Stores (Admin)
+        /// Get Pending Merchant Stores (Admin, Market Manager)
         /// </summary>
         [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpGet("pending")]
         public async Task<IActionResult> GetPendingMerchantStores()
         {
@@ -353,9 +356,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Approve MerchantStore With ID (Admin)
+        /// Approve MerchantStore With ID (Admin, Market Manager)
         /// </summary>
         [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpPut("approval/{id}")]
         public async Task<IActionResult> ApproveMerchantStore(string id)
         {
@@ -379,9 +383,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Reject MerchantStore With ID (Admin)
+        /// Reject MerchantStore With ID (Admin, Market Manager)
         /// </summary>
         [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpPut("rejection/{id}")]
         public async Task<IActionResult> RejectCreateMerchantStore(string id)
         {

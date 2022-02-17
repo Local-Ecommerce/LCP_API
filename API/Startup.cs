@@ -42,9 +42,11 @@ namespace API
             {
                 options.AddPolicy(name: "MyPolicy", builder =>
                 {
-                    builder.AllowAnyOrigin()
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
+                    builder.WithOrigins(_configuration.GetValue<string>("ServerLink"))
+                           .AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .AllowAnyOrigin();
+
                 });
             });
 
