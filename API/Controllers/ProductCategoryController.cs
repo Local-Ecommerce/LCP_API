@@ -133,8 +133,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Product Categories By Status
+        /// Get Product Categories By Status (Merchant)
         /// </summary>
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetProductCategoriesByStatus(int status)
         {
