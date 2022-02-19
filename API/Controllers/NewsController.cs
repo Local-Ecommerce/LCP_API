@@ -28,9 +28,10 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create news (Maket Manager)
+        /// Create news (Admin, Maket Manager)
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPost]
         public async Task<IActionResult> CreateNews([FromBody] NewsRequest newsRequest)
         {
@@ -104,9 +105,10 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Update news (Market Manager)
+        /// Update news (Admin, Market Manager)
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateNewsById(string id, [FromBody] NewsUpdateRequest newsRequest)
         {
@@ -130,9 +132,10 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Delete news (Market Manager)
+        /// Delete news (Admin, Market Manager)
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNewsById(string id)
         {
@@ -207,9 +210,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get News By Status (Market Manager)
+        /// Get News By Status (Admin, Market Manager)
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetNewsByStatus(int status)
         {

@@ -54,8 +54,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get System Category By Id (Authentication required)
+        /// Get System Category By Id (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSystemCategoryById(string id)
         {
@@ -157,8 +158,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete SystemCategory by Id
+        /// Delete SystemCategory by Id (Admin)
         /// </summary>
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSystemCategory(string id)
         {

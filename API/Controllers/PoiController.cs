@@ -28,9 +28,10 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create poi (Market Manager)
+        /// Create poi (Admin, Market Manager)
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPost]
         public async Task<IActionResult> CreatePoi([FromBody] PoiRequest poiRequest)
         {
@@ -105,9 +106,10 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Update Poi (Market Manager)
+        /// Update Poi (Admin, Market Manager)
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePoiById(string id, [FromBody] PoiUpdateRequest poiRequest)
         {
@@ -131,9 +133,10 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Delete poi (Market Manager)
+        /// Delete poi (Admin, Market Manager)
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePoisById(string id)
         {
@@ -208,9 +211,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Poi By Status (Market Manager)
+        /// Get Poi By Status (Admin, Market Manager)
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = RoleId.ADMIN)]
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetPoiByStatus(int status)
         {
