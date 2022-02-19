@@ -54,9 +54,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get System Category By Id (Admin)
+        /// Get System Category By Id
         /// </summary>
-        [Authorize(Roles = RoleId.ADMIN)]
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSystemCategoryById(string id)
         {
@@ -184,9 +184,10 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get System Categories By Status (Admin)
+        /// Get System Categories By Status (Admin, Merchant)
         /// </summary>
         [Authorize(Roles = RoleId.ADMIN)]
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetSystemCategoriesByStatus(int status)
         {
