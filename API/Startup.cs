@@ -149,7 +149,7 @@ namespace API
             services.AddApplicationServices(Configuration);
 
             //setting environment
-            string startupPath = System.IO.Directory.GetCurrentDirectory();
+            string startupPath = Directory.GetCurrentDirectory();
             string credential_path = startupPath + "\\firebase_auth.json";
             System.Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credential_path);
         }

@@ -1,4 +1,5 @@
-﻿using BLL.Dtos;
+﻿using API.Extensions;
+using BLL.Dtos;
 using BLL.Dtos.POI;
 using BLL.Services.Interfaces;
 using DAL.Constants;
@@ -30,8 +31,7 @@ namespace API.Controllers
         /// <summary>
         /// Create poi (Admin, Market Manager)
         /// </summary>
-        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
-        [Authorize(Roles = RoleId.ADMIN)]
+        [AuthorizeRoles(RoleId.ADMIN, ResidentType.MARKET_MANAGER)]
         [HttpPost]
         public async Task<IActionResult> CreatePoi([FromBody] PoiRequest poiRequest)
         {

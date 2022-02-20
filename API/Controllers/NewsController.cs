@@ -1,4 +1,5 @@
-﻿using BLL.Dtos;
+﻿using API.Extensions;
+using BLL.Dtos;
 using BLL.Dtos.News;
 using BLL.Services.Interfaces;
 using DAL.Constants;
@@ -30,12 +31,11 @@ namespace API.Controllers
         /// <summary>
         /// Create news (Admin, Maket Manager)
         /// </summary>
-        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
-        [Authorize(Roles = RoleId.ADMIN)]
+        [AuthorizeRoles(RoleId.ADMIN, ResidentType.MARKET_MANAGER)]
         [HttpPost]
         public async Task<IActionResult> CreateNews([FromBody] NewsRequest newsRequest)
         {
-            _logger.Information($"POST api/news START Request: " + 
+            _logger.Information($"POST api/news START Request: " +
                 $"{JsonSerializer.Serialize(newsRequest)}");
 
             Stopwatch watch = new();
