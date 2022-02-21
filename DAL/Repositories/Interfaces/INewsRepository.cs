@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 using DAL.Models;
 
@@ -7,17 +7,22 @@ namespace DAL.Repositories.Interfaces
     public interface INewsRepository : IRepository<News>
     {
         /// <summary>
-        /// Get All News Include Resident And Apartment
+        /// Get News
         /// </summary>
+        /// <param name="id"></param>
+        /// <param name="apartmentId"></param>
+        /// <param name="date"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="queryPage"></param>
+        /// <param name="isAsc"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        Task<List<News>> GetAllNewsIncludeApartmentAndResident();
-
-
-        /// <summary>
-        /// Get News Include Resident And Apartment By News Id
-        /// </summary>
-        /// <param name="newsId"></param>
-        /// <returns></returns>
-        Task<News> GetNewsIncludeResidentAndApartmentByNewsId(string newsId);
+        Task<PagingModel<News>> GetNews(
+            string id, string apartmentId,
+            DateTime date, int?[] status,
+            int? limit, int? queryPage, 
+            bool isAsc, string propertyName, string[] include);
     }
 }

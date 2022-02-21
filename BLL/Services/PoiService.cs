@@ -66,100 +66,6 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Poi by Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<ExtendPoiResponse> GetPoiById(string id)
-        {
-            ExtendPoiResponse extendPoiResponses = null;
-            //Get poi from Redis
-
-            //Get poi from DB
-            if (extendPoiResponses is null)
-            {
-                try
-                {
-                    Poi poi = await _unitOfWork.Pois.GetPoiIncludeResidentAndApartMentByPoiId(id);
-
-                    extendPoiResponses = _mapper.Map<ExtendPoiResponse>(poi);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[PoiService.GetPoiById()]: " + e.Message);
-
-                    throw new EntityNotFoundException(typeof(Poi), id);
-                }
-            }
-
-            return extendPoiResponses;
-        }
-
-
-        /// <summary>
-        /// Get POI By Release Date
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        public async Task<List<ExtendPoiResponse>> GetPoiByReleaseDate(DateTime date)
-        {
-            List<ExtendPoiResponse> extendPoiResponses = null;
-
-
-            //Get ApartmentId from DB
-            if (_utilService.IsNullOrEmpty(extendPoiResponses))
-            {
-                try
-                {
-                    List<Poi> poi = await _unitOfWork.Pois.FindListAsync(poi => poi.ReleaseDate.Value.Date == date.Date);
-
-                    extendPoiResponses = _mapper.Map<List<ExtendPoiResponse>>(poi);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[PoiService.GetPoiByReleasedDate()]: " + e.Message);
-
-                    throw new EntityNotFoundException(typeof(Poi), date);
-                }
-            }
-
-            return extendPoiResponses;
-        }
-
-
-        /// <summary>
-        /// Get Poi by Apartment Id
-        /// </summary>
-        /// <param name="apartmentId"></param>
-        /// <returns></returns>
-        public async Task<List<ExtendPoiResponse>> GetPoiByApartmentId(string apartmentId)
-        {
-            List<ExtendPoiResponse> extendPoiResponses = null;
-
-            //Get Poi from Redis
-
-            //Get ApartmentId from DB
-            if (_utilService.IsNullOrEmpty(extendPoiResponses))
-            {
-                try
-                {
-                    List<Poi> poi = await _unitOfWork.Pois.FindListAsync(poi => poi.ApartmentId.Equals(apartmentId));
-
-                    extendPoiResponses = _mapper.Map<List<ExtendPoiResponse>>(poi);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[PoiService.GetPoiByApartmentId()]: " + e.Message);
-
-                    throw new EntityNotFoundException(typeof(Poi), apartmentId);
-                }
-            }
-
-            return extendPoiResponses;
-        }
-
-
-        /// <summary>
         /// Update Poi by Id
         /// </summary>
         /// <param name="id"></param>
@@ -241,50 +147,56 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Pois By Status
+        /// Get Poi
         /// </summary>
+        /// <param name="id"></param>
+        /// <param name="apartmentId"></param>
+        /// <param name="date"></param>
         /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<List<ExtendPoiResponse>> GetPoisByStatus(int status)
+        public async Task<object> GetPoi(
+            string id, string apartmentId, 
+            DateTime date, int?[] status, 
+            int? limit, int? page, string sort, string[] include)
         {
-            List<ExtendPoiResponse> poiList = null;
+            PagingModel<Poi> poi;
+            string propertyName = default;
+            bool isAsc = false;
 
-            //get Poi from database
-            try
+            if (!string.IsNullOrEmpty(sort))
             {
-                poiList = _mapper.Map<List<ExtendPoiResponse>>(
-                    await _unitOfWork.Pois.FindListAsync(Poi => Poi.Status == status));
+                isAsc = sort[0].ToString().Equals("+");
+                propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
             }
-            catch (Exception e)
+            for (int i = 0; i < include.Length; i++)
             {
-                _logger.Error("[PoiService.GetPoisByStatus()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Poi), status);
+                include[i] = !string.IsNullOrEmpty(include[i]) ? _utilService.UpperCaseFirstLetter(include[i]) : null;
             }
-
-            return poiList;
-        }
-
-        /// <summary>
-        /// Get All Poi
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<ExtendPoiResponse>> GetAllPoi()
-        {
-            List<Poi> pois;
 
             try
             {
-                pois = await _unitOfWork.Pois.GetAllPoisIncludeApartmentAndResident();
+                poi = await _unitOfWork.Pois.GetPoi(id, apartmentId, date, status, limit, page, isAsc, propertyName, include);
+
+                if (_utilService.IsNullOrEmpty(poi.List))
+                    throw new EntityNotFoundException(typeof(Menu), "in the url");
             }
             catch (Exception e)
             {
-                _logger.Error("[PoiService.GetAllPoi()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Poi), "all");
+                _logger.Error("[PoiService.GetPoi()]" + e.Message);
+                throw;
             }
 
-            return _mapper.Map<List<ExtendPoiResponse>>(pois);
+            return new PagingModel<ExtendPoiResponse>
+            {
+                List = _mapper.Map<List<ExtendPoiResponse>>(poi.List),
+                Page = poi.Page,
+                LastPage = poi.LastPage,
+                Total = poi.Total,
+            };
         }
     }
 }

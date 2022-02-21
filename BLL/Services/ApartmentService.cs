@@ -149,7 +149,7 @@ namespace BLL.Services
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<object> GetApartment(string id, int[] status, int? limit, int? page, string sort, string include)
+        public async Task<object> GetApartment(string id, int?[] status, int? limit, int? page, string sort, string include)
         {
             PagingModel<Apartment> apartments;
             string propertyName = default;
@@ -166,7 +166,7 @@ namespace BLL.Services
                 apartments = await _unitOfWork.Apartments.GetApartment(id, status, limit, page, isAsc, propertyName, include);
 
                 if (_utilService.IsNullOrEmpty(apartments.List))
-                    throw new EntityNotFoundException(typeof(Apartment), $"{id} + {status}");
+                    throw new EntityNotFoundException(typeof(Apartment), "in the url");
             }
             catch (Exception e)
             {

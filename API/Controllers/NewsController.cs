@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -48,57 +47,43 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/news END duration: " + 
+            _logger.Information("POST api/news END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
 
+
         /// <summary>
-        /// Get news by id
+        /// Get news
         /// </summary>
         [AllowAnonymous]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetNewsById(string id)
+        [HttpGet]
+        public async Task<IActionResult> GetNews(
+            [FromQuery] string id,
+            [FromQuery] int?[] status,
+            [FromQuery] string apartmentid,
+            [FromQuery] DateTime date,
+            [FromQuery] int? limit,
+            [FromQuery] int? page,
+            [FromQuery] string sort,
+            [FromQuery] string[] include)
         {
-            _logger.Information($"GET api/news/{id} START");
+            _logger.Information($"GET api/news?id={id}&status=" + string.Join("status=", status) +
+                $"&apartmentid={apartmentid}&date={date}&limit={limit}&page={page}&sort={sort}&include={include} START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //Get News
-            ExtendNewsResponse response = await _newsService.GetNewsById(id);
-
-            string json = JsonSerializer.Serialize(ApiResponse<NewsResponse>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/news/{id} END duration: " + 
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-        /// <summary>
-        /// Get all news
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAllNews()
-        {
-            _logger.Information($"GET api/news/all START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get News
-            List<ExtendNewsResponse> response = await _newsService.GetAllNews();
+            object response = await _newsService.GetNews(id, apartmentid, date, status, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"GET api/news/all END duration: " +
+            _logger.Information($"GET api/news?id={id}&status=" + string.Join("status=", status) +
+                $"&apartmentid={apartmentid}&date={date}&limit={limit}&page={page}&sort={sort}&include={include} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -109,10 +94,10 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [Authorize(Roles = RoleId.ADMIN)]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateNewsById(string id, [FromBody] NewsUpdateRequest newsRequest)
+        [HttpPut]
+        public async Task<IActionResult> UpdateNewsById([FromQuery] string id, [FromBody] NewsUpdateRequest newsRequest)
         {
-            _logger.Information($"PUT api/news/{id} START Request: " +
+            _logger.Information($"PUT api/news?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(newsRequest)}");
 
             Stopwatch watch = new();
@@ -125,21 +110,22 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/news/{id} END duration: " + 
+            _logger.Information($"PUT api/news?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
+
 
         /// <summary>
         /// Delete news (Admin, Market Manager)
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [Authorize(Roles = RoleId.ADMIN)]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNewsById(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteNewsById([FromQuery] string id)
         {
-            _logger.Information($"DELETE api/news/{id} START");
+            _logger.Information($"DELETE api/news?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -151,89 +137,13 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"DELETE api/news/{id} END duration: " + 
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-        /// <summary>
-        /// Get news by apartment id
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("apartment/{apartmentId}")]
-        public async Task<IActionResult> GetNewsByApartmentId(string apartmentId)
-        {
-            _logger.Information($"GET api/news/apartment/{apartmentId} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Get News by ApartmentId
-            List<ExtendNewsResponse> response = await _newsService.GetNewsByAparmentId(apartmentId);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/news/apartment/{apartmentId} END duration: " + 
+            _logger.Information($"DELETE api/news?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
 
 
-        /// <summary>
-        /// Get News By Release Date
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("bydate/{date}")]
-        public async Task<IActionResult> GetNewsByReleaseDate(DateTime date)
-        {
-            _logger.Information($"GET api/news/{date} START");
 
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Get News by RealeaseDate
-            List<ExtendNewsResponse> response = await _newsService.GetNewsByReleaseDate(date);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/news/{date} END duration: " + 
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get News By Status (Admin, Market Manager)
-        /// </summary>
-        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
-        [Authorize(Roles = RoleId.ADMIN)]
-        [HttpGet("status/{status}")]
-        public async Task<IActionResult> GetNewsByStatus(int status)
-        {
-            _logger.Information($"GET api/news/status/{status} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get News
-            List<ExtendNewsResponse> response =
-                await _newsService.GetNewsByStatus(status);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/news/status/{status} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
     }
 }

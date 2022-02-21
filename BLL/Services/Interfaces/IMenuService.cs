@@ -35,7 +35,7 @@ namespace BLL.Services.Interfaces
         /// <param name="include"></param>
         /// <returns></returns>
         Task<object> GetMenu(
-            string id, int[] status,
+            string id, int?[] status,
             string residentId, int? limit,
             int? page, string sort, string include);
 

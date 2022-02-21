@@ -1,5 +1,4 @@
 ﻿using BLL.Dtos.Apartment;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -42,6 +41,6 @@ namespace BLL.Services.Interfaces
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        Task<object> GetApartment(string id, int[] status, int? limit, int? page, string sort, string include);
+        Task<object> GetApartment(string id, int?[] status, int? limit, int? page, string sort, string include);
     }
 }

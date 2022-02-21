@@ -27,7 +27,7 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<Menu>> GetMenu(
-            string id, int[] status,
+            string id, int?[] status,
             string residentId, int? limit,
             int? queryPage, bool isAsc,
             string propertyName, string include)
@@ -40,7 +40,7 @@ namespace DAL.Repositories
 
             //filter by status
             if (status.Length != 0)
-                query = query.Where(menu => Array.IndexOf(status, menu.Status) > -1);
+                query = query.Where(menu => status.Contains(menu.Status));
 
             //filter by residentId
             if (!string.IsNullOrEmpty(residentId))

@@ -61,7 +61,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetApartment(
             [FromQuery] string id,
-            [FromQuery] int[] status,
+            [FromQuery] int?[] status,
             [FromQuery] int? limit,
             [FromQuery] int? page,
             [FromQuery] string sort,

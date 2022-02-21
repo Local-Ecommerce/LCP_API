@@ -60,86 +60,6 @@ namespace BLL.Services
             return _mapper.Map<NewsResponse>(news);
         }
 
-        /// <summary>
-        /// Get News By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<ExtendNewsResponse> GetNewsById(string id)
-        {
-            ExtendNewsResponse newsReponse;
-
-            //Get News from DB
-
-            try
-            {
-                News news = await _unitOfWork.News.GetNewsIncludeResidentAndApartmentByNewsId(id);
-
-                newsReponse = _mapper.Map<ExtendNewsResponse>(news);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[NewsService.GetNewsById()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(News), id);
-            }
-
-            return newsReponse;
-        }
-
-        /// <summary>
-        /// Get News By Release Date
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        public async Task<List<ExtendNewsResponse>> GetNewsByReleaseDate(DateTime date)
-        {
-            List<ExtendNewsResponse> ExtendNewsResponses;
-
-            //Get News from DB
-
-            try
-            {
-                List<News> news = await _unitOfWork.News.FindListAsync(news => news.ReleaseDate.Value.Date == date.Date);
-
-                ExtendNewsResponses = _mapper.Map<List<ExtendNewsResponse>>(news);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[NewsService.GetNewsByReleasedDate()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(News), date);
-            }
-
-            return ExtendNewsResponses;
-        }
-
-        /// <summary>
-        /// GetNewsByApartmentId
-        /// </summary>
-        /// <param name="apatrmentId"></param>
-        /// <returns></returns>
-        public async Task<List<ExtendNewsResponse>> GetNewsByAparmentId(string apatrmentId)
-        {
-            List<ExtendNewsResponse> ExtendNewsResponses;
-
-            //Get ApartmentId from DB
-
-            try
-            {
-                List<News> news = await _unitOfWork.News.FindListAsync(news => news.ApartmentId.Equals(apatrmentId));
-
-                ExtendNewsResponses = _mapper.Map<List<ExtendNewsResponse>>(news);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[NewsService.GetNewsByAparmentId()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(News), apatrmentId);
-            }
-
-            return ExtendNewsResponses;
-        }
 
         /// <summary>
         ///  Update News By Id
@@ -179,6 +99,7 @@ namespace BLL.Services
 
             return _mapper.Map<NewsResponse>(news);
         }
+
 
         /// <summary>
         /// Delete News
@@ -221,49 +142,57 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get News By Status
+        /// Get News
         /// </summary>
+        /// <param name="id"></param>
+        /// <param name="apartmentId"></param>
+        /// <param name="date"></param>
         /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<List<ExtendNewsResponse>> GetNewsByStatus(int status)
+        public async Task<object> GetNews(
+            string id, string apartmentId,
+            DateTime date, int?[] status,
+            int? limit, int? page,
+            string sort, string[] include)
         {
-            List<ExtendNewsResponse> newsList = null;
+            PagingModel<News> news;
+            string propertyName = default;
+            bool isAsc = false;
 
-            //get News from database
+            if (!string.IsNullOrEmpty(sort))
+            {
+                isAsc = sort[0].ToString().Equals("+");
+                propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
+            }
+            for (int i = 0; i < include.Length; i++)
+            {
+                include[i] = !string.IsNullOrEmpty(include[i]) ? _utilService.UpperCaseFirstLetter(include[i]) : null;
+            }
+
             try
             {
-                newsList = _mapper.Map<List<ExtendNewsResponse>>(
-                    await _unitOfWork.News.FindListAsync(mar => mar.Status == status));
+                news = await _unitOfWork.News.GetNews(id, apartmentId, date, status, limit, page, isAsc, propertyName, include);
+
+                if (_utilService.IsNullOrEmpty(news.List))
+                    throw new EntityNotFoundException(typeof(Menu), "in the url");
             }
             catch (Exception e)
             {
-                _logger.Error("[NewsService.GetNewsByStatus()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(News), status);
+                _logger.Error("[NewsService.GetNews()]" + e.Message);
+                throw;
             }
 
-            return newsList;
-        }
-
-        /// <summary>
-        /// Get All News
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<ExtendNewsResponse>> GetAllNews()
-        {
-            List<News> news;
-            try
+            return new PagingModel<ExtendNewsResponse>
             {
-                news = await _unitOfWork.News.GetAllNewsIncludeApartmentAndResident();
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[NewsService.GetAllNews()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(News), "all");
-            }
-
-            return _mapper.Map<List<ExtendNewsResponse>>(news);
+                List = _mapper.Map<List<ExtendNewsResponse>>(news.List),
+                Page = news.Page,
+                LastPage = news.LastPage,
+                Total = news.Total,
+            };
         }
     }
 }

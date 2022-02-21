@@ -22,7 +22,6 @@ namespace BLL.Services
         private readonly IMenuService _menuService;
         private readonly IRedisService _redisService;
         private const string PREFIX = "MS_";
-        private const string SUB_PREFIX = "SMD_";
         private const string CACHE_KEY_FOR_UPDATE = "Unverified Updated Store";
 
 
@@ -120,34 +119,6 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Merchant Store By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<ExtendMerchantStoreResponse> GetMerchantStoreById(string id)
-        {
-            //biz rule
-
-            ExtendMerchantStoreResponse merchantStoreResponse;
-
-            //Get MerchantStore From Database
-            try
-            {
-                MerchantStore merchantStore = await _unitOfWork.MerchantStores.GetMerchantStoreIncludeResidentById(id);
-                merchantStoreResponse = _mapper.Map<ExtendMerchantStoreResponse>(merchantStore);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.GetMerchantById()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(MerchantStore), id);
-            }
-
-            return merchantStoreResponse;
-        }
-
-
-        /// <summary>
         /// Request Update Merchant Store By Id
         /// </summary>
         /// <param name="id"></param>
@@ -181,68 +152,6 @@ namespace BLL.Services
         }
 
 
-        /// <summary>
-        /// Get Merchant Store By Apartment Id
-        /// </summary>
-        /// <param name="apartmentId"></param>
-        /// <returns></returns>
-        public async Task<List<MerchantStoreResponse>> GetMerchantStoreByApartmentId(string apartmentId)
-        {
-            List<MerchantStoreResponse> merchantStoreResponses;
-
-            //Get MerchantStore From Database
-
-            try
-            {
-                List<MerchantStore> merchantStores = await _unitOfWork.MerchantStores
-                                                            .FindListAsync(store => store.ApartmentId.Equals(apartmentId));
-
-                merchantStoreResponses = _mapper.Map<List<MerchantStoreResponse>>(merchantStores);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.GetMerchantStoreByAppartmentId()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(MerchantStore), apartmentId);
-            }
-
-            return merchantStoreResponses;
-        }
-
-
-        /// <summary>
-        /// Add Store Menu Details To Merchant Store
-        /// </summary>
-        /// <param name="merchantStoreId"></param>
-        /// <param name="storeMenuDetailRequest"></param>
-        /// <returns></returns>
-        public async Task<List<StoreMenuDetailResponse>> AddStoreMenuDetailsToMerchantStore(string merchantStoreId,
-            List<StoreMenuDetailRequest> storeMenuDetailRequest)
-        {
-            List<StoreMenuDetail> storeMenuDetails = _mapper.Map<List<StoreMenuDetail>>(storeMenuDetailRequest);
-            try
-            {
-                storeMenuDetails.ForEach(storeMenuDetail =>
-                {
-                    storeMenuDetail.StoreMenuDetailId = _utilService.CreateId(SUB_PREFIX);
-                    storeMenuDetail.MerchantStoreId = merchantStoreId;
-                    storeMenuDetail.Status = (int)StoreMenuDetailStatus.ACTIVE_STORE_MENU_DETAIL;
-
-                    _unitOfWork.StoreMenuDetails.Add(storeMenuDetail);
-
-                });
-
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.AddStoreMenuDetailsToMerchantStore()]: " + e.Message);
-
-                throw;
-            }
-
-            return _mapper.Map<List<StoreMenuDetailResponse>>(storeMenuDetails);
-        }
 
 
         /// <summary>
@@ -304,113 +213,6 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Merchant Stores By Status
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<MerchantStoreResponse>> GetMerchantStoresByStatus(int status)
-        {
-            List<MerchantStoreResponse> merchantStoreList = null;
-
-            //get merchantStore from database
-            try
-            {
-                merchantStoreList = _mapper.Map<List<MerchantStoreResponse>>(
-                    await _unitOfWork.MerchantStores.FindListAsync(ms => ms.Status == status));
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.GetMerchantStoresByStatus()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(MerchantStore), status);
-            }
-
-            return merchantStoreList;
-        }
-
-
-        /// <summary>
-        /// Get All Merchant Stores
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<ExtendMerchantStoreResponse>> GetAllMerchantStores()
-        {
-            //Get MerchantStore from database
-            List<MerchantStore> merchantStores;
-            try
-            {
-                merchantStores = await _unitOfWork.MerchantStores.GetAllMerchantStoresIncludeResidentAndApartment();
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.GetAllMerchantStores()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(MerchantStore), "all");
-            }
-
-            return _mapper.Map<List<ExtendMerchantStoreResponse>>(merchantStores);
-        }
-
-
-        /// <summary>
-        /// Get Pending Merchant Stores
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<ExtendMerchantStoreResponse>> GetPendingMerchantStores()
-        {
-            List<ExtendMerchantStoreResponse> merchantStoreResponses;
-
-            //get unverified create merchant Store from database
-            try
-            {
-                merchantStoreResponses = _mapper.Map<List<ExtendMerchantStoreResponse>>(
-                    await _unitOfWork.MerchantStores.GetUnverifiedMerchantStoreIncludeResident());
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.GetPendingMerchantStores()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(MerchantStore), "pending");
-            }
-
-            //get unverified update merchant Store from redis
-            List<ExtendMerchantStoreResponse> updateStore = _redisService.GetList<ExtendMerchantStoreResponse>(CACHE_KEY_FOR_UPDATE);
-
-            merchantStoreResponses.AddRange(updateStore);
-
-            return merchantStoreResponses;
-        }
-
-
-        /// <summary>
-        /// Get Menus By Store Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<ExtendMerchantStoreResponse> GetMenusByStoreId(string id)
-        {
-            //biz rule
-
-            ExtendMerchantStoreResponse merchantStoreResponse;
-
-            //Get MerchantStore From Database
-            try
-            {
-                MerchantStore merchantStore = await _unitOfWork.MerchantStores.GetMenusByStoreId(id);
-
-                merchantStoreResponse = _mapper.Map<ExtendMerchantStoreResponse>(merchantStore);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.GetMenusByStoreId()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(MerchantStore), id);
-            }
-
-            return merchantStoreResponse;
-        }
-
-
-        /// <summary>
         /// Verify Merchant Store
         /// </summary>
         /// <param name="id"></param>
@@ -457,6 +259,61 @@ namespace BLL.Services
             }
 
             return merchantStoreResponse;
+        }
+
+
+        /// <summary>
+        /// Get Merchant Store
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="apartmentId"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <param name="include"></param>
+        /// <returns></returns>
+        public async Task<object> GetMerchantStore(
+            string id, string apartmentId, 
+            int?[] status, int? limit, 
+            int? page, string sort, 
+            string[] include)
+        {
+            PagingModel<MerchantStore> merchantStore;
+            string propertyName = default;
+            bool isAsc = false;
+
+            if (!string.IsNullOrEmpty(sort))
+            {
+                isAsc = sort[0].ToString().Equals("+");
+                propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
+            }
+            for (int i = 0; i < include.Length; i++)
+            {
+                include[i] = !string.IsNullOrEmpty(include[i]) ? _utilService.UpperCaseFirstLetter(include[i]) : null;
+            }
+
+            try
+            {
+                merchantStore = await _unitOfWork.MerchantStores.GetMerchantStore(id, apartmentId, 
+                    status, limit, page, isAsc, propertyName, include);
+
+                if (_utilService.IsNullOrEmpty(merchantStore.List))
+                    throw new EntityNotFoundException(typeof(Menu), "in the url");
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MerchantStoreService.GetMerchantStore()]" + e.Message);
+                throw;
+            }
+
+            return new PagingModel<ExtendMerchantStoreResponse>
+            {
+                List = _mapper.Map<List<ExtendMerchantStoreResponse>>(merchantStore.List),
+                Page = merchantStore.Page,
+                LastPage = merchantStore.LastPage,
+                Total = merchantStore.Total,
+            };
         }
     }
 }

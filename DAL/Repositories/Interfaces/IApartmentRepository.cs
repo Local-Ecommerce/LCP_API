@@ -17,7 +17,7 @@ namespace DAL.Repositories.Interfaces
         /// <param name="include"></param>
         /// <returns></returns>
         Task<PagingModel<Apartment>> GetApartment(
-            string id, int[] status,
+            string id, int?[] status,
             int? limit, int? queryPage,
             bool isAsc, string propertyName, string include);
     }

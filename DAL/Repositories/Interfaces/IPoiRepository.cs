@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 using DAL.Models;
 
@@ -7,17 +7,22 @@ namespace DAL.Repositories.Interfaces
     public interface IPoiRepository : IRepository<Poi>
     {
         /// <summary>
-        /// Get All Pois Include Resident And Apartment
+        /// Get Poi
         /// </summary>
+        /// <param name="id"></param>
+        /// <param name="apartmentId"></param>
+        /// <param name="date"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="queryPage"></param>
+        /// <param name="isAsc"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        Task<List<Poi>> GetAllPoisIncludeApartmentAndResident();
-
-
-        /// <summary>
-        /// Get Poi Include Resident By Poi Id
-        /// </summary>
-        /// <param name="poiId"></param>
-        /// <returns></returns>
-        Task<Poi> GetPoiIncludeResidentAndApartMentByPoiId(string poiId);
+        Task<PagingModel<Poi>> GetPoi(
+            string id, string apartmentId,
+            DateTime date, int?[] status,
+            int? limit, int? queryPage,
+            bool isAsc, string propertyName, string[] include);
     }
 }

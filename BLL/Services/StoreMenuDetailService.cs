@@ -6,6 +6,7 @@ using BLL.Dtos.StoreMenuDetail;
 using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
+using System.Collections.Generic;
 
 namespace BLL.Services
 {
@@ -56,32 +57,38 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Create Store Menu Detail
+        /// Add Store Menu Details To Merchant Store
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="merchantStoreId"></param>
+        /// <param name="storeMenuDetailRequest"></param>
         /// <returns></returns>
-        public async Task<StoreMenuDetailResponse> CreateStoreMenuDetail(StoreMenuDetailRequest request)
+        public async Task<List<StoreMenuDetailResponse>> AddStoreMenuDetailsToMerchantStore(string merchantStoreId,
+            List<StoreMenuDetailRequest> storeMenuDetailRequest)
         {
-            StoreMenuDetail storeMenuDetail;
-
+            List<StoreMenuDetail> storeMenuDetails = _mapper.Map<List<StoreMenuDetail>>(storeMenuDetailRequest);
             try
             {
-                storeMenuDetail = _mapper.Map<StoreMenuDetail>(request);
-                storeMenuDetail.StoreMenuDetailId = _utilService.CreateId(PREFIX);
+                storeMenuDetails.ForEach(storeMenuDetail =>
+                {
+                    storeMenuDetail.StoreMenuDetailId = _utilService.CreateId(PREFIX);
+                    storeMenuDetail.MerchantStoreId = merchantStoreId;
+                    storeMenuDetail.Status = (int)StoreMenuDetailStatus.ACTIVE_STORE_MENU_DETAIL;
 
-                _unitOfWork.StoreMenuDetails.Add(storeMenuDetail);
+                    _unitOfWork.StoreMenuDetails.Add(storeMenuDetail);
+
+                });
 
                 await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception e)
             {
-                _logger.Error("[StoreMenuDetailService.CreateStoreMenuDetail()]: " + e.Message);
-
+                _logger.Error("[StoreMenuDetailService.AddStoreMenuDetailsToMerchantStore()]: " + e.Message);
                 throw;
             }
 
-            return _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
+            return _mapper.Map<List<StoreMenuDetailResponse>>(storeMenuDetails);
         }
+
 
 
         /// <summary>
@@ -119,7 +126,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<StoreMenuDetailResponse> DeleteStoreMenuDetailById(string id)
         {
             StoreMenuDetail storeMenuDetail;
