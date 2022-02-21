@@ -98,31 +98,6 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Apartment By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<ApartmentResponse> GetApartmentById(string id)
-        {
-            ApartmentResponse apartmentResponse;
-            try
-            {
-                Apartment apartment = await _unitOfWork.Apartments.FindAsync(ap => ap.ApartmentId.Equals(id));
-
-                apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ApartmentService.GetApartmentById()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Apartment), id);
-            }
-
-            return apartmentResponse;
-        }
-
-
-        /// <summary>
         /// Update Apartment
         /// </summary>
         /// <param name="id"></param>
@@ -165,124 +140,47 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Apartment By Address
-        /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
-        public async Task<ApartmentResponse> GetApartmentByAddress(string address)
-        {
-            ApartmentResponse apartmentResponse;
-            try
-            {
-                Apartment apartment = await _unitOfWork.Apartments.FindAsync(ap => ap.Address.Equals(address));
-
-                apartmentResponse = _mapper.Map<ApartmentResponse>(apartment);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ApartmentService.GetApartmentByAddress()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Apartment), address);
-            }
-
-            return apartmentResponse;
-        }
-
-
-        /// <summary>
-        /// Get Apartments By Status
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<ApartmentResponse>> GetApartmentsByStatus(int status)
-        {
-            List<ApartmentResponse> apartmentResponses;
-            try
-            {
-                List<Apartment> apartments = await _unitOfWork.Apartments.FindListAsync(ap => ap.Status == status);
-
-                apartmentResponses = _mapper.Map<List<ApartmentResponse>>(apartments);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ApartmentService.GetApartmentsByStatus()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Apartment), status);
-            }
-
-            return apartmentResponses;
-        }
-
-
-        /// <summary>
-        /// Get Apartment For Auto Complete
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<ApartmentResponse>> GetApartmentForAutoComplete()
-        {
-            List<ApartmentResponse> apartmentResponses;
-            try
-            {
-                List<Apartment> apartments = await _unitOfWork.Apartments.GetAllActiveApartment();
-
-                apartmentResponses = _mapper.Map<List<ApartmentResponse>>(apartments);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ApartmentService.GetApartmentForAutoComplete()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Apartment), "autocomplete");
-            }
-
-            return apartmentResponses;
-        }
-
-
-        /// <summary>
-        /// Get All Apartments
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<ApartmentResponse>> GetAllApartments()
-        {
-            List<ApartmentResponse> apartmentResponses;
-            try
-            {
-                List<Apartment> apartments = await _unitOfWork.Apartments.GetAllApartment();
-
-                apartmentResponses = _mapper.Map<List<ApartmentResponse>>(apartments);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ApartmentService.GetAllApartments()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Apartment), "all");
-            }
-
-            return apartmentResponses;
-        }
-
-
-        /// <summary>
-        /// Get Market Manager By Apartment Id
+        /// Get Apartment
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<ExtendApartmentResponse> GetMarketManagerByApartmentId(string id)
+        public async Task<object> GetApartment(string id, int[] status, int? limit, int? page, string sort, string include)
         {
-            ExtendApartmentResponse apartmentResponse;
+            PagingModel<Apartment> apartments;
+            string propertyName = default;
+            bool isAsc = false;
+
+            if (!string.IsNullOrEmpty(sort))
+            {
+                isAsc = sort[0].ToString().Equals("+");
+                propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
+            }
+
             try
             {
-                Apartment apartment = await _unitOfWork.Apartments.GetMarketManagerByApartmentId(id);
+                apartments = await _unitOfWork.Apartments.GetApartment(id, status, limit, page, isAsc, propertyName, include);
 
-                apartmentResponse = _mapper.Map<ExtendApartmentResponse>(apartment);
+                if (_utilService.IsNullOrEmpty(apartments.List))
+                    throw new EntityNotFoundException(typeof(Apartment), $"{id} + {status}");
             }
             catch (Exception e)
             {
-                _logger.Error("[ApartmentService.GetMarketManagerByApartmentId()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Resident), id);
+                _logger.Error("[ApartmentService.GetApartment()]" + e.Message);
+                throw;
             }
 
-            return apartmentResponse;
+            return new PagingModel<ExtendApartmentResponse>
+            {
+                List = _mapper.Map<List<ExtendApartmentResponse>>(apartments.List),
+                Page = apartments.Page,
+                LastPage = apartments.LastPage,
+                Total = apartments.Total,
+            };
         }
     }
 }

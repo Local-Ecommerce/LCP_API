@@ -41,6 +41,7 @@ namespace API.Extensions
             services.AddScoped<IProductCombinationService, ProductCombinationService>();
             services.AddScoped<IMoMoService, MoMoService>();
             services.AddScoped<ISecurityService, SecurityService>();
+            services.AddScoped<IProductInMenuService, ProductInMenuService>();
 
             return services;
         }

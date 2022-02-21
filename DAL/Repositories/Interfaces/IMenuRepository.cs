@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Models;
 
@@ -7,25 +6,21 @@ namespace DAL.Repositories.Interfaces
     public interface IMenuRepository : IRepository<Menu>
     {
         /// <summary>
-        /// Get All Menus Include Resident
-        /// </summary>
-        /// <returns></returns>
-        Task<List<Menu>> GetAllMenusIncludeResident();
-
-
-        /// <summary>
-        /// Get Menu Include Resident By Id
+        /// Get Menu
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
-        Task<Menu> GetMenuIncludeResidentById(string id);
-
-
-        /// <summary>
-        /// Get Menu By Resident Id
-        /// </summary>
+        /// <param name="status"></param>
         /// <param name="residentId"></param>
+        /// <param name="limit"></param>
+        /// <param name="queryPage"></param>
+        /// <param name="isAsc"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        Task<List<Menu>> GetMenusByResidentId(string residentId);
+        Task<PagingModel<Menu>> GetMenu(
+            string id, int[] status, 
+            string residentId, int? limit, 
+            int? queryPage, bool isAsc, 
+            string propertyName, string include);
     }
 }

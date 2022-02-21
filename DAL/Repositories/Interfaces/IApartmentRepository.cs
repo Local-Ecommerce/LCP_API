@@ -1,31 +1,24 @@
 using DAL.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DAL.Repositories.Interfaces
 {
     public interface IApartmentRepository : IRepository<Apartment>
     {
-
         /// <summary>
-        /// Get All Active Apartment
-        /// </summary>
-        /// <returns></returns>
-        Task<List<Apartment>> GetAllActiveApartment();
-
-
-        /// <summary>
-        /// Get All Apartment
-        /// </summary>
-        /// <returns></returns>
-        Task<List<Apartment>> GetAllApartment();
-
-
-        /// <summary>
-        /// Get Market Manager By Apartment Id
+        /// Get Apartment
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="queryPage"></param>
+        /// <param name="isAsc"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        Task<Apartment> GetMarketManagerByApartmentId(string id);
+        Task<PagingModel<Apartment>> GetApartment(
+            string id, int[] status,
+            int? limit, int? queryPage,
+            bool isAsc, string propertyName, string include);
     }
 }

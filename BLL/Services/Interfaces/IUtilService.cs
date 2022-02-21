@@ -43,5 +43,13 @@ namespace BLL.Services.Interfaces
         /// <param name="url"></param>
         /// <returns></returns>
         int LastImageNumber(string imageName, string url);
+
+
+        /// <summary>
+        /// Upper Case First Letter
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        string UpperCaseFirstLetter(string str);
     }
 }
