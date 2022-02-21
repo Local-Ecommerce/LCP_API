@@ -1,6 +1,5 @@
 ﻿using BLL.Dtos.News;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -16,27 +15,22 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// //Get News by Id
+        /// Get News
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
-        Task<ExtendNewsResponse> GetNewsById(string id);
-
-
-        /// <summary>
-        /// Get news by date
-        /// </summary>
+        /// <param name="apartmentId"></param>
         /// <param name="date"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        Task<List<ExtendNewsResponse>> GetNewsByReleaseDate(DateTime date);
-
-
-        /// <summary>
-        /// get news by apartmentid
-        /// </summary>
-        /// <param name="aparmentId"></param>
-        /// <returns></returns>
-        Task<List<ExtendNewsResponse>> GetNewsByAparmentId(string apartmentId);
+        Task<object> GetNews(
+            string id, string apartmentId,
+            DateTime date, int?[] status,
+            int? limit, int? page,
+            string sort, string[] include);
 
 
         /// <summary>
@@ -54,20 +48,5 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<NewsResponse> DeleteNewsById(string id);
-
-
-        /// <summary>
-        /// Get News By Status
-        /// </summary>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        Task<List<ExtendNewsResponse>> GetNewsByStatus(int status);
-
-
-        /// <summary>
-        /// Get All News
-        /// </summary>
-        /// <returns></returns>
-        Task<List<ExtendNewsResponse>> GetAllNews();
     }
 }

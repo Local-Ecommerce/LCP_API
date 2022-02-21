@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -16,7 +15,7 @@ namespace API.Controllers
 {
     [EnableCors("MyPolicy")]
     [ApiController]
-    [Route("api/poi")]
+    [Route("api/pois")]
     public class PoiController : ControllerBase
     {
         private readonly ILogger _logger;
@@ -54,66 +53,52 @@ namespace API.Controllers
             return Ok(json);
         }
 
+
         /// <summary>
-        /// Get poi by id
+        /// Get poi
         /// </summary>
         [AllowAnonymous]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPoiById(string id)
+        [HttpGet]
+        public async Task<IActionResult> GetPoi(
+            [FromQuery] string id,
+            [FromQuery] int?[] status,
+            [FromQuery] string apartmentid,
+            [FromQuery] DateTime date,
+            [FromQuery] int? limit,
+            [FromQuery] int? page,
+            [FromQuery] string sort,
+            [FromQuery] string[] include)
         {
-            _logger.Information($"GET api/poi/{id} START");
+            _logger.Information($"GET api/poi?id={id}&status=" + string.Join("status=", status) +
+                $"&apartmentid={apartmentid}&date={date}&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) +
+                $"START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //Get Poi
-            ExtendPoiResponse response = await _poiService.GetPoiById(id);
-
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendPoiResponse>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/poi/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-        /// <summary>
-        /// Get all poi
-        /// </summary>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAllPoi()
-        {
-            _logger.Information($"GET api/poi/all START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Get Poi
-            List<ExtendPoiResponse> response = await _poiService.GetAllPoi();
+            object response = await _poiService.GetPoi(id, apartmentid, date, status, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"GET api/poi/getall END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+            _logger.Information($"GET api/poi?id={id}&status=" + string.Join("status=", status) +
+                $"&apartmentid={apartmentid}&date={date}&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) +
+                $"END duration: {watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
 
+
         /// <summary>
         /// Update Poi (Admin, Market Manager)
         /// </summary>
-        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
-        [Authorize(Roles = RoleId.ADMIN)]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePoiById(string id, [FromBody] PoiUpdateRequest poiRequest)
+        [AuthorizeRoles(ResidentType.MARKET_MANAGER, RoleId.ADMIN)]
+        [HttpPut]
+        public async Task<IActionResult> UpdatePoiById([FromQuery]string id, [FromBody] PoiUpdateRequest poiRequest)
         {
-            _logger.Information($"PUT api/poi/{id} START Request: " +
+            _logger.Information($"PUT api/poi?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(poiRequest)}");
 
             Stopwatch watch = new();
@@ -126,21 +111,22 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/poi/{id} END duration: " +
+            _logger.Information($"PUT api/poi?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
+
 
         /// <summary>
         /// Delete poi (Admin, Market Manager)
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [Authorize(Roles = RoleId.ADMIN)]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePoisById(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeletePoisById([FromQuery]string id)
         {
-            _logger.Information($"PUT api/poi/{id} START");
+            _logger.Information($"DELETE api/poi?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -152,85 +138,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/poi/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-        /// <summary>
-        /// Get poi by apartment id
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("apartment/{apartmentId}")]
-        public async Task<IActionResult> GetPoiByApartmentId(string apartmentId)
-        {
-            _logger.Information($"GET api/poi/apartment/{apartmentId} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Get Poi by ApartmentId
-            List<ExtendPoiResponse> response = await _poiService.GetPoiByApartmentId(apartmentId);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/poi/apartment/{apartmentId} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get Poi By Release Date
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("bydate/{date}")]
-        public async Task<IActionResult> GetPoiByReleaseDate(DateTime date)
-        {
-            _logger.Information($"GET api/poi/{date} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Get Poi by RealeaseDate
-            List<ExtendPoiResponse> response = await _poiService.GetPoiByReleaseDate(date);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/poi/{date} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get Poi By Status (Admin, Market Manager)
-        /// </summary>
-        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
-        [Authorize(Roles = RoleId.ADMIN)]
-        [HttpGet("status/{status}")]
-        public async Task<IActionResult> GetPoiByStatus(int status)
-        {
-            _logger.Information($"GET api/poi/status/{status} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get Poi
-            List<ExtendPoiResponse> response = await _poiService.GetPoisByStatus(status);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/poi/status/{status} END duration: " +
+            _logger.Information($"DELETE api/poi?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

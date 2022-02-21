@@ -186,7 +186,7 @@ namespace BLL.Services
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<object> GetMenu(
-            string id, int[] status,
+            string id, int?[] status,
             string residentId, int? limit,
             int? page, string sort, string include)
         {
@@ -207,7 +207,7 @@ namespace BLL.Services
                 menus = await _unitOfWork.Menus.GetMenu(id, status, residentId, limit, page, isAsc, propertyName, include);
 
                 if (_utilService.IsNullOrEmpty(menus.List))
-                    throw new EntityNotFoundException(typeof(Menu), $"{id} + {status}");
+                    throw new EntityNotFoundException(typeof(Menu), "in the url");
             }
             catch (Exception e)
             {

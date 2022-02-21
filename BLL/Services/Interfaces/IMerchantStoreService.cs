@@ -1,6 +1,4 @@
 ﻿using BLL.Dtos.MerchantStore;
-using BLL.Dtos.StoreMenuDetail;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -16,11 +14,21 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Merchant Store By Id
+        /// Get Merchant Store
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="apartmentId"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        Task<ExtendMerchantStoreResponse> GetMerchantStoreById(string id);
+        Task<object> GetMerchantStore(
+            string id, string apartmentId,
+            int?[] status,
+            int? limit, int? page,
+            string sort, string[] include);
 
 
         /// <summary>
@@ -38,69 +46,6 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<MerchantStoreResponse> DeleteMerchantStore(string id);
-
-
-        /// <summary>
-        /// Get Merchant By Account Id
-        /// </summary>
-        /// <param name="apartmentId"></param>
-        /// <returns></returns>
-        Task<List<MerchantStoreResponse>> GetMerchantStoreByApartmentId(string apartmentId);
-
-
-        /// <summary>
-        /// Add Store Menu Details To Merchant Store
-        /// </summary>
-        /// <param name="storeMenuDetailRequest"></param>
-        /// <returns></returns>
-        Task<List<StoreMenuDetailResponse>> AddStoreMenuDetailsToMerchantStore(string merchantStoreId,
-            List<StoreMenuDetailRequest> storeMenuDetailRequest);
-
-
-        /// <summary>
-        /// Update Store Menu Detail By Id
-        /// </summary>
-        /// <param name="storeMenuDetailId"></param>
-        /// <returns></returns>
-        Task<StoreMenuDetailResponse> UpdateStoreMenuDetailById(string storeMenuDetailId,
-            StoreMenuDetailUpdateRequest storeMenuDetailUpdateRequest);
-
-
-        /// <summary>
-        /// Delete Store Menu Detail By Id
-        /// </summary>
-        /// <param name="storeMenuDetailId"></param>
-        /// <returns></returns>
-        Task<StoreMenuDetailResponse> DeleteStoreMenuDetailById(string storeMenuDetailId);
-
-
-        /// <summary>
-        /// Get Merchant Stores By Status
-        /// </summary>
-        /// <returns></returns>
-        Task<List<MerchantStoreResponse>> GetMerchantStoresByStatus(int status);
-
-
-        /// <summary>
-        /// Get All Merchant Stores
-        /// </summary>
-        /// <returns></returns>
-        Task<List<ExtendMerchantStoreResponse>> GetAllMerchantStores();
-
-
-        /// <summary>
-        /// Get Pending Merchant Stores
-        /// </summary>
-        /// <returns></returns>
-        Task<List<ExtendMerchantStoreResponse>> GetPendingMerchantStores();
-
-
-        /// <summary>
-        /// Get Menus By Store Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<ExtendMerchantStoreResponse> GetMenusByStoreId(string id);
 
 
         /// <summary>

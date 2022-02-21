@@ -18,7 +18,7 @@ namespace DAL.Repositories.Interfaces
         /// <param name="include"></param>
         /// <returns></returns>
         Task<PagingModel<Menu>> GetMenu(
-            string id, int[] status, 
+            string id, int?[] status, 
             string residentId, int? limit, 
             int? queryPage, bool isAsc, 
             string propertyName, string include);

@@ -1,16 +1,13 @@
 ﻿using DAL.Constants;
 using BLL.Dtos;
 using BLL.Dtos.Menu;
-using BLL.Dtos.ProductInMenu;
 using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
-using API.Extensions;
 
 namespace API.Controllers
 {
@@ -56,13 +53,13 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get menu by id (Merchant)
+        /// Get menu (Merchant)
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpGet]
         public async Task<IActionResult> GetMenu(
             [FromQuery] string id,
-            [FromQuery] int[] status,
+            [FromQuery] int?[] status,
             [FromQuery] string residentid,
             [FromQuery] int? limit,
             [FromQuery] int? page,

@@ -1,9 +1,10 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System;
+using System.Linq.Dynamic.Core;
 
 namespace DAL.Repositories
 {
@@ -13,31 +14,72 @@ namespace DAL.Repositories
 
 
         /// <summary>
-        /// Get All Pois Include Resident And Apartment
+        /// Get Poi
         /// </summary>
+        /// <param name="id"></param>
+        /// <param name="apartmentId"></param>
+        /// <param name="date"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="queryPage"></param>
+        /// <param name="isAsc"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<List<Poi>> GetAllPoisIncludeApartmentAndResident()
+        public async Task<PagingModel<Poi>> GetPoi(
+            string id, string apartmentId, 
+            DateTime date, int?[] status, 
+            int? limit, int? queryPage, 
+            bool isAsc, string propertyName, string[] include)
         {
-            List<Poi> pois = await _context.Pois
-                                .Include(poi => poi.Apartment)
-                                .Include(poi => poi.Resident)
-                                .OrderByDescending(poi => poi.ReleaseDate)
-                                .ToListAsync();
+            IQueryable<Poi> query = _context.Pois.Where(poi => poi.PoiId != null);
 
-            return pois;
-        }
+            //filter by id
+            if (!string.IsNullOrEmpty(id))
+                query = query.Where(poi => poi.PoiId.Equals(id));
 
+            //filter by status
+            if (status.Length != 0)
+                query = query.Where(poi => status.Contains(poi.Status));
 
-        public async Task<Poi> GetPoiIncludeResidentAndApartMentByPoiId(string poiId)
-        {
-            Poi poi = await _context.Pois
-                                .Where(poi => poi.PoiId.Equals(poiId))
-                                .Include(poi => poi.Resident)
-                                .Include(poi => poi.Apartment)
-                                .OrderByDescending(poi => poi.ReleaseDate)
-                                .FirstOrDefaultAsync();
+            //filter by apartmentId
+            if (!string.IsNullOrEmpty(apartmentId))
+                query = query.Where(poi => poi.ApartmentId.Equals(apartmentId));
 
-            return poi;
+            //filter by date
+            if(date != DateTime.MinValue)
+                query = query.Where(poi => poi.ReleaseDate.Equals(date.Date));
+
+            //add include
+            if (include.Length > 0)
+            {
+                foreach (var item in include)
+                {
+                    if (item.Equals(nameof(Poi.Resident)))
+                        query = query.Include(poi => poi.Resident);
+                    if (item.Equals(nameof(Poi.Apartment)))
+                        query = query.Include(poi => poi.Apartment);
+                }
+            }
+
+            //sort
+            if (!string.IsNullOrEmpty(propertyName))
+            {
+                query = isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
+            }
+
+            //paging
+            int perPage = limit.GetValueOrDefault(10);
+            int page = queryPage.GetValueOrDefault(1) == 0 ? 1 : queryPage.GetValueOrDefault(1);
+            int total = query.Count();
+
+            return new PagingModel<Poi>
+            {
+                List = await query.Take(perPage).Skip((page - 1) * perPage).ToListAsync(),
+                Total = total,
+                Page = page,
+                LastPage = (int)Math.Ceiling(total / (double)perPage)
+            };
         }
     }
 }

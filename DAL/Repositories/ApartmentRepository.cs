@@ -26,7 +26,7 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<Apartment>> GetApartment(
-            string id, int[] status, 
+            string id, int?[] status, 
             int? limit, int? queryPage, 
             bool isAsc, string propertyName, string include)
         {
@@ -38,7 +38,7 @@ namespace DAL.Repositories
             
             //filter by status
             if(status.Length != 0)
-                query = query.Where(ap => Array.IndexOf(status, ap.Status) > -1);
+                query = query.Where(ap => status.Contains(ap.Status));
 
             //add include
             if (!string.IsNullOrEmpty(include))

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace API.Controllers
 {
     [EnableCors("MyPolicy")]
     [ApiController]
-    [Route("api/storeMenuDetail")]
+    [Route("api/store-menus")]
     public class StoreMenuDetailController : ControllerBase
     {
 
@@ -28,26 +29,26 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create Store Menu Detail (Merchant)
+        /// Add Store Menu Details To Merchant Store (Merchant)
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPost]
-        public async Task<IActionResult> CreateStoreMenuDetail([FromBody] StoreMenuDetailRequest request)
+        public async Task<IActionResult> CreateStoreMenuDetail([FromQuery] string storeid, [FromBody] List<StoreMenuDetailRequest> requests)
         {
-            _logger.Information($"POST api/storeMenuDetail START Request: " +
-                $"{JsonSerializer.Serialize(request)}");
+            _logger.Information($"POST api/store-menus?storeid={storeid} START Request: " +
+                $"{JsonSerializer.Serialize(requests)}");
 
             Stopwatch watch = new();
             watch.Start();
 
             //create
-            StoreMenuDetailResponse response = await _storeMenuDetailService.CreateStoreMenuDetail(request);
+            List<StoreMenuDetailResponse> response = await _storeMenuDetailService.AddStoreMenuDetailsToMerchantStore(storeid, requests);
 
-            string json = JsonSerializer.Serialize(ApiResponse<StoreMenuDetailResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
-            _logger.Information("POST api/storeMenuDetail END duration: " +
+            _logger.Information($"POST api/store-menus?storeid={storeid} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -58,10 +59,10 @@ namespace API.Controllers
         /// Update Store Menu Detail By Id (Merchant)
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStoreMenuDetailById(string id, [FromBody] StoreMenuDetailUpdateRequest request)
+        [HttpPut]
+        public async Task<IActionResult> UpdateStoreMenuDetailById([FromQuery] string id, [FromBody] StoreMenuDetailUpdateRequest request)
         {
-            _logger.Information($"PUT api/storeMenuDetail/{id} START Request: " +
+            _logger.Information($"PUT api/store-menus?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(request)}");
 
             Stopwatch watch = new();
@@ -75,7 +76,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("PUT api/storeMenuDetail/{id} END duration: " +
+            _logger.Information($"PUT api/store-menus?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -86,10 +87,10 @@ namespace API.Controllers
         /// Delete Store Menu Detail By Id (Merchant)
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStoreMenuDetailById(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteStoreMenuDetailById([FromQuery] string id)
         {
-            _logger.Information($"PUT api/storeMenuDetail/{id} START Request: ");
+            _logger.Information($"DELETE api/store-menus?id={id} START Request: ");
 
             Stopwatch watch = new();
             watch.Start();
@@ -102,7 +103,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("PUT api/storeMenuDetail/{id} END duration: " +
+            _logger.Information($"DELETE api/store-menus?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
