@@ -1,9 +1,10 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System;
+using System.Linq.Dynamic.Core;
 
 namespace DAL.Repositories
 {
@@ -12,54 +13,62 @@ namespace DAL.Repositories
 
         public MenuRepository(LoichDBContext context) : base(context) { }
 
-        /// <summary>
-        /// Get All Menus Include Resident
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<Menu>> GetAllMenusIncludeResident()
-        {
-            List<Menu> menus = await _context.Menus.Include(menus => menus.Resident)
-                                                   .OrderByDescending(menus => menus.CreatedDate)
-                                                   .ToListAsync();
-
-            return menus;
-        }
-
 
         /// <summary>
-        /// Get Menu Include Resident By Id
+        /// Get Menu
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<Menu> GetMenuIncludeResidentById(string id)
-        {
-            Menu menu = await _context.Menus
-                                .Where(menus => menus.MenuId.Equals(id))
-                                .Include(menus => menus.Resident)
-                                .OrderByDescending(menus => menus.CreatedDate)
-                                .FirstOrDefaultAsync();
-
-            return menu;
-        }
-
-
-        /// <summary>
-        /// Get Menu By Resident Id
-        /// </summary>
+        /// <param name="status"></param>
         /// <param name="residentId"></param>
+        /// <param name="limit"></param>
+        /// <param name="queryPage"></param>
+        /// <param name="isAsc"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<List<Menu>> GetMenusByResidentId(string residentId)
+        public async Task<PagingModel<Menu>> GetMenu(
+            string id, int[] status,
+            string residentId, int? limit,
+            int? queryPage, bool isAsc,
+            string propertyName, string include)
         {
-            List<Menu> menus = await _context.Menus
-                                        .Where(menu => menu.ResidentId.Equals(residentId))
-                                        .Include(menu => menu.StoreMenuDetails)
-                                        .Include(menu => menu.ProductInMenus)
-                                        .ThenInclude(pim => pim.Product)
-                                        .Include(menu => menu.ProductInMenus)
-                                        .ThenInclude(pim => pim.ProductCombination)
-                                        .ToListAsync();
+            IQueryable<Menu> query = _context.Menus.Where(menu => menu.MenuId != null);
 
-            return menus;
+            //filter by id
+            if (!string.IsNullOrEmpty(id))
+                query = query.Where(menu => menu.MenuId.Equals(id));
+
+            //filter by status
+            if (status.Length != 0)
+                query = query.Where(menu => Array.IndexOf(status, menu.Status) > -1);
+
+            //filter by residentId
+            if (!string.IsNullOrEmpty(residentId))
+                query = query.Where(menu => menu.ResidentId.Equals(residentId));
+
+            //add include
+            if (!string.IsNullOrEmpty(include))
+                if (include.Equals(nameof(Menu.Resident)))
+                    query = query.Include(menu => menu.Resident);
+
+            //sort
+            if (!string.IsNullOrEmpty(propertyName))
+            {
+                query = isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
+            }
+
+            //paging
+            int perPage = limit.GetValueOrDefault(10);
+            int page = queryPage.GetValueOrDefault(1) == 0 ? 1 : queryPage.GetValueOrDefault(1);
+            int total = query.Count();
+
+            return new PagingModel<Menu>
+            {
+                List = await query.Take(perPage).Skip((page - 1) * perPage).ToListAsync(),
+                Total = total,
+                Page = page,
+                LastPage = (int)Math.Ceiling(total / (double)perPage)
+            };
         }
     }
 }

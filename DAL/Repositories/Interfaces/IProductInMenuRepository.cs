@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Models;
 
@@ -7,18 +6,17 @@ namespace DAL.Repositories.Interfaces
     public interface IProductInMenuRepository : IRepository<ProductInMenu>
     {
         /// <summary>
-        /// Get Product In Menus Include Product By Product In Menu Id
+        /// Get Product In Menu
         /// </summary>
-        /// <param name="productInMenuId"></param>
-        /// <returns></returns>
-        Task<ProductInMenu> GetProductInMenusIncludeProductByProductInMenuId(string productInMenuId);
-
-
-        /// <summary>
-        /// Get Product In Menus Include Product By Menu Id
-        /// </summary>
+        /// <param name="id"></param>
         /// <param name="menuId"></param>
+        /// <param name="limit"></param>
+        /// <param name="queryPage"></param>
+        /// <param name="isAsc"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        Task<List<ProductInMenu>> GetProductInMenusIncludeProductByMenuId(string menuId);
+        Task<PagingModel<ProductInMenu>> GetProductInMenu(string id, string menuId, 
+            int? limit, int? queryPage, bool isAsc, string propertyName, string include);
     }
 }

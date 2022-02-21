@@ -74,5 +74,18 @@ namespace BLL.Services
 
             return int.Parse(url[t1..t2]);
         }
+
+
+        /// <summary>
+        /// Upper Case First Letter
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public string UpperCaseFirstLetter(string str)
+        {
+            if (!string.IsNullOrEmpty(str))
+                return str[0].ToString().ToUpper() + str[1..];
+            return str;
+        }
     }
 }

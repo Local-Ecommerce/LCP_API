@@ -16,14 +16,6 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Apartment By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<ApartmentResponse> GetApartmentById(string id);
-
-
-        /// <summary>
         /// Update Apartment By Id
         /// </summary>
         /// <param name="id"></param>
@@ -41,39 +33,15 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Apartment By Addess
-        /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
-        Task<ApartmentResponse> GetApartmentByAddress(string address);
-
-
-        /// <summary>
-        /// Get Apartment By Status
-        /// </summary>
-        /// <returns></returns>
-        Task<List<ApartmentResponse>> GetApartmentsByStatus(int status);
-
-
-        /// <summary>
-        /// Get Apartment For Auto Complete
-        /// </summary>
-        /// <returns></returns>
-        Task<List<ApartmentResponse>> GetApartmentForAutoComplete();
-        
-        
-        /// <summary>
-        /// Get Apartment For Auto Complete
-        /// </summary>
-        /// <returns></returns>
-        Task<List<ApartmentResponse>> GetAllApartments();
-
-
-        /// <summary>
-        /// Get Market Manager By Apartment Id
+        /// Get Apartment
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        Task<ExtendApartmentResponse> GetMarketManagerByApartmentId(string id);
+        Task<object> GetApartment(string id, int[] status, int? limit, int? page, string sort, string include);
     }
 }

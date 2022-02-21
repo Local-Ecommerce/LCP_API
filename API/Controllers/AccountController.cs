@@ -13,7 +13,7 @@ namespace API.Controllers
 {
     [EnableCors("MyPolicy")]
     [ApiController]
-    [Route("api/account")]
+    [Route("api/accounts")]
     public class AccountController : ControllerBase
     {
         private readonly ILogger _logger;
@@ -46,7 +46,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("GET api/account/login END duration: " +
+            _logger.Information("GET api/accounts/login END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -58,10 +58,10 @@ namespace API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetAccountById(string id)
+        [HttpGet]
+        public async Task<IActionResult> GetAccountById([FromQuery] string id)
         {
-            _logger.Information($"GET api/account/{id} START");
+            _logger.Information($"GET api/accounts?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -73,7 +73,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/account/{id} END duration: " +
+            _logger.Information($"GET api/accounts?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -84,10 +84,10 @@ namespace API.Controllers
         /// Update Account (Authentication required)
         /// </summary>
         [Authorize]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAccount(string id)
+        [HttpPut]
+        public async Task<IActionResult> UpdateAccount([FromQuery] string id)
         {
-            _logger.Information($"PUT api/acccount/{id} START Request: ");
+            _logger.Information($"PUT api/acccounts?id={id} START Request: ");
 
             Stopwatch watch = new();
             watch.Start();
@@ -99,7 +99,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/account/{id} END duration: " +
+            _logger.Information($"PUT api/accounts?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -110,10 +110,10 @@ namespace API.Controllers
         /// Delete Account (Authentication required)
         /// </summary>
         [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAccount(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAccount([FromQuery] string id)
         {
-            _logger.Information($"DELETE api/account/{id} START");
+            _logger.Information($"DELETE api/accounts?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -125,7 +125,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"DELETE api/account/{id} END duration: " +
+            _logger.Information($"DELETE api/accounts?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -136,10 +136,10 @@ namespace API.Controllers
         /// Change Resident Type By Account Id (Admin)
         /// </summary>
         [Authorize(Roles = RoleId.ADMIN)]
-        [HttpPut("{id}/type/{type}")]
-        public async Task<IActionResult> ChangeRoleByAccountId(string id, string type)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ChangeRoleByAccountId(string id, [FromQuery]string type)
         {
-            _logger.Information($"PUT api/account/{id}/type/{type} START");
+            _logger.Information($"PUT api/accounts/{id}?type={type} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -151,7 +151,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/account/{id}/type/{type} END duration: " +
+            _logger.Information($"PUT api/accounts/{id}?type={type} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

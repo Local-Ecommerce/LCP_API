@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
+using System;
 
 namespace DAL.Repositories
 {
@@ -13,34 +15,53 @@ namespace DAL.Repositories
 
 
         /// <summary>
-        /// Get Product In Menus Include Product By Menu Id
+        /// Get Product In Menu
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="menuId"></param>
+        /// <param name="limit"></param>
+        /// <param name="queryPage"></param>
+        /// <param name="isAsc"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<List<ProductInMenu>> GetProductInMenusIncludeProductByMenuId(string menuId)
+        public async Task<PagingModel<ProductInMenu>> GetProductInMenu(string id, string menuId, 
+            int? limit, int? queryPage, bool isAsc, 
+            string propertyName, string include)
         {
-            List<ProductInMenu> productInMenus = await _context.ProductInMenus
-                                                   .Where(pim => pim.MenuId == menuId)
-                                                   .Include(pim => pim.Product)
-                                                   .ToListAsync();
+            IQueryable<ProductInMenu> query = _context.ProductInMenus.Where(pim => pim.ProductInMenuId != null);
 
-            return productInMenus;
-        }
+            //filter by id
+            if (!string.IsNullOrEmpty(id))
+                query = query.Where(pim => pim.MenuId.Equals(id));
 
+            //filter by menuId
+            if (!string.IsNullOrEmpty(menuId))
+                query = query.Where(pim => pim.MenuId.Equals(menuId));
 
-        /// <summary>
-        /// Get Product In Menus Include Product By Product In Menu Id
-        /// </summary>
-        /// <param name="productInMenuId"></param>
-        /// <returns></returns>
-        public async Task<ProductInMenu> GetProductInMenusIncludeProductByProductInMenuId(string productInMenuId)
-        {
-            ProductInMenu productInMenu = await _context.ProductInMenus
-                                            .Where(pim => pim.ProductInMenuId.Equals(productInMenuId))
-                                            .Include(pim => pim.Product)
-                                            .FirstOrDefaultAsync();
+            //add include
+            if (!string.IsNullOrEmpty(include))
+                if (include.Equals(nameof(ProductInMenu.Product)))
+                    query = query.Include(pim => pim.Product);
 
-            return productInMenu;
+            //sort
+            if (!string.IsNullOrEmpty(propertyName))
+            {
+                query = isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
+            }
+
+            //paging
+            int perPage = limit.GetValueOrDefault(10);
+            int page = queryPage.GetValueOrDefault(1) == 0 ? 1 : queryPage.GetValueOrDefault(1);
+            int total = query.Count();
+
+            return new PagingModel<ProductInMenu>
+            {
+                List = await query.Take(perPage).Skip((page - 1) * perPage).ToListAsync(),
+                Total = total,
+                Page = page,
+                LastPage = (int)Math.Ceiling(total / (double)perPage)
+            };
         }
     }
 }
