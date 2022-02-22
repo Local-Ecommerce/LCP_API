@@ -129,26 +129,45 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get All System Category
+        /// Get System Category
         /// </summary>
+        /// <param name="id"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
         /// <returns></returns>
-        public async Task<List<SystemCategoryResponse>> GetAllSystemCategory()
+        public async Task<object> GetSystemCategory(string id, int? limit, int? page, string sort)
         {
-            List<SystemCategory> systemCategories;
+            PagingModel<SystemCategory> categories;
+            string propertyName = default;
+            bool isAsc = false;
 
-            //get systemCategory from database
+            if (!string.IsNullOrEmpty(sort))
+            {
+                isAsc = sort[0].ToString().Equals("+");
+                propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
+            }
+
             try
             {
-                systemCategories = await _unitOfWork.SystemCategories.GetAllSystemCategoryIncludeInverseBelongTo();
+                categories = await _unitOfWork.SystemCategories.GetSystemCategory(id, limit, page, isAsc, propertyName);
+
+                if (_utilService.IsNullOrEmpty(categories.List))
+                    throw new EntityNotFoundException(typeof(SystemCategory), "in the url");
             }
             catch (Exception e)
             {
-                _logger.Error("[SystemCategoryService.GetAllSystemCategory()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(SystemCategory), "all");
+                _logger.Error("[SystemCategoryService.GetSystemCategory()]" + e.Message);
+                throw;
             }
 
-            return _mapper.Map<List<SystemCategoryResponse>>(systemCategories);
+            return new PagingModel<SystemCategoryResponse>
+            {
+                List = _mapper.Map<List<SystemCategoryResponse>>(categories.List),
+                Page = categories.Page,
+                LastPage = categories.LastPage,
+                Total = categories.Total,
+            };
         }
 
 
@@ -195,110 +214,6 @@ namespace BLL.Services
             }
 
             return _mapper.Map<SystemCategoryResponse>(systemCategory);
-        }
-
-
-        /// <summary>
-        /// Get System Category By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<SystemCategoryResponse> GetSystemCategoryById(string id)
-        {
-            SystemCategory systemCategory;
-            //get systemCategory from database
-            try
-            {
-                systemCategory = await _unitOfWork.SystemCategories
-                                            .GetSystemCategoryByIdIncludeInverseBelongTo(id);
-
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[SystemCategoryService.GetSystemCategoryById()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(SystemCategory), id);
-            }
-
-            return _mapper.Map<SystemCategoryResponse>(systemCategory);
-        }
-
-
-        /// <summary>
-        /// Get System Category And One Level Down Inverse Belong To By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<SystemCategoryResponse> GetSystemCategoryAndOneLevelDownInverseBelongToById(string id)
-        {
-            SystemCategory systemCategory;
-            //get systemCategory from database
-            try
-            {
-                systemCategory = await _unitOfWork.SystemCategories
-                                            .GetSystemCategoryByIdIncludeOneLevelDownInverseBelongTo(id);
-
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[SystemCategoryService.GetSystemCategoryById()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(SystemCategory), id);
-            }
-
-            return _mapper.Map<SystemCategoryResponse>(systemCategory);
-        }
-
-
-        /// <summary>
-        /// Get System Categories By Status
-        /// </summary>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        public async Task<List<SystemCategoryResponse>> GetSystemCategoriesByStatus(int status)
-        {
-            List<SystemCategoryResponse> systemCategoryList = null;
-
-            //get SystemCategory from database
-            try
-            {
-                systemCategoryList = _mapper.Map<List<SystemCategoryResponse>>(
-                    await _unitOfWork.SystemCategories
-                                     .FindListAsync(SystemCategory => SystemCategory.Status == status));
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[SystemCategoryService.GetSystemCategorysByStatus()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(SystemCategory), status);
-            }
-
-            return systemCategoryList;
-        }
-
-
-        /// <summary>
-        /// Get System Categories For Auto Complete
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<SystemCategoryForAutoCompleteResponse>> GetSystemCategoriesForAutoComplete()
-        {
-            List<SystemCategoryForAutoCompleteResponse> systemCategoryList = null;
-
-            //get SystemCategory from database
-            try
-            {
-                systemCategoryList = _mapper.Map<List<SystemCategoryForAutoCompleteResponse>>(
-                    await _unitOfWork.SystemCategories.GetAllLevelOneAndTwoSystemCategory());
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[SystemCategoryService.GetSystemCategoriesForAutoComplete()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(SystemCategory), "autoComplete");
-            }
-
-            return systemCategoryList;
         }
     }
 }

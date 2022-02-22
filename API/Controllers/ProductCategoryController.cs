@@ -14,7 +14,7 @@ namespace API.Controllers
 {
     [EnableCors("MyPolicy")]
     [ApiController]
-    [Route("api/productCategory")]
+    [Route("api/category-products")]
     public class ProductCategoryController : ControllerBase
     {
         private readonly ILogger _logger;
@@ -34,7 +34,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProductCategory([FromBody] ProductCategoryRequest productCategoryRequest)
         {
-            _logger.Information($"POST api/productCategory START Request: {JsonSerializer.Serialize(productCategoryRequest)}");
+            _logger.Information($"POST api/category-products START Request: {JsonSerializer.Serialize(productCategoryRequest)}");
 
             Stopwatch watch = new ();
             watch.Start();
@@ -46,7 +46,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/productCategory END duration: " +
+            _logger.Information("POST api/category-products END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -54,25 +54,32 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Product Category By Id (Merchant)
+        /// Get Product Category (Merchant)
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetProductCategoryById(string id)
+        [HttpGet]
+        public async Task<IActionResult> GetProductCategory(
+            [FromQuery] string id,
+            [FromQuery] int?[] status,
+            [FromQuery] int? limit,
+            [FromQuery] int? page,
+            [FromQuery] string sort)
         {
-            _logger.Information($"GET api/productCategory/{id} START");
+            _logger.Information($"GET api/category-products?id ={id}&status=" + string.Join("status=", status) +
+                $"&limit={limit}&page={page}&sort={sort} START");
 
             Stopwatch watch = new ();
             watch.Start();
 
             //get productCategory
-            ExtendProductCategoryResponse response = await _productCategoryService.GetProCategoryById(id);
+            object response = await _productCategoryService.GetProCategory(id, status, limit, page, sort);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductCategoryResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"GET api/productCategory/{id} END duration: " +
+            _logger.Information($"GET api/category-products?id ={id}&status=" + string.Join("status=", status) +
+                $"&limit={limit}&page={page}&sort={sort} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -83,11 +90,11 @@ namespace API.Controllers
         /// Update Product Category (Merchant)
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProductCategory(string id,
+        [HttpPut]
+        public async Task<IActionResult> UpdateProductCategory([FromQuery] string id,
             [FromBody] ProductCategoryRequest productCategoryRequest)
         {
-            _logger.Information($"PUT api/productCategory/{id} START Request: {JsonSerializer.Serialize(productCategoryRequest)}");
+            _logger.Information($"PUT api/category-products?id={id} START Request: {JsonSerializer.Serialize(productCategoryRequest)}");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -99,7 +106,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/productCategory/{id} END duration: " +
+            _logger.Information($"PUT api/category-products?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -110,10 +117,10 @@ namespace API.Controllers
         /// Delete ProductCategory by Id (Merchant)
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProductCategory(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteProductCategory([FromQuery] string id)
         {
-            _logger.Information($"DELETE api/productCategory/{id} START");
+            _logger.Information($"DELETE api/category-products?id={id} START");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -125,34 +132,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"DELETE api/productCategory/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get Product Categories By Status (Merchant)
-        /// </summary>
-        [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpGet("status/{status}")]
-        public async Task<IActionResult> GetProductCategoriesByStatus(int status)
-        {
-            _logger.Information($"GET api/productCategory/status/{status} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get Product
-            List<ExtendProductCategoryResponse> response =
-                await _productCategoryService.GetProductCategoriesByStatus(status);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/productCategory/status/{status} END duration: " +
+            _logger.Information($"DELETE api/category-products?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

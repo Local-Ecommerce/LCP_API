@@ -1,5 +1,4 @@
 ﻿using BLL.Dtos.Resident;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -12,14 +11,6 @@ namespace BLL.Services.Interfaces
         /// <param name="residentRequest"></param>
         /// <returns></returns>
         Task<ResidentResponse> CreateResident(ResidentRequest residentRequest);
-
-
-        /// <summary>
-        /// Get Resident By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<ResidentResponse> GetResidentById(string id);
 
 
         /// <summary>
@@ -40,25 +31,18 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Resident By Apartment Id
+        /// Get Resident
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="apartmentId"></param>
-        /// <returns></returns>
-        Task<List<ResidentResponse>> GetResidentByApartmentId(string apartmentId);
-
-
-        /// <summary>
-        /// Get All Residents
-        /// </summary>
-        /// <returns></returns>
-        Task<List<ResidentResponse>> GetAllResidents();
-
-
-        /// <summary>
-        /// Get Resident By Apartment Id
-        /// </summary>
         /// <param name="accountId"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
         /// <returns></returns>
-        Task<List<ResidentResponse>> GetResidentByAccountId(string accountId);
+        Task<object> GetResident(
+            string id, string apartmentId,
+            string accountId, int? limit,
+            int? page, string sort);
     }
 }
