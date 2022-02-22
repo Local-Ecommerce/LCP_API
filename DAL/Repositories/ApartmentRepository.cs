@@ -58,7 +58,7 @@ namespace DAL.Repositories
 
             return new PagingModel<Apartment>
             {
-                List = await query.Take(perPage).Skip((page - 1) * perPage).ToListAsync(),
+                List = await query.Skip((page - 1) * perPage).Take(perPage).ToListAsync(),
                 Total = total,
                 Page = page,
                 LastPage = (int)Math.Ceiling(total / (double)perPage)

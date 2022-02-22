@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Models;
 
@@ -7,31 +6,19 @@ namespace DAL.Repositories.Interfaces
     public interface IProductRepository : IRepository<Product>
     {
         /// <summary>
-        /// Get Base Product By Id
+        /// Get Product
         /// </summary>
-        /// <param name="productId"></param>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="queryPage"></param>
+        /// <param name="isAsc"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        Task<Product> GetBaseProductById(string productId);
-
-        /// <summary>
-        /// Get Related Product By Id
-        /// </summary>
-        /// <param name="productId"></param>
-        /// <returns></returns>
-        Task<Product> GetRelatedProductById(string productId);
-
-
-        /// <summary>
-        /// Get All Base Product
-        /// </summary>
-        /// <returns></returns>
-        Task<List<Product>> GetAllBaseProduct();
-
-
-        /// <summary>
-        /// Get Unverified Create Products
-        /// </summary>
-        /// <returns></returns>
-        Task<List<Product>> GetUnverifiedCreateProducts();
+        Task<PagingModel<Product>> GetProduct(
+            string id, int?[] status,
+            int? limit, int? queryPage,
+            bool isAsc, string propertyName, string include);
     }
 }

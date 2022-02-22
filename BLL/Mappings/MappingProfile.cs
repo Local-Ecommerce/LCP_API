@@ -49,7 +49,6 @@ namespace BLL.Mappings
             CreateMap<SystemCategoryRequest, SystemCategory>();
             CreateMap<SystemCategoryUpdateRequest, SystemCategory>();
             CreateMap<SystemCategory, SystemCategoryResponse>().ReverseMap();
-            CreateMap<SystemCategory, SystemCategoryForAutoCompleteResponse>().ReverseMap();
 
             //MerchantStore Mapping
             CreateMap<MerchantStoreRequest, MerchantStore>();

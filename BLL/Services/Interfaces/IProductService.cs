@@ -1,4 +1,5 @@
 ﻿using BLL.Dtos.Product;
+using DAL.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="productRequests"></param>
         /// <returns></returns>
-        Task<ProductResponse> AddRelatedProduct(string baseProductId,
+        Task<ExtendProductResponse> AddRelatedProduct(string baseProductId,
             List<ProductRequest> productRequests);
 
 
@@ -33,57 +34,24 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get All Base Product
-        /// </summary>
-        /// <returns></returns>
-        Task<List<ExtendProductResponse>> GetAllBaseProduct();
-
-
-        /// <summary>
-        /// Get Base Product by Id
+        /// Get Product
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
-        Task<ExtendProductResponse> GetBaseProductById(string id);
-
-
-        /// <summary>
-        /// Get Related Product by Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<ProductResponse> GetRelatedProductById(string id);
-
-
-        /// <summary>
-        /// Delete Base Product by id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<ExtendProductResponse> DeleteBaseProduct(string id);
-
-
-        /// <summary>
-        /// Delete Related Product
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<ProductResponse> DeleteRelatedProduct(string id);
-
-
-        /// <summary>
-        /// Get Products By Status
-        /// </summary>
         /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        Task<List<ProductResponse>> GetProductsByStatus(int status);
+        Task<PagingModel<ExtendProductResponse>> GetProduct(string id, int?[] status, int? limit, int? page, string sort, string include);
 
 
         /// <summary>
-        /// Get Pending Products
+        /// Delete Product by id
         /// </summary>
+        /// <param name="id"></param>
         /// <returns></returns>
-        Task<List<ExtendProductResponse>> GetPendingProducts();
+        Task<ExtendProductResponse> DeleteProduct(string id);
 
 
         /// <summary>

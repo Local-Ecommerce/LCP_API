@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
-using DAL.Constants;
 using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -13,66 +13,62 @@ namespace DAL.Repositories
     {
         public ProductRepository(LoichDBContext context) : base(context) { }
 
-        
-        /// <summary>
-        /// Get All Base Product
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<Product>> GetAllBaseProduct()
-        {
-            List<Product> products = await _context.Products
-                                            .Where(p => p.BelongTo == null && p.Status == (int)ProductStatus.VERIFIED_PRODUCT)
-                                            .Include(p => p.InverseBelongToNavigation)
-                                            .ToListAsync();
-
-            return products;
-        }
-
 
         /// <summary>
-        /// Get Base Product By Id
+        /// Get Product
         /// </summary>
-        /// <param name="productId"></param>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="queryPage"></param>
+        /// <param name="isAsc"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<Product> GetBaseProductById(string productId)
+        public async Task<PagingModel<Product>> GetProduct(
+            string id, int?[] status,
+            int? limit, int? queryPage,
+            bool isAsc, string propertyName, string include)
         {
-            Product product = await _context.Products
-                                        .Where(p => p.ProductId.Equals(productId))
-                                        .Include(p => p.InverseBelongToNavigation)
-                                        .FirstOrDefaultAsync();
+            IQueryable<Product> query = _context.Products.Where(p => p.ProductId != null);
 
-            return product;
-        }
+            //filter by id
+            if (!string.IsNullOrEmpty(id))
+                query = query.Where(p => p.ProductId.Equals(id));
+            else
+                query = query.Where(p => p.BelongTo == null).Include(p => p.InverseBelongToNavigation);
 
-        /// <summary>
-        /// Get Related Product By Id
-        /// </summary>
-        /// <param name="productId"></param>
-        /// <returns></returns>
-        public async Task<Product> GetRelatedProductById(string productId)
-        {
-            Product product = await _context.Products
-                                                    .Where(p => p.ProductId.Equals(productId))
-                                                    .Include(p => p.BelongToNavigation)
-                                                    .FirstOrDefaultAsync();
+            //filter by status
+            if (status.Length != 0)
+                query = query.Where(p => status.Contains(p.Status));
 
-            return product;
-        }
+            //add include
+            if (!string.IsNullOrEmpty(include))
+            {
+                if (include.Equals("related"))
+                    query = query.Where(p => p.BelongTo == null).Include(p => p.InverseBelongToNavigation);
+                if (include.Equals("base"))
+                    query = query.Where(p => p.BelongTo != null).Include(p => p.BelongToNavigation);
+            }
 
+            //sort
+            if (!string.IsNullOrEmpty(propertyName))
+            {
+                query = isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
+            }
 
-        /// <summary>
-        /// Get Unverified Create Products
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<Product>> GetUnverifiedCreateProducts()
-        {
-            List<Product>  products = await _context.Products
-                                            .Where(p => p.Status == (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT)
-                                            .Include(p => p.BelongToNavigation)
-                                            .OrderByDescending(p => p.CreatedDate)
-                                            .ToListAsync();
+            //paging
+            int perPage = limit.GetValueOrDefault(10);
+            int page = queryPage.GetValueOrDefault(1) == 0 ? 1 : queryPage.GetValueOrDefault(1);
+            int total = query.Count();
 
-            return products;
+            return new PagingModel<Product>
+            {
+                List = await query.Skip((page - 1) * perPage).Take(perPage).ToListAsync(),
+                Total = total,
+                Page = page,
+                LastPage = (int)Math.Ceiling(total / (double)perPage)
+            };
         }
     }
 }
