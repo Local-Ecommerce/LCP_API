@@ -106,34 +106,6 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Resident By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<ResidentResponse> GetResidentById(string id)
-        {
-            //biz rule
-
-            ResidentResponse residentResponse;
-
-            //Get Resident From Database
-            try
-            {
-                Resident resident = await _unitOfWork.Residents.FindAsync(resident => resident.ResidentId.Equals(id));
-                residentResponse = _mapper.Map<ResidentResponse>(resident);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ResidentService.GetResidentById()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Resident), id);
-            }
-
-            return residentResponse;
-        }
-
-
-        /// <summary>
         /// Update Resident By Id
         /// </summary>
         /// <param name="id"></param>
@@ -246,88 +218,50 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Resident By Apartment Id
+        /// Get Resident
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="apartmentId"></param>
-        /// <returns></returns>
-        public async Task<List<ResidentResponse>> GetResidentByApartmentId(string apartmentId)
-        {
-            List<ResidentResponse> residentResponses;
-
-            //Get Resident From Database
-
-            try
-            {
-                List<Resident> residentList = await _unitOfWork.Residents
-                                                            .FindListAsync(resident => resident.ApartmentId.Equals(apartmentId));
-
-                residentResponses = _mapper.Map<List<ResidentResponse>>(residentList);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ResidentService.GetResidentByAppartmentId()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Resident), apartmentId);
-            }
-
-            return residentResponses;
-        }
-
-
-        /// <summary>
-        /// Get All Residents
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<ResidentResponse>> GetAllResidents()
-        {
-            List<ResidentResponse> residentResponses;
-
-            //Get Resident From Database
-
-            try
-            {
-                List<Resident> residentList = await _unitOfWork.Residents
-                                                            .FindListAsync(resident => resident.ResidentId != null);
-
-                residentResponses = _mapper.Map<List<ResidentResponse>>(residentList);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ResidentService.GetAllResidents()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Resident), "all");
-            }
-
-            return residentResponses;
-        }
-
-
-        /// <summary>
-        /// Get Resident By Account Id
-        /// </summary>
         /// <param name="accountId"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
         /// <returns></returns>
-        public async Task<List<ResidentResponse>> GetResidentByAccountId(string accountId)
+        public async Task<object> GetResident(
+            string id, string apartmentId, 
+            string accountId, int? limit, 
+            int? page, string sort)
         {
-            List<ResidentResponse> residentResponses;
+            PagingModel<Resident> residents;
+            string propertyName = default;
+            bool isAsc = false;
 
-            //Get Resident From Database
+            if (!string.IsNullOrEmpty(sort))
+            {
+                isAsc = sort[0].ToString().Equals("+");
+                propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
+            }
 
             try
             {
-                List<Resident> residentList = await _unitOfWork.Residents
-                                                            .FindListAsync(resident => resident.AccountId.Equals(accountId));
+                residents = await _unitOfWork.Residents.GetResident(id, apartmentId, accountId, limit, page, isAsc, propertyName);
 
-                residentResponses = _mapper.Map<List<ResidentResponse>>(residentList);
+                if (_utilService.IsNullOrEmpty(residents.List))
+                    throw new EntityNotFoundException(typeof(Resident), "in the url");
             }
             catch (Exception e)
             {
-                _logger.Error("[ResidentService.GetResidentByAccountId()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Resident), accountId);
+                _logger.Error("[ResidentService.GetResident()]" + e.Message);
+                throw;
             }
 
-            return residentResponses;
+            return new PagingModel<ExtendResidentResponse>
+            {
+                List = _mapper.Map<List<ExtendResidentResponse>>(residents.List),
+                Page = residents.Page,
+                LastPage = residents.LastPage,
+                Total = residents.Total,
+            };
         }
     }
 }

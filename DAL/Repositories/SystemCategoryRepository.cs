@@ -1,7 +1,7 @@
-using System.Collections.Generic;
+using System;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
-using DAL.Constants;
 using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,66 +14,45 @@ namespace DAL.Repositories
 
 
         /// <summary>
-        /// Get All Level One And Two System Category
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<SystemCategory>> GetAllLevelOneAndTwoSystemCategory()
-        {
-            List<SystemCategory> systemCategories = await _context.SystemCategories
-                                                            .Where(sc => sc.CategoryLevel != (int)CategoryLevel.THREE 
-                                                                && sc.Status == (int)SystemCategoryStatus.ACTIVE_SYSTEM_CATEGORY)
-                                                            .OrderBy(sc => sc.CategoryLevel)
-                                                            .ToListAsync();
-            return systemCategories;
-        }
-
-
-        /// <summary>
-        /// Get All System Category Include Inverse Belong To
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<SystemCategory>> GetAllSystemCategoryIncludeInverseBelongTo()
-        {
-            List<SystemCategory> systemCategories = await _context.SystemCategories
-                                                            .Where(sc => sc.BelongTo == null)
-                                                            .Include(sc => sc.InverseBelongToNavigation)
-                                                            .ThenInclude(sc => sc.InverseBelongToNavigation)
-                                                            .ToListAsync();
-
-            return systemCategories;
-        }
-
-
-        /// <summary>
-        /// Get System Category By Id Include Inverse Belong To
+        /// Get System Category
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="limit"></param>
+        /// <param name="queryPage"></param>
+        /// <param name="isAsc"></param>
+        /// <param name="propertyName"></param>
         /// <returns></returns>
-        public async Task<SystemCategory> GetSystemCategoryByIdIncludeInverseBelongTo(string id)
+        public async Task<PagingModel<SystemCategory>> GetSystemCategory(
+            string id, int? limit,
+            int? queryPage, bool isAsc,
+            string propertyName)
         {
-            SystemCategory systemCategory = await _context.SystemCategories
-                                                    .Where(sc => sc.SystemCategoryId.Equals(id))
-                                                    .Include(sc => sc.InverseBelongToNavigation)
-                                                    .ThenInclude(sc => sc.InverseBelongToNavigation)
-                                                    .FirstOrDefaultAsync();
+            IQueryable<SystemCategory> query = _context.SystemCategories.Where(sc => sc.SystemCategoryId != null);
 
-            return systemCategory;
-        }
-        
-        
-        /// <summary>
-        /// Get System Category By Id Include One Level Down Inverse Belong To
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<SystemCategory> GetSystemCategoryByIdIncludeOneLevelDownInverseBelongTo(string id)
-        {
-            SystemCategory systemCategory = await _context.SystemCategories
-                                                    .Where(sc => sc.SystemCategoryId.Equals(id))
-                                                    .Include(sc => sc.InverseBelongToNavigation)
-                                                    .FirstOrDefaultAsync();
+            //filter by id
+            if (!string.IsNullOrEmpty(id))
+                query = query.Where(sc => sc.SystemCategoryId.Equals(id));
+            else
+                query = query.Where(sc => sc.BelongTo == null)
+                             .Include(sc => sc.InverseBelongToNavigation)
+                             .ThenInclude(sc => sc.InverseBelongToNavigation);
 
-            return systemCategory;
+            //sort
+            if (!string.IsNullOrEmpty(propertyName))
+                query = isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
+
+            //paging
+            int perPage = limit.GetValueOrDefault(10);
+            int page = queryPage.GetValueOrDefault(1) == 0 ? 1 : queryPage.GetValueOrDefault(1);
+            int total = query.Count();
+
+            return new PagingModel<SystemCategory>
+            {
+                List = await query.Take(perPage).Skip((page - 1) * perPage).ToListAsync(),
+                Total = total,
+                Page = page,
+                LastPage = (int)Math.Ceiling(total / (double)perPage)
+            };
         }
     }
 }

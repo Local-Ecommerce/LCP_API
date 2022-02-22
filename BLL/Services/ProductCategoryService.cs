@@ -6,8 +6,8 @@ using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace BLL.Services
 {
@@ -150,55 +150,46 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Product Category By Id
+        /// Get Product Category
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<ExtendProductCategoryResponse> GetProCategoryById(string id)
-        {
-            ExtendProductCategoryResponse extendProductCategoryResponse;
-
-            //get productCategory from database
-            try
-            {
-                ProductCategory productCategory = await _unitOfWork.ProductCategories.FindAsync(p => p.ProductCategoryId.Equals(id));
-                extendProductCategoryResponse = _mapper.Map<ExtendProductCategoryResponse>(productCategory);
-
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ProductCategoryService.GetProductCategoryById()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(ProductCategory), id);
-            }
-
-            return extendProductCategoryResponse;
-        }
-
-
-        /// <summary>
-        /// Get Product Categories By Status
-        /// </summary>
         /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
         /// <returns></returns>
-        public async Task<List<ExtendProductCategoryResponse>> GetProductCategoriesByStatus(int status)
+        public async Task<object> GetProCategory(string id, int?[] status, int? limit, int? page, string sort)
         {
-            List<ExtendProductCategoryResponse> productCategoryList = null;
+            PagingModel<ProductCategory> productCategories;
+            string propertyName = default;
+            bool isAsc = false;
 
-            //get ProductCategory from database
+            if (!string.IsNullOrEmpty(sort))
+            {
+                isAsc = sort[0].ToString().Equals("+");
+                propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
+            }
+
             try
             {
-                productCategoryList = _mapper.Map<List<ExtendProductCategoryResponse>>(
-                    await _unitOfWork.ProductCategories.FindListAsync(ms => ms.Status == status));
+                productCategories = await _unitOfWork.ProductCategories.GetProductCategory(id, status, limit, page, isAsc, propertyName);
+
+                if (_utilService.IsNullOrEmpty(productCategories.List))
+                    throw new EntityNotFoundException(typeof(ProductCategory), "in the url");
             }
             catch (Exception e)
             {
-                _logger.Error("[ProductCategoryService.GetProductCategorysByStatus()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(ProductCategory), status);
+                _logger.Error("[ProductCategoryService.GetProductCategory()]" + e.Message);
+                throw;
             }
 
-            return productCategoryList;
+            return new PagingModel<ExtendProductCategoryResponse>
+            {
+                List = _mapper.Map<List<ExtendProductCategoryResponse>>(productCategories.List),
+                Page = productCategories.Page,
+                LastPage = productCategories.LastPage,
+                Total = productCategories.Total,
+            };
         }
     }
 }

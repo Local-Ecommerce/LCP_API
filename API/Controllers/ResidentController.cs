@@ -5,7 +5,6 @@ using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -14,7 +13,7 @@ namespace API.Controllers
 {
     [EnableCors("MyPolicy")]
     [ApiController]
-    [Route("api/resident")]
+    [Route("api/residents")]
     public class ResidentController : ControllerBase
     {
         private readonly ILogger _logger;
@@ -35,7 +34,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateResident([FromBody] ResidentRequest residentRequest)
         {
-            _logger.Information($"POST api/resident START Request: " +
+            _logger.Information($"POST api/residents START Request: " +
                 $"{JsonSerializer.Serialize(residentRequest)}");
 
             Stopwatch watch = new();
@@ -48,7 +47,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/resident END duration: " +
+            _logger.Information("POST api/residents END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -56,25 +55,33 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Resident By Id
+        /// Get Resident (Authentication required)
         /// </summary>
-        [AllowAnonymous]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetResidentById(string id)
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetResident(
+            [FromQuery] string id,
+            [FromQuery] string apartmentid,
+            [FromQuery] string accountid,
+            [FromQuery] int? limit,
+            [FromQuery] int? page,
+            [FromQuery] string sort)
         {
-            _logger.Information($"GET api/resident/{id} START");
+            _logger.Information($"GET api/residents?id={id}&apartmentid={apartmentid}&accountid={accountid}" +
+                $"&limit={limit}&page={page}&sort={sort} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new ();
             watch.Start();
 
             //get Resident
-            ResidentResponse response = await _residentService.GetResidentById(id);
+            object response = await _residentService.GetResident(id, apartmentid, accountid, limit, page, sort);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"GET api/resident/{id} END duration: " +
+            _logger.Information($"GET api/residents?id={id}&apartmentid={apartmentid}&accountid={accountid}" +
+                $"&limit={limit}&page={page}&sort={sort} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -85,11 +92,11 @@ namespace API.Controllers
         /// Update Resident (Apartment Roles)
         /// </summary>
         [Authorize(Roles = RoleId.APARTMENT)]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateResident(string id,
+        [HttpPut]
+        public async Task<IActionResult> UpdateResident([FromQuery]string id,
                                                       [FromBody] ResidentUpdateRequest residentUpdateRequest)
         {
-            _logger.Information($"PUT api/resident/{id} START Request: " +
+            _logger.Information($"PUT api/residents?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(residentUpdateRequest)}");
 
             Stopwatch watch = new();
@@ -102,7 +109,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/resident/{id} END duration: " +
+            _logger.Information($"PUT api/residents?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -113,10 +120,10 @@ namespace API.Controllers
         /// Delete Resident (Admin)
         /// </summary>
         [Authorize(Roles = RoleId.ADMIN)]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteResident(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteResident([FromQuery] string id)
         {
-            _logger.Information($"DELETE api/resident/{id} START");
+            _logger.Information($"DELETE api/residents?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -128,88 +135,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"DELETE api/resident/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get Resident By Apartment Id (Admin)
-        /// </summary>
-        [Authorize(Roles = RoleId.ADMIN)]
-        [HttpGet("apartment/{apartmentId}")]
-        public async Task<IActionResult> GetResidentByApartmentId(string apartmentId)
-        {
-            _logger.Information($"GET api/resident/apartment/{apartmentId} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get Resident
-            List<ResidentResponse> response =
-                await _residentService.GetResidentByApartmentId(apartmentId);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/resident/apartment/{apartmentId} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get Resident By Account Id (Admin)
-        /// </summary>
-        [Authorize(Roles = RoleId.ADMIN)]
-        [HttpGet("account/{accountId}")]
-        public async Task<IActionResult> GetResidentByAccountId(string accountId)
-        {
-            _logger.Information($"GET api/resident/account/{accountId} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get Resident
-            List<ResidentResponse> response =
-                await _residentService.GetResidentByAccountId(accountId);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/resident/account/{accountId} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get All Residents (Admin)
-        /// </summary>
-        [Authorize(Roles = RoleId.ADMIN)]
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAllResidents()
-        {
-            _logger.Information($"GET api/resident/all START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get Resident
-            List<ResidentResponse> response =
-                await _residentService.GetAllResidents();
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/resident/all END duration: " +
+            _logger.Information($"DELETE api/residents?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

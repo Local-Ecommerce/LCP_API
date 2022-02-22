@@ -1,5 +1,4 @@
 ﻿using BLL.Dtos.ProductCategory;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -31,17 +30,14 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Product Category By Id
+        /// Get Product Category
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
         /// <returns></returns>
-        Task<ExtendProductCategoryResponse> GetProCategoryById(string id);
-
-
-        /// <summary>
-        /// Get Product Categories By Status
-        /// </summary>
-        /// <returns></returns>
-        Task<List<ExtendProductCategoryResponse>> GetProductCategoriesByStatus(int status);
+        Task<object> GetProCategory(string id, int?[] status, int? limit, int? page, string sort);
     }
 }

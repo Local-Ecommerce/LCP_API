@@ -14,7 +14,7 @@ namespace API.Controllers
 {
     [EnableCors("MyPolicy")]
     [ApiController]
-    [Route("api/systemCategory")]
+    [Route("api/categories")]
     public class SystemCategoryController : ControllerBase
     {
         private readonly ILogger _logger;
@@ -34,7 +34,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSystemCategory([FromBody] SystemCategoryRequest systemCategoryRequest)
         {
-            _logger.Information($"POST api/systemCategory START Request: {JsonSerializer.Serialize(systemCategoryRequest)}");
+            _logger.Information($"POST api/categories START Request: {JsonSerializer.Serialize(systemCategoryRequest)}");
 
             Stopwatch watch = new();
             watch.Start();
@@ -46,7 +46,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/systemCategory END duration: " +
+            _logger.Information("POST api/categories END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -54,93 +54,46 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get System Category By Id
+        /// Get System Category (Authentication required)
         /// </summary>
-        [AllowAnonymous]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetSystemCategoryById(string id)
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetSystemCategory(
+            [FromQuery] string id,
+            [FromQuery] int? limit,
+            [FromQuery] int? page,
+            [FromQuery] string sort)
         {
-            _logger.Information($"GET api/systemCategory/{id} START");
+            _logger.Information($"GET api/categories?id={id}&limit={limit}&page={page}&sort={sort} START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //get systemCategory
-            SystemCategoryResponse response = await _systemCategoryService.GetSystemCategoryById(id);
-
-            string json = JsonSerializer.Serialize(ApiResponse<SystemCategoryResponse>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/systemCategory/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get System Category And One Level Down Inverse Belong To By Id
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("oneLevelDown/{id}")]
-        public async Task<IActionResult> GetSystemCategoryAndOneLevelDownInverseBelongToById(string id)
-        {
-            _logger.Information($"GET api/systemCategory/oneLevelDown/{id} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get systemCategory
-            SystemCategoryResponse response = await _systemCategoryService.GetSystemCategoryAndOneLevelDownInverseBelongToById(id);
-
-            string json = JsonSerializer.Serialize(ApiResponse<SystemCategoryResponse>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/systemCategory/oneLevelDown/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get All System Category
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAllSystemCategory()
-        {
-            _logger.Information($"GET api/systemCategory/all START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get systemCategory
-            List<SystemCategoryResponse> response = await _systemCategoryService.GetAllSystemCategory();
+            object response = await _systemCategoryService.GetSystemCategory(id, limit, page, sort);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"GET api/systemCategory/all END duration: " +
+            _logger.Information($"GET api/categories?id={id}&limit={limit}&page={page}&sort={sort} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
 
+
         /// <summary>
         /// Update SystemCategory By Id (Admin)
         /// </summary>
         [Authorize(Roles = RoleId.ADMIN)]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateSystemCategory(string id,
+        [HttpPut]
+        public async Task<IActionResult> UpdateSystemCategory([FromQuery] string id,
             [FromBody] SystemCategoryUpdateRequest systemCategoryRequest)
         {
-            _logger.Information($"PUT api/systemCategory/{id} START Request: {JsonSerializer.Serialize(systemCategoryRequest)}");
+            _logger.Information($"PUT api/categories?id={id} START Request: {JsonSerializer.Serialize(systemCategoryRequest)}");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //update systemCategory
@@ -150,7 +103,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/systemCategory/{id} END duration: " +
+            _logger.Information($"PUT api/categories?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -161,10 +114,10 @@ namespace API.Controllers
         /// Delete SystemCategory by Id (Admin)
         /// </summary>
         [Authorize(Roles = RoleId.ADMIN)]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSystemCategory(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteSystemCategory([FromQuery] string id)
         {
-            _logger.Information($"DELETE api/systemCategory/{id} START");
+            _logger.Information($"DELETE api/categories?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -176,62 +129,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"DELETE api/systemCategory/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get System Categories By Status (Admin, Merchant)
-        /// </summary>
-        [Authorize(Roles = RoleId.ADMIN)]
-        [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpGet("status/{status}")]
-        public async Task<IActionResult> GetSystemCategoriesByStatus(int status)
-        {
-            _logger.Information($"GET api/systemCategory/status/{status} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get SystemCategory
-            List<SystemCategoryResponse> response =
-                await _systemCategoryService.GetSystemCategoriesByStatus(status);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/systemCategory/status/{status} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get All Level One And Two System Category
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("autocomplete")]
-        public async Task<IActionResult> GetAllLevelOneAndTwoSystemCategory()
-        {
-            _logger.Information($"GET api/systemCategory/autocomplete START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get SystemCategory
-            List<SystemCategoryForAutoCompleteResponse> response =
-                await _systemCategoryService.GetSystemCategoriesForAutoComplete();
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/systemCategory/autocomplete END duration: " +
+            _logger.Information($"DELETE api/categories?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
