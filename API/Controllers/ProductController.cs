@@ -14,7 +14,7 @@ namespace API.Controllers
 {
     [EnableCors("MyPolicy")]
     [ApiController]
-    [Route("api/product")]
+    [Route("api/products")]
     public class ProductController : ControllerBase
     {
         private readonly ILogger _logger;
@@ -28,14 +28,13 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Create Product (base include related product) (Merchant, Admin)
+        /// Create Product (base include related product) (Merchant)
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
-        [Authorize(Roles = RoleId.ADMIN)]
         [HttpPost]
         public async Task<IActionResult> CreateBaseProduct([FromBody] BaseProductRequest productRequest)
         {
-            _logger.Information($"POST api/product START Request: {JsonSerializer.Serialize(productRequest)}");
+            _logger.Information($"POST api/products START Request: {JsonSerializer.Serialize(productRequest)}");
 
             Stopwatch watch = new();
             watch.Start();
@@ -47,7 +46,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/product END duration: " +
+            _logger.Information("POST api/products END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -55,16 +54,16 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Add Related Product (Merchant, Admin)
+        /// Add Related Product (Merchant)
         /// </summary>
-        [HttpPost("related/{id}")]
+        [HttpPost("{id}/related")]
         [Authorize(Roles = ResidentType.MERCHANT)]
-        [Authorize(Roles = RoleId.ADMIN)]
+        [AllowAnonymous]
         public async Task<IActionResult> AddRelatedProduct(string id, [FromBody] List<ProductRequest> relatedProductRequest)
         {
-            _logger.Information($"POST api/product/related/{id} START Request: {JsonSerializer.Serialize(relatedProductRequest)}");
+            _logger.Information($"POST api/products/related/{id} START Request: {JsonSerializer.Serialize(relatedProductRequest)}");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //create product
@@ -74,7 +73,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"POST api/product/related/{id} END duration: " +
+            _logger.Information($"POST api/products/related/{id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -82,51 +81,35 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Base Product By Id
+        /// Get Product
         /// </summary>
         [AllowAnonymous]
-        [HttpGet("base/{id}")]
-        public async Task<IActionResult> GetBaseProductById(string id)
+        [HttpGet]
+        public async Task<IActionResult> GetProduct(
+            [FromQuery] string id,
+            [FromQuery] int?[] status,
+            [FromQuery] int? limit,
+            [FromQuery] int? page,
+            [FromQuery] string sort,
+            [FromQuery] string include)
         {
-            _logger.Information($"GET api/product/base/{id} START");
+            _logger.Information($"GET api/products" +
+                $"?id={id}&status=" + string.Join("status=", status) +
+                $"&limit={limit}&page={page}&sort={sort}&include={include} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //get base product
-            ExtendProductResponse response = await _productService.GetBaseProductById(id);
-
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/product/base/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get All Base Product
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("base")]
-        public async Task<IActionResult> GetAllBaseProduct()
-        {
-            _logger.Information($"GET api/product/base START");
-
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-
-            //get base product
-            List<ExtendProductResponse> response = await _productService.GetAllBaseProduct();
+            object response = await _productService.GetProduct(id, status, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"GET api/product/base END duration: " +
+            _logger.Information($"GET api/products" +
+                $"?id={id}&status=" + string.Join("status=", status) +
+                $"&limit={limit}&page={page}&sort={sort}&include={include} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -134,41 +117,14 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Related Product By Id
+        /// Request Update Product (Merchant)
         /// </summary>
-        [AllowAnonymous]
-        [HttpGet("related/{id}")]
-        public async Task<IActionResult> GetRelatedProductById(string id)
-        {
-            _logger.Information($"GET api/product/related/{id} START");
-
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-
-            //get related product
-            ProductResponse response = await _productService.GetRelatedProductById(id);
-
-            string json = JsonSerializer.Serialize(ApiResponse<ProductResponse>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/product/related/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Request Update Product (Merchant, Admin)
-        /// </summary>
-        [Authorize(Roles = RoleId.ADMIN)]
         [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> RequestUpdateProduct(string id,
+        [HttpPut]
+        public async Task<IActionResult> RequestUpdateProduct([FromQuery] string id,
             [FromBody] ProductRequest productRequest)
         {
-            _logger.Information($"PUT api/product/{id} START Request: {JsonSerializer.Serialize(productRequest)}");
+            _logger.Information($"PUT api/products?id={id} START Request: {JsonSerializer.Serialize(productRequest)}");
 
             Stopwatch watch = new();
             watch.Start();
@@ -180,7 +136,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/product/{id} END duration: " +
+            _logger.Information($"PUT api/products?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -188,104 +144,25 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Delete Base Product by Id (Merchant, Admin)
+        /// Delete Product by Id (Merchant)
         /// </summary>
-        [Authorize(Roles = RoleId.ADMIN)]
         [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpDelete("base/{id}")]
-        public async Task<IActionResult> DeleteBaseProduct(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteProduct([FromQuery] string id)
         {
-            _logger.Information($"DELETE api/product/base/{id} START");
+            _logger.Information($"DELETE api/products?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //delete product
-            ExtendProductResponse response = await _productService.DeleteBaseProduct(id);
+            ExtendProductResponse response = await _productService.DeleteProduct(id);
 
             string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"DELETE api/product/base/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Delete Related Product by Id
-        /// </summary>
-        [HttpDelete("related/{id}")]
-        public async Task<IActionResult> DeleteRelatedProduct(string id)
-        {
-            _logger.Information($"DELETE api/product/related/{id} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //delete product
-            ProductResponse response = await _productService.DeleteRelatedProduct(id);
-
-            string json = JsonSerializer.Serialize(ApiResponse<ProductResponse>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"DELETE api/product/related/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get Products By Status
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("status/{status}")]
-        public async Task<IActionResult> GetProductsByStatus(int status)
-        {
-            _logger.Information($"GET api/product/status/{status} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get Product
-            List<ProductResponse> response =
-                await _productService.GetProductsByStatus(status);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/product/status/{status} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get Pendings Products (Admin)
-        /// </summary>
-        [Authorize(Roles = RoleId.ADMIN)]
-        [HttpGet("pending")]
-        public async Task<IActionResult> GetPendingProducts()
-        {
-            _logger.Information($"GET api/product/pending START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get Product
-            List<ExtendProductResponse> response = await _productService.GetPendingProducts();
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/product/pending END duration: " +
+            _logger.Information($"DELETE api/products?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -296,10 +173,10 @@ namespace API.Controllers
         /// Approve  Product With ID (Admin)
         /// </summary>
         [Authorize(Roles = RoleId.ADMIN)]
-        [HttpPut("approval/{id}")]
-        public async Task<IActionResult> ApproveProduct(string id)
+        [HttpPut("approval")]
+        public async Task<IActionResult> ApproveProduct([FromQuery] string id)
         {
-            _logger.Information($"PUT api/product/approval/{id} START");
+            _logger.Information($"PUT api/products/approval?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -311,7 +188,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/product/approval/{id} END duration: " +
+            _logger.Information($"PUT api/products/approval?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -322,10 +199,10 @@ namespace API.Controllers
         /// Reject Product With ID (Admin)
         /// </summary>
         [Authorize(Roles = RoleId.ADMIN)]
-        [HttpPut("rejection/{id}")]
-        public async Task<IActionResult> RejectCreateProduct(string id)
+        [HttpPut("rejection")]
+        public async Task<IActionResult> RejectCreateProduct([FromQuery] string id)
         {
-            _logger.Information($"PUT api/product/rejection/{id} START");
+            _logger.Information($"PUT api/products/rejection?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -337,7 +214,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/product/rejection/{id} END duration: " +
+            _logger.Information($"GET api/products/rejection?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

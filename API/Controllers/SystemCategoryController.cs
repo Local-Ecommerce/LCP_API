@@ -56,7 +56,7 @@ namespace API.Controllers
         /// <summary>
         /// Get System Category (Authentication required)
         /// </summary>
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public async Task<IActionResult> GetSystemCategory(
             [FromQuery] string id,

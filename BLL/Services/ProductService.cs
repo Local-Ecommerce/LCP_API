@@ -9,6 +9,7 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace BLL.Services
 {
@@ -105,7 +106,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="productRequests"></param>
         /// <returns></returns>
-        public async Task<ProductResponse> AddRelatedProduct(string baseProductId,
+        public async Task<ExtendProductResponse> AddRelatedProduct(string baseProductId,
             List<ProductRequest> productRequests)
         {
             try
@@ -120,8 +121,8 @@ namespace BLL.Services
 
                     Product product = _mapper.Map<Product>(productRequest);
 
-                    product.ProductId = _utilService.CreateId(PREFIX);
-                    product.Image = "";
+                    product.ProductId = productId;
+                    product.Image = imageUrl;
                     product.Status = (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT;
                     product.CreatedDate = DateTime.Now;
                     product.UpdatedDate = DateTime.Now;
@@ -141,100 +142,8 @@ namespace BLL.Services
             }
 
             //create response
-            ProductResponse productResponse = GetBaseProductById(baseProductId).Result;
-
-            return productResponse;
-        }
-
-
-        /// <summary>
-        /// Get Base Product by Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<ExtendProductResponse> GetBaseProductById(string id)
-        {
-            //get product from redis
-            ExtendProductResponse baseProductResponse = _redisService.GetList<ExtendProductResponse>(CACHE_KEY)
-                .Find(p => p.ProductId.Equals(id));
-
-            if (baseProductResponse == null)
-            {
-                //get product from database
-                try
-                {
-                    Product product = await _unitOfWork.Products.GetBaseProductById(id);
-
-                    baseProductResponse = _mapper.Map<ExtendProductResponse>(product);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[ProductService.GetBaseProductById()]: " + e.Message);
-
-                    throw new EntityNotFoundException(typeof(Product), id);
-                }
-            }
-
-            return baseProductResponse;
-        }
-
-
-        /// <summary>
-        /// Get All Base Product
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<ExtendProductResponse>> GetAllBaseProduct()
-        {
-            //get products from redis
-            List<ExtendProductResponse> extendProductResponses = _redisService.GetList<ExtendProductResponse>(CACHE_KEY);
-
-            if (_utilService.IsNullOrEmpty(extendProductResponses))
-            {
-                //get products from database
-                try
-                {
-                    List<Product> products = await _unitOfWork.Products.GetAllBaseProduct();
-
-                    extendProductResponses = _mapper.Map<List<ExtendProductResponse>>(products);
-
-                    //store to redis
-                    _redisService.StoreList(CACHE_KEY, extendProductResponses);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[ProductService.GetAllBaseProduct()]: " + e.Message);
-
-                    throw new EntityNotFoundException(typeof(Product), "all");
-                }
-            }
-
-            return extendProductResponses;
-        }
-
-
-        /// <summary>
-        /// Get Related Product By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<ProductResponse> GetRelatedProductById(string id)
-        {
-            ProductResponse productResponse;
-
-            //get product from database
-            try
-            {
-
-                Product product = await _unitOfWork.Products.GetRelatedProductById(id);
-
-                productResponse = _mapper.Map<ProductResponse>(product);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ProductService.GetRelatedProductById()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Product), id);
-            }
+            var products = await GetProduct(baseProductId, Array.Empty<int?>(), default, default, default, "related");
+            ExtendProductResponse productResponse = products.List.FirstOrDefault();
 
             return productResponse;
         }
@@ -284,11 +193,11 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Delete Base Product by id
+        /// Delete Product by id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ExtendProductResponse> DeleteBaseProduct(string id)
+        public async Task<ExtendProductResponse> DeleteProduct(string id)
         {
             //biz rule
 
@@ -327,136 +236,9 @@ namespace BLL.Services
                 throw;
             }
 
-            //update product in Redis and create response
-            List<ProductResponse> productResponses = _mapper.Map<List<ProductResponse>>(products);
-            ExtendProductResponse extendProductResponse = null;
-
-            productResponses.ForEach(product =>
-            {
-                _redisService.StoreToList(CACHE_KEY, product,
-                    new Predicate<ProductResponse>(p => p.ProductId == product.ProductId));
-
-                if (product.ProductId.Equals(id))
-                {
-                    extendProductResponse = _mapper.Map<ExtendProductResponse>(product);
-                }
-            });
-
-            productResponses.Remove(productResponses.Find(p => p.ProductId.Equals(id)));
-
-            return extendProductResponse;
-        }
-
-
-        /// <summary>
-        /// Delete Related Product
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<ProductResponse> DeleteRelatedProduct(string id)
-        {
-            //biz rule
-
-            //validate id
-            Product product;
-            try
-            {
-                product = await _unitOfWork.Products.FindAsync(p => p.ProductId.Equals(id));
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ProductService.DeleteRelatedProduct()]" + e.Message);
-
-                throw new EntityNotFoundException(typeof(Product), id);
-            }
-
-            //update data
-            try
-            {
-                product.UpdatedDate = DateTime.Now;
-                product.Status = (int)ProductStatus.DELETED_PRODUCT;
-                product.ApproveBy = "";
-
-                _unitOfWork.Products.Update(product);
-
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ProductService.DeleteRelatedProduct()]" + e.Message);
-
-                throw;
-            }
-
             //create response
-            ProductResponse productResponse = _mapper.Map<ProductResponse>(product);
 
-            //store product to Redis
-            _redisService.StoreToList(CACHE_KEY, productResponse,
-                    new Predicate<ProductResponse>(a => a.ProductId == productResponse.ProductId));
-
-            return productResponse;
-        }
-
-
-        /// <summary>
-        /// Get Products By Status
-        /// </summary>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        public async Task<List<ProductResponse>> GetProductsByStatus(int status)
-        {
-            //biz rule
-
-
-            List<ProductResponse> productResponses;
-
-            //Get Product From Database
-
-            try
-            {
-                List<Product> products = await _unitOfWork.Products.FindListAsync(p => p.Status == status);
-
-                productResponses = _mapper.Map<List<ProductResponse>>(products);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ProductService.GetProductsByStatus()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Product), status);
-            }
-
-            return productResponses;
-        }
-
-
-        /// <summary>
-        /// Get Pending Products
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<ExtendProductResponse>> GetPendingProducts()
-        {
-            List<ExtendProductResponse> productResponses;
-
-            //Get Unverified Create Product From Database
-            try
-            {
-                List<Product> products = await _unitOfWork.Products.GetUnverifiedCreateProducts();
-
-                productResponses = _mapper.Map<List<ExtendProductResponse>>(products);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ProductService.GetPendingProducts()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Product), "pending");
-            }
-
-            //Get Unverified Update Product From Redis
-            List<ExtendProductResponse> unverifiedUpdateProducts = _redisService.GetList<ExtendProductResponse>(CACHE_KEY_FOR_UPDATE);
-            productResponses.AddRange(unverifiedUpdateProducts);
-
-            return productResponses;
+            return null;
         }
 
 
@@ -509,6 +291,54 @@ namespace BLL.Services
                     new Predicate<ExtendProductResponse>(p => p.ProductId.Equals(productId)));
 
             return productResponse;
+        }
+
+
+        /// <summary>
+        /// Get Product
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <param name="include"></param>
+        /// <returns></returns>
+        public async Task<PagingModel<ExtendProductResponse>> GetProduct(
+            string id, int?[] status, 
+            int? limit, int? page, 
+            string sort, string include)
+        {
+            PagingModel<Product> products;
+            string propertyName = default;
+            bool isAsc = false;
+
+            if (!string.IsNullOrEmpty(sort))
+            {
+                isAsc = sort[0].ToString().Equals("+");
+                propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
+            }
+
+            try
+            {
+                products = await _unitOfWork.Products.GetProduct(id, status, limit, page, isAsc, propertyName, include);
+
+                if (_utilService.IsNullOrEmpty(products.List))
+                    throw new EntityNotFoundException(typeof(Product), "in the url");
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductService.GetProduct()]" + e.Message);
+                throw;
+            }
+
+            return new PagingModel<ExtendProductResponse>
+            {
+                List = _mapper.Map<List<ExtendProductResponse>>(products.List),
+                Page = products.Page,
+                LastPage = products.LastPage,
+                Total = products.Total,
+            };
         }
     }
 }
