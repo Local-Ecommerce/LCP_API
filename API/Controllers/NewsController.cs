@@ -92,8 +92,7 @@ namespace API.Controllers
         /// <summary>
         /// Update news (Admin, Market Manager)
         /// </summary>
-        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
-        [Authorize(Roles = RoleId.ADMIN)]
+        [AuthorizeRoles(RoleId.ADMIN, ResidentType.MARKET_MANAGER)]
         [HttpPut]
         public async Task<IActionResult> UpdateNewsById([FromQuery] string id, [FromBody] NewsUpdateRequest newsRequest)
         {
@@ -120,8 +119,7 @@ namespace API.Controllers
         /// <summary>
         /// Delete news (Admin, Market Manager)
         /// </summary>
-        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
-        [Authorize(Roles = RoleId.ADMIN)]
+        [AuthorizeRoles(RoleId.ADMIN, ResidentType.MARKET_MANAGER)]
         [HttpDelete]
         public async Task<IActionResult> DeleteNewsById([FromQuery] string id)
         {

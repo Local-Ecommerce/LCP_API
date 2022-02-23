@@ -96,7 +96,7 @@ namespace API.Controllers
         /// </summary>
         [AuthorizeRoles(ResidentType.MARKET_MANAGER, RoleId.ADMIN)]
         [HttpPut]
-        public async Task<IActionResult> UpdatePoiById([FromQuery]string id, [FromBody] PoiUpdateRequest poiRequest)
+        public async Task<IActionResult> UpdatePoiById([FromQuery] string id, [FromBody] PoiUpdateRequest poiRequest)
         {
             _logger.Information($"PUT api/poi?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(poiRequest)}");
@@ -121,10 +121,9 @@ namespace API.Controllers
         /// <summary>
         /// Delete poi (Admin, Market Manager)
         /// </summary>
-        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
-        [Authorize(Roles = RoleId.ADMIN)]
+        [AuthorizeRoles(RoleId.ADMIN, ResidentType.MARKET_MANAGER)]
         [HttpDelete]
-        public async Task<IActionResult> DeletePoisById([FromQuery]string id)
+        public async Task<IActionResult> DeletePoisById([FromQuery] string id)
         {
             _logger.Information($"DELETE api/poi?id={id} START");
 
