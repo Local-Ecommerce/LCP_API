@@ -43,7 +43,10 @@ namespace BLL.Services.Interfaces
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        Task<PagingModel<ExtendProductResponse>> GetProduct(string id, int?[] status, int? limit, int? page, string sort, string include);
+        Task<PagingModel<ExtendProductResponse>> GetProduct(
+            string id, int?[] status,
+            int? limit, int? page,
+            string sort, string include);
 
 
         /// <summary>
