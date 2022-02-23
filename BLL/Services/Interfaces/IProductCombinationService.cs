@@ -1,5 +1,4 @@
 ﻿using BLL.Dtos.ProductCombination;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -15,11 +14,19 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Product Combination By Id
+        /// Get Product Combination
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
-        Task<ProductCombinationResponse> GetProductCombinationById(string id);
+        /// <param name="productId"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <returns></returns> 
+        Task<object> GetProductCombination(
+            string id, string productId,
+            int?[] status, int? limit, int? page,
+            string sort);
 
 
         /// <summary>
@@ -37,29 +44,5 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<ProductCombinationResponse> DeleteProductCombinationById(string id);
-
-
-        /// <summary>
-        /// Get ProductCombinations By Status
-        /// </summary>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        Task<List<ProductCombinationResponse>> GetProductCombinationsByStatus(int status);
-
-
-        /// <summary>
-        /// Get ProductCombinations By Status
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<List<ProductCombinationResponse>> GetProductCombinationsByBaseProductId(string id);
-        
-        
-        /// <summary>
-        /// Get ProductCombinations By Status
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<List<ProductCombinationResponse>> GetProductCombinationsByProductId(string id);
     }
 }

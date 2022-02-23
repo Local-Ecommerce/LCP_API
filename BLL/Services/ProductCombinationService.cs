@@ -104,117 +104,6 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Product Combination By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<ProductCombinationResponse> GetProductCombinationById(string id)
-        {
-            ProductCombinationResponse productCombinationReponse = null;
-
-            //Get ProductCombination from DB
-            if (productCombinationReponse is null)
-            {
-                try
-                {
-                    ProductCombination productCombination = await _unitOfWork.ProductCombinations.FindAsync(pdc => pdc.ProductCombinationId.Equals(id));
-
-                    productCombinationReponse = _mapper.Map<ProductCombinationResponse>(productCombination);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("[ProductCombinationService.GetProductCombinationById()]: " + e.Message);
-
-                    throw new EntityNotFoundException(typeof(ProductCombination), id);
-                }
-            }
-
-            return productCombinationReponse;
-        }
-
-
-        /// <summary>
-        /// Get Product Combinations By Base Product Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<List<ProductCombinationResponse>> GetProductCombinationsByBaseProductId(string id)
-        {
-            List<ProductCombinationResponse> productCombinationList = null;
-
-            //get ProductCombination from database
-            try
-            {
-                productCombinationList = _mapper.Map<List<ProductCombinationResponse>>(
-                    await _unitOfWork.ProductCombinations
-                                     .FindListAsync(me => me.BaseProductId.Equals(id)));
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ProductCombinationService.GetProductCombinationsByBaseProductId()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(ProductCombination), id);
-            }
-
-            return productCombinationList;
-        }
-
-
-        /// <summary>
-        /// Get Product Combinations By Product Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<List<ProductCombinationResponse>> GetProductCombinationsByProductId(string id)
-        {
-            List<ProductCombinationResponse> productCombinationList = null;
-
-            //get ProductCombination from database
-            try
-            {
-                productCombinationList = _mapper.Map<List<ProductCombinationResponse>>(
-                    await _unitOfWork.ProductCombinations
-                                     .FindListAsync(me => me.ProductId.Equals(id)));
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ProductCombinationService.GetProductCombinationsByProductId()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(ProductCombination), id);
-            }
-
-            return productCombinationList;
-        }
-
-
-        /// <summary>
-        /// Get Product Combinations By Status
-        /// </summary>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        public async Task<List<ProductCombinationResponse>> GetProductCombinationsByStatus(int status)
-        {
-            List<ProductCombinationResponse> productCombinationList = null;
-
-            //get ProductCombination from database
-            try
-            {
-                productCombinationList = _mapper.Map<List<ProductCombinationResponse>>(
-                    await _unitOfWork.ProductCombinations
-                                     .FindListAsync(me => me.Status == status));
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ProductCombinationService.GetProductCombinationsByStatus()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(ProductCombination), status);
-            }
-
-            return productCombinationList;
-        }
-
-
-        /// <summary>
         /// Update Product Combination By Id
         /// </summary>
         /// <param name="id"></param>
@@ -252,6 +141,55 @@ namespace BLL.Services
             }
 
             return _mapper.Map<ProductCombinationResponse>(productCombination);
+        }
+
+
+        /// <summary>
+        /// Get Product Combination
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="productId"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <returns></returns> 
+        public async Task<object> GetProductCombination(
+            string id, string productId,
+            int?[] status, int? limit,
+            int? page, string sort)
+        {
+            PagingModel<ProductCombination> products;
+            string propertyName = default;
+            bool isAsc = false;
+
+            if (!string.IsNullOrEmpty(sort))
+            {
+                isAsc = sort[0].ToString().Equals("+");
+                propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
+            }
+
+            try
+            {
+                products = await _unitOfWork.ProductCombinations
+                .GetProductCombination(id, productId, status, limit, page, isAsc, propertyName);
+
+                if (_utilService.IsNullOrEmpty(products.List))
+                    throw new EntityNotFoundException(typeof(ProductCombination), "in the url");
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductCombination.GetProductCombination()]" + e.Message);
+                throw;
+            }
+
+            return new PagingModel<ProductCombinationResponse>
+            {
+                List = _mapper.Map<List<ProductCombinationResponse>>(products.List),
+                Page = products.Page,
+                LastPage = products.LastPage,
+                Total = products.Total,
+            };
         }
     }
 }

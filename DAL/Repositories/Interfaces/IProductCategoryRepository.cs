@@ -6,7 +6,7 @@ namespace DAL.Repositories.Interfaces
     public interface IProductCategoryRepository : IRepository<ProductCategory>
     {
         /// <summary>
-        /// Get ProductCategory
+        /// Get Product Category
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>

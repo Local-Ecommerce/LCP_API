@@ -14,7 +14,7 @@ namespace API.Controllers
 {
     [EnableCors("MyPolicy")]
     [ApiController]
-    [Route("api/combination")]
+    [Route("api/combination-products")]
     public class ProductCombinationController : ControllerBase
     {
         private readonly ILogger _logger;
@@ -34,7 +34,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProductCombination([FromBody] ProductCombinationRequest productCombinationRequest)
         {
-            _logger.Information($"POST api/combination START Request: " +
+            _logger.Information($"POST api/combination-products START Request: " +
                 $"{JsonSerializer.Serialize(productCombinationRequest)}");
 
             Stopwatch watch = new();
@@ -47,7 +47,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/combination END duration: " +
+            _logger.Information("POST api/combination-products END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -56,25 +56,36 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Product Combination By Id
+        /// Get Product Combination
         /// </summary>
         [AllowAnonymous]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetProductCombinationById(string id)
+        [HttpGet]
+        public async Task<IActionResult> GetProductCombination(
+            [FromQuery] string id,
+            [FromQuery] string productid,
+            [FromQuery] int?[] status,
+            [FromQuery] int? limit,
+            [FromQuery] int? page,
+            [FromQuery] string sort,
+            [FromQuery] string include)
         {
-            _logger.Information($"GET api/combination/{id} START");
+            _logger.Information($"GET api/combination-products" +
+                $"?id={id}&productid={productid}&status=" + string.Join("status=", status) +
+                $"&limit={limit}&page={page}&sort={sort}&include={include} START");
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Start();
 
             //get ProductCombination
-            ProductCombinationResponse response = await _ProductCombinationService.GetProductCombinationById(id);
+            object response = await _ProductCombinationService.GetProductCombination(id, productid, status, limit, page, sort);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ProductCombinationResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"GET api/combination/{id} END duration: " +
+            _logger.Information($"GET api/combination-products" +
+                $"?id={id}&productid={productid}&status=" + string.Join("status=", status) +
+                $"&limit={limit}&page={page}&sort={sort}&include={include} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -85,11 +96,11 @@ namespace API.Controllers
         /// Update Product Combination (Merchant)
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProductCombination(string id,
+        [HttpPut]
+        public async Task<IActionResult> UpdateProductCombination([FromQuery] string id,
                                                       [FromBody] ProductCombinationRequest request)
         {
-            _logger.Information($"PUT api/combination/{id} START Request: " +
+            _logger.Information($"PUT api/combination-products?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(request)}");
 
             Stopwatch watch = new();
@@ -102,7 +113,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/combination/{id} END duration: " +
+            _logger.Information($"PUT api/combination-products?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -113,10 +124,10 @@ namespace API.Controllers
         /// Delete Product Combination (Merchant)
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProductCombination(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteProductCombination([FromQuery] string id)
         {
-            _logger.Information($"PUT api/combination/{id} START");
+            _logger.Information($"PUT api/combination-products?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -128,88 +139,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/combination/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get Product Combinations By Status
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("status/{status}")]
-        public async Task<IActionResult> GetProductCombinationByStatus(int status)
-        {
-            _logger.Information($"GET api/combination/status/{status} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get Product Combination
-            List<ProductCombinationResponse> response =
-                await _ProductCombinationService.GetProductCombinationsByStatus(status);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/combination/status/{status} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-        
-        
-        /// <summary>
-        /// Get Product Combinations By Product Id
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("products/{id}")]
-        public async Task<IActionResult> GetProductCombinationByProductId(string id)
-        {
-            _logger.Information($"GET api/combination/products/{id} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get Product Combination
-            List<ProductCombinationResponse> response =
-                await _ProductCombinationService.GetProductCombinationsByProductId(id);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/combination/products/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-        
-        
-        /// <summary>
-        /// Get Product Combinations By Base Product Id
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet("base/{id}")]
-        public async Task<IActionResult> GetProductCombinationByBaseProductId(string id)
-        {
-            _logger.Information($"GET api/combination/base/{id} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //get Product Combination
-            List<ProductCombinationResponse> response =
-                await _ProductCombinationService.GetProductCombinationsByBaseProductId(id);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/combination/status/base/{id} END duration: " +
+            _logger.Information($"PUT api/combination-products?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

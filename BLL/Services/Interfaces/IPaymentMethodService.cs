@@ -15,11 +15,15 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Payment Method By Id
+        /// Get Payment Method
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
         /// <returns></returns>
-        Task<PaymentMethodResponse> GetPaymentMethodById(string id);
+        Task<object> GetPaymentMethod(string id, int?[] status, int? limit, int? page, string sort);
 
 
         /// <summary>
@@ -37,13 +41,5 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<PaymentMethodResponse> DeletePaymentMethod(string id);
-
-
-        /// <summary>
-        /// Get Payment Method By Name
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        Task<List<PaymentMethodResponse>> GetAllPaymentMethod();
     }
 }
