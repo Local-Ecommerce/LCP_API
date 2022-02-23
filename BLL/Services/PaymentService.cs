@@ -103,146 +103,6 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Payment By Date
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        public async Task<List<PaymentResponse>> GetPaymentByDate(DateTime date)
-        {
-            List<PaymentResponse> paymentResponses;
-
-            //Get Payment from DB
-
-            try
-            {
-                List<Payment> Payment = await _unitOfWork.Payments.FindListAsync(payment => payment.DateTime.Value.Date == date.Date);
-
-                paymentResponses = _mapper.Map<List<PaymentResponse>>(Payment);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[PaymentService.GetPaymentByDate()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Payment), date);
-            }
-
-            return paymentResponses;
-        }
-
-
-        /// <summary>
-        /// Get Payment By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<PaymentResponse> GetPaymentById(string id)
-        {
-            PaymentResponse paymentReponse;
-
-            //Get Payment from DB
-
-            try
-            {
-                Payment payment = await _unitOfWork.Payments.FindAsync(pm => pm.PaymentId.Equals(id));
-
-                paymentReponse = _mapper.Map<PaymentResponse>(payment);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[PaymentService.GetPaymentById()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Payment), id);
-            }
-
-            return paymentReponse;
-        }
-
-
-        /// <summary>
-        /// Get Payment By Order Id
-        /// </summary>
-        /// <param name="orderId"></param>
-        /// <returns></returns>
-        public async Task<List<PaymentResponse>> GetPaymentByOrderId(string orderId)
-        {
-            List<PaymentResponse> paymentResponses;
-
-            //Get Payments from DB
-
-            try
-            {
-                List<Payment> Payment = await _unitOfWork.Payments.FindListAsync(Payment => Payment.OrderId.Equals(orderId));
-
-                paymentResponses = _mapper.Map<List<PaymentResponse>>(Payment);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[PaymentService.GetPaymentByOrderId()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Payment), orderId);
-            }
-
-            return paymentResponses;
-        }
-
-
-        /// <summary>
-        /// Get Payment By Payment Amount
-        /// </summary>
-        /// <param name="amount"></param>
-        /// <returns></returns>
-        public async Task<List<PaymentResponse>> GetPaymentByPaymentAmount(string amount)
-        {
-            List<PaymentResponse> paymentResponses;
-
-            //Get Payments from DB
-
-            try
-            {
-                List<Payment> Payment = await _unitOfWork.Payments.FindListAsync(pm => pm.PaymentAmount.Equals(amount));
-
-                paymentResponses = _mapper.Map<List<PaymentResponse>>(Payment);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[PaymentService.GetPaymentByPaymentAmount()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Payment), amount);
-            }
-
-            return paymentResponses;
-        }
-
-
-        /// <summary>
-        /// Get Payment By Payment Method Id
-        /// </summary>
-        /// <param name="paymentMethodId"></param>
-        /// <returns></returns>
-        public async Task<List<PaymentResponse>> GetPaymentByPaymentMethodId(string paymentMethodId)
-        {
-            List<PaymentResponse> paymentResponses;
-
-            //Get Payments from DB
-
-            try
-            {
-                List<Payment> Payment = await _unitOfWork.Payments.FindListAsync(pm => pm.PaymentMethodId.Equals(paymentMethodId));
-
-                paymentResponses = _mapper.Map<List<PaymentResponse>>(Payment);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[PaymentService.GetPaymentByPaymentMethodId()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Payment), paymentMethodId);
-            }
-
-            return paymentResponses;
-        }
-
-
-        /// <summary>
         /// Update Payment By Id
         /// </summary>
         /// <param name="id"></param>
@@ -279,6 +139,58 @@ namespace BLL.Services
             }
 
             return _mapper.Map<PaymentResponse>(payment);
+        }
+
+
+        /// <summary>
+        /// Get Payment
+        /// </summary>        
+        /// <param name="id"></param>
+        /// <param name="orderId"></param>
+        /// <param name="paymentMethodId"></param>
+        /// <param name="date"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        public async Task<object> GetPayment(
+            string id, string orderId,
+            string paymentMethodId, DateTime date,
+            int?[] status, int? limit,
+            int? page, string sort)
+        {
+            PagingModel<Payment> paymentMethods;
+            string propertyName = default;
+            bool isAsc = false;
+
+            if (!string.IsNullOrEmpty(sort))
+            {
+                isAsc = sort[0].ToString().Equals("+");
+                propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
+            }
+
+            try
+            {
+                paymentMethods = await _unitOfWork.Payments
+                .GetPayment(id, orderId, paymentMethodId, date, status, limit, page, isAsc, propertyName);
+
+                if (_utilService.IsNullOrEmpty(paymentMethods.List))
+                    throw new EntityNotFoundException(typeof(Payment), "in the url");
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[PaymentService.GetPayment()]" + e.Message);
+                throw;
+            }
+
+            return new PagingModel<PaymentResponse>
+            {
+                List = _mapper.Map<List<PaymentResponse>>(paymentMethods.List),
+                Page = paymentMethods.Page,
+                LastPage = paymentMethods.LastPage,
+                Total = paymentMethods.Total,
+            };
         }
     }
 }

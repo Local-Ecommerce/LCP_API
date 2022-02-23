@@ -1,6 +1,5 @@
 ﻿using BLL.Dtos.Payment;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -16,35 +15,22 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// //Get Payment by Id
-        /// </summary>
+        /// Get Payment
+        /// </summary>        
         /// <param name="id"></param>
-        /// <returns></returns>
-        Task<PaymentResponse> GetPaymentById(string id);
-
-
-        /// <summary>
-        /// Get Payment by date
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        Task<List<PaymentResponse>> GetPaymentByDate(DateTime date);
-
-
-        /// <summary>
-        /// Get Payment By Order Id
-        /// </summary>
         /// <param name="orderId"></param>
-        /// <returns></returns>
-        Task<List<PaymentResponse>> GetPaymentByOrderId(string orderId);
-
-
-        /// <summary>
-        /// Get Payment By Payment Method Id
-        /// </summary>
         /// <param name="paymentMethodId"></param>
+        /// <param name="date"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
         /// <returns></returns>
-        Task<List<PaymentResponse>> GetPaymentByPaymentMethodId(string paymentMethodId);
+        Task<object> GetPayment(
+            string id, string orderId,
+            string paymentMethodId, DateTime date,
+            int?[] status, int? limit,
+            int? page, string sort);
 
 
         /// <summary>
@@ -62,13 +48,5 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<PaymentResponse> DeletePaymentById(string id);
-
-
-        /// <summary>
-        /// Get Payment By Payment Amount
-        /// </summary>
-        /// <param name="amount"></param>
-        /// <returns></returns>
-        Task<List<PaymentResponse>> GetPaymentByPaymentAmount(string amount);
     }
 }

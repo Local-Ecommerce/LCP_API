@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ namespace API.Controllers
 {
     [EnableCors("MyPolicy")]
     [ApiController]
-    [Route("api/payment")]
+    [Route("api/payments")]
     public class PaymentController : ControllerBase
     {
         private readonly ILogger _logger;
@@ -35,7 +34,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePayment([FromBody] PaymentRequest paymentRequest)
         {
-            _logger.Information($"POST api/payment START Request: " +
+            _logger.Information($"POST api/payments START Request: " +
                 $"{JsonSerializer.Serialize(paymentRequest)}");
 
             Stopwatch watch = new();
@@ -48,7 +47,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/payment END duration: " +
+            _logger.Information("POST api/payments END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -56,25 +55,37 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Payment By Id (Customer)
+        /// Get Payment (Authentication required)
         /// </summary>
-        [Authorize(Roles = ResidentType.CUSTOMER)]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPaymentById(string id)
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetPayment(
+            [FromQuery] string id,
+            [FromQuery] string orderid,
+            [FromQuery] string paymentmethodid,
+            [FromQuery] DateTime date,
+            [FromQuery] int?[] status,
+            [FromQuery] int? limit,
+            [FromQuery] int? page,
+            [FromQuery] string sort)
         {
-            _logger.Information($"GET api/payment/{id} START");
+            _logger.Information($"GET api/payments?id={id}&orderid={orderid}" +
+            $"&paymentmethodid={paymentmethodid}&date={date}&status=" + string.Join("status=", status) +
+                $"&limit={limit}&page={page}&sort={sort} START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //Get payment
-            PaymentResponse response = await _paymentService.GetPaymentById(id);
+            object response = await _paymentService.GetPayment(id, orderid, paymentmethodid, date, status, limit, page, sort);
 
-            string json = JsonSerializer.Serialize(ApiResponse<PaymentResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"GET api/payment/{id} END duration: " +
+            _logger.Information($"GET api/payments?id={id}&orderid={orderid}" +
+            $"&paymentmethodid={paymentmethodid}&date={date}&status=" + string.Join("status=", status) +
+                $"&limit={limit}&page={page}&sort={sort} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -85,10 +96,10 @@ namespace API.Controllers
         /// Update Payment By Id (Customer)
         /// </summary>
         [Authorize(Roles = ResidentType.CUSTOMER)]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePaymentById(string id, [FromBody] PaymentRequest paymentRequest)
+        [HttpPut]
+        public async Task<IActionResult> UpdatePaymentById([FromQuery] string id, [FromBody] PaymentRequest paymentRequest)
         {
-            _logger.Information($"PUT api/payment/{id} START Request: " +
+            _logger.Information($"PUT api/payments?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(paymentRequest)}");
 
             Stopwatch watch = new();
@@ -101,7 +112,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/payment/{id} END duration: " +
+            _logger.Information($"PUT api/payments?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -112,10 +123,10 @@ namespace API.Controllers
         /// Delete Payment By Id (Customer)
         /// </summary>
         [Authorize(Roles = ResidentType.CUSTOMER)]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePaymentById(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeletePaymentById([FromQuery] string id)
         {
-            _logger.Information($"DELETE api/payment/{id} START");
+            _logger.Information($"DELETE api/payments?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -127,85 +138,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"DELETE api/payment/{id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get Payment By Order Id (Customer)
-        /// </summary>
-        [Authorize(Roles = ResidentType.CUSTOMER)]
-        [HttpGet("order/{orderId}")]
-        public async Task<IActionResult> GetPaymentByOrderId(string orderId)
-        {
-            _logger.Information($"GET api/payment/apartment/{orderId} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Get payment by OrderId
-            List<PaymentResponse> response = await _paymentService.GetPaymentByOrderId(orderId);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/payment/apartment/{orderId} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get Payment By Payment Method Id (Admin)
-        /// </summary>
-        [Authorize(Roles = RoleId.ADMIN)]
-        [HttpGet("paymentMethod/{paymentMethodId}")]
-        public async Task<IActionResult> GetPaymentByPaymentMethodId(string paymentMethodId)
-        {
-            _logger.Information($"GET api/payment/paymentMethod/{paymentMethodId} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Get payment by paymentMethod
-            List<PaymentResponse> response = await _paymentService.GetPaymentByPaymentMethodId(paymentMethodId);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/payment/paymentMethod/{paymentMethodId} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get Payment By Date (Admin)
-        /// </summary>
-        [Authorize(Roles = RoleId.ADMIN)]
-        [HttpGet("bydate/{date}")]
-        public async Task<IActionResult> GetPaymentByDate(DateTime date)
-        {
-            _logger.Information($"GET api/payment/{date} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Get payment by RealeaseDate
-            List<PaymentResponse> response = await _paymentService.GetPaymentByDate(date);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/payment/{date} END duration: " +
+            _logger.Information($"DELETE api/payments?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
