@@ -9,6 +9,6 @@ namespace BLL.Dtos.Apartment
     public class ExtendApartmentResponse : ApartmentResponse
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public Collection<ResidentResponse> Resident { get; set; }
+        public Collection<ResidentResponse> Residents { get; set; }
     }
 }

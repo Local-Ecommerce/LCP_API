@@ -40,9 +40,9 @@ namespace API.Controllers
             watch.Start();
 
             //Login
-            AccountResponse response = await _accountService.Login(accountRequest);
+            ExtendAccountResponse response = await _accountService.Login(accountRequest);
 
-            string json = JsonSerializer.Serialize(ApiResponse<AccountResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendAccountResponse>.Success(response));
 
             watch.Stop();
 
