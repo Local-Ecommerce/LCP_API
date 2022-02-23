@@ -137,7 +137,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="accountRequest"></param>
         /// <returns></returns>
-        public async Task<AccountResponse> Login(AccountRequest accountRequest)
+        public async Task<ExtendAccountResponse> Login(AccountRequest accountRequest)
         {
             DateTime expiredDate;
             Account account;
@@ -152,13 +152,13 @@ namespace BLL.Services
                 account = await _unitOfWork.Accounts.GetAccountIncludeResidentByAccountId(uid);
 
                 //create new account if account is not existed yet
-                if(account == null)
+                if (account == null)
                 {
                     account = await Register(account, uid);
                     isCreate = true;
                 }
 
-                if(account.TokenExpiredDate == null || account.TokenExpiredDate < DateTime.Now)
+                if (account.TokenExpiredDate == null || account.TokenExpiredDate < DateTime.Now)
                 {
                     string roleId;
                     //find resident role

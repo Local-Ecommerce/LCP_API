@@ -20,7 +20,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="accountRequest"></param>
         /// <returns></returns>
-        Task<AccountResponse> Login(AccountRequest accountRequest);
+        Task<ExtendAccountResponse> Login(AccountRequest accountRequest);
 
 
         /// <summary>
