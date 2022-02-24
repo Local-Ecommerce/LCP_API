@@ -9,6 +9,7 @@ using System;
 using System.Threading.Tasks;
 using BLL.Dtos.JWT;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace BLL.Services
 {
@@ -19,7 +20,8 @@ namespace BLL.Services
         private readonly IMapper _mapper;
         private readonly IRedisService _redisService;
         private readonly IFirebaseService _firebaseService;
-        private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
+        private readonly IUtilService _utilService;
+        private readonly ITokenService _tokenService;
         private const string TOKEN_BLACKLIST_KEY = "Token Blacklist";
 
         public AccountService(IUnitOfWork unitOfWork,
@@ -27,14 +29,16 @@ namespace BLL.Services
             IMapper mapper,
             IRedisService redisService,
             IFirebaseService firebaseService,
-            IJwtAuthenticationManager jwtAuthenticationManager)
+            IUtilService utilService,
+            ITokenService tokenService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _redisService = redisService;
             _firebaseService = firebaseService;
-            _jwtAuthenticationManager = jwtAuthenticationManager;
+            _tokenService = tokenService;
+            _utilService = utilService;
         }
 
         /// <summary>
@@ -91,15 +95,15 @@ namespace BLL.Services
             }
 
             //revoke token here
-            TokenInfo tokenInfo = new()
-            {
-                Token = account.Token,
-                ExpiredDate = account.TokenExpiredDate,
-                ResidentId = account.RoleId
-            };
+            // TokenInfo tokenInfo = new()
+            // {
+            //     Token = account.Token,
+            //     ExpiredDate = account.TokenExpiredDate,
+            //     ResidentId = account.RoleId
+            // };
 
-            _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,
-                new Predicate<TokenInfo>(ti => ti.Token == tokenInfo.Token));
+            // _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,
+            //     new Predicate<TokenInfo>(ti => ti.Token == tokenInfo.Token));
 
             return default;
         }
@@ -139,7 +143,6 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<ExtendAccountResponse> Login(AccountRequest accountRequest)
         {
-            DateTime expiredDate;
             Account account;
             bool isCreate = false;
 
@@ -149,7 +152,7 @@ namespace BLL.Services
             try
             {
                 //check if user exists
-                account = await _unitOfWork.Accounts.GetAccountIncludeResidentByAccountId(uid);
+                account = await _unitOfWork.Accounts.GetAccountIncludeResidentAndRefreshToken(uid);
 
                 //create new account if account is not existed yet
                 if (account == null)
@@ -158,38 +161,27 @@ namespace BLL.Services
                     isCreate = true;
                 }
 
-                if (account.TokenExpiredDate == null || account.TokenExpiredDate < DateTime.Now)
+                string roleId;
+                //find resident role
+                if (account.RoleId.Equals(RoleId.ADMIN))
+                    roleId = account.RoleId;
+                else
                 {
-                    string roleId;
-                    //find resident role
-                    if (account.RoleId.Equals(RoleId.ADMIN))
-                    {
-                        //is admin
-                        expiredDate = DateTime.Now.AddHours((double)TimeUnit.ONE_HOUR);
-                        roleId = account.RoleId;
-                    }
-                    else
-                    {
-                        Resident resident = account.Residents.FirstOrDefault();
-
-                        if (resident.Type.Equals(ResidentType.MARKET_MANAGER))
-                            expiredDate = DateTime.Now.AddHours((double)TimeUnit.ONE_HOUR);
-                        else
-                            expiredDate = DateTime.Now.AddDays((double)TimeUnit.THIRTY_DAYS);
-
-                        roleId = resident.Type;
-                    }
-
-                    account.Token = _jwtAuthenticationManager.Authenticate(account.AccountId, roleId, expiredDate);
-                    account.TokenExpiredDate = expiredDate;
-
-                    if (isCreate)
-                        _unitOfWork.Accounts.Add(account);
-                    else
-                        _unitOfWork.Accounts.Update(account);
-
-                    await _unitOfWork.SaveChangesAsync();
+                    Resident resident = account.Residents.FirstOrDefault();
+                    roleId = resident.Type;
                 }
+
+                //generate token
+                List<RefreshToken> refreshTokens = (List<RefreshToken>)account.RefreshTokens.DefaultIfEmpty();
+                refreshTokens.Add(
+                    _tokenService.GenerateRefreshToken(account.AccountId, _utilService.CreateId(""), roleId));
+
+                if (isCreate)
+                    _unitOfWork.Accounts.Add(account);
+                else
+                    _unitOfWork.Accounts.Update(account);
+
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -257,22 +249,22 @@ namespace BLL.Services
             Account account;
             try
             {
-                account = await _unitOfWork.Accounts.GetAccountIncludeResidentByAccountId(accountId);
+                account = await _unitOfWork.Accounts.GetAccountIncludeResidentAndRefreshToken(accountId);
 
                 Resident resident = account.Residents.FirstOrDefault();
 
-                tokenInfo = new()
-                {
-                    Token = account.Token,
-                    ResidentId = resident.ResidentId,
-                    ExpiredDate = account.TokenExpiredDate
-                };
+                // tokenInfo = new()
+                // {
+                //     Token = account.Token,
+                //     ResidentId = resident.ResidentId,
+                //     ExpiredDate = account.TokenExpiredDate
+                // };
 
-                account.Token = null;
-                account.TokenExpiredDate = null;
-                resident.Type = residentType;
+                // account.Token = null;
+                // account.TokenExpiredDate = null;
+                // resident.Type = residentType;
 
-                _unitOfWork.Accounts.Update(account);
+                // _unitOfWork.Accounts.Update(account);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -283,8 +275,8 @@ namespace BLL.Services
             }
 
             //move old token to blacklist
-            _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,
-                new Predicate<TokenInfo>(ti => ti.Token == tokenInfo.Token));
+            // _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,
+            //     new Predicate<TokenInfo>(ti => ti.Token == tokenInfo.Token));
 
             return _mapper.Map<ExtendAccountResponse>(account);
         }

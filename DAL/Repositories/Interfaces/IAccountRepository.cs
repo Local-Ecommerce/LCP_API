@@ -6,10 +6,10 @@ namespace DAL.Repositories.Interfaces
     public interface IAccountRepository : IRepository<Account>
     {
         /// <summary>
-        /// Get Account Include Resident By Account Id
+        /// Get Account Include Resident And Refresh Token By Account Id
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        Task<Account> GetAccountIncludeResidentByAccountId(string accountId);
+        Task<Account> GetAccountIncludeResidentAndRefreshToken(string accountId);
     }
 }

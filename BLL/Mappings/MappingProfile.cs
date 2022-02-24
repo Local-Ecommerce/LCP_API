@@ -16,6 +16,7 @@ using BLL.Dtos.Product;
 using BLL.Dtos.ProductCategory;
 using BLL.Dtos.ProductCombination;
 using BLL.Dtos.ProductInMenu;
+using BLL.Dtos.RefreshToken;
 using BLL.Dtos.Resident;
 using BLL.Dtos.StoreMenuDetail;
 using BLL.Dtos.SystemCategory;
@@ -128,6 +129,9 @@ namespace BLL.Mappings
 
             //MoMo Mapping
             CreateMap<MoMoIPNRequest, MoMoIPNResponse>();
+
+            //Refresh Token Mapping
+            CreateMap<RefreshToken, RefreshTokenDto>().ReverseMap();
         }
     }
 }
