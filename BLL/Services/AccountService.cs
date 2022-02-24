@@ -172,7 +172,7 @@ namespace BLL.Services
                 }
 
                 //generate token
-                List<RefreshToken> refreshTokens = (List<RefreshToken>)account.RefreshTokens;
+                List<RefreshToken> refreshTokens = account.RefreshTokens.ToList();
                 if (refreshTokens is null) refreshTokens = new();
                 refreshTokens.Add(
                     _tokenService.GenerateRefreshToken(account.AccountId, _utilService.CreateId(""), roleId));
@@ -183,7 +183,10 @@ namespace BLL.Services
                     _unitOfWork.Accounts.Add(account);
                 }
                 else
+                {
+                    account.RefreshTokens = refreshTokens;
                     _unitOfWork.Accounts.Update(account);
+                }
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -193,6 +196,8 @@ namespace BLL.Services
 
                 throw new UnauthorizedAccessException();
             }
+
+            account.RefreshTokens = account.RefreshTokens.OrderByDescending(rt => rt.CreatedDate).Take(1).ToList();
 
             return _mapper.Map<ExtendAccountResponse>(account);
         }
