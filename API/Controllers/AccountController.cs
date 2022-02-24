@@ -1,5 +1,6 @@
 ﻿using BLL.Dtos;
 using BLL.Dtos.Account;
+using BLL.Dtos.RefreshToken;
 using BLL.Services.Interfaces;
 using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -47,6 +48,32 @@ namespace API.Controllers
             watch.Stop();
 
             _logger.Information("GET api/accounts/login END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Refresh Token
+        /// </summary>
+        [AllowAnonymous]
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
+        {
+            _logger.Information($"GET api/acccount/refresh-token START Request: {JsonSerializer.Serialize(refreshTokenDto)}");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //Refresh Token
+            string response = await _accountService.RefreshToken(refreshTokenDto);
+
+            string json = JsonSerializer.Serialize(ApiResponse<string>.Success(response));
+
+            watch.Stop();
+
+            _logger.Information("GET api/accounts/refresh-token END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -137,7 +164,7 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = RoleId.ADMIN)]
         [HttpPut("{id}")]
-        public async Task<IActionResult> ChangeRoleByAccountId(string id, [FromQuery]string type)
+        public async Task<IActionResult> ChangeRoleByAccountId(string id, [FromQuery] string type)
         {
             _logger.Information($"PUT api/accounts/{id}?type={type} START");
 

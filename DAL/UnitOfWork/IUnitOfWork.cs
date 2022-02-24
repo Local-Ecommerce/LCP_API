@@ -20,6 +20,7 @@ namespace DAL.UnitOfWork
         IProductCombinationRepository ProductCombinations { get; }
         IProductInMenuRepository ProductInMenus { get; }
         IProductRepository Products { get; }
+        IRefreshTokenRepository RefreshTokens { get; }
         IResidentRepository Residents { get; }
         IRoleRepository Roles { get; }
         IStoreMenuDetailRepository StoreMenuDetails { get; }

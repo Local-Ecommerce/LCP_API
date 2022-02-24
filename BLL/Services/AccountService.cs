@@ -7,9 +7,9 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Threading.Tasks;
-using BLL.Dtos.JWT;
 using System.Linq;
 using System.Collections.Generic;
+using BLL.Dtos.RefreshToken;
 
 namespace BLL.Services
 {
@@ -174,6 +174,11 @@ namespace BLL.Services
                 //generate token
                 List<RefreshToken> refreshTokens = account.RefreshTokens.ToList();
                 if (refreshTokens is null) refreshTokens = new();
+                else
+                    //revoke old refresh token
+                    foreach (RefreshToken rt in refreshTokens)
+                        rt.IsRevoked = true;
+
                 refreshTokens.Add(
                     _tokenService.GenerateRefreshToken(account.AccountId, _utilService.CreateId(""), roleId));
 
@@ -197,7 +202,7 @@ namespace BLL.Services
                 throw new UnauthorizedAccessException();
             }
 
-            account.RefreshTokens = account.RefreshTokens.OrderByDescending(rt => rt.CreatedDate).Take(1).ToList();
+            account.RefreshTokens = account.RefreshTokens.Where(rt => rt.IsRevoked == false).ToList();
 
             return _mapper.Map<ExtendAccountResponse>(account);
         }
@@ -288,6 +293,33 @@ namespace BLL.Services
             //     new Predicate<TokenInfo>(ti => ti.Token == tokenInfo.Token));
 
             return _mapper.Map<ExtendAccountResponse>(account);
+        }
+
+
+        /// <summary>
+        /// Refresh Token
+        /// </summary>
+        /// <param name="refreshTokenDto"></param>
+        /// <returns></returns>
+        public async Task<string> RefreshToken(RefreshTokenDto refreshTokenDto)
+        {
+            RefreshToken refreshToken;
+            try
+            {
+                refreshToken = await _unitOfWork.RefreshTokens.FindAsync(rt => rt.Token.Equals(refreshTokenDto.Token));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[AccountService.RefreshToken()]: " + e.Message);
+                throw new EntityNotFoundException();
+            }
+
+            string accessToken = _tokenService.VerifyAndGenerateToken(refreshTokenDto, refreshToken);
+
+            if (accessToken == null)
+                throw new UnauthorizedAccessException();
+
+            return accessToken;
         }
     }
 }

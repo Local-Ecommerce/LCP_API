@@ -1,4 +1,5 @@
 using System;
+using BLL.Dtos.RefreshToken;
 using DAL.Models;
 
 namespace BLL.Services.Interfaces
@@ -38,5 +39,21 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         RefreshToken GenerateRefreshToken(string id, string randomString, string roleName);
 
+
+        /// <summary>
+        /// Verify And Generate Token
+        /// </summary>
+        /// <param name="tokenDto"></param>
+        /// <param name="refreshToken"></param>
+        /// <returns></returns>
+        string VerifyAndGenerateToken(RefreshTokenDto tokenDto, RefreshToken refreshToken);
+
+
+        /// <summary>
+        /// Unix Time Stamp To Date Time
+        /// </summary>
+        /// <param name="unixTimeStamp"></param>
+        /// <returns></returns>
+        DateTime UnixTimeStampToDateTime(long unixTimeStamp);
     }
 }
