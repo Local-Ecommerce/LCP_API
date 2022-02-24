@@ -53,9 +53,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get menu (Merchant)
+        /// Get menu (Authentication required)
         /// </summary>
-        [Authorize(Roles = ResidentType.MERCHANT)]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetMenu(
             [FromQuery] string id,
