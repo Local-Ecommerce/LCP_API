@@ -183,7 +183,10 @@ namespace BLL.Services
                     _unitOfWork.Accounts.Add(account);
                 }
                 else
+                {
+                    account.RefreshTokens = refreshTokens;
                     _unitOfWork.Accounts.Update(account);
+                }
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -193,6 +196,8 @@ namespace BLL.Services
 
                 throw new UnauthorizedAccessException();
             }
+
+            account.RefreshTokens = account.RefreshTokens.OrderByDescending(rt => rt.CreatedDate).Take(1).ToList();
 
             return _mapper.Map<ExtendAccountResponse>(account);
         }
