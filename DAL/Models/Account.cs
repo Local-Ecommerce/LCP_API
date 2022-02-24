@@ -9,6 +9,7 @@ namespace DAL.Models
     {
         public Account()
         {
+            RefreshTokens = new HashSet<RefreshToken>();
             Residents = new HashSet<Resident>();
         }
 
@@ -19,12 +20,11 @@ namespace DAL.Models
         public string AvatarImage { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
-        public string Token { get; set; }
-        public DateTime? TokenExpiredDate { get; set; }
         public string RoleId { get; set; }
         public int? Status { get; set; }
 
         public virtual Role Role { get; set; }
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
         public virtual ICollection<Resident> Residents { get; set; }
     }
 }

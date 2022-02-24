@@ -11,15 +11,16 @@ namespace DAL.Repositories
         public AccountRepository(LoichDBContext context) : base(context) { }
 
         /// <summary>
-        /// Get Account Include Resident By Account Id
+        /// Get Account Include Resident And Refresh Token By Account Id
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        public async Task<Account> GetAccountIncludeResidentByAccountId(string accountId)
+        public async Task<Account> GetAccountIncludeResidentAndRefreshToken(string accountId)
         {
             Account account = await _context.Accounts
                             .Where(acc => acc.AccountId.Equals(accountId))
                             .Include(acc => acc.Residents)
+                            .Include(acc => acc.RefreshTokens)
                             .FirstOrDefaultAsync();
 
             return account;

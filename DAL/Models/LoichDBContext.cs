@@ -31,6 +31,7 @@ namespace DAL.Models
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
         public virtual DbSet<ProductCombination> ProductCombinations { get; set; }
         public virtual DbSet<ProductInMenu> ProductInMenus { get; set; }
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
         public virtual DbSet<Resident> Residents { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<StoreMenuDetail> StoreMenuDetails { get; set; }
@@ -40,7 +41,7 @@ namespace DAL.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=localhost;Database=LoichDB;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=localhost;Database=LoichDB;User ID=sa;pwd=123456;");
             }
         }
 
@@ -69,8 +70,6 @@ namespace DAL.Models
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("RoleID");
-
-                entity.Property(e => e.Token).IsUnicode(false);
 
                 entity.Property(e => e.Username)
                     .HasMaxLength(100)
@@ -487,6 +486,30 @@ namespace DAL.Models
                     .HasConstraintName("FK_tblProductInMenu_tblProduct");
             });
 
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.HasKey(e => e.Token)
+                    .HasName("PK__RefreshT__1EB4F816C5CEB517");
+
+                entity.ToTable("RefreshToken");
+
+                entity.Property(e => e.Token)
+                    .HasMaxLength(16)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AccessToken).IsUnicode(false);
+
+                entity.Property(e => e.AccountId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("AccountID");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.RefreshTokens)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("FK__RefreshTo__Accou__5DCAEF64");
+            });
+
             modelBuilder.Entity<Resident>(entity =>
             {
                 entity.ToTable("Resident");
@@ -600,9 +623,7 @@ namespace DAL.Models
 
                 entity.Property(e => e.SysCategoryName).HasMaxLength(250);
 
-                entity.Property(e => e.Type)
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
+                entity.Property(e => e.Type).HasMaxLength(250);
 
                 entity.HasOne(d => d.BelongToNavigation)
                     .WithMany(p => p.InverseBelongToNavigation)

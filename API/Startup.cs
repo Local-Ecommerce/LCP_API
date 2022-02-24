@@ -42,7 +42,7 @@ namespace API
             {
                 options.AddPolicy(name: "MyPolicy", builder =>
                 {
-                    builder.WithOrigins(Configuration.GetValue<string>("CorsOrigin:Backend"), 
+                    builder.WithOrigins(Configuration.GetValue<string>("CorsOrigin:Backend"),
                         Configuration.GetValue<string>("CorsOrigin:Frontend"), Configuration.GetValue<string>("CorsOrigin:Server"))
                            .AllowAnyHeader()
                            .AllowAnyMethod();
@@ -139,8 +139,7 @@ namespace API
                 };
             });
 
-            services.AddSingleton<IJwtAuthenticationManager>(
-                new JwtAuthenticationManager(key));
+            services.AddSingleton<ITokenService>(new TokenService(key));
 
             //add middleware
             services.AddTransient<CheckBlacklistTokenMiddleware>();
@@ -158,13 +157,13 @@ namespace API
         {
             //if (env.IsDevelopment())
             //{
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.RoutePrefix = "";
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "LCP v1");
-                });
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.RoutePrefix = "";
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "LCP v1");
+            });
             //}
 
             app.UseHttpsRedirection();
