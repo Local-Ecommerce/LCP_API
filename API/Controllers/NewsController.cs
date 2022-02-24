@@ -64,29 +64,28 @@ namespace API.Controllers
             [FromQuery] int?[] status,
             [FromQuery] string apartmentid,
             [FromQuery] DateTime date,
-            [FromQuery] string title,
-            [FromQuery] string text,
+            [FromQuery] string search,
             [FromQuery] int? limit,
             [FromQuery] int? page,
             [FromQuery] string sort,
             [FromQuery] string[] include)
         {
             _logger.Information($"GET api/news?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&date={date}&title={title}&text={text}&limit={limit}&page={page}&sort={sort}" +
+                $"&apartmentid={apartmentid}&date={date}&search={search}&limit={limit}&page={page}&sort={sort}" +
                 $"&include={include} START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //Get News
-            object response = await _newsService.GetNews(id, apartmentid, date, title, text, status, limit, page, sort, include);
+            object response = await _newsService.GetNews(id, apartmentid, date, search, status, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
             _logger.Information($"GET api/news?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&date={date}&title={title}&text={text}&limit={limit}&page={page}&sort={sort}" +
+                $"&apartmentid={apartmentid}&date={date}&search={search}&limit={limit}&page={page}&sort={sort}" +
                 $"&include={include} END duration: {watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

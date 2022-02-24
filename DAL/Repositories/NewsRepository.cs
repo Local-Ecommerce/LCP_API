@@ -19,8 +19,7 @@ namespace DAL.Repositories
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
         /// <param name="date"></param>
-        /// <param name="title"></param>
-        /// <param name="text"></param>
+        /// <param name="search"></param>
         /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
@@ -30,7 +29,7 @@ namespace DAL.Repositories
         /// <returns></returns>
         public async Task<PagingModel<News>> GetNews(
             string id, string apartmentId,
-            DateTime date, string title, string text, int?[] status,
+            DateTime date, string search, int?[] status,
             int? limit, int? queryPage,
             bool isAsc, string propertyName, string[] include)
         {
@@ -52,13 +51,9 @@ namespace DAL.Repositories
             if (date != DateTime.MinValue)
                 query = query.Where(news => news.ReleaseDate.Equals(date.Date));
 
-            //filter by title
-            if (!string.IsNullOrEmpty(title))
-                query = query.Where(news => news.Title.Contains(title));
-
-            //filter by text
-            if (!string.IsNullOrEmpty(text))
-                query = query.Where(news => news.Text.Contains(text));
+            //search contains
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(news => news.Title.Contains(search) || news.Text.Contains(search));
 
             //add include
             if (include.Length > 0)
