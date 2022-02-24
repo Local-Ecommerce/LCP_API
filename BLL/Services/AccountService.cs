@@ -172,7 +172,7 @@ namespace BLL.Services
                 }
 
                 //generate token
-                List<RefreshToken> refreshTokens = (List<RefreshToken>)account.RefreshTokens;
+                List<RefreshToken> refreshTokens = account.RefreshTokens.ToList();
                 if (refreshTokens is null) refreshTokens = new();
                 refreshTokens.Add(
                     _tokenService.GenerateRefreshToken(account.AccountId, _utilService.CreateId(""), roleId));
