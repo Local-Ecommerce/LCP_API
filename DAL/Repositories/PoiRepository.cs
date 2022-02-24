@@ -19,6 +19,8 @@ namespace DAL.Repositories
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
         /// <param name="date"></param>
+        /// <param name="title"></param>
+        /// <param name="text"></param>
         /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
@@ -27,9 +29,9 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<Poi>> GetPoi(
-            string id, string apartmentId, 
-            DateTime date, int?[] status, 
-            int? limit, int? queryPage, 
+            string id, string apartmentId,
+            DateTime date, string title, string text,
+            int?[] status, int? limit, int? queryPage,
             bool isAsc, string propertyName, string[] include)
         {
             IQueryable<Poi> query = _context.Pois.Where(poi => poi.PoiId != null);
@@ -47,8 +49,16 @@ namespace DAL.Repositories
                 query = query.Where(poi => poi.ApartmentId.Equals(apartmentId));
 
             //filter by date
-            if(date != DateTime.MinValue)
+            if (date != DateTime.MinValue)
                 query = query.Where(poi => poi.ReleaseDate.Equals(date.Date));
+
+            //filter by title
+            if (!string.IsNullOrEmpty(title))
+                query = query.Where(poi => poi.Title.Contains(title));
+
+            //filter by text
+            if (!string.IsNullOrEmpty(text))
+                query = query.Where(poi => poi.Text.Contains(text));
 
             //add include
             if (include.Length > 0)

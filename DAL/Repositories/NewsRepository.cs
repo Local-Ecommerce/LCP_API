@@ -19,6 +19,8 @@ namespace DAL.Repositories
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
         /// <param name="date"></param>
+        /// <param name="title"></param>
+        /// <param name="text"></param>
         /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
@@ -27,9 +29,9 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<News>> GetNews(
-            string id, string apartmentId, 
-            DateTime date, int?[] status, 
-            int? limit, int? queryPage, 
+            string id, string apartmentId,
+            DateTime date, string title, string text, int?[] status,
+            int? limit, int? queryPage,
             bool isAsc, string propertyName, string[] include)
         {
             IQueryable<News> query = _context.News.Where(news => news.NewsId != null);
@@ -50,14 +52,22 @@ namespace DAL.Repositories
             if (date != DateTime.MinValue)
                 query = query.Where(news => news.ReleaseDate.Equals(date.Date));
 
+            //filter by title
+            if (!string.IsNullOrEmpty(title))
+                query = query.Where(news => news.Title.Contains(title));
+
+            //filter by text
+            if (!string.IsNullOrEmpty(text))
+                query = query.Where(news => news.Text.Contains(text));
+
             //add include
             if (include.Length > 0)
             {
-                foreach(var item in include)
+                foreach (var item in include)
                 {
                     if (item.Equals(nameof(News.Resident)))
                         query = query.Include(news => news.Resident);
-                    if(item.Equals(nameof(News.Apartment)))
+                    if (item.Equals(nameof(News.Apartment)))
                         query = query.Include(news => news.Apartment);
                 }
             }
