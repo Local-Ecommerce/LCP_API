@@ -20,6 +20,8 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
         /// <param name="date"></param>
+        /// <param name="title"></param>
+        /// <param name="text"></param>
         /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
@@ -28,7 +30,7 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<object> GetNews(
             string id, string apartmentId,
-            DateTime date, int?[] status,
+            DateTime date, string title, string text, int?[] status,
             int? limit, int? page,
             string sort, string[] include);
 
