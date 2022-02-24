@@ -1,5 +1,6 @@
-using System.Collections.Generic;
+using System;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using DAL.Models;
 using DAL.Repositories.Interfaces;
@@ -11,53 +12,75 @@ namespace DAL.Repositories
     {
         public OrderRepository(LoichDBContext context) : base(context) { }
 
+
         /// <summary>
-        /// Get Order By Resident Id And Status
+        /// Get Order
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="residentId"></param>
         /// <param name="status"></param>
-        /// <returns></returns>
-        public async Task<List<Order>> GetOrderByResidentIdAndStatus(string residentId, int status)
-        {
-            List<Order> orders = await _context.Orders
-                                            .Where(o => o.ResidentId.Equals(residentId) && o.Status.Equals(status))
-                                            .Include(o => o.OrderDetails)
-                                            .ToListAsync();
-
-            return orders;
-        }
-
-
-        /// <summary>
-        /// Get Order By Order Id And Resident Id
-        /// </summary>
-        /// <param name="orderId"></param>
-        /// <param name="residentId"></param>
-        /// <returns></returns>
-        public async Task<Order> GetOrderByOrderIdAndResidentId(string orderId, string residentId)
-        {
-            Order order = await _context.Orders
-                                    .Where(o => o.ResidentId.Equals(residentId) && o.ResidentId.Equals(residentId))
-                                    .Include(o => o.OrderDetails)
-                                    .FirstOrDefaultAsync();
-
-            return order;
-        }
-
-
-        /// <summary>
-        /// Get Orders By Merchant Store Id
-        /// </summary>
         /// <param name="merchantStoreId"></param>
+        /// <param name="limit"></param>
+        /// <param name="queryPage"></param>
+        /// <param name="isAsc"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<List<Order>> GetOrdersByMerchantStoreId(string merchantStoreId)
+        public async Task<PagingModel<Order>> GetOrder(
+            string id, string residentId, int?[] status,
+            string merchantStoreId, int? limit,
+            int? queryPage, bool isAsc,
+            string propertyName, string include)
         {
-            List<Order> orders = await _context.Orders
-                                    .Where(o => o.MerchantStoreId.Equals(merchantStoreId))
-                                    .Include(o => o.OrderDetails)
-                                    .ToListAsync();
+            IQueryable<Order> query = _context.Orders.Where(o => o.OrderId != null);
 
-            return orders;
+            //filter by id
+            if (!string.IsNullOrEmpty(id))
+                query = query.Where(o => o.OrderId.Equals(id));
+
+            //filter by residentId
+            if (!string.IsNullOrEmpty(residentId))
+                query = query.Where(o => o.ResidentId.Equals(residentId));
+
+            //filter by status
+            if (status.Length != 0)
+                query = query.Where(o => status.Contains(o.Status));
+
+            //filter by merchantStoreId
+            if (!string.IsNullOrEmpty(merchantStoreId))
+                query = query.Where(o => o.MerchantStoreId.Equals(merchantStoreId));
+
+            //sort
+            if (!string.IsNullOrEmpty(propertyName))
+            {
+                query = isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
+            }
+
+            //add include
+            if (!string.IsNullOrEmpty(include) && include.Equals("detail"))
+            {
+                query = query.Include(o => o.OrderDetails);
+            }
+
+            //paging
+            int perPage = limit.GetValueOrDefault(10);
+            int page = queryPage.GetValueOrDefault(1) == 0 ? 1 : queryPage.GetValueOrDefault(1);
+            int total = query.Count();
+
+            return new PagingModel<Order>
+            {
+                List = await query.Skip((page - 1) * perPage).Take(perPage).ToListAsync(),
+                Total = total,
+                Page = page,
+                LastPage = (int)Math.Ceiling(total / (double)perPage)
+            };
+        }
+
+        public async Task<Order> GetOrder(string id, string residentId)
+        {
+            return await _context.Orders
+                                .Where(o => o.OrderId.Equals(id) && o.ResidentId.Equals(residentId))
+                                .FirstAsync();
         }
     }
 }
