@@ -152,8 +152,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
         /// <param name="date"></param>
-        /// <param name="title"></param>
-        /// <param name="text"></param>
+        /// <param name="search"></param>
         /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
@@ -162,7 +161,7 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<object> GetPoi(
             string id, string apartmentId,
-            DateTime date, string title, string text, int?[] status,
+            DateTime date, string search, int?[] status,
             int? limit, int? page, string sort, string[] include)
         {
             PagingModel<Poi> poi;
@@ -182,7 +181,7 @@ namespace BLL.Services
             try
             {
                 poi = await _unitOfWork.Pois
-                    .GetPoi(id, apartmentId, date, title, text, status, limit, page, isAsc, propertyName, include);
+                    .GetPoi(id, apartmentId, date, search, status, limit, page, isAsc, propertyName, include);
 
                 if (_utilService.IsNullOrEmpty(poi.List))
                     throw new EntityNotFoundException(typeof(Menu), "in the url");
