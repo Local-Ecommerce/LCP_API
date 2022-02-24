@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Models;
 
@@ -10,6 +11,7 @@ namespace DAL.Repositories.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
+        /// <param name="residentId"></param>
         /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
@@ -18,10 +20,9 @@ namespace DAL.Repositories.Interfaces
         /// <param name="include"></param>
         /// <returns></returns>
         Task<PagingModel<MerchantStore>> GetMerchantStore(
-            string id, string apartmentId,
-            int?[] status, int? limit, 
-            int? queryPage, bool isAsc, 
+            string id, string apartmentId, string residentId,
+            int?[] status, int? limit,
+            int? queryPage, bool isAsc,
             string propertyName, string[] include);
-
     }
 }

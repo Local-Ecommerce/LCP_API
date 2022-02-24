@@ -16,22 +16,32 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<List<ExtendOrderResponse>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId);
 
+        /// <summary>
+        /// Get Order
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="residentId"></param>
+        /// <param name="role"></param>
+        /// <param name="merchantStoreId"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <param name="include"></param>
+        /// <returns></returns>
+        Task<object> GetOrder(
+            string id, string residentId,
+            string role, string merchantStoreId, int?[] status,
+            int? limit, int? page,
+            string sort, string include);
+
 
         /// <summary>
-        /// Get Order By Resident Id And Status
+        /// Update Order Status
         /// </summary>
-        /// <param name="residentId"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<List<ExtendOrderResponse>> GetOrderByResidentIdAndStatus(string residentId, int status);
-
-
-        /// <summary>
-        /// Get Order By Merchant Store Id
-        /// </summary>
-        /// <param name="merchantStoreId"></param>
-        /// <returns></returns>
-        Task<List<ExtendOrderResponse>> GetOrderByMerchantStoreId(string merchantStoreId);
+        Task<OrderResponse> UpdateOrderStatus(string id, int status);
 
 
         /// <summary>

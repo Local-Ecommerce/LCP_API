@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System;
+using System.Collections.Generic;
 
 namespace DAL.Repositories
 {
@@ -18,6 +19,7 @@ namespace DAL.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
+        /// <param name="residentId"></param>
         /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
@@ -26,7 +28,7 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<MerchantStore>> GetMerchantStore(
-            string id, string apartmentId,
+            string id, string apartmentId, string residentId,
             int?[] status, int? limit,
             int? queryPage, bool isAsc,
             string propertyName, string[] include)
@@ -44,6 +46,10 @@ namespace DAL.Repositories
             //filter by apartmentId
             if (!string.IsNullOrEmpty(apartmentId))
                 query = query.Where(ms => ms.ApartmentId.Equals(apartmentId));
+
+            //filter by residentId
+            if (!string.IsNullOrEmpty(residentId))
+                query = query.Where(ms => ms.ResidentId.Equals(residentId));
 
             //add include
             if (include.Length > 0)

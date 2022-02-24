@@ -18,6 +18,8 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
+        /// <param name="residentId"></param>
+        /// <param name="role"></param>
         /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
@@ -25,8 +27,8 @@ namespace BLL.Services.Interfaces
         /// <param name="include"></param>
         /// <returns></returns>
         Task<object> GetMerchantStore(
-            string id, string apartmentId,
-            int?[] status,
+            string id, string apartmentId, string residentId,
+            string role, int?[] status,
             int? limit, int? page,
             string sort, string[] include);
 

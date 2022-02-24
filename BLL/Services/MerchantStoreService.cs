@@ -95,7 +95,7 @@ namespace BLL.Services
             {
                 _logger.Error("[MerchantStoreService.DeleteMerchantStore()]: " + e.Message);
 
-                throw new EntityNotFoundException(typeof(MerchantStore),id);
+                throw new EntityNotFoundException(typeof(MerchantStore), id);
             }
 
             //Delete MerchantStore
@@ -267,6 +267,8 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
+        /// <param name="residentId"></param>
+        /// <param name="role"></param>
         /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
@@ -274,14 +276,16 @@ namespace BLL.Services
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<object> GetMerchantStore(
-            string id, string apartmentId, 
-            int?[] status, int? limit, 
-            int? page, string sort, 
+            string id, string apartmentId, string residentId,
+            string role, int?[] status, int? limit,
+            int? page, string sort,
             string[] include)
         {
             PagingModel<MerchantStore> merchantStore;
             string propertyName = default;
             bool isAsc = false;
+
+            residentId = role.Equals(ResidentType.MERCHANT) ? residentId : null;
 
             if (!string.IsNullOrEmpty(sort))
             {
@@ -295,7 +299,7 @@ namespace BLL.Services
 
             try
             {
-                merchantStore = await _unitOfWork.MerchantStores.GetMerchantStore(id, apartmentId, 
+                merchantStore = await _unitOfWork.MerchantStores.GetMerchantStore(id, apartmentId, residentId,
                     status, limit, page, isAsc, propertyName, include);
 
                 if (_utilService.IsNullOrEmpty(merchantStore.List))

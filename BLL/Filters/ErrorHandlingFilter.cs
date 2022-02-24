@@ -33,6 +33,9 @@ namespace BLL.Filters
                     apiResponse.ResultMessage = "Authentication failed";
                     response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
                     break;
+                case IllegalArgumentException:
+                    response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+                    break;
                 default:
                     response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
                     apiResponse.ResultMessage = CommonResponse.ERROR.ToString();

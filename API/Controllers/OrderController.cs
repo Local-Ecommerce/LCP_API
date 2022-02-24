@@ -18,7 +18,7 @@ namespace API.Controllers
 {
     [Authorize]
     [EnableCors("MyPolicy")]
-    [Route("api/order")]
+    [Route("api/orders")]
     [ApiController]
     public class OrderController : ControllerBase
     {
@@ -46,7 +46,7 @@ namespace API.Controllers
             string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
             string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
-            _logger.Information($"POST api/order START Request: " +
+            _logger.Information($"POST api/orders START Request: " +
                 $"{JsonSerializer.Serialize(orderDetailRequests)}" + $"Resident Id: {residentId}");
 
             Stopwatch watch = new();
@@ -60,7 +60,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/order END duration: " +
+            _logger.Information("POST api/orders END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -68,11 +68,89 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Order By Resident Id And Status (Customer)
+        /// Get Order (Authentication required)
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetOrder(
+            [FromQuery] string id,
+            [FromQuery] int?[] status,
+            [FromQuery] string merchantstoreid,
+            [FromQuery] int? limit,
+            [FromQuery] int? page,
+            [FromQuery] string sort,
+            [FromQuery] string include)
+        {
+            _logger.Information($"GET api/orders?id={id}&status=" + string.Join("status=", status) +
+                $"&merchantstoreid={merchantstoreid}&limit={limit}&page={page}&sort={sort}&include={include}"
+                + " START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
+            //get role from token
+            string claimRole = claim.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault().ToString();
+            string role = claimName.Substring(claimRole.LastIndexOf(':') + 2);
+
+            //Get Order
+            object response = await
+            _orderService.GetOrder(id, residentId, role, merchantstoreid, status, limit, page, sort, include);
+
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
+
+            watch.Stop();
+
+            _logger.Information($"GET api/orders?id={id}&status=" + string.Join("status=", status) +
+                $"&merchantstoreid={merchantstoreid}&limit={limit}&page={page}&sort={sort}&include="
+                + string.Join("include=", include) + " END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Update Order (Authentication required)
+        /// </summary>
+
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> UpdateOrderStatus([FromQuery] string id, [FromQuery] int status)
+        {
+            _logger.Information($"PUT api/orders?id={id}&status={status} START Request: ");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //Update Order
+            OrderResponse response = await
+            _orderService.UpdateOrderStatus(id, status);
+
+            string json = JsonSerializer.Serialize(ApiResponse<OrderResponse>.Success(response));
+
+            watch.Stop();
+
+            _logger.Information($"PUT api/orders?id={id}&status={status}  END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+
+        /// <summary>
+        /// Delete Order By Order Id (Customer)
         /// </summary>
         [Authorize(Roles = ResidentType.CUSTOMER)]
-        [HttpGet("status/{status}")]
-        public async Task<IActionResult> GetOrderByResidentIdAndStatus(int status)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteOrderByOrderIdAndResidentId([FromQuery] string orderId)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             IEnumerable<Claim> claim = identity.Claims;
@@ -80,74 +158,7 @@ namespace API.Controllers
             string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
             string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
-            _logger.Information($"GET api/order/status/{status} START Request: " + $"Resident Id: {residentId}");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Get Order
-            List<ExtendOrderResponse> response = await
-            _orderService.GetOrderByResidentIdAndStatus(residentId, status);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/order/status/{status}  END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Get Order By Merchant Store Id (Customer, Merchant)
-        /// </summary>
-        [Authorize(Roles = ResidentType.CUSTOMER)]
-        [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpGet("store/{merchantStoreId}")]
-        public async Task<IActionResult> GetOrderByMerchantStoreId(string merchantStoreId)
-        {
-            // var identity = HttpContext.User.Identity as ClaimsIdentity;
-            // IEnumerable<Claim> claim = identity.Claims;
-
-            // string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
-            // string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
-
-            _logger.Information($"GET api/order/store/{merchantStoreId} START Request: ");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Get Order
-            List<ExtendOrderResponse> response = await
-            _orderService.GetOrderByMerchantStoreId(merchantStoreId);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/order/store/{merchantStoreId}  END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Delete Order By Order Id And Resident Id (Customer)
-        /// </summary>
-        [Authorize(Roles = ResidentType.CUSTOMER)]
-        [HttpDelete("{orderId}")]
-        public async Task<IActionResult> DeleteOrderByOrderIdAndResidentId(string orderId)
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            IEnumerable<Claim> claim = identity.Claims;
-
-            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
-            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
-
-            _logger.Information($"DELETE api/order/{orderId} START Request: " + $"Resident Id: {residentId}");
+            _logger.Information($"DELETE api/orders?orderid={orderId} START Request: " + $"Resident Id: {residentId}");
 
             Stopwatch watch = new();
             watch.Start();
@@ -160,7 +171,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"DELETE api/order/{orderId}  END duration: " +
+            _logger.Information($"DELETE api/orders?orderid={orderId}  END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

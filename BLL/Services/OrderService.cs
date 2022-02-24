@@ -105,53 +105,82 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Order By Resident Id And Status
+        /// Get Order
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="residentId"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        public async Task<List<ExtendOrderResponse>> GetOrderByResidentIdAndStatus(string residentId, int status)
-        {
-            List<ExtendOrderResponse> extendOrderResponses;
-            try
-            {
-                extendOrderResponses = _mapper.Map<List<ExtendOrderResponse>>(
-                    await _unitOfWork.Orders.GetOrderByResidentIdAndStatus(residentId, status)
-                );
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[OrderService.GetOrderByResidentIdAndStatus()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Order), residentId);
-            }
-
-            return extendOrderResponses;
-        }
-
-
-        /// <summary>
-        /// Get Order By Merchant Store Id
-        /// </summary>
+        /// <param name="role"></param>
         /// <param name="merchantStoreId"></param>
+        /// <param name="status"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
+        /// <param name="sort"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<List<ExtendOrderResponse>> GetOrderByMerchantStoreId(string merchantStoreId)
+        public async Task<object> GetOrder(
+            string id, string residentId,
+            string role, string merchantStoreId,
+            int?[] status, int? limit,
+            int? page, string sort, string include)
         {
-            List<ExtendOrderResponse> extendOrderResponses;
+            //check role
+            if (role.Equals(ResidentType.MERCHANT))
+            {
+                if (merchantStoreId == null)
+                {
+                    _logger.Error("Merchant without merchant store cannot get order");
+                    throw new UnauthorizedAccessException();
+                }
+                else
+                {
+                    //Find out if the store belongs to the merchant
+                    bool flag = false;
+                    foreach (MerchantStore store in await _unitOfWork.MerchantStores.FindListAsync(ms => ms.ResidentId.Equals(residentId)))
+                    {
+                        if (store.MerchantStoreId.Equals(merchantStoreId)) flag = true;
+                        break;
+                    }
+                    if (!flag)
+                    {
+                        _logger.Error("The store does not belongs to the merchant");
+                        throw new UnauthorizedAccessException();
+                    }
+                }
+            }
+
+            residentId = !residentId.Equals(ResidentType.CUSTOMER) ? null : residentId;
+
+            PagingModel<Order> orders;
+            string propertyName = default;
+            bool isAsc = false;
+
+            if (!string.IsNullOrEmpty(sort))
+            {
+                isAsc = sort[0].ToString().Equals("+");
+                propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
+            }
+
             try
             {
-                extendOrderResponses = _mapper.Map<List<ExtendOrderResponse>>(
-                    await _unitOfWork.Orders.GetOrdersByMerchantStoreId(merchantStoreId)
-                );
+                orders = await _unitOfWork.Orders.GetOrder
+                        (id, residentId, status, merchantStoreId, limit, page, isAsc, propertyName, include);
+
+                if (_utilService.IsNullOrEmpty(orders.List))
+                    throw new EntityNotFoundException(typeof(Order), "in the url");
             }
             catch (Exception e)
             {
-                _logger.Error("[OrderService.GetOrderByMerchantStoreId()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Order), merchantStoreId);
+                _logger.Error("[OrderService.GetOrder()]" + e.Message);
+                throw;
             }
 
-            return extendOrderResponses;
+            return new PagingModel<ExtendOrderResponse>
+            {
+                List = _mapper.Map<List<ExtendOrderResponse>>(orders.List),
+                Page = orders.Page,
+                LastPage = orders.LastPage,
+                Total = orders.Total,
+            };
         }
 
 
@@ -166,7 +195,7 @@ namespace BLL.Services
             Order order;
             try
             {
-                order = await _unitOfWork.Orders.GetOrderByOrderIdAndResidentId(orderId, residentId);
+                order = await _unitOfWork.Orders.GetOrder(orderId, residentId);
                 order.Status = (int)OrderStatus.DELETED_ORDER;
 
                 OrderDetail orderDetail = order.OrderDetails.FirstOrDefault();
@@ -186,6 +215,7 @@ namespace BLL.Services
 
             return _mapper.Map<OrderResponse>(order);
         }
+
 
         /// <summary>
         /// Caculate Final Amount
@@ -211,5 +241,47 @@ namespace BLL.Services
         }
 
 
+        /// <summary>
+        /// Update Order Status
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public async Task<OrderResponse> UpdateOrderStatus(string id, int status)
+        {
+            Order order;
+            try
+            {
+                order = await _unitOfWork.Orders.FindAsync(o => o.OrderId.Equals(id));
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[OrderService.UpdateOrder()]: " + e.Message);
+                throw new EntityNotFoundException(typeof(Order), "in the url");
+            }
+
+            //check status
+            if (!Enum.IsDefined(typeof(OrderStatus), status))
+            {
+                _logger.Error($"[OrderService.UpdateOrder()]: Status {status} is invalid");
+                throw new IllegalArgumentException();
+            }
+
+            //update order
+            try
+            {
+                order.Status = status;
+                _unitOfWork.Orders.Update(order);
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[OrderService.UpdateOrder()]: " + e.Message);
+                throw;
+            }
+
+            return _mapper.Map<OrderResponse>(order);
+        }
     }
 }
