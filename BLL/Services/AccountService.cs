@@ -172,12 +172,16 @@ namespace BLL.Services
                 }
 
                 //generate token
-                List<RefreshToken> refreshTokens = (List<RefreshToken>)account.RefreshTokens.DefaultIfEmpty();
+                List<RefreshToken> refreshTokens = (List<RefreshToken>)account.RefreshTokens;
+                if (refreshTokens is null) refreshTokens = new();
                 refreshTokens.Add(
                     _tokenService.GenerateRefreshToken(account.AccountId, _utilService.CreateId(""), roleId));
 
                 if (isCreate)
+                {
+                    account.RefreshTokens = refreshTokens;
                     _unitOfWork.Accounts.Add(account);
+                }
                 else
                     _unitOfWork.Accounts.Update(account);
 
@@ -245,7 +249,7 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<ExtendAccountResponse> ChangeResidentTypeByAccountId(string accountId, string residentType)
         {
-            TokenInfo tokenInfo;
+            // TokenInfo tokenInfo;
             Account account;
             try
             {
