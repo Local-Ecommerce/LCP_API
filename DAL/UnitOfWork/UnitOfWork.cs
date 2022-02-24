@@ -23,6 +23,7 @@ namespace DAL.UnitOfWork
         private IProductCategoryRepository _productCategoryRepository;
         private IProductCombinationRepository _productCombinationRepository;
         private IProductInMenuRepository _productInMenuRepository;
+        private IRefreshTokenRepository _refreshTokenRepository;
         private IResidentRepository _residentRepository;
         private IRoleRepository _roleRepository;
         private IStoreMenuDetailRepository _storeMenuDetailRepository;
@@ -185,6 +186,16 @@ namespace DAL.UnitOfWork
                 if (_systemCategoryRepository == null)
                     _systemCategoryRepository = new SystemCategoryRepository(_context);
                 return _systemCategoryRepository;
+            }
+        }
+
+        public IRefreshTokenRepository RefreshTokens
+        {
+            get
+            {
+                if (_refreshTokenRepository == null)
+                    _refreshTokenRepository = new RefreshTokenRepository(_context);
+                return _refreshTokenRepository;
             }
         }
 

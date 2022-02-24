@@ -1,4 +1,5 @@
 ﻿using BLL.Dtos.Account;
+using BLL.Dtos.RefreshToken;
 using DAL.Models;
 using System.Threading.Tasks;
 
@@ -45,6 +46,14 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<AccountResponse> DeleteAccount(string id);
+
+
+        /// <summary>
+        /// Refresh Token
+        /// </summary>
+        /// <param name="refreshTokenDto"></param>
+        /// <returns></returns>
+        Task<string> RefreshToken(RefreshTokenDto refreshTokenDto);
 
 
         /// <summary>
