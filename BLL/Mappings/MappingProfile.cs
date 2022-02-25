@@ -132,6 +132,7 @@ namespace BLL.Mappings
 
             //Refresh Token Mapping
             CreateMap<RefreshToken, RefreshTokenDto>().ReverseMap();
+            CreateMap<RefreshToken, ExtendRefreshTokenDto>().ReverseMap();
         }
     }
 }

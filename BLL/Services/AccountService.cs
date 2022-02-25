@@ -207,10 +207,10 @@ namespace BLL.Services
 
             //create response
             ExtendAccountResponse response = _mapper.Map<ExtendAccountResponse>(account);
-            RefreshTokenDto refreshToken = response.RefreshTokens.FirstOrDefault();
+            ExtendRefreshTokenDto refreshToken = response.RefreshTokens.FirstOrDefault();
             refreshToken.AccessTokenExpiredDate = DateTime.Now;
 
-            response.RefreshTokens = new Collection<RefreshTokenDto>() { refreshToken };
+            response.RefreshTokens = new Collection<ExtendRefreshTokenDto>() { refreshToken };
 
             return response;
         }

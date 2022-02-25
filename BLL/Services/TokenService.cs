@@ -13,9 +13,9 @@ namespace BLL.Services
 {
     public class TokenService : ITokenService
     {
-        private readonly string _key;
-        private readonly TokenValidationParameters _tokenValidationParameters;
-        public TokenService(string key, TokenValidationParameters tokenValidationParameters)
+        private readonly byte[] _key;
+        private TokenValidationParameters _tokenValidationParameters;
+        public TokenService(byte[] key, TokenValidationParameters tokenValidationParameters)
         {
             _key = key;
             _tokenValidationParameters = tokenValidationParameters;
@@ -31,7 +31,6 @@ namespace BLL.Services
         public string GenerateAccessToken(string id, string roleName)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenKey = Encoding.ASCII.GetBytes(_key);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -43,7 +42,7 @@ namespace BLL.Services
                 Expires = ExpiryTimeAccessToken(roleName),
 
                 SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(tokenKey),
+                    new SymmetricSecurityKey(_key),
                     SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -63,7 +62,7 @@ namespace BLL.Services
             switch (roleName)
             {
                 case RoleId.ADMIN:
-                    expiryTime = DateTime.Now.AddHours((double)TimeUnit.ONE_HOUR);
+                    expiryTime = DateTime.UtcNow.AddHours((double)TimeUnit.ONE_HOUR);
                     break;
                 case ResidentType.MARKET_MANAGER:
                     expiryTime = DateTime.Now.AddHours((double)TimeUnit.ONE_HOUR);
@@ -72,11 +71,13 @@ namespace BLL.Services
                     expiryTime = DateTime.Now.AddHours((double)TimeUnit.TWENTY_FOUR_HOUR);
                     break;
                 case ResidentType.CUSTOMER:
-                    expiryTime = DateTime.Now.AddHours((double)TimeUnit.TWENTY_FOUR_HOUR);
+                    // expiryTime = DateTime.Now.AddHours((double)TimeUnit.TWENTY_FOUR_HOUR);
+                    expiryTime = DateTime.UtcNow.AddSeconds(10);
                     break;
             }
             return expiryTime;
         }
+
 
         /// <summary>
         /// Expiry Time Refresh Token
@@ -135,51 +136,62 @@ namespace BLL.Services
         /// <returns></returns>
         public string VerifyAndGenerateToken(RefreshTokenDto tokenDto, RefreshToken refreshToken)
         {
+            _tokenValidationParameters.ValidateLifetime = false;
             var jwtTokenHandler = new JwtSecurityTokenHandler();
 
             // Validation 1 - Validation JWT token format
-            var tokenInVerification = jwtTokenHandler
-                        .ValidateToken(tokenDto.AccessToken, _tokenValidationParameters, out var validatedToken);
-
-            // Validation 2 - Validate encryption alg
-            if (validatedToken is JwtSecurityToken jwtSecurityToken)
+            try
             {
-                var result = jwtSecurityToken.Header.Alg
-                        .Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
+                var tokenInVerification = jwtTokenHandler
+            .ValidateToken(tokenDto.AccessToken, _tokenValidationParameters, out var validatedToken);
 
-                if (result == false)
+
+                // Validation 2 - Validate encryption alg
+                if (validatedToken is JwtSecurityToken jwtSecurityToken)
+                {
+                    var result = jwtSecurityToken.Header.Alg
+                            .Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
+
+                    if (result == false)
+                        return null;
+                }
+
+                // Validation 3 - validate expiry date
+                var localExpiryDate = long.Parse(tokenInVerification.Claims
+                                        .FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+
+                var expiryDate = UnixTimeStampToDateTime(localExpiryDate);
+
+                if (expiryDate > DateTime.UtcNow)
                     return null;
+
+                // Validation 4 - validate if revoked
+                if (refreshToken.IsRevoked is true)
+                    return null;
+
+                // Validation 5 - validate the id
+                var id = tokenInVerification.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value;
+
+                if (refreshToken.AccountId != id)
+                    return null;
+
+                // Validation 6 - validate stored token expiry date
+                if (refreshToken.ExpiredDate < DateTime.Now)
+                    return null;
+
+                // update current token
+                var role = tokenInVerification.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
+                string accessToken = GenerateAccessToken(id, role);
+                refreshToken.AccessToken = accessToken;
+
+                return accessToken;
+
             }
-
-            // Validation 3 - validate expiry date
-            var localExpiryDate = long.Parse(tokenInVerification.Claims
-                                    .FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
-
-            var expiryDate = UnixTimeStampToDateTime(localExpiryDate);
-
-            if (expiryDate > DateTime.UtcNow)
-                return null;
-
-            // Validation 4 - validate if revoked
-            if (refreshToken.IsRevoked is true)
-                return null;
-
-            // Validation 5 - validate the id
-            var id = tokenInVerification.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value;
-
-            if (refreshToken.AccountId != id)
-                return null;
-
-            // Validation 6 - validate stored token expiry date
-            if (refreshToken.ExpiredDate < DateTime.Now)
-                return null;
-
-            // update current token
-            var role = tokenInVerification.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
-            string accessToken = GenerateAccessToken(id, role);
-            refreshToken.AccessToken = accessToken;
-
-            return accessToken;
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
         }
 
 

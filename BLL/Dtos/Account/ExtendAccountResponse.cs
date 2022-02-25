@@ -13,6 +13,6 @@ namespace BLL.Dtos.Account
         public Collection<ResidentResponse> Residents { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public Collection<RefreshTokenDto> RefreshTokens { get; set; }
+        public Collection<ExtendRefreshTokenDto> RefreshTokens { get; set; }
     }
 }
