@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using BLL.Dtos.RefreshToken;
+using System.Collections.ObjectModel;
 
 namespace BLL.Services
 {
@@ -204,7 +205,14 @@ namespace BLL.Services
 
             account.RefreshTokens = account.RefreshTokens.Where(rt => rt.IsRevoked == false).ToList();
 
-            return _mapper.Map<ExtendAccountResponse>(account);
+            //create response
+            ExtendAccountResponse response = _mapper.Map<ExtendAccountResponse>(account);
+            RefreshTokenDto refreshToken = response.RefreshTokens.FirstOrDefault();
+            refreshToken.AccessTokenExpiredDate = DateTime.Now;
+
+            response.RefreshTokens = new Collection<RefreshTokenDto>() { refreshToken };
+
+            return response;
         }
 
 
