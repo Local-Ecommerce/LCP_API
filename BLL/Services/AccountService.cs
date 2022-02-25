@@ -319,7 +319,44 @@ namespace BLL.Services
             if (accessToken == null)
                 throw new UnauthorizedAccessException();
 
+            try
+            {
+                _unitOfWork.RefreshTokens.Update(refreshToken);
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[AccountService.RefreshToken()]: " + e.Message);
+                throw;
+            }
+
             return accessToken;
+        }
+
+
+        /// <summary>
+        /// Logout
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <returns></returns>
+        public async Task<string> Logout(string accessToken)
+        {
+            try
+            {
+                RefreshToken refreshToken = await _unitOfWork.RefreshTokens.FindAsync(rt => rt.AccessToken.Equals(accessToken));
+
+                refreshToken.IsRevoked = true;
+
+                _unitOfWork.RefreshTokens.Update(refreshToken);
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[AccountService.Logout()]: " + e.Message);
+                throw;
+            }
+
+            return null;
         }
     }
 }
