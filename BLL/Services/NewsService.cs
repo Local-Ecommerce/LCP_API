@@ -178,9 +178,6 @@ namespace BLL.Services
             {
                 news = await _unitOfWork.News
                         .GetNews(id, apartmentId, date, search, status, limit, page, isAsc, propertyName, include);
-
-                if (_utilService.IsNullOrEmpty(news.List))
-                    throw new EntityNotFoundException(typeof(Menu), "in the url");
             }
             catch (Exception e)
             {

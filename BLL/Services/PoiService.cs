@@ -182,9 +182,6 @@ namespace BLL.Services
             {
                 poi = await _unitOfWork.Pois
                     .GetPoi(id, apartmentId, date, search, status, limit, page, isAsc, propertyName, include);
-
-                if (_utilService.IsNullOrEmpty(poi.List))
-                    throw new EntityNotFoundException(typeof(Menu), "in the url");
             }
             catch (Exception e)
             {
