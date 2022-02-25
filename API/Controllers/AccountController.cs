@@ -6,6 +6,8 @@ using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
+using System;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -61,7 +63,7 @@ namespace API.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
         {
-            _logger.Information($"GET api/acccount/refresh-token START Request: {JsonSerializer.Serialize(refreshTokenDto)}");
+            _logger.Information($"POST api/acccount/refresh-token START Request: {JsonSerializer.Serialize(refreshTokenDto)}");
 
             Stopwatch watch = new();
             watch.Start();
@@ -73,11 +75,44 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("GET api/accounts/refresh-token END duration: " +
+            _logger.Information("POST api/accounts/refresh-token END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Logout
+        /// </summary>
+        [Authorize]
+        [HttpPut("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            _logger.Information($"PUT api/acccount/logout START Request:");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            string JWTtoken = Request.Headers[HeaderNames.Authorization];
+
+            // string JWTtoken = context.Request.Headers["Authorization"];
+            string token = JWTtoken?[7..];
+            Console.WriteLine(token);
+
+            //Refresh Token
+            string response = await _accountService.Logout(token);
+
+            string json = JsonSerializer.Serialize(ApiResponse<string>.Success(response));
+
+            watch.Stop();
+
+            _logger.Information("PUT api/accounts/logout END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
 
         /// <summary>
         /// Get Account By Id (Authentication required)

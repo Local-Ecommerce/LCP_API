@@ -23,6 +23,13 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<ExtendAccountResponse> Login(AccountRequest accountRequest);
 
+        /// <summary>
+        /// Logout
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <returns></returns>
+        Task<string> Logout(string accessToken);
+
 
         /// <summary>
         /// Get Account by Id
