@@ -335,7 +335,7 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[AccountService.RefreshToken()]: " + e.Message);
-                throw;
+                throw new IllegalArgumentException();
             }
 
             return accessToken;

@@ -104,14 +104,16 @@ namespace API
             });
 
             //Custom Jwt Authentication
-            var key = Configuration.GetValue<string>("Jwt:Custom:Key");
+            var key = Encoding.ASCII.GetBytes(Configuration.GetValue<string>("Jwt:Custom:Key"));
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+                IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = false,
                 ValidateAudience = false,
-                ValidateLifetime = true
+                ValidateLifetime = true,
+                RequireExpirationTime = false,
+                ClockSkew = TimeSpan.Zero
             };
 
             //Add JWT Authentication
@@ -125,20 +127,20 @@ namespace API
                 x.SaveToken = true;
                 x.TokenValidationParameters = tokenValidationParameters;
 
-                // x.Events = new JwtBearerEvents
-                // {
-                //     OnChallenge = async context =>
-                //     {
-                //         // Call this to skip the default logic and avoid using the default response
-                //         context.HandleResponse();
+                x.Events = new JwtBearerEvents
+                {
+                    OnChallenge = async context =>
+                    {
+                        // Call this to skip the default logic and avoid using the default response
+                        context.HandleResponse();
 
-                //         // Write to the response
-                //         context.Response.StatusCode = 401;
-                //         string response = JsonSerializer.Serialize(
-                //             ApiResponse<string>.Fail((int)AccountStatus.UNAUTHORIZED_ACCOUNT, AccountStatus.UNAUTHORIZED_ACCOUNT.ToString()));
-                //         await context.Response.WriteAsync(response);
-                //     }
-                // };
+                        // Write to the response
+                        context.Response.StatusCode = 401;
+                        string response = JsonSerializer.Serialize(
+                            ApiResponse<string>.Fail((int)AccountStatus.UNAUTHORIZED_ACCOUNT, AccountStatus.UNAUTHORIZED_ACCOUNT.ToString()));
+                        await context.Response.WriteAsync(response);
+                    }
+                };
             });
 
             services.AddSingleton<ITokenService>(new TokenService(key, tokenValidationParameters));
