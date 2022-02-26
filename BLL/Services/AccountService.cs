@@ -146,6 +146,7 @@ namespace BLL.Services
         {
             Account account;
             bool isCreate = false;
+            DateTime accessTokenExpiredDate = DateTime.MinValue;
 
             //check valid user
             string uid = await _firebaseService.GetUIDByToken(accountRequest.FirebaseToken);
@@ -182,6 +183,7 @@ namespace BLL.Services
 
                 refreshTokens.Add(
                     _tokenService.GenerateRefreshToken(account.AccountId, _utilService.CreateId(""), roleId));
+                accessTokenExpiredDate = _tokenService.ExpiryTimeAccessToken(roleId);
 
                 if (isCreate)
                 {
@@ -208,7 +210,7 @@ namespace BLL.Services
             //create response
             ExtendAccountResponse response = _mapper.Map<ExtendAccountResponse>(account);
             ExtendRefreshTokenDto refreshToken = response.RefreshTokens.FirstOrDefault();
-            refreshToken.AccessTokenExpiredDate = DateTime.Now;
+            refreshToken.AccessTokenExpiredDate = accessTokenExpiredDate;
 
             response.RefreshTokens = new Collection<ExtendRefreshTokenDto>() { refreshToken };
 

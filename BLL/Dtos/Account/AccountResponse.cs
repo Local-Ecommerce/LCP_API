@@ -12,8 +12,6 @@ namespace BLL.Dtos.Account
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public int? Status { get; set; }
-        public string Token { get; set; }
-        public string TokenExpiredDate { get; set; }
         public string RoleId { get; set; }
     }
 }
