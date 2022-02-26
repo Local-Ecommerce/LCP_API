@@ -65,14 +65,13 @@ namespace BLL.Services
                     expiryTime = DateTime.UtcNow.AddHours((double)TimeUnit.ONE_HOUR);
                     break;
                 case ResidentType.MARKET_MANAGER:
-                    expiryTime = DateTime.Now.AddHours((double)TimeUnit.ONE_HOUR);
+                    expiryTime = DateTime.UtcNow.AddHours((double)TimeUnit.ONE_HOUR);
                     break;
                 case ResidentType.MERCHANT:
-                    expiryTime = DateTime.Now.AddHours((double)TimeUnit.TWENTY_FOUR_HOUR);
+                    expiryTime = DateTime.UtcNow.AddHours((double)TimeUnit.TWENTY_FOUR_HOUR);
                     break;
                 case ResidentType.CUSTOMER:
-                    // expiryTime = DateTime.Now.AddHours((double)TimeUnit.TWENTY_FOUR_HOUR);
-                    expiryTime = DateTime.UtcNow.AddSeconds(10);
+                    expiryTime = DateTime.UtcNow.AddHours((double)TimeUnit.TWENTY_FOUR_HOUR);
                     break;
             }
             return expiryTime;
@@ -90,16 +89,16 @@ namespace BLL.Services
             switch (roleName)
             {
                 case RoleId.ADMIN:
-                    expiryTime = DateTime.Now.AddHours((double)TimeUnit.TWENTY_FOUR_HOUR);
+                    expiryTime = DateTime.UtcNow.AddHours((double)TimeUnit.TWENTY_FOUR_HOUR);
                     break;
                 case ResidentType.MARKET_MANAGER:
-                    expiryTime = DateTime.Now.AddHours((double)TimeUnit.TWENTY_FOUR_HOUR);
+                    expiryTime = DateTime.UtcNow.AddHours((double)TimeUnit.TWENTY_FOUR_HOUR);
                     break;
                 case ResidentType.MERCHANT:
-                    expiryTime = DateTime.Now.AddYears(1);
+                    expiryTime = DateTime.UtcNow.AddYears(1);
                     break;
                 case ResidentType.CUSTOMER:
-                    expiryTime = DateTime.Now.AddYears(1);
+                    expiryTime = DateTime.UtcNow.AddYears(1);
                     break;
             }
             return expiryTime;
@@ -122,7 +121,7 @@ namespace BLL.Services
                 AccessToken = GenerateAccessToken(id, roleName),
                 AccountId = id,
                 IsRevoked = false,
-                CreatedDate = DateTime.Now,
+                CreatedDate = DateTime.UtcNow,
                 ExpiredDate = ExpiryTimeRefreshToken(roleName)
             };
         }
@@ -176,7 +175,7 @@ namespace BLL.Services
                     return null;
 
                 // Validation 6 - validate stored token expiry date
-                if (refreshToken.ExpiredDate < DateTime.Now)
+                if (refreshToken.ExpiredDate < DateTime.UtcNow)
                     return null;
 
                 // update current token
@@ -187,7 +186,7 @@ namespace BLL.Services
                 return accessToken;
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }
@@ -201,7 +200,7 @@ namespace BLL.Services
         /// <returns></returns>
         public DateTime UnixTimeStampToDateTime(long unixTimeStamp)
         {
-            var dateTimeVal = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local);
+            var dateTimeVal = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dateTimeVal = dateTimeVal.AddSeconds(unixTimeStamp).ToUniversalTime();
 
             return dateTimeVal;
