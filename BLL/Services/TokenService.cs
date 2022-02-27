@@ -27,10 +27,12 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="roleName"></param>
+        /// <param name="expiredDate"></param>
         /// <returns></returns>
-        public string GenerateAccessToken(string id, string roleName)
+        public string GenerateAccessToken(string id, string roleName, out DateTime expiredDate)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
+            expiredDate = ExpiryTimeAccessToken(roleName);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -39,7 +41,7 @@ namespace BLL.Services
                     new Claim(ClaimTypes.Name, id),
                     new Claim(ClaimTypes.Role, roleName),
                 }),
-                Expires = ExpiryTimeAccessToken(roleName),
+                Expires = expiredDate,
 
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(_key),
@@ -112,13 +114,14 @@ namespace BLL.Services
         /// <param name="randomString"></param>
         /// <param name="accessToken"></param>
         /// <param name="roleName"></param>
+        /// <param name="expiredDate"></param>
         /// <returns></returns>
-        public RefreshToken GenerateRefreshToken(string id, string randomString, string roleName)
+        public RefreshToken GenerateRefreshToken(string id, string randomString, string roleName, out DateTime expiredDate)
         {
             return new RefreshToken
             {
                 Token = randomString,
-                AccessToken = GenerateAccessToken(id, roleName),
+                AccessToken = GenerateAccessToken(id, roleName, out expiredDate),
                 AccountId = id,
                 IsRevoked = false,
                 CreatedDate = DateTime.UtcNow,
@@ -132,11 +135,13 @@ namespace BLL.Services
         /// </summary>
         /// <param name="tokenDto"></param>
         /// <param name="refreshToken"></param>
+        /// <param name="expiredDate"></param>
         /// <returns></returns>
-        public string VerifyAndGenerateToken(RefreshTokenDto tokenDto, RefreshToken refreshToken)
+        public string VerifyAndGenerateToken(RefreshTokenDto tokenDto, RefreshToken refreshToken, out DateTime expiredDate)
         {
             _tokenValidationParameters.ValidateLifetime = false;
             var jwtTokenHandler = new JwtSecurityTokenHandler();
+            expiredDate = DateTime.MinValue;
 
             // Validation 1 - Validation JWT token format
             try
@@ -156,12 +161,11 @@ namespace BLL.Services
                 }
 
                 // Validation 3 - validate expiry date
-                var localExpiryDate = long.Parse(tokenInVerification.Claims
+                var utcExpiryDate = long.Parse(tokenInVerification.Claims
                                         .FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
 
-                var expiryDate = UnixTimeStampToDateTime(localExpiryDate);
 
-                if (expiryDate > DateTime.UtcNow)
+                if (UnixTimeStampToDateTime(utcExpiryDate) > DateTime.UtcNow)
                     return null;
 
                 // Validation 4 - validate if revoked
@@ -180,7 +184,7 @@ namespace BLL.Services
 
                 // update current token
                 var role = tokenInVerification.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
-                string accessToken = GenerateAccessToken(id, role);
+                string accessToken = GenerateAccessToken(id, role, out expiredDate);
                 refreshToken.AccessToken = accessToken;
 
                 return accessToken;

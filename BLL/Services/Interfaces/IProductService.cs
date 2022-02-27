@@ -50,6 +50,15 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
+        /// Get Product By Apartment Id And Type
+        /// </summary>
+        /// <param name="apartmentId"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        Task<List<ProductResponse>> GetProductByApartmentIdAndType(string apartmentId, string type);
+
+
+        /// <summary>
         /// Delete Product by id
         /// </summary>
         /// <param name="id"></param>

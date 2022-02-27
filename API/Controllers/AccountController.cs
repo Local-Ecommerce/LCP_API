@@ -69,9 +69,9 @@ namespace API.Controllers
             watch.Start();
 
             //Refresh Token
-            string response = await _accountService.RefreshToken(refreshTokenDto);
+            object response = await _accountService.RefreshToken(refreshTokenDto);
 
-            string json = JsonSerializer.Serialize(ApiResponse<string>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
