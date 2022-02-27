@@ -60,7 +60,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="refreshTokenDto"></param>
         /// <returns></returns>
-        Task<string> RefreshToken(RefreshTokenDto refreshTokenDto);
+        Task<ExtendRefreshTokenDto> RefreshToken(RefreshTokenDto refreshTokenDto);
 
 
         /// <summary>

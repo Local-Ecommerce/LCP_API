@@ -182,8 +182,7 @@ namespace BLL.Services
                         rt.IsRevoked = true;
 
                 refreshTokens.Add(
-                    _tokenService.GenerateRefreshToken(account.AccountId, _utilService.CreateId(""), roleId));
-                accessTokenExpiredDate = _tokenService.ExpiryTimeAccessToken(roleId);
+                    _tokenService.GenerateRefreshToken(account.AccountId, _utilService.CreateId(""), roleId, out accessTokenExpiredDate));
 
                 if (isCreate)
                 {
@@ -311,9 +310,10 @@ namespace BLL.Services
         /// </summary>
         /// <param name="refreshTokenDto"></param>
         /// <returns></returns>
-        public async Task<string> RefreshToken(RefreshTokenDto refreshTokenDto)
+        public async Task<ExtendRefreshTokenDto> RefreshToken(RefreshTokenDto refreshTokenDto)
         {
             RefreshToken refreshToken;
+            DateTime expiredDate;
             try
             {
                 refreshToken = await _unitOfWork.RefreshTokens.FindAsync(rt => rt.Token.Equals(refreshTokenDto.Token));
@@ -324,7 +324,7 @@ namespace BLL.Services
                 throw new EntityNotFoundException();
             }
 
-            string accessToken = _tokenService.VerifyAndGenerateToken(refreshTokenDto, refreshToken);
+            string accessToken = _tokenService.VerifyAndGenerateToken(refreshTokenDto, refreshToken, out expiredDate);
 
             if (accessToken == null)
                 throw new UnauthorizedAccessException();
@@ -340,7 +340,11 @@ namespace BLL.Services
                 throw new IllegalArgumentException();
             }
 
-            return accessToken;
+            return new ExtendRefreshTokenDto
+            {
+                AccessToken = accessToken,
+                AccessTokenExpiredDate = expiredDate
+            };
         }
 
 

@@ -11,8 +11,9 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="roleName"></param>
+        /// <param name="expiredDate"></param>
         /// <returns></returns>
-        string GenerateAccessToken(string id, string roleName);
+        string GenerateAccessToken(string id, string roleName, out DateTime expiredDate);
 
 
         /// <summary>
@@ -36,8 +37,10 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="randomString"></param>
         /// <param name="roleName"></param>
+        /// <param name="roleName"></param>
+        /// <param name="expiredDate"></param>
         /// <returns></returns>
-        RefreshToken GenerateRefreshToken(string id, string randomString, string roleName);
+        RefreshToken GenerateRefreshToken(string id, string randomString, string roleName, out DateTime expiredDate);
 
 
         /// <summary>
@@ -45,8 +48,9 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="tokenDto"></param>
         /// <param name="refreshToken"></param>
+        /// <param name="expiredDate"></param>
         /// <returns></returns>
-        string VerifyAndGenerateToken(RefreshTokenDto tokenDto, RefreshToken refreshToken);
+        string VerifyAndGenerateToken(RefreshTokenDto tokenDto, RefreshToken refreshToken, out DateTime expiredDate);
 
 
         /// <summary>
