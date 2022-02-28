@@ -55,7 +55,7 @@ namespace BLL.Services.Interfaces
         /// <param name="apartmentId"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        Task<List<ProductResponse>> GetProductByApartmentIdAndType(string apartmentId, string type);
+        // Task<List<ProductResponse>> GetProductByApartmentIdAndType(string apartmentId, string type);
 
 
         /// <summary>
