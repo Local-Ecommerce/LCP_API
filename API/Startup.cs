@@ -43,7 +43,9 @@ namespace API
                 options.AddPolicy(name: "MyPolicy", builder =>
                 {
                     builder.WithOrigins(Configuration.GetValue<string>("CorsOrigin:Backend"),
-                        Configuration.GetValue<string>("CorsOrigin:Frontend"), Configuration.GetValue<string>("CorsOrigin:Server"))
+                        Configuration.GetValue<string>("CorsOrigin:Frontend"),
+                        Configuration.GetValue<string>("CorsOrigin:Admin"),
+                        Configuration.GetValue<string>("CorsOrigin:Merchant"))
                            .AllowAnyHeader()
                            .AllowAnyMethod();
                 });
