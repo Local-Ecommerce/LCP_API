@@ -180,6 +180,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <param name="residentId"></param>
+        /// <param name="apartmentId"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
@@ -187,7 +188,7 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<object> GetMenu(
             string id, int?[] status,
-            string residentId, int? limit,
+            string residentId, string apartmentId, int? limit,
             int? page, string sort, string include)
         {
             PagingModel<Menu> menus;
@@ -204,7 +205,7 @@ namespace BLL.Services
 
             try
             {
-                menus = await _unitOfWork.Menus.GetMenu(id, status, residentId, limit, page, isAsc, propertyName, include);
+                menus = await _unitOfWork.Menus.GetMenu(id, status, residentId, apartmentId, limit, page, isAsc, propertyName, include);
 
                 if (_utilService.IsNullOrEmpty(menus.List))
                     throw new EntityNotFoundException(typeof(Menu), "in the url");

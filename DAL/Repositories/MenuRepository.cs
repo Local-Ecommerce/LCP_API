@@ -20,6 +20,7 @@ namespace DAL.Repositories
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <param name="residentId"></param>
+        /// <param name="apartmentId"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
@@ -28,7 +29,7 @@ namespace DAL.Repositories
         /// <returns></returns>
         public async Task<PagingModel<Menu>> GetMenu(
             string id, int?[] status,
-            string residentId, int? limit,
+            string residentId, string apartmentId, int? limit,
             int? queryPage, bool isAsc,
             string propertyName, string include)
         {
@@ -41,6 +42,12 @@ namespace DAL.Repositories
             //filter by status
             if (status.Length != 0)
                 query = query.Where(menu => status.Contains(menu.Status));
+
+            //filter by apartmentId
+            if (!string.IsNullOrEmpty(apartmentId))
+                query = query.Include(menu => menu.StoreMenuDetails)
+                             .ThenInclude(smd => smd.MerchantStore)
+                             .Where(menu => menu.StoreMenuDetails.All(smd => smd.MerchantStore.ApartmentId.Equals(apartmentId)));
 
             //filter by residentId
             if (!string.IsNullOrEmpty(residentId))
