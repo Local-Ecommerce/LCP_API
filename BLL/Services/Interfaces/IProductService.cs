@@ -38,24 +38,17 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
+        /// <param name="apartmentId"></param>
+        /// <param name="type"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
         Task<PagingModel<ExtendProductResponse>> GetProduct(
-            string id, int?[] status,
+            string id, int?[] status, string apartmentId, string type,
             int? limit, int? page,
             string sort, string include);
-
-
-        /// <summary>
-        /// Get Product By Apartment Id And Type
-        /// </summary>
-        /// <param name="apartmentId"></param>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        // Task<List<ProductResponse>> GetProductByApartmentIdAndType(string apartmentId, string type);
 
 
         /// <summary>

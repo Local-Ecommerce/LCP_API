@@ -142,7 +142,7 @@ namespace BLL.Services
             }
 
             //create response
-            var products = await GetProduct(baseProductId, Array.Empty<int?>(), default, default, default, "related");
+            var products = await GetProduct(baseProductId, Array.Empty<int?>(), default, default, default, default, default, "related");
             ExtendProductResponse productResponse = products.List.FirstOrDefault();
 
             return productResponse;
@@ -262,7 +262,7 @@ namespace BLL.Services
                 ExtendProductResponse newProduct = _redisService.GetList<ExtendProductResponse>(CACHE_KEY_FOR_UPDATE)
                     .Find(p => p.ProductId == productId);
 
-                if(newProduct != null)
+                if (newProduct != null)
                 {
                     product = _mapper.Map<Product>(newProduct);
                     isUpdate = true;
@@ -285,7 +285,7 @@ namespace BLL.Services
                 throw new EntityNotFoundException(typeof(Product), productId);
             }
 
-            if(isUpdate)
+            if (isUpdate)
                 //remove from redis
                 _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
                     new Predicate<ExtendProductResponse>(p => p.ProductId.Equals(productId)));
@@ -299,14 +299,16 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
+        /// <param name="apartmentId"></param>
+        /// <param name="type"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<ExtendProductResponse>> GetProduct(
-            string id, int?[] status, 
-            int? limit, int? page, 
+            string id, int?[] status, string apartmentId, string type,
+            int? limit, int? page,
             string sort, string include)
         {
             PagingModel<Product> products;
@@ -321,7 +323,9 @@ namespace BLL.Services
 
             try
             {
-                products = await _unitOfWork.Products.GetProduct(id, status, limit, page, isAsc, propertyName, include);
+                products = await _unitOfWork.Products.GetProduct
+                    (id, status, apartmentId, type, limit, page, isAsc, propertyName, include);
+
 
                 if (_utilService.IsNullOrEmpty(products.List))
                     throw new EntityNotFoundException(typeof(Product), "in the url");
