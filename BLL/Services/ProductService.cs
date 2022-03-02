@@ -60,7 +60,7 @@ namespace BLL.Services
                 product.Image = _firebaseService
                                         .UploadFilesToFirebase(baseProductRequest.Image, TYPE, product.ProductId, "Image", 0)
                                         .Result;
-                product.Status = (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT;
+                product.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
                 product.CreatedDate = DateTime.Now;
                 product.UpdatedDate = DateTime.Now;
                 product.IsFavorite = 0;
@@ -77,7 +77,7 @@ namespace BLL.Services
                     relatedProduct.Image = _firebaseService
                                         .UploadFilesToFirebase(relatedProductRequest.Image, TYPE, relatedProduct.ProductId, "Image", 0)
                                         .Result;
-                    relatedProduct.Status = (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT;
+                    relatedProduct.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
                     relatedProduct.CreatedDate = DateTime.Now;
                     relatedProduct.UpdatedDate = DateTime.Now;
                     relatedProduct.ApproveBy = "";
@@ -123,7 +123,7 @@ namespace BLL.Services
 
                     product.ProductId = productId;
                     product.Image = imageUrl;
-                    product.Status = (int)ProductStatus.UNVERIFIED_CREATE_PRODUCT;
+                    product.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
                     product.CreatedDate = DateTime.Now;
                     product.UpdatedDate = DateTime.Now;
                     product.ApproveBy = "";
