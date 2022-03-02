@@ -170,7 +170,7 @@ namespace BLL.Services
                     if (resident is null)
                         throw new UnauthorizedAccessException($"Role {accountRequest.Role} is invalid.");
                     else if (isCreate)
-                        account.AccountId = account.AccountId + "_" + resident.Type;
+                        resident.AccountId = account.AccountId + "_" + resident.Type;
                 }
 
                 //generate token
@@ -205,7 +205,9 @@ namespace BLL.Services
                 throw new UnauthorizedAccessException();
             }
 
-            account.RefreshTokens = account.RefreshTokens.Where(rt => rt.IsRevoked == false).ToList();
+            account.RefreshTokens = account.RefreshTokens.Where(rt => rt.IsRevoked == false)
+                                                            .OrderByDescending(rt => rt.CreatedDate)
+                                                            .ToList();
 
             //create response
             ExtendAccountResponse response = _mapper.Map<ExtendAccountResponse>(account);
