@@ -88,7 +88,7 @@ namespace API.Controllers
 
             //get role from token
             string claimRole = claim.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault().ToString();
-            string role = claimName.Substring(claimRole.LastIndexOf(':') + 2);
+            string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
 
             //Get MerchantStore
             object response = await _merchantStoreService.GetMerchantStore(id, apartmentid, residentId, role, status, limit, page, sort, include);

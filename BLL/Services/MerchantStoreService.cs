@@ -55,7 +55,7 @@ namespace BLL.Services
             try
             {
                 merchantStore.MerchantStoreId = _utilService.CreateId(PREFIX);
-                merchantStore.Status = (int)MerchantStoreStatus.UNVERIFIED_CREATE_MERCHANT_STORE;
+                merchantStore.Status = (int)MerchantStoreStatus.UNVERIFIED_MERCHANT_STORE;
                 merchantStore.CreatedDate = DateTime.Now;
 
                 _unitOfWork.MerchantStores.Add(merchantStore);

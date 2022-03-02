@@ -44,7 +44,7 @@ namespace BLL.Services
             try
             {
                 productCategory.ProductCategoryId = _utilService.CreateId(PREFIX);
-                productCategory.Status = (int)ProductCategoryStatus.UNVERIFIED_CREATE_PRODUCT_CATEGORY;
+                productCategory.Status = (int)ProductCategoryStatus.UNVERIFIED_PRODUCT_CATEGORY;
                 productCategory.CreatedDate = DateTime.Now;
                 productCategory.UpdatedDate = DateTime.Now;
 
@@ -131,7 +131,7 @@ namespace BLL.Services
             try
             {
                 productCategory = _mapper.Map(request, productCategory);
-                productCategory.Status = (int)ProductCategoryStatus.UNVERIFIED_UPDATE_PRODUCT_CATEGORY;
+                productCategory.Status = (int)ProductCategoryStatus.UNVERIFIED_PRODUCT_CATEGORY;
                 productCategory.UpdatedDate = DateTime.Now;
 
                 _unitOfWork.ProductCategories.Update(productCategory);
