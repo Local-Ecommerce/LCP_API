@@ -6,5 +6,6 @@ namespace BLL.Dtos.Account
     public class AccountRequest
     {
         public string FirebaseToken { get; set; }
+        public string Role { get; set; }
     }
 }

@@ -163,14 +163,14 @@ namespace BLL.Services
                     isCreate = true;
                 }
 
-                string roleId;
                 //find resident role
-                if (account.RoleId.Equals(RoleId.ADMIN))
-                    roleId = account.RoleId;
-                else
+                if (!account.RoleId.Equals(RoleId.ADMIN) || !accountRequest.Role.Equals(RoleId.ADMIN))
                 {
-                    Resident resident = account.Residents.FirstOrDefault();
-                    roleId = resident.Type;
+                    Resident resident = account.Residents.Where(r => r.Type.Equals(accountRequest.Role)).FirstOrDefault();
+                    if (resident is null)
+                        throw new UnauthorizedAccessException($"Role {accountRequest.Role} is invalid.");
+                    else if (isCreate)
+                        account.AccountId = account.AccountId + "_" + resident.Type;
                 }
 
                 //generate token
@@ -179,10 +179,11 @@ namespace BLL.Services
                 else
                     //revoke old refresh token
                     foreach (RefreshToken rt in refreshTokens)
-                        rt.IsRevoked = true;
+                        if (rt.Token.EndsWith(accountRequest.Role))
+                            rt.IsRevoked = true;
 
-                refreshTokens.Add(
-                    _tokenService.GenerateRefreshToken(account.AccountId, _utilService.CreateId(""), roleId, out accessTokenExpiredDate));
+                refreshTokens.Add(_tokenService
+                    .GenerateRefreshToken(account.AccountId, _utilService.CreateId(""), accountRequest.Role, out accessTokenExpiredDate));
 
                 if (isCreate)
                 {
@@ -261,51 +262,6 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Change Resident Type By Account Id
-        /// </summary>
-        /// <param name="accountId"></param>
-        /// <param name="residentType"></param>
-        /// <returns></returns>
-        public async Task<ExtendAccountResponse> ChangeResidentTypeByAccountId(string accountId, string residentType)
-        {
-            // TokenInfo tokenInfo;
-            Account account;
-            try
-            {
-                account = await _unitOfWork.Accounts.GetAccountIncludeResidentAndRefreshToken(accountId);
-
-                Resident resident = account.Residents.FirstOrDefault();
-
-                // tokenInfo = new()
-                // {
-                //     Token = account.Token,
-                //     ResidentId = resident.ResidentId,
-                //     ExpiredDate = account.TokenExpiredDate
-                // };
-
-                // account.Token = null;
-                // account.TokenExpiredDate = null;
-                // resident.Type = residentType;
-
-                // _unitOfWork.Accounts.Update(account);
-
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[AccountService.ChangeResidentTypeByAccountId()]: " + e.Message);
-                throw;
-            }
-
-            //move old token to blacklist
-            // _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,
-            //     new Predicate<TokenInfo>(ti => ti.Token == tokenInfo.Token));
-
-            return _mapper.Map<ExtendAccountResponse>(account);
-        }
-
-
-        /// <summary>
         /// Refresh Token
         /// </summary>
         /// <param name="refreshTokenDto"></param>
@@ -327,7 +283,7 @@ namespace BLL.Services
             string accessToken = _tokenService.VerifyAndGenerateToken(refreshTokenDto, refreshToken, out expiredDate);
 
             if (accessToken == null)
-                throw new UnauthorizedAccessException();
+                throw new TimeoutException();
 
             try
             {
@@ -337,7 +293,7 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[AccountService.RefreshToken()]: " + e.Message);
-                throw new IllegalArgumentException();
+                throw;
             }
 
             return new ExtendRefreshTokenDto

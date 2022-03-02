@@ -192,31 +192,5 @@ namespace API.Controllers
 
             return Ok(json);
         }
-
-
-        /// <summary>
-        /// Change Resident Type By Account Id (Admin)
-        /// </summary>
-        [Authorize(Roles = RoleId.ADMIN)]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> ChangeRoleByAccountId(string id, [FromQuery] string type)
-        {
-            _logger.Information($"PUT api/accounts/{id}?type={type} START");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //change Role By Account
-            ExtendAccountResponse response = await _accountService.ChangeResidentTypeByAccountId(id, type);
-
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendAccountResponse>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"PUT api/accounts/{id}?type={type} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
     }
 }

@@ -18,7 +18,6 @@ namespace BLL.Services
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
         private readonly IValidateDataService _validateDataService;
-        private const string PREFIX = "RS_";
 
 
         public ResidentService(IUnitOfWork unitOfWork,
@@ -39,56 +38,30 @@ namespace BLL.Services
         /// Create Resident
         /// </summary>
         /// <param name="residentRequest"></param>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<ResidentResponse> CreateResident(ResidentRequest residentRequest)
+        public async Task<ResidentResponse> CreateResident(ResidentRequest residentRequest, string residentId)
         {
-            //biz rule
-
-            //check valid Resident's Name
-            if (!_validateDataService.IsValidName(residentRequest.ResidentName))
-            {
-                _logger.Error($"[Invalid Name : '{residentRequest.ResidentName}']");
-
-                throw new BusinessException(ResidentStatus.INVALID_NAME_RESIDENT.ToString(), (int)ResidentStatus.INVALID_NAME_RESIDENT);
-
-            }
-
-            //check valid Resident's Type
-            if (!residentRequest.Type.Equals(ResidentType.MERCHANT) 
-                && !residentRequest.Type.Equals(ResidentType.MARKET_MANAGER)
-                && !residentRequest.Type.Equals(ResidentType.CUSTOMER))
-            {
-                _logger.Error($"[Invalid Resident Type : '{residentRequest.Type}']");
-
-                throw new BusinessException(ResidentStatus.INVALID_TYPE_RESIDENT.ToString(), (int)ResidentStatus.INVALID_TYPE_RESIDENT);
-
-            }
-
-            //check valid Resident's PhoneNumber
-            if (!_validateDataService.IsValidPhoneNumber(residentRequest.PhoneNumber))
-            {
-                _logger.Error($"[Invalid PhoneNumber : '{residentRequest.PhoneNumber}']");
-
-                throw new BusinessException(ResidentStatus.INVALID_PHONE_NUMBER_RESIDENT.ToString(), (int)ResidentStatus.INVALID_PHONE_NUMBER_RESIDENT);
-
-            }
-
             //check valid dob
             if (!_validateDataService.IsLaterThanPresent(residentRequest.DateOfBirth))
             {
                 _logger.Error($"[Invalid Date Of Birth : '{residentRequest.DateOfBirth}']");
 
                 throw new BusinessException(ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT.ToString(), (int)ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT);
-
             }
+
+            //get account Id
+            string accountId = residentId.Substring(0, residentId.IndexOf("_"));
 
             //Store Resident To Database
             Resident resident = _mapper.Map<Resident>(residentRequest);
             try
             {
-                resident.ResidentId = _utilService.CreateId(PREFIX);
+                resident.ResidentId = accountId + "_" + ResidentType.MERCHANT;
                 resident.Status = (int)ResidentStatus.ACTIVE_RESIDENT;
                 resident.CreatedDate = DateTime.Now;
+                resident.AccountId = accountId;
+                resident.Type = ResidentType.MERCHANT;
 
                 _unitOfWork.Residents.Add(resident);
 
@@ -114,24 +87,6 @@ namespace BLL.Services
         public async Task<ResidentResponse> UpdateResidentById(string id, ResidentUpdateRequest residentUpdateRequest)
         {
             Resident resident;
-
-            //check valid Resident's Name
-            if (!_validateDataService.IsValidName(residentUpdateRequest.ResidentName))
-            {
-                _logger.Error($"[Invalid Name : '{residentUpdateRequest.ResidentName}']");
-
-                throw new BusinessException(ResidentStatus.INVALID_NAME_RESIDENT.ToString(), (int)ResidentStatus.INVALID_NAME_RESIDENT);
-
-            }
-
-            //check valid Resident's PhoneNumber
-            if (!_validateDataService.IsValidPhoneNumber(residentUpdateRequest.PhoneNumber))
-            {
-                _logger.Error($"[Invalid PhoneNumber : '{residentUpdateRequest.PhoneNumber}']");
-
-                throw new BusinessException(ResidentStatus.INVALID_PHONE_NUMBER_RESIDENT.ToString(), (int)ResidentStatus.INVALID_PHONE_NUMBER_RESIDENT);
-
-            }
 
             //check valid dob
             if (!_validateDataService.IsLaterThanPresent(residentUpdateRequest.DateOfBirth))
@@ -228,8 +183,8 @@ namespace BLL.Services
         /// <param name="sort"></param>
         /// <returns></returns>
         public async Task<object> GetResident(
-            string id, string apartmentId, 
-            string accountId, int? limit, 
+            string id, string apartmentId,
+            string accountId, int? limit,
             int? page, string sort)
         {
             PagingModel<Resident> residents;
