@@ -61,14 +61,5 @@ namespace BLL.Services.Interfaces
         /// <param name="refreshTokenDto"></param>
         /// <returns></returns>
         Task<ExtendRefreshTokenDto> RefreshToken(RefreshTokenDto refreshTokenDto);
-
-
-        /// <summary>
-        /// Change Resident Type By Account Id
-        /// </summary>
-        /// <param name="accountId"></param>
-        /// <param name="residentType"></param>
-        /// <returns></returns>
-        Task<ExtendAccountResponse> ChangeResidentTypeByAccountId(string accountId, string residentType);
     }
 }

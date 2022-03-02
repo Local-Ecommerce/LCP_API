@@ -1,7 +1,5 @@
 ﻿using BLL.Services.Interfaces;
 using System;
-using System.Text.RegularExpressions;
-using System.Net.Mail;
 
 namespace BLL.Services
 {
@@ -21,80 +19,11 @@ namespace BLL.Services
         {
             if (date.HasValue)
             {
-                if(date.Value.Date >= DateTime.Now.Date)
+                if (date.Value.Date >= DateTime.Now.Date)
                     return false;
             }
 
             return true;
-        }
-
-
-        /// <summary>
-        /// Is Valid Email
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
-        public bool IsValidEmail(string email)
-        {
-            if (!String.IsNullOrEmpty(email))
-            {
-                try
-                {
-                    MailAddress mail = new(email);
-                    return true;
-                }
-                catch (FormatException) 
-                { 
-                    return false;
-                }
-            }
-            return false;
-        }
-
-
-        /// <summary>
-        /// Is Valid Name
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public bool IsValidName(string name)
-        {
-            if (!String.IsNullOrEmpty(name))
-            {
-                    return Regex.IsMatch(name, NAME_REGEX);
-
-            }
-            return false;
-        }
-
-
-        /// <summary>
-        /// Is Valid Phone Number
-        /// </summary>
-        /// <param name="phoneNumber"></param>
-        /// <returns></returns>
-        public bool IsValidPhoneNumber(string phoneNumber)
-        {
-            if (!String.IsNullOrEmpty(phoneNumber))
-            {
-                return Regex.IsMatch(phoneNumber, PHONE_REGEX);
-            }
-            return false;
-        }
-
-
-        /// <summary>
-        /// Is Valid Password
-        /// </summary>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public bool IsValidPassword(string password)
-        {
-            if (!String.IsNullOrEmpty(password))
-            {
-                return Regex.IsMatch(password, PASSWORD_REGEX);
-            }
-            return false;
         }
     }
 }

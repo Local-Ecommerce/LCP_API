@@ -158,7 +158,7 @@ namespace BLL.Services
                         Gender = documentDictionary.ContainsKey("gender") ? (string)documentDictionary["gender"] : default,
                         DeliveryAddress = documentDictionary.ContainsKey("deliveryAddress") ? (string)documentDictionary["deliveryAddress"] : default,
                         DateOfBirth = (DateTime?)documentDictionary["dob"],
-                        Type = ResidentType.CUSTOMER,
+                        Type = documentDictionary.ContainsKey("role") ? (string)documentDictionary["role"] : ResidentType.CUSTOMER,
                         AccountId = document.Id,
                         CreatedDate = DateTime.Now,
                         UpdatedDate = DateTime.Now,

@@ -9,8 +9,9 @@ namespace BLL.Services.Interfaces
         /// Create Resident
         /// </summary>
         /// <param name="residentRequest"></param>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<ResidentResponse> CreateResident(ResidentRequest residentRequest);
+        Task<ResidentResponse> CreateResident(ResidentRequest residentRequest, string residentId);
 
 
         /// <summary>

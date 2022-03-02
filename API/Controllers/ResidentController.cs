@@ -5,7 +5,10 @@ using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -28,9 +31,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Create a Resident (Apartment Roles)
+        /// Create a Merchant (Customer)
         /// </summary>
-        [Authorize(Roles = RoleId.APARTMENT)]
+        [Authorize(Roles = ResidentType.CUSTOMER)]
         [HttpPost]
         public async Task<IActionResult> CreateResident([FromBody] ResidentRequest residentRequest)
         {
@@ -40,8 +43,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
             //create Resident
-            ResidentResponse response = await _residentService.CreateResident(residentRequest);
+            ResidentResponse response = await _residentService.CreateResident(residentRequest, residentId);
 
             string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success(response));
 
@@ -70,7 +80,7 @@ namespace API.Controllers
             _logger.Information($"GET api/residents?id={id}&apartmentid={apartmentid}&accountid={accountid}" +
                 $"&limit={limit}&page={page}&sort={sort} START");
 
-            Stopwatch watch = new ();
+            Stopwatch watch = new();
             watch.Start();
 
             //get Resident
@@ -93,7 +103,7 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = RoleId.APARTMENT)]
         [HttpPut]
-        public async Task<IActionResult> UpdateResident([FromQuery]string id,
+        public async Task<IActionResult> UpdateResident([FromQuery] string id,
                                                       [FromBody] ResidentUpdateRequest residentUpdateRequest)
         {
             _logger.Information($"PUT api/residents?id={id} START Request: " +

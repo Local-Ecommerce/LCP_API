@@ -108,7 +108,7 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Generate Refresh Token
+        /// Generate Refresh Token 
         /// </summary>
         /// <param name="id"></param>
         /// <param name="randomString"></param>
@@ -120,7 +120,7 @@ namespace BLL.Services
         {
             return new RefreshToken
             {
-                Token = randomString,
+                Token = randomString + "_" + roleName,
                 AccessToken = GenerateAccessToken(id, roleName, out expiredDate),
                 AccountId = id,
                 IsRevoked = false,
