@@ -57,7 +57,7 @@ namespace BLL.Mappings
             CreateMap<MerchantStore, ExtendMerchantStoreResponse>().ReverseMap();
 
             //ProCategory Mapping
-            CreateMap<ProductCategoryRequest, ProductCategory>();
+            CreateMap<ProductCategoryRequest, ProductCategory>().ReverseMap();
             CreateMap<ProductCategory, ProductCategoryResponse>().ReverseMap();
             CreateMap<ProductCategory, ExtendProductCategoryResponse>();
 

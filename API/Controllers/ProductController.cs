@@ -83,9 +83,9 @@ namespace API.Controllers
             string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
             //add related product
-            ProductResponse response = await _productService.AddRelatedProduct(id, residentId, relatedProductRequest);
+            object response = await _productService.AddRelatedProduct(id, residentId, relatedProductRequest);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ProductResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
