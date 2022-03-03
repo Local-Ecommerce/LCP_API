@@ -8,9 +8,10 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Create Menu
         /// </summary>
+        /// <param name="residentId"></param>
         /// <param name="menuRequest"></param>
         /// <returns></returns>
-        Task<MenuResponse> CreateMenu(MenuRequest menuRequest);
+        Task<MenuResponse> CreateMenu(string residentId, MenuRequest menuRequest);
 
 
         /// <summary>

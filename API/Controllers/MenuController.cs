@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace API.Controllers
 {
@@ -38,8 +41,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
             //Create Menu
-            MenuResponse response = await _menuService.CreateMenu(menuRequest);
+            MenuResponse response = await _menuService.CreateMenu(residentId, menuRequest);
 
             string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
 

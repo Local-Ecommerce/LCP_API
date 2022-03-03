@@ -39,9 +39,10 @@ namespace BLL.Services
         /// <summary>
         /// Create Menu
         /// </summary>
+        /// <param name="residentId"></param>
         /// <param name="menuRequest"></param>
         /// <returns></returns>
-        public async Task<MenuResponse> CreateMenu(MenuRequest menuRequest)
+        public async Task<MenuResponse> CreateMenu(string residentId, MenuRequest menuRequest)
         {
             Menu menu = _mapper.Map<Menu>(menuRequest);
             try
@@ -50,6 +51,7 @@ namespace BLL.Services
                 menu.CreatedDate = DateTime.Now;
                 menu.UpdatedDate = DateTime.Now;
                 menu.Status = (int)MenuStatus.ACTIVE_MENU;
+                menu.ResidentId = residentId;
 
                 _unitOfWork.Menus.Add(menu);
 

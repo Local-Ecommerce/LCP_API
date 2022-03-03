@@ -8,9 +8,10 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Create Merchant Store
         /// </summary>
+        /// <param name="residentId"></param>
         /// <param name="merchantStoreRequest"></param>
         /// <returns></returns>
-        Task<MerchantStoreResponse> CreateMerchantStore(MerchantStoreRequest merchantStoreRequest);
+        Task<MerchantStoreResponse> CreateMerchantStore(string residentId, MerchantStoreRequest merchantStoreRequest);
 
 
         /// <summary>

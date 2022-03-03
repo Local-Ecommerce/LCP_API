@@ -7,6 +7,7 @@ using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
 using System.Collections.Generic;
+using BLL.Dtos.Exception;
 
 namespace BLL.Services
 {
@@ -69,6 +70,11 @@ namespace BLL.Services
             {
                 storeMenuDetails.ForEach(storeMenuDetail =>
                 {
+                    if (TimeSpan.Compare(storeMenuDetail.TimeStart.Value, storeMenuDetail.TimeEnd.Value) >= 0)
+                    {
+                        throw new IllegalArgumentException
+                        ($"The start time {storeMenuDetail.TimeStart} is >= the end time {storeMenuDetail.TimeEnd}");
+                    }
                     storeMenuDetail.StoreMenuDetailId = _utilService.CreateId(PREFIX);
                     storeMenuDetail.Status = (int)StoreMenuDetailStatus.ACTIVE_STORE_MENU_DETAIL;
                     _unitOfWork.StoreMenuDetails.Add(storeMenuDetail);

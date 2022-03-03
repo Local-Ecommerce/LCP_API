@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -39,8 +41,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
             //create product
-            ExtendProductResponse response = await _productService.CreateProduct(productRequest);
+            ExtendProductResponse response = await _productService.CreateProduct(residentId, productRequest);
 
             string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
 
@@ -66,8 +75,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
-            //create product
-            ProductResponse response = await _productService.AddRelatedProduct(id, relatedProductRequest);
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
+            //add related product
+            ProductResponse response = await _productService.AddRelatedProduct(id, residentId, relatedProductRequest);
 
             string json = JsonSerializer.Serialize(ApiResponse<ProductResponse>.Success(response));
 
