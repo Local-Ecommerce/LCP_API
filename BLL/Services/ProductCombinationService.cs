@@ -173,9 +173,6 @@ namespace BLL.Services
             {
                 products = await _unitOfWork.ProductCombinations
                 .GetProductCombination(id, productId, status, limit, page, isAsc, propertyName);
-
-                if (_utilService.IsNullOrEmpty(products.List))
-                    throw new EntityNotFoundException(typeof(ProductCombination), "in the url");
             }
             catch (Exception e)
             {

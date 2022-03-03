@@ -164,9 +164,6 @@ namespace BLL.Services
             try
             {
                 apartments = await _unitOfWork.Apartments.GetApartment(id, status, limit, page, isAsc, propertyName, include);
-
-                if (_utilService.IsNullOrEmpty(apartments.List))
-                    throw new EntityNotFoundException(typeof(Apartment), "in the url");
             }
             catch (Exception e)
             {

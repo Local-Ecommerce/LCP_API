@@ -40,7 +40,6 @@ namespace BLL.Mappings
             CreateMap<Apartment, ApartmentResponse>().ReverseMap();
             CreateMap<Apartment, ExtendApartmentResponse>().ReverseMap();
 
-
             //Account Mapping
             CreateMap<AccountRequest, Account>();
             CreateMap<AccountResponse, Account>().ReverseMap();

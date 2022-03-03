@@ -1,4 +1,6 @@
 ﻿using BLL.Dtos.ProductCategory;
+using DAL.Models;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -11,6 +13,15 @@ namespace BLL.Services.Interfaces
         /// <param name="request"></param>
         /// <returns></returns>
         Task<ProductCategoryResponse> CreateProCategory(ProductCategoryRequest request);
+
+
+        /// <summary>
+        /// Create Product Category
+        /// </summary>
+        /// <param name="product"></param>
+        /// <param name="requests"></param>
+        /// <returns></returns>
+        Product CreateProCategory(Product product, Collection<ProductCategoryRequest> requests);
 
 
         /// <summary>
