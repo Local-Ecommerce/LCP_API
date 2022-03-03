@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using BLL.Dtos.ProductCategory;
 
 namespace BLL.Services
 {
@@ -114,11 +115,17 @@ namespace BLL.Services
         /// <param name="residentId"></param>
         /// <param name="productRequests"></param>
         /// <returns></returns>
-        public async Task<ExtendProductResponse> AddRelatedProduct(string baseProductId, string residentId,
+        public async Task<PagingModel<ExtendProductResponse>> AddRelatedProduct(string baseProductId, string residentId,
             List<ProductRequest> productRequests)
         {
             try
             {
+                //add product category from base product
+                List<ProductCategory> productCategories =
+                    await _unitOfWork.ProductCategories.FindListAsync(pc => pc.ProductId.Equals(baseProductId));
+
+                Collection<ProductCategoryRequest> proCateRequest = _mapper.Map<Collection<ProductCategoryRequest>>(productCategories);
+
                 productRequests.ForEach(productRequest =>
                 {
                     string productId = _utilService.CreateId(PREFIX);
@@ -138,6 +145,8 @@ namespace BLL.Services
                     product.ResidentId = residentId;
                     product.BelongTo = baseProductId;
 
+                    product = _productCategoryService.CreateProCategory(product, proCateRequest);
+
                     _unitOfWork.Products.Add(product);
                 });
 
@@ -150,11 +159,7 @@ namespace BLL.Services
                 throw;
             }
 
-            //create response
-            var products = await GetProduct(baseProductId, Array.Empty<int?>(), default, default, default, default, default, "related");
-            ExtendProductResponse productResponse = products.List.FirstOrDefault();
-
-            return productResponse;
+            return await GetProduct(baseProductId, Array.Empty<int?>(), default, default, default, default, default, "related");
         }
 
 

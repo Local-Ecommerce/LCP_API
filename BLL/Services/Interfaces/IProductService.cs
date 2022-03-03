@@ -22,7 +22,7 @@ namespace BLL.Services.Interfaces
         /// <param name="residentId"></param>
         /// <param name="productRequests"></param>
         /// <returns></returns>
-        Task<ExtendProductResponse> AddRelatedProduct(string baseProductId, string residentId,
+        Task<PagingModel<ExtendProductResponse>> AddRelatedProduct(string baseProductId, string residentId,
             List<ProductRequest> productRequests);
 
 
