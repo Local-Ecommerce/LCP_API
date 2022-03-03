@@ -169,8 +169,6 @@ namespace BLL.Services
                     Resident resident = account.Residents.Where(r => r.Type.Equals(accountRequest.Role)).FirstOrDefault();
                     if (resident is null)
                         throw new UnauthorizedAccessException($"Role {accountRequest.Role} is invalid.");
-                    else if (isCreate)
-                        resident.AccountId = account.AccountId + "_" + resident.Type;
                 }
 
                 //generate token

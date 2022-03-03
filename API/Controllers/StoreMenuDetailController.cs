@@ -33,22 +33,22 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPost]
-        public async Task<IActionResult> CreateStoreMenuDetail([FromQuery] string storeid, [FromBody] List<StoreMenuDetailRequest> requests)
+        public async Task<IActionResult> CreateStoreMenuDetail([FromBody] List<StoreMenuDetailRequest> requests)
         {
-            _logger.Information($"POST api/store-menus?storeid={storeid} START Request: " +
+            _logger.Information($"POST api/store-menus START Request: " +
                 $"{JsonSerializer.Serialize(requests)}");
 
             Stopwatch watch = new();
             watch.Start();
 
             //create
-            List<StoreMenuDetailResponse> response = await _storeMenuDetailService.AddStoreMenuDetailsToMerchantStore(storeid, requests);
+            List<StoreMenuDetailResponse> response = await _storeMenuDetailService.AddStoreMenuDetailsToMerchantStore(requests);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"POST api/store-menus?storeid={storeid} END duration: " +
+            _logger.Information($"POST api/store-menus END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -69,7 +69,7 @@ namespace API.Controllers
             watch.Start();
 
             //update
-            StoreMenuDetailResponse response = 
+            StoreMenuDetailResponse response =
                 await _storeMenuDetailService.UpdateStoreMenuDetailById(id, request);
 
             string json = JsonSerializer.Serialize(ApiResponse<StoreMenuDetailResponse>.Success(response));

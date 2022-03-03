@@ -153,7 +153,7 @@ namespace BLL.Services
 
                     ResidentResponse residentResponse = new ResidentResponse
                     {
-                        ResidentId = document.Id,
+                        ResidentId = document.Id + "_" + (documentDictionary.ContainsKey("role") ? (string)documentDictionary["role"] : ResidentType.CUSTOMER),
                         ResidentName = documentDictionary.ContainsKey("fullname") ? (string)documentDictionary["fullname"] : default,
                         Gender = documentDictionary.ContainsKey("gender") ? (string)documentDictionary["gender"] : default,
                         DeliveryAddress = documentDictionary.ContainsKey("deliveryAddress") ? (string)documentDictionary["deliveryAddress"] : default,

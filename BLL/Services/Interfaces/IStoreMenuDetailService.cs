@@ -11,7 +11,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="storeMenuDetailRequest"></param>
         /// <returns></returns>
-        Task<List<StoreMenuDetailResponse>> AddStoreMenuDetailsToMerchantStore(string merchantStoreId,
+        Task<List<StoreMenuDetailResponse>> AddStoreMenuDetailsToMerchantStore(
             List<StoreMenuDetailRequest> storeMenuDetailRequest);
 
 

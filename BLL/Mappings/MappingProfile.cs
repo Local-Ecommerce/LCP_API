@@ -62,14 +62,6 @@ namespace BLL.Mappings
             CreateMap<ProductCategory, ProductCategoryResponse>().ReverseMap();
             CreateMap<ProductCategory, ExtendProductCategoryResponse>();
 
-            //Collection Mapping
-            CreateMap<CollectionRequest, Collection>();
-            CreateMap<CollectionUpdateRequest, Collection>();
-            CreateMap<Collection, CollectionResponse>().ReverseMap();
-
-            //CollectionMapping Mapping
-            CreateMap<CollectionMapping, CollectionMappingResponse>();
-
             //News Mapping
             CreateMap<NewsRequest, News>();
             CreateMap<NewsUpdateRequest, News>();
@@ -92,11 +84,6 @@ namespace BLL.Mappings
             CreateMap<ProductInMenuRequest, ProductInMenu>();
             CreateMap<ProductInMenu, ProductInMenuResponse>();
             CreateMap<ProductInMenu, ExtendProductInMenuResponse>();
-
-            //Store Menu Detail Mapping
-            CreateMap<StoreMenuDetailRequest, StoreMenuDetail>();
-            CreateMap<StoreMenuDetail, StoreMenuDetailResponse>();
-            CreateMap<StoreMenuDetail, ExtendStoreMenuDetailResponse>();
 
             //Payment Mapping
             CreateMap<PaymentRequest, Payment>();
