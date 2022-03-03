@@ -43,8 +43,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
             //create MerchantStore
-            MerchantStoreResponse response = await _merchantStoreService.CreateMerchantStore(merchantStoreRequest);
+            MerchantStoreResponse response = await _merchantStoreService.CreateMerchantStore(residentId, merchantStoreRequest);
 
             string json = JsonSerializer.Serialize(ApiResponse<MerchantStoreResponse>.Success(response));
 

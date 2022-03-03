@@ -44,12 +44,11 @@ namespace BLL.Services
         /// <summary>
         /// Create Merchant Store
         /// </summary>
+        /// <param name="residentId"></param>
         /// <param name="merchantStoreRequest"></param>
         /// <returns></returns>
-        public async Task<MerchantStoreResponse> CreateMerchantStore(MerchantStoreRequest merchantStoreRequest)
+        public async Task<MerchantStoreResponse> CreateMerchantStore(string residentId, MerchantStoreRequest merchantStoreRequest)
         {
-            //biz rule
-
             //Store MerchantStore To Database
             MerchantStore merchantStore = _mapper.Map<MerchantStore>(merchantStoreRequest);
             try
@@ -57,6 +56,7 @@ namespace BLL.Services
                 merchantStore.MerchantStoreId = _utilService.CreateId(PREFIX);
                 merchantStore.Status = (int)MerchantStoreStatus.UNVERIFIED_MERCHANT_STORE;
                 merchantStore.CreatedDate = DateTime.Now;
+                merchantStore.ResidentId = residentId;
 
                 _unitOfWork.MerchantStores.Add(merchantStore);
 

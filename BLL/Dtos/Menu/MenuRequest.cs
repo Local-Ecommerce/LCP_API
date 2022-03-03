@@ -7,6 +7,5 @@ namespace BLL.Dtos.Menu
     {
         public string MenuName { get; set; }
         public string MenuDescription { get; set; }
-        public string ResidentId { get; set; }
     }
 }

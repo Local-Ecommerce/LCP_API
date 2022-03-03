@@ -97,7 +97,7 @@ namespace API.Controllers
 
             //get role from token
             string claimRole = claim.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault().ToString();
-            string role = claimName.Substring(claimRole.LastIndexOf(':') + 2);
+            string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
 
             //Get Order
             object response = await

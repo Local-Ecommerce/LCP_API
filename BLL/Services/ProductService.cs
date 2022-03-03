@@ -46,9 +46,10 @@ namespace BLL.Services
         /// <summary>
         /// Create product
         /// </summary>
+        /// <param name="residentId"></param>
         /// <param name="baseProductRequest"></param>
         /// <returns></returns>
-        public async Task<ExtendProductResponse> CreateProduct(BaseProductRequest baseProductRequest)
+        public async Task<ExtendProductResponse> CreateProduct(string residentId, BaseProductRequest baseProductRequest)
         {
             //biz rule
 
@@ -66,6 +67,7 @@ namespace BLL.Services
                 product.IsFavorite = 0;
                 product.ApproveBy = "";
                 product.BelongTo = null;
+                product.ResidentId = residentId;
                 product.InverseBelongToNavigation = new Collection<Product>();
 
                 //create related product
@@ -81,6 +83,7 @@ namespace BLL.Services
                     relatedProduct.CreatedDate = DateTime.Now;
                     relatedProduct.UpdatedDate = DateTime.Now;
                     relatedProduct.ApproveBy = "";
+                    relatedProduct.ResidentId = residentId;
                     relatedProduct.BelongTo = product.ProductId;
 
                     product.InverseBelongToNavigation.Add(relatedProduct);
@@ -104,9 +107,11 @@ namespace BLL.Services
         /// <summary>
         /// Add Related Product
         /// </summary>
+        /// <param name="baseProductId"></param>
+        /// <param name="residentId"></param>
         /// <param name="productRequests"></param>
         /// <returns></returns>
-        public async Task<ExtendProductResponse> AddRelatedProduct(string baseProductId,
+        public async Task<ExtendProductResponse> AddRelatedProduct(string baseProductId, string residentId,
             List<ProductRequest> productRequests)
         {
             try
@@ -127,6 +132,7 @@ namespace BLL.Services
                     product.CreatedDate = DateTime.Now;
                     product.UpdatedDate = DateTime.Now;
                     product.ApproveBy = "";
+                    product.ResidentId = residentId;
                     product.BelongTo = baseProductId;
 
                     _unitOfWork.Products.Add(product);
