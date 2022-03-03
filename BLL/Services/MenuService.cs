@@ -208,9 +208,6 @@ namespace BLL.Services
             try
             {
                 menus = await _unitOfWork.Menus.GetMenu(id, status, residentId, apartmentId, limit, page, isAsc, propertyName, include);
-
-                if (_utilService.IsNullOrEmpty(menus.List))
-                    throw new EntityNotFoundException(typeof(Menu), "in the url");
             }
             catch (Exception e)
             {

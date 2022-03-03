@@ -19,6 +19,7 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IFirebaseService _firebaseService;
+        private readonly IProductCategoryService _productCategoryService;
         private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
         private const string PREFIX = "PD_";
@@ -32,6 +33,7 @@ namespace BLL.Services
             IMapper mapper,
             IRedisService redisService,
             IUtilService utilService,
+            IProductCategoryService productCategoryService,
             IFirebaseService firebaseService)
         {
             _unitOfWork = unitOfWork;
@@ -40,6 +42,7 @@ namespace BLL.Services
             _mapper = mapper;
             _redisService = redisService;
             _utilService = utilService;
+            _productCategoryService = productCategoryService;
         }
 
 
@@ -51,10 +54,8 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<ExtendProductResponse> CreateProduct(string residentId, BaseProductRequest baseProductRequest)
         {
-            //biz rule
-
-            //store product to database
             Product product = _mapper.Map<Product>(baseProductRequest);
+            Collection<ProductCategory> categories = new();
             try
             {
                 product.ProductId = _utilService.CreateId(PREFIX); ;
@@ -89,6 +90,9 @@ namespace BLL.Services
                     product.InverseBelongToNavigation.Add(relatedProduct);
                 }
 
+                //add productCategory
+                product = _productCategoryService.CreateProCategory(product, baseProductRequest.ProductCategories);
+
                 _unitOfWork.Products.Add(product);
 
                 await _unitOfWork.SaveChangesAsync();
@@ -96,7 +100,6 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[ProductService.CreateBaseProduct()]: " + e.Message);
-
                 throw;
             }
 
@@ -331,10 +334,6 @@ namespace BLL.Services
             {
                 products = await _unitOfWork.Products.GetProduct
                     (id, status, apartmentId, type, limit, page, isAsc, propertyName, include);
-
-
-                if (_utilService.IsNullOrEmpty(products.List))
-                    throw new EntityNotFoundException(typeof(Product), "in the url");
             }
             catch (Exception e)
             {

@@ -37,7 +37,7 @@ namespace BLL.Services
         /// <param name="menuId"></param>
         /// <param name="productInMenuRequests"></param>
         /// <returns></returns>
-        public async Task<List<ExtendProductInMenuResponse>> AddProductsToMenu(string menuId, 
+        public async Task<List<ExtendProductInMenuResponse>> AddProductsToMenu(string menuId,
             List<ProductInMenuRequest> productInMenuRequests)
         {
             List<ProductInMenu> productInMenus = _mapper.Map<List<ProductInMenu>>(productInMenuRequests);
@@ -121,9 +121,6 @@ namespace BLL.Services
             try
             {
                 pims = await _unitOfWork.ProductInMenus.GetProductInMenu(id, menuId, limit, page, isAsc, propertyName, include);
-
-                if (_utilService.IsNullOrEmpty(pims.List))
-                    throw new EntityNotFoundException(typeof(Menu), $"id={id}, menuId={menuId}, limit={limit}, page={page}, sort={sort}, includee={include}");
             }
             catch (Exception e)
             {
@@ -148,7 +145,7 @@ namespace BLL.Services
         /// <param name="productInMenuUpdateRequest"></param>
         /// <returns></returns>
         /// <exception cref="EntityNotFoundException"></exception>
-        public async Task<ExtendProductInMenuResponse> UpdateProductInMenuById(string productInMenuId, 
+        public async Task<ExtendProductInMenuResponse> UpdateProductInMenuById(string productInMenuId,
             ProductInMenuUpdateRequest productInMenuUpdateRequest)
         {
             ProductInMenu productInMenu;

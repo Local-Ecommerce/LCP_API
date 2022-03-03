@@ -163,12 +163,22 @@ namespace BLL.Services
                     isCreate = true;
                 }
 
+                RefreshToken refreshToken;
+
                 //find resident role
                 if (!account.RoleId.Equals(RoleId.ADMIN) || !accountRequest.Role.Equals(RoleId.ADMIN))
                 {
                     Resident resident = account.Residents.Where(r => r.Type.Equals(accountRequest.Role)).FirstOrDefault();
                     if (resident is null)
                         throw new UnauthorizedAccessException($"Role {accountRequest.Role} is invalid.");
+
+                    refreshToken = _tokenService.GenerateRefreshToken(resident.ResidentId,
+                                    _utilService.CreateId(""), accountRequest.Role, out accessTokenExpiredDate);
+                }
+                else
+                {
+                    refreshToken = _tokenService.GenerateRefreshToken(account.AccountId,
+                                    _utilService.CreateId(""), accountRequest.Role, out accessTokenExpiredDate);
                 }
 
                 //generate token
@@ -180,8 +190,7 @@ namespace BLL.Services
                         if (rt.Token.EndsWith(accountRequest.Role))
                             rt.IsRevoked = true;
 
-                refreshTokens.Add(_tokenService
-                    .GenerateRefreshToken(account.AccountId, _utilService.CreateId(""), accountRequest.Role, out accessTokenExpiredDate));
+                refreshTokens.Add(refreshToken);
 
                 if (isCreate)
                 {
@@ -209,10 +218,10 @@ namespace BLL.Services
 
             //create response
             ExtendAccountResponse response = _mapper.Map<ExtendAccountResponse>(account);
-            ExtendRefreshTokenDto refreshToken = response.RefreshTokens.FirstOrDefault();
-            refreshToken.AccessTokenExpiredDate = accessTokenExpiredDate;
+            ExtendRefreshTokenDto refreshTokenResponse = response.RefreshTokens.FirstOrDefault();
+            refreshTokenResponse.AccessTokenExpiredDate = accessTokenExpiredDate;
 
-            response.RefreshTokens = new Collection<ExtendRefreshTokenDto>() { refreshToken };
+            response.RefreshTokens = new Collection<ExtendRefreshTokenDto>() { refreshTokenResponse };
 
             return response;
         }

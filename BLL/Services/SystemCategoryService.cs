@@ -151,9 +151,6 @@ namespace BLL.Services
             try
             {
                 categories = await _unitOfWork.SystemCategories.GetSystemCategory(id, limit, page, isAsc, propertyName);
-
-                if (_utilService.IsNullOrEmpty(categories.List))
-                    throw new EntityNotFoundException(typeof(SystemCategory), "in the url");
             }
             catch (Exception e)
             {

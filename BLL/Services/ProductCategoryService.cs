@@ -8,6 +8,7 @@ using DAL.UnitOfWork;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace BLL.Services
 {
@@ -173,9 +174,6 @@ namespace BLL.Services
             try
             {
                 productCategories = await _unitOfWork.ProductCategories.GetProductCategory(id, status, limit, page, isAsc, propertyName);
-
-                if (_utilService.IsNullOrEmpty(productCategories.List))
-                    throw new EntityNotFoundException(typeof(ProductCategory), "in the url");
             }
             catch (Exception e)
             {
@@ -190,6 +188,41 @@ namespace BLL.Services
                 LastPage = productCategories.LastPage,
                 Total = productCategories.Total,
             };
+        }
+
+
+        /// <summary>
+        /// Create Product Category
+        /// </summary>
+        /// <param name="product"></param>
+        /// <param name="requests"></param>
+        /// <returns></returns>
+        public Product CreateProCategory(Product product, Collection<ProductCategoryRequest> requests)
+        {
+            Collection<ProductCategory> productCategories = new();
+            List<Product> products = new();
+            products.Add(product);
+            products.AddRange(product.InverseBelongToNavigation);
+
+            //create product Category
+            foreach (Product pro in products)
+            {
+                foreach (var proCate in requests)
+                {
+                    ProductCategory productCategory = _mapper.Map<ProductCategory>(proCate);
+                    productCategory.ProductCategoryId = _utilService.CreateId(PREFIX);
+                    productCategory.Status = (int)ProductCategoryStatus.UNVERIFIED_PRODUCT_CATEGORY;
+                    productCategory.CreatedDate = DateTime.Now;
+                    productCategory.UpdatedDate = DateTime.Now;
+                    productCategory.ProductId = pro.ResidentId;
+                    productCategory.ResidentId = pro.ResidentId;
+
+                    productCategories.Add(productCategory);
+                }
+            }
+
+            product.ProductCategories = productCategories;
+            return product;
         }
     }
 }

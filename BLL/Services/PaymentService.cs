@@ -174,9 +174,6 @@ namespace BLL.Services
             {
                 paymentMethods = await _unitOfWork.Payments
                 .GetPayment(id, orderId, paymentMethodId, date, status, limit, page, isAsc, propertyName);
-
-                if (_utilService.IsNullOrEmpty(paymentMethods.List))
-                    throw new EntityNotFoundException(typeof(Payment), "in the url");
             }
             catch (Exception e)
             {

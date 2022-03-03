@@ -200,9 +200,6 @@ namespace BLL.Services
             try
             {
                 residents = await _unitOfWork.Residents.GetResident(id, apartmentId, accountId, limit, page, isAsc, propertyName);
-
-                if (_utilService.IsNullOrEmpty(residents.List))
-                    throw new EntityNotFoundException(typeof(Resident), "in the url");
             }
             catch (Exception e)
             {

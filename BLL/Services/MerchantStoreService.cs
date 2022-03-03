@@ -152,8 +152,6 @@ namespace BLL.Services
         }
 
 
-
-
         /// <summary>
         /// Update Store Menu Detail By Id
         /// </summary>
@@ -301,9 +299,6 @@ namespace BLL.Services
             {
                 merchantStore = await _unitOfWork.MerchantStores.GetMerchantStore(id, apartmentId, residentId,
                     status, limit, page, isAsc, propertyName, include);
-
-                if (_utilService.IsNullOrEmpty(merchantStore.List))
-                    throw new EntityNotFoundException(typeof(Menu), "in the url");
             }
             catch (Exception e)
             {

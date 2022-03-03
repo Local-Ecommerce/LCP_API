@@ -15,6 +15,6 @@ namespace BLL.Dtos.Product
         public UpdateProductRequest UpdatedProduct { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public Collection<ExtendProductCategoryResponse> ProductCategoryResponses { get; set; }
+        public Collection<ExtendProductCategoryResponse> ProductCategories { get; set; }
     }
 }
