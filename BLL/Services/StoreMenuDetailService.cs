@@ -42,8 +42,8 @@ namespace BLL.Services
             StoreMenuDetail storeMenuDetail = new()
             {
                 StoreMenuDetailId = _utilService.CreateId(PREFIX),
-                TimeStart = TimeSpan.Zero,
-                TimeEnd = TimeSpan.FromHours((int)TimeUnit.TWENTY_FOUR_HOUR),
+                TimeStart = new TimeSpan(0, 0, 0),
+                TimeEnd = new TimeSpan(23, 59, 59),
                 Status = (int)StoreMenuDetailStatus.ACTIVE_STORE_MENU_DETAIL,
                 RepeatDate = "2345678",
                 MenuId = menuId,
@@ -59,10 +59,9 @@ namespace BLL.Services
         /// <summary>
         /// Add Store Menu Details To Merchant Store
         /// </summary>
-        /// <param name="merchantStoreId"></param>
         /// <param name="storeMenuDetailRequest"></param>
         /// <returns></returns>
-        public async Task<List<StoreMenuDetailResponse>> AddStoreMenuDetailsToMerchantStore(string merchantStoreId,
+        public async Task<List<StoreMenuDetailResponse>> AddStoreMenuDetailsToMerchantStore(
             List<StoreMenuDetailRequest> storeMenuDetailRequest)
         {
             List<StoreMenuDetail> storeMenuDetails = _mapper.Map<List<StoreMenuDetail>>(storeMenuDetailRequest);
@@ -71,11 +70,8 @@ namespace BLL.Services
                 storeMenuDetails.ForEach(storeMenuDetail =>
                 {
                     storeMenuDetail.StoreMenuDetailId = _utilService.CreateId(PREFIX);
-                    storeMenuDetail.MerchantStoreId = merchantStoreId;
                     storeMenuDetail.Status = (int)StoreMenuDetailStatus.ACTIVE_STORE_MENU_DETAIL;
-
                     _unitOfWork.StoreMenuDetails.Add(storeMenuDetail);
-
                 });
 
                 await _unitOfWork.SaveChangesAsync();

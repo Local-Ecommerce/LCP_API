@@ -41,7 +41,7 @@ namespace DAL.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=localhost;Database=LoichDB;User ID=sa;pwd=123456;");
+                optionsBuilder.UseSqlServer("Server=localhost;Database=LoichDB;Trusted_Connection=True;");
             }
         }
 
@@ -489,12 +489,12 @@ namespace DAL.Models
             modelBuilder.Entity<RefreshToken>(entity =>
             {
                 entity.HasKey(e => e.Token)
-                    .HasName("PK__RefreshT__1EB4F816C5CEB517");
+                    .HasName("PK__RefreshT__1EB4F81638C38772");
 
                 entity.ToTable("RefreshToken");
 
                 entity.Property(e => e.Token)
-                    .HasMaxLength(16)
+                    .HasMaxLength(50)
                     .IsUnicode(false);
 
                 entity.Property(e => e.AccessToken).IsUnicode(false);
