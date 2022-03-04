@@ -58,27 +58,27 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Add Store Menu Details To Merchant Store
+        /// Create Store Menu Details
         /// </summary>
         /// <param name="storeMenuDetailRequest"></param>
+        /// <param name="menuId"></param>
         /// <returns></returns>
-        public async Task<List<StoreMenuDetailResponse>> AddStoreMenuDetailsToMerchantStore(
-            List<StoreMenuDetailRequest> storeMenuDetailRequest)
+        public async Task<StoreMenuDetailResponse> CreateStoreMenuDetails(
+            StoreMenuDetailRequest storeMenuDetailRequest, string menuId)
         {
-            List<StoreMenuDetail> storeMenuDetails = _mapper.Map<List<StoreMenuDetail>>(storeMenuDetailRequest);
+            StoreMenuDetail storeMenuDetail = _mapper.Map<StoreMenuDetail>(storeMenuDetailRequest);
             try
             {
-                storeMenuDetails.ForEach(storeMenuDetail =>
+                if (TimeSpan.Compare(storeMenuDetail.TimeStart.Value, storeMenuDetail.TimeEnd.Value) >= 0)
                 {
-                    if (TimeSpan.Compare(storeMenuDetail.TimeStart.Value, storeMenuDetail.TimeEnd.Value) >= 0)
-                    {
-                        throw new IllegalArgumentException
-                        ($"The start time {storeMenuDetail.TimeStart} is >= the end time {storeMenuDetail.TimeEnd}");
-                    }
-                    storeMenuDetail.StoreMenuDetailId = _utilService.CreateId(PREFIX);
-                    storeMenuDetail.Status = (int)StoreMenuDetailStatus.ACTIVE_STORE_MENU_DETAIL;
-                    _unitOfWork.StoreMenuDetails.Add(storeMenuDetail);
-                });
+                    throw new IllegalArgumentException
+                    ($"The start time {storeMenuDetail.TimeStart} is >= the end time {storeMenuDetail.TimeEnd}");
+                }
+
+                storeMenuDetail.StoreMenuDetailId = _utilService.CreateId(PREFIX);
+                storeMenuDetail.Status = (int)StoreMenuDetailStatus.ACTIVE_STORE_MENU_DETAIL;
+                storeMenuDetail.MenuId = menuId;
+                _unitOfWork.StoreMenuDetails.Add(storeMenuDetail);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -88,7 +88,7 @@ namespace BLL.Services
                 throw;
             }
 
-            return _mapper.Map<List<StoreMenuDetailResponse>>(storeMenuDetails);
+            return _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
         }
 
 

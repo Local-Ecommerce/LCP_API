@@ -1,4 +1,5 @@
 ﻿using System;
+using BLL.Dtos.StoreMenuDetail;
 
 namespace BLL.Dtos.Menu
 {
@@ -7,5 +8,6 @@ namespace BLL.Dtos.Menu
     {
         public string MenuName { get; set; }
         public string MenuDescription { get; set; }
+        public StoreMenuDetailRequest StoreMenuDetail { get; set; }
     }
 }

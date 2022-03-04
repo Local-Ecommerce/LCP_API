@@ -11,7 +11,7 @@ namespace BLL.Services.Interfaces
         /// <param name="residentId"></param>
         /// <param name="menuRequest"></param>
         /// <returns></returns>
-        Task<MenuResponse> CreateMenu(string residentId, MenuRequest menuRequest);
+        Task<ExtendMenuResponse> CreateMenu(string residentId, MenuRequest menuRequest);
 
 
         /// <summary>
