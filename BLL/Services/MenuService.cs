@@ -42,9 +42,10 @@ namespace BLL.Services
         /// <param name="residentId"></param>
         /// <param name="menuRequest"></param>
         /// <returns></returns>
-        public async Task<MenuResponse> CreateMenu(string residentId, MenuRequest menuRequest)
+        public async Task<ExtendMenuResponse> CreateMenu(string residentId, MenuRequest menuRequest)
         {
             Menu menu = _mapper.Map<Menu>(menuRequest);
+            StoreMenuDetailResponse storeMenuDetailResponse;
             try
             {
                 menu.MenuId = _utilService.CreateId(PREFIX);
@@ -55,14 +56,17 @@ namespace BLL.Services
 
                 _unitOfWork.Menus.Add(menu);
 
-                await _unitOfWork.SaveChangesAsync();
+                storeMenuDetailResponse = await _storeMenuDetailService.CreateStoreMenuDetails(menuRequest.StoreMenuDetail, menu.MenuId);
             }
             catch (Exception e)
             {
                 _logger.Error("[MenuService.CreateMenu()]: " + e.Message);
                 throw;
             }
-            return _mapper.Map<MenuResponse>(menu);
+            ExtendMenuResponse response = _mapper.Map<ExtendMenuResponse>(menu);
+            response.StoreMenuDetails = new Collection<StoreMenuDetailResponse> { storeMenuDetailResponse };
+
+            return response;
         }
 
 

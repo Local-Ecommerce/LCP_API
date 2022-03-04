@@ -33,22 +33,22 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPost]
-        public async Task<IActionResult> CreateStoreMenuDetail([FromBody] List<StoreMenuDetailRequest> requests)
+        public async Task<IActionResult> CreateStoreMenuDetail([FromQuery] string menuid, [FromBody] StoreMenuDetailRequest request)
         {
-            _logger.Information($"POST api/store-menus START Request: " +
-                $"{JsonSerializer.Serialize(requests)}");
+            _logger.Information($"POST api/store-menus?menuid={menuid} START Request: " +
+                $"{JsonSerializer.Serialize(request)}");
 
             Stopwatch watch = new();
             watch.Start();
 
             //create
-            List<StoreMenuDetailResponse> response = await _storeMenuDetailService.AddStoreMenuDetailsToMerchantStore(requests);
+            StoreMenuDetailResponse response = await _storeMenuDetailService.CreateStoreMenuDetails(request, menuid);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"POST api/store-menus END duration: " +
+            _logger.Information($"POST api/store-menus?menuid={menuid} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

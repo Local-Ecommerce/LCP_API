@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using BLL.Dtos.StoreMenuDetail;
 
@@ -7,12 +6,13 @@ namespace BLL.Services.Interfaces
     public interface IStoreMenuDetailService
     {
         /// <summary>
-        /// Add Store Menu Details To Merchant Store
+        /// Create Store Menu Details
         /// </summary>
         /// <param name="storeMenuDetailRequest"></param>
+        /// <param name="menuId"></param>
         /// <returns></returns>
-        Task<List<StoreMenuDetailResponse>> AddStoreMenuDetailsToMerchantStore(
-            List<StoreMenuDetailRequest> storeMenuDetailRequest);
+        Task<StoreMenuDetailResponse> CreateStoreMenuDetails(
+            StoreMenuDetailRequest storeMenuDetailRequest, string menuId);
 
 
         /// <summary>
