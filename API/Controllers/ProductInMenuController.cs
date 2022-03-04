@@ -60,7 +60,7 @@ namespace API.Controllers
         [AuthorizeRoles(RoleId.ADMIN, ResidentType.MERCHANT, ResidentType.MARKET_MANAGER)]
         [HttpGet]
         public async Task<IActionResult> GetProductsInMenu(
-            [FromQuery] string id, 
+            [FromQuery] string id,
             [FromQuery] string menuid,
             [FromQuery] int? limit,
             [FromQuery] int? page,
@@ -93,7 +93,7 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut]
-        public async Task<IActionResult> UpdateProductInMenuById([FromQuery]string id,
+        public async Task<IActionResult> UpdateProductInMenuById([FromQuery] string id,
             [FromBody] ProductInMenuUpdateRequest productInMenuUpdateRequest)
         {
             _logger.Information($"PUT api/menu-products?id={id} START");
@@ -121,21 +121,21 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete]
-        public async Task<IActionResult> DeleteProductInMenuById([FromQuery]string id)
+        public async Task<IActionResult> DeleteProductInMenuById([FromBody] List<string> ids)
         {
-            _logger.Information($"DELETE api/menu-products?id={id} START");
+            _logger.Information($"DELETE api/menu-products START Request: { ids}");
 
             Stopwatch watch = new();
             watch.Start();
 
             //Delete Product In Menu By Id
-            string response = await _productInMenuService.DeleteProductInMenuById(id);
+            string response = await _productInMenuService.DeleteProductInMenu(ids);
 
             string json = JsonSerializer.Serialize(ApiResponse<string>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"DELETE api/menu-products?id={id} END duration: " +
+            _logger.Information($"DELETE api/menu-productsEND duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

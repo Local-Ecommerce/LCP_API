@@ -68,19 +68,21 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Delete Product In Menu By Id
+        /// Delete Product In Menu By Ids
         /// </summary>
-        /// <param name="productInMenuId"></param>
+        /// <param name="productInMenuIdz"></param>
         /// <returns></returns>
-        public async Task<string> DeleteProductInMenuById(string productInMenuId)
+        public async Task<string> DeleteProductInMenu(List<string> productInMenuIds)
         {
-            ProductInMenu productInMenu;
+            List<ProductInMenu> productInMenus;
             try
             {
-                productInMenu = await _unitOfWork.ProductInMenus.FindAsync(p =>
-                                                                    p.ProductInMenuId.Equals(productInMenuId));
-
-                _unitOfWork.ProductInMenus.Delete(productInMenu);
+                productInMenus = await _unitOfWork.ProductInMenus.FindListAsync(p => productInMenuIds.Contains(p.ProductInMenuId));
+                foreach (var productInMenu in productInMenus)
+                {
+                    productInMenu.Status = (int)ProductInMenuStatus.DELETED_PRODUCT_IN_MENU;
+                    _unitOfWork.ProductInMenus.Update(productInMenu);
+                }
 
                 await _unitOfWork.SaveChangesAsync();
             }
