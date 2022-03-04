@@ -34,7 +34,6 @@ namespace DAL.Models
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
         public virtual DbSet<Resident> Residents { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
-        public virtual DbSet<StoreMenuDetail> StoreMenuDetails { get; set; }
         public virtual DbSet<SystemCategory> SystemCategories { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -60,20 +59,12 @@ namespace DAL.Models
 
                 entity.Property(e => e.AvatarImage).IsUnicode(false);
 
-                entity.Property(e => e.Password)
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
-
                 entity.Property(e => e.ProfileImage).IsUnicode(false);
 
                 entity.Property(e => e.RoleId)
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("RoleID");
-
-                entity.Property(e => e.Username)
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Accounts)
@@ -108,15 +99,19 @@ namespace DAL.Models
 
                 entity.Property(e => e.MenuName).HasMaxLength(250);
 
-                entity.Property(e => e.ResidentId)
-                    .HasMaxLength(50)
+                entity.Property(e => e.MerchantStoreId)
+                    .HasMaxLength(20)
                     .IsUnicode(false)
-                    .HasColumnName("ResidentID");
+                    .HasColumnName("MerchantStoreID");
 
-                entity.HasOne(d => d.Resident)
+                entity.Property(e => e.RepeatDate)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.MerchantStore)
                     .WithMany(p => p.Menus)
-                    .HasForeignKey(d => d.ResidentId)
-                    .HasConstraintName("FK_Menu_Resident");
+                    .HasForeignKey(d => d.MerchantStoreId)
+                    .HasConstraintName("FK_Menu_MerchantStore");
             });
 
             modelBuilder.Entity<MerchantStore>(entity =>
@@ -473,7 +468,7 @@ namespace DAL.Models
                 entity.HasOne(d => d.Menu)
                     .WithMany(p => p.ProductInMenus)
                     .HasForeignKey(d => d.MenuId)
-                    .HasConstraintName("FK_tblProductInMenu_tblMenu");
+                    .HasConstraintName("FK_ProductInMenu_Menu");
 
                 entity.HasOne(d => d.ProductCombination)
                     .WithMany(p => p.ProductInMenus)
@@ -489,12 +484,12 @@ namespace DAL.Models
             modelBuilder.Entity<RefreshToken>(entity =>
             {
                 entity.HasKey(e => e.Token)
-                    .HasName("PK__RefreshT__1EB4F81638C38772");
+                    .HasName("PK__RefreshT__1EB4F816E1900CD1");
 
                 entity.ToTable("RefreshToken");
 
                 entity.Property(e => e.Token)
-                    .HasMaxLength(50)
+                    .HasMaxLength(16)
                     .IsUnicode(false);
 
                 entity.Property(e => e.AccessToken).IsUnicode(false);
@@ -507,7 +502,7 @@ namespace DAL.Models
                 entity.HasOne(d => d.Account)
                     .WithMany(p => p.RefreshTokens)
                     .HasForeignKey(d => d.AccountId)
-                    .HasConstraintName("FK__RefreshTo__Accou__5DCAEF64");
+                    .HasConstraintName("FK__RefreshTo__Accou__5BE2A6F2");
             });
 
             modelBuilder.Entity<Resident>(entity =>
@@ -570,40 +565,6 @@ namespace DAL.Models
                 entity.Property(e => e.RoleName)
                     .HasMaxLength(250)
                     .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<StoreMenuDetail>(entity =>
-            {
-                entity.ToTable("StoreMenuDetail");
-
-                entity.Property(e => e.StoreMenuDetailId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("StoreMenuDetailID");
-
-                entity.Property(e => e.MenuId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("MenuID");
-
-                entity.Property(e => e.MerchantStoreId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("MerchantStoreID");
-
-                entity.Property(e => e.RepeatDate)
-                    .HasMaxLength(15)
-                    .IsUnicode(false);
-
-                entity.HasOne(d => d.Menu)
-                    .WithMany(p => p.StoreMenuDetails)
-                    .HasForeignKey(d => d.MenuId)
-                    .HasConstraintName("FK_tblStoreMenuDetail_tblMenu");
-
-                entity.HasOne(d => d.MerchantStore)
-                    .WithMany(p => p.StoreMenuDetails)
-                    .HasForeignKey(d => d.MerchantStoreId)
-                    .HasConstraintName("FK_tblStoreMenuDetail_tblMerchantStore");
             });
 
             modelBuilder.Entity<SystemCategory>(entity =>

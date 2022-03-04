@@ -9,8 +9,8 @@ namespace DAL.Models
     {
         public MerchantStore()
         {
+            Menus = new HashSet<Menu>();
             Orders = new HashSet<Order>();
-            StoreMenuDetails = new HashSet<StoreMenuDetail>();
         }
 
         public string MerchantStoreId { get; set; }
@@ -22,7 +22,7 @@ namespace DAL.Models
 
         public virtual Apartment Apartment { get; set; }
         public virtual Resident Resident { get; set; }
+        public virtual ICollection<Menu> Menus { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
-        public virtual ICollection<StoreMenuDetail> StoreMenuDetails { get; set; }
     }
 }

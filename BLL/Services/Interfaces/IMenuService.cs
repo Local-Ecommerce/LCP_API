@@ -11,17 +11,16 @@ namespace BLL.Services.Interfaces
         /// <param name="residentId"></param>
         /// <param name="menuRequest"></param>
         /// <returns></returns>
-        Task<ExtendMenuResponse> CreateMenu(string residentId, MenuRequest menuRequest);
+        Task<MenuResponse> CreateMenu(string residentId, MenuRequest menuRequest);
 
 
         /// <summary>
         /// Create Default Menu
         /// </summary>
-        /// <param name="residentId"></param>
         /// <param name="storeName"></param>
         /// <param name="merchantStoreId"></param>
         /// <returns></returns>
-        MenuResponse CreateDefaultMenu(string residentId, string storeName, string merchantStoreId);
+        MenuResponse CreateDefaultMenu(string storeName, string merchantStoreId);
 
 
         /// <summary>
@@ -48,7 +47,7 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="menuRequest"></param>
         /// <returns></returns>
-        Task<MenuResponse> UpdateMenuById(string id, MenuUpdateRequest menuUpdateRequest);
+        Task<MenuResponse> UpdateMenuById(string id, MenuRequest menuRequest);
 
 
         /// <summary>

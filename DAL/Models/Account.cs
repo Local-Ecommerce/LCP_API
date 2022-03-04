@@ -14,8 +14,6 @@ namespace DAL.Models
         }
 
         public string AccountId { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
         public string ProfileImage { get; set; }
         public string AvatarImage { get; set; }
         public DateTime? CreatedDate { get; set; }

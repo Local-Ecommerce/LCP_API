@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using BLL.Dtos.Apartment;
+using BLL.Dtos.Menu;
 using BLL.Dtos.Resident;
-using BLL.Dtos.StoreMenuDetail;
 
 namespace BLL.Dtos.MerchantStore
 {
@@ -15,9 +15,8 @@ namespace BLL.Dtos.MerchantStore
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public ResidentResponse Resident { get; set; }
-
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public List<StoreMenuDetailResponse> StoreMenuDetails { get; set; }
+        public Collection<MenuResponse> Menus { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public MerchantStoreUpdateRequest UpdatedMerchantStore { get; set; }

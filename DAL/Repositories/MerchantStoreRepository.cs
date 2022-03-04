@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System;
-using System.Collections.Generic;
 
 namespace DAL.Repositories
 {
@@ -65,7 +64,7 @@ namespace DAL.Repositories
                             query = query.Include(ms => ms.Apartment);
                             break;
                         case "menu":
-                            query = query.Include(ms => ms.StoreMenuDetails).ThenInclude(smd => smd.Menu);
+                            query = query.Include(ms => ms.Menus);
                             break;
                     };
                 }

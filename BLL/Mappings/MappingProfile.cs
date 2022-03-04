@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Dtos.Account;
 using BLL.Dtos.Apartment;
-using BLL.Dtos.Collection;
-using BLL.Dtos.CollectionMapping;
 using BLL.Dtos.Menu;
 using BLL.Dtos.MerchantStore;
 using BLL.Dtos.MoMo.IPN;
@@ -18,7 +16,6 @@ using BLL.Dtos.ProductCombination;
 using BLL.Dtos.ProductInMenu;
 using BLL.Dtos.RefreshToken;
 using BLL.Dtos.Resident;
-using BLL.Dtos.StoreMenuDetail;
 using BLL.Dtos.SystemCategory;
 using DAL.Models;
 
@@ -76,7 +73,6 @@ namespace BLL.Mappings
             //Menu Mapping
             CreateMap<MenuRequest, Menu>();
             CreateMap<Menu, MenuResponse>();
-            CreateMap<MenuUpdateRequest, Menu>();
             CreateMap<Menu, ExtendMenuResponse>();
 
             //Product In Menu Mapping
@@ -103,11 +99,6 @@ namespace BLL.Mappings
             CreateMap<OrderDetail, OrderDetailResponse>();
             CreateMap<Order, OrderResponse>();
             CreateMap<Order, ExtendOrderResponse>();
-
-            //Store Menu Detail Mapping
-            CreateMap<StoreMenuDetailRequest, StoreMenuDetail>();
-            CreateMap<StoreMenuDetailUpdateRequest, StoreMenuDetail>();
-            CreateMap<StoreMenuDetail, StoreMenuDetailResponse>();
 
             //Product Combination Mapping
             CreateMap<ProductCombinationRequest, ProductCombination>();
