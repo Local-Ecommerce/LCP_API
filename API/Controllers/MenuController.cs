@@ -103,16 +103,16 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut]
-        public async Task<IActionResult> UpdateMenuById([FromQuery] string id, [FromBody] MenuUpdateRequest menuUpdateRequest)
+        public async Task<IActionResult> UpdateMenuById([FromQuery] string id, [FromBody] MenuRequest menuRequest)
         {
             _logger.Information($"PUT api/menus?id={id} START Request: " +
-                $"{JsonSerializer.Serialize(menuUpdateRequest)}");
+                $"{JsonSerializer.Serialize(menuRequest)}");
 
             Stopwatch watch = new();
             watch.Start();
 
             //Update Menu
-            MenuResponse response = await _menuService.UpdateMenuById(id, menuUpdateRequest);
+            MenuResponse response = await _menuService.UpdateMenuById(id, menuRequest);
 
             string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
 

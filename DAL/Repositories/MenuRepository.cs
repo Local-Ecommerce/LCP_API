@@ -19,7 +19,6 @@ namespace DAL.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
-        /// <param name="residentId"></param>
         /// <param name="apartmentId"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
@@ -29,7 +28,7 @@ namespace DAL.Repositories
         /// <returns></returns>
         public async Task<PagingModel<Menu>> GetMenu(
             string id, int?[] status,
-            string residentId, string apartmentId, int? limit,
+            string apartmentId, int? limit,
             int? queryPage, bool isAsc,
             string propertyName, string include)
         {
@@ -45,18 +44,8 @@ namespace DAL.Repositories
 
             //filter by apartmentId
             if (!string.IsNullOrEmpty(apartmentId))
-                query = query.Include(menu => menu.StoreMenuDetails)
-                             .ThenInclude(smd => smd.MerchantStore)
-                             .Where(menu => menu.StoreMenuDetails.All(smd => smd.MerchantStore.ApartmentId.Equals(apartmentId)));
-
-            //filter by residentId
-            if (!string.IsNullOrEmpty(residentId))
-                query = query.Where(menu => menu.ResidentId.Equals(residentId));
-
-            //add include
-            if (!string.IsNullOrEmpty(include))
-                if (include.Equals(nameof(Menu.Resident)))
-                    query = query.Include(menu => menu.Resident);
+                query = query.Include(menu => menu.MerchantStore)
+                             .Where(menu => menu.MerchantStore.ApartmentId.Equals(apartmentId));
 
             //sort
             if (!string.IsNullOrEmpty(propertyName))

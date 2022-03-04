@@ -8,4 +8,11 @@ namespace BLL.Dtos.MerchantStore
         public string StoreName { get; set; }
         public string ApartmentId { get; set; }
     }
+
+
+    [Serializable]
+    public class MerchantStoreUpdateRequest : MerchantStoreRequest
+    {
+        public int? Status { get; set; }
+    }
 }

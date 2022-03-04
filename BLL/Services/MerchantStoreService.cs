@@ -8,7 +8,6 @@ using DAL.UnitOfWork;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using BLL.Dtos.StoreMenuDetail;
 
 namespace BLL.Services
 {
@@ -61,7 +60,7 @@ namespace BLL.Services
                 _unitOfWork.MerchantStores.Add(merchantStore);
 
                 //create default menu
-                _menuService.CreateDefaultMenu(merchantStore.ResidentId, merchantStore.StoreName, merchantStore.MerchantStoreId);
+                _menuService.CreateDefaultMenu(merchantStore.StoreName, merchantStore.MerchantStoreId);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -149,64 +148,6 @@ namespace BLL.Services
                 new Predicate<MerchantStoreResponse>(ms => ms.MerchantStoreId.Equals(merchantStoreResponse.MerchantStoreId)));
 
             return merchantStoreResponse;
-        }
-
-
-        /// <summary>
-        /// Update Store Menu Detail By Id
-        /// </summary>
-        /// <param name="storeMenuDetailId"></param>
-        /// <param name="storeMenuDetailUpdateRequest"></param>
-        /// <returns></returns>
-        public async Task<StoreMenuDetailResponse> UpdateStoreMenuDetailById(string storeMenuDetailId,
-            StoreMenuDetailUpdateRequest storeMenuDetailUpdateRequest)
-        {
-            StoreMenuDetail storeMenuDetail;
-            try
-            {
-                storeMenuDetail = await _unitOfWork.StoreMenuDetails
-                    .FindAsync(smd => smd.StoreMenuDetailId == storeMenuDetailId);
-
-                storeMenuDetail.Status = storeMenuDetailUpdateRequest.Status;
-
-                _unitOfWork.StoreMenuDetails.Update(storeMenuDetail);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.UpdateStoreMenuDetailById()]: " + e.Message);
-
-                throw;
-            }
-
-            return _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
-        }
-
-
-        /// <summary>
-        /// Delete Store Menu Detail By Id
-        /// </summary>
-        /// <param name="storeMenuDetailId"></param>
-        /// <returns></returns>
-        public async Task<StoreMenuDetailResponse> DeleteStoreMenuDetailById(string storeMenuDetailId)
-        {
-            StoreMenuDetail storeMenuDetail;
-            try
-            {
-                storeMenuDetail = await _unitOfWork.StoreMenuDetails
-                    .FindAsync(smd => smd.StoreMenuDetailId == storeMenuDetailId);
-
-                storeMenuDetail.Status = (int)StoreMenuDetailStatus.DELETED_STORE_MENU_DETAIL;
-
-                _unitOfWork.StoreMenuDetails.Update(storeMenuDetail);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MerchantStoreService.DeleteStoreMenuDetailById()]: " + e.Message);
-
-                throw;
-            }
-
-            return _mapper.Map<StoreMenuDetailResponse>(storeMenuDetail);
         }
 
 

@@ -23,7 +23,6 @@ namespace DAL.UnitOfWork
         IRefreshTokenRepository RefreshTokens { get; }
         IResidentRepository Residents { get; }
         IRoleRepository Roles { get; }
-        IStoreMenuDetailRepository StoreMenuDetails { get; }
         ISystemCategoryRepository SystemCategories { get; }
         Task SaveChangesAsync();
     }

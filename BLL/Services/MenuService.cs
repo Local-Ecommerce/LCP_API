@@ -2,13 +2,11 @@
 using DAL.Constants;
 using BLL.Dtos.Exception;
 using BLL.Dtos.Menu;
-using BLL.Dtos.StoreMenuDetail;
 using BLL.Services.Interfaces;
 using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace BLL.Services
@@ -19,21 +17,18 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
-        private readonly IStoreMenuDetailService _storeMenuDetailService;
         private const string PREFIX = "MN_";
 
         public MenuService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IUtilService utilService,
-            IStoreMenuDetailService storeMenuDetailService
+            IUtilService utilService
             )
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
-            _storeMenuDetailService = storeMenuDetailService;
         }
 
         /// <summary>
@@ -42,31 +37,27 @@ namespace BLL.Services
         /// <param name="residentId"></param>
         /// <param name="menuRequest"></param>
         /// <returns></returns>
-        public async Task<ExtendMenuResponse> CreateMenu(string residentId, MenuRequest menuRequest)
+        public async Task<MenuResponse> CreateMenu(string residentId, MenuRequest menuRequest)
         {
             Menu menu = _mapper.Map<Menu>(menuRequest);
-            StoreMenuDetailResponse storeMenuDetailResponse;
             try
             {
                 menu.MenuId = _utilService.CreateId(PREFIX);
                 menu.CreatedDate = DateTime.Now;
                 menu.UpdatedDate = DateTime.Now;
                 menu.Status = (int)MenuStatus.ACTIVE_MENU;
-                menu.ResidentId = residentId;
 
                 _unitOfWork.Menus.Add(menu);
 
-                storeMenuDetailResponse = await _storeMenuDetailService.CreateStoreMenuDetails(menuRequest.StoreMenuDetail, menu.MenuId);
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception e)
             {
                 _logger.Error("[MenuService.CreateMenu()]: " + e.Message);
                 throw;
             }
-            ExtendMenuResponse response = _mapper.Map<ExtendMenuResponse>(menu);
-            response.StoreMenuDetails = new Collection<StoreMenuDetailResponse> { storeMenuDetailResponse };
 
-            return response;
+            return _mapper.Map<MenuResponse>(menu);
         }
 
 
@@ -76,7 +67,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="menuUpdateRequest"></param>
         /// <returns></returns>
-        public async Task<MenuResponse> UpdateMenuById(string id, MenuUpdateRequest menuUpdateRequest)
+        public async Task<MenuResponse> UpdateMenuById(string id, MenuRequest menuRequest)
         {
             Menu menu;
             try
@@ -93,7 +84,7 @@ namespace BLL.Services
             //Update Menu to DB
             try
             {
-                menu = _mapper.Map(menuUpdateRequest, menu);
+                menu = _mapper.Map(menuRequest, menu);
                 menu.UpdatedDate = DateTime.Now;
 
                 _unitOfWork.Menus.Update(menu);
@@ -153,11 +144,10 @@ namespace BLL.Services
         /// <summary>
         /// Create Default Menu
         /// </summary>
-        /// <param name="residentId"></param>
         /// <param name="storeName"></param>
         /// <param name="merchantStoreId"></param>
         /// <returns></returns>
-        public MenuResponse CreateDefaultMenu(string residentId, string storeName, string merchantStoreId)
+        public MenuResponse CreateDefaultMenu(string storeName, string merchantStoreId)
         {
             Menu menu = new()
             {
@@ -166,15 +156,11 @@ namespace BLL.Services
                 CreatedDate = DateTime.Now,
                 UpdatedDate = DateTime.Now,
                 Status = (int)MenuStatus.ACTIVE_MENU,
-                ResidentId = residentId
             };
 
             _unitOfWork.Menus.Add(menu);
 
-            ExtendMenuResponse menuResponse = _mapper.Map<ExtendMenuResponse>(menu);
-            menuResponse.StoreMenuDetails = new Collection<StoreMenuDetailResponse>();
-            menuResponse.StoreMenuDetails.Add(
-                _storeMenuDetailService.CreateDefaultStoreMenuDetail(menu.MenuId, merchantStoreId));
+            MenuResponse menuResponse = _mapper.Map<MenuResponse>(menu);
 
             return menuResponse;
         }
@@ -211,7 +197,7 @@ namespace BLL.Services
 
             try
             {
-                menus = await _unitOfWork.Menus.GetMenu(id, status, residentId, apartmentId, limit, page, isAsc, propertyName, include);
+                menus = await _unitOfWork.Menus.GetMenu(id, status, apartmentId, limit, page, isAsc, propertyName, include);
             }
             catch (Exception e)
             {

@@ -26,7 +26,6 @@ namespace DAL.UnitOfWork
         private IRefreshTokenRepository _refreshTokenRepository;
         private IResidentRepository _residentRepository;
         private IRoleRepository _roleRepository;
-        private IStoreMenuDetailRepository _storeMenuDetailRepository;
         private ISystemCategoryRepository _systemCategoryRepository;
 
         public IAccountRepository Accounts
@@ -168,14 +167,6 @@ namespace DAL.UnitOfWork
             {
                 if (_roleRepository == null) _roleRepository = new RoleRepository(_context);
                 return _roleRepository;
-            }
-        }
-        public IStoreMenuDetailRepository StoreMenuDetails
-        {
-            get
-            {
-                if (_storeMenuDetailRepository == null) _storeMenuDetailRepository = new StoreMenuDetailRepository(_context);
-                return _storeMenuDetailRepository;
             }
         }
 

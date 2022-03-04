@@ -10,19 +10,20 @@ namespace DAL.Models
         public Menu()
         {
             ProductInMenus = new HashSet<ProductInMenu>();
-            StoreMenuDetails = new HashSet<StoreMenuDetail>();
         }
 
         public string MenuId { get; set; }
         public string MenuName { get; set; }
         public string MenuDescription { get; set; }
+        public TimeSpan? TimeStart { get; set; }
+        public TimeSpan? TimeEnd { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public int? Status { get; set; }
-        public string ResidentId { get; set; }
+        public string RepeatDate { get; set; }
+        public string MerchantStoreId { get; set; }
 
-        public virtual Resident Resident { get; set; }
+        public virtual MerchantStore MerchantStore { get; set; }
         public virtual ICollection<ProductInMenu> ProductInMenus { get; set; }
-        public virtual ICollection<StoreMenuDetail> StoreMenuDetails { get; set; }
     }
 }
