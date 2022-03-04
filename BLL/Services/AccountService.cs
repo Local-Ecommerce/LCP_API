@@ -166,19 +166,30 @@ namespace BLL.Services
                 RefreshToken refreshToken;
 
                 //find resident role
-                if (!account.RoleId.Equals(RoleId.ADMIN) || !accountRequest.Role.Equals(RoleId.ADMIN))
+                if (!account.RoleId.Equals(RoleId.ADMIN))
                 {
-                    Resident resident = account.Residents.Where(r => r.Type.Equals(accountRequest.Role)).FirstOrDefault();
+                    List<Resident> residents = account.Residents.ToList();
+                    Resident resident;
+
+                    if (residents.Count == 2) //has 2 role: Customer and Merchant
+                        if (accountRequest.Role.Equals(ResidentType.CUSTOMER))
+                            resident = residents.Where(r => r.Type.Equals(ResidentType.CUSTOMER)).FirstOrDefault();
+                        else
+                            resident = residents.Where(r => r.Type.Equals(ResidentType.MERCHANT)).FirstOrDefault();
+
+                    else resident = residents.FirstOrDefault(); //market manager
+
                     if (resident is null)
                         throw new UnauthorizedAccessException($"Role {accountRequest.Role} is invalid.");
 
                     refreshToken = _tokenService.GenerateRefreshToken(resident.ResidentId,
-                                    _utilService.CreateId(""), accountRequest.Role, out accessTokenExpiredDate);
+                                    _utilService.CreateId(""), resident.Type, out accessTokenExpiredDate);
                 }
                 else
                 {
+                    //admin
                     refreshToken = _tokenService.GenerateRefreshToken(account.AccountId,
-                                    _utilService.CreateId(""), accountRequest.Role, out accessTokenExpiredDate);
+                                    _utilService.CreateId(""), account.RoleId, out accessTokenExpiredDate);
                 }
 
                 //generate token
