@@ -99,6 +99,7 @@
     public enum ProductInMenuStatus
     {
         ACTIVE_PRODUCT_IN_MENU = 10001,
+        DELETED_PRODUCT_IN_MENU = 10002,
         INACTIVE_PRODUCT_IN_MENU = 10005
     }
 
