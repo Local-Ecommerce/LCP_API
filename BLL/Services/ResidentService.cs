@@ -113,7 +113,7 @@ namespace BLL.Services
             try
             {
                 resident = _mapper.Map(residentUpdateRequest, resident);
-                resident.Status = (int)ResidentStatus.VERIFIED_RESIDENT;
+                resident.UpdatedDate = DateTime.Now;
 
                 _unitOfWork.Residents.Update(resident);
 
