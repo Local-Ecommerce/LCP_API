@@ -70,7 +70,6 @@ namespace API.Controllers
         public async Task<IActionResult> GetMenu(
             [FromQuery] string id,
             [FromQuery] int?[] status,
-            [FromQuery] string residentid,
             [FromQuery] string apartmentid,
             [FromQuery] int? limit,
             [FromQuery] int? page,
@@ -84,7 +83,7 @@ namespace API.Controllers
             watch.Start();
 
             //get Menu
-            object responses = await _menuService.GetMenu(id, status, residentid, apartmentid, limit, page, sort, include);
+            object responses = await _menuService.GetMenu(id, status, apartmentid, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 
@@ -103,7 +102,7 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut]
-        public async Task<IActionResult> UpdateMenuById([FromQuery] string id, [FromBody] MenuRequest menuRequest)
+        public async Task<IActionResult> UpdateMenuById([FromQuery] string id, [FromBody] MenuUpdateRequest menuRequest)
         {
             _logger.Information($"PUT api/menus?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(menuRequest)}");

@@ -67,7 +67,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="menuUpdateRequest"></param>
         /// <returns></returns>
-        public async Task<MenuResponse> UpdateMenuById(string id, MenuRequest menuRequest)
+        public async Task<MenuResponse> UpdateMenuById(string id, MenuUpdateRequest menuUpdateRequest)
         {
             Menu menu;
             try
@@ -84,7 +84,7 @@ namespace BLL.Services
             //Update Menu to DB
             try
             {
-                menu = _mapper.Map(menuRequest, menu);
+                menu = _mapper.Map(menuUpdateRequest, menu);
                 menu.UpdatedDate = DateTime.Now;
 
                 _unitOfWork.Menus.Update(menu);
@@ -184,7 +184,7 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<object> GetMenu(
             string id, int?[] status,
-            string residentId, string apartmentId, int? limit,
+            string apartmentId, int? limit,
             int? page, string sort, string include)
         {
             PagingModel<Menu> menus;

@@ -127,6 +127,72 @@ namespace API.Controllers
 
 
         /// <summary>
+        /// Approve Resident (Market Manager)
+        /// </summary>
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [HttpPut("approval")]
+        public async Task<IActionResult> ApproveResident([FromQuery] string id)
+        {
+            _logger.Information($"PUT api/residents/approval?id={id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string marketManagerId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
+            //approve Resident
+            ResidentResponse response = await _residentService.VerifyResident(id, marketManagerId, true);
+
+            string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success(response));
+
+            watch.Stop();
+
+            _logger.Information($"PUT api/residents/approval?id={id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Reject Resident (Market Manager)
+        /// </summary>
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [HttpPut("rejection")]
+        public async Task<IActionResult> RejectResident([FromQuery] string id)
+        {
+            _logger.Information($"PUT api/residents/rejection?id={id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string marketManagerId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
+            //rejection Resident
+            ResidentResponse response = await _residentService.VerifyResident(id, marketManagerId, false);
+
+            string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success(response));
+
+            watch.Stop();
+
+            _logger.Information($"PUT api/residents/rejection?id={id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
         /// Delete Resident (Admin)
         /// </summary>
         [Authorize(Roles = RoleId.ADMIN)]

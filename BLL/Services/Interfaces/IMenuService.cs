@@ -37,7 +37,7 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<object> GetMenu(
             string id, int?[] status,
-            string residentId, string apartmentId, int? limit,
+            string apartmentId, int? limit,
             int? page, string sort, string include);
 
 
@@ -45,9 +45,9 @@ namespace BLL.Services.Interfaces
         /// Update Menu By Id
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="menuRequest"></param>
+        /// <param name="menuUpdateRequest"></param>
         /// <returns></returns>
-        Task<MenuResponse> UpdateMenuById(string id, MenuRequest menuRequest);
+        Task<MenuResponse> UpdateMenuById(string id, MenuUpdateRequest menuUpdateRequest);
 
 
         /// <summary>
