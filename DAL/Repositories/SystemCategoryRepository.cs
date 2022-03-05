@@ -31,7 +31,9 @@ namespace DAL.Repositories
 
             //filter by id
             if (!string.IsNullOrEmpty(id))
-                query = query.Where(sc => sc.SystemCategoryId.Equals(id));
+                query = query.Where(sc => sc.SystemCategoryId.Equals(id))
+                             .Include(sc => sc.InverseBelongToNavigation)
+                             .ThenInclude(sc => sc.InverseBelongToNavigation);
             else
                 query = query.Where(sc => sc.BelongTo == null)
                              .Include(sc => sc.InverseBelongToNavigation)
