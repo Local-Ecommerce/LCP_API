@@ -45,5 +45,15 @@ namespace BLL.Services.Interfaces
             string id, string apartmentId,
             string accountId, int? limit,
             int? page, string sort);
+
+
+        /// <summary>
+        /// Verify Resident
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="marketManagerId"></param>
+        /// <param name="isApprove"></param>
+        /// <returns></returns>
+        Task<ExtendResidentResponse> VerifyResident(string id, string marketManagerId, bool isApprove);
     }
 }

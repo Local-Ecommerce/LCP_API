@@ -72,6 +72,7 @@ namespace BLL.Mappings
 
             //Menu Mapping
             CreateMap<MenuRequest, Menu>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<MenuUpdateRequest, Menu>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<Menu, MenuResponse>();
             CreateMap<Menu, ExtendMenuResponse>();
 

@@ -103,13 +103,6 @@
         INACTIVE_PRODUCT_IN_MENU = 10005
     }
 
-    public enum StoreMenuDetailStatus
-    {
-        ACTIVE_STORE_MENU_DETAIL = 11001,
-        DELETED_STORE_MENU_DETAIL = 11002,
-        INACTIVE_STORE_MENU_DETAIL = 11005
-    }
-
     public enum PaymentStatus
     {
         ACTIVE_PAYMENT = 12001,
@@ -126,8 +119,10 @@
 
     public enum ResidentStatus
     {
-        ACTIVE_RESIDENT = 14001,
+        VERIFIED_RESIDENT = 14001,
         DELETED_RESIDENT = 14002,
+        REJECTED_RESIDENT = 14003,
+        UNVERIFIED_RESIDENT = 6004,
         INACTIVE_RESIDENT = 14005,
         INVALID_DATE_OF_BIRTH_RESIDENT = 14009
     }

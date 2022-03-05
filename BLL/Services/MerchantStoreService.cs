@@ -182,12 +182,13 @@ namespace BLL.Services
                 _unitOfWork.MerchantStores.Update(merchantStore);
 
                 await _unitOfWork.SaveChangesAsync();
+
+                merchantStoreResponse = _mapper.Map(merchantStore, merchantStoreResponse);
             }
             catch (Exception e)
             {
                 _logger.Error("[MerchantStoreService.VerifyMerchantStore()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(MerchantStore), id);
+                throw;
             }
 
             //remove from redis

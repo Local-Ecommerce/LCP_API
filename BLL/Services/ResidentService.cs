@@ -58,7 +58,7 @@ namespace BLL.Services
             try
             {
                 resident.ResidentId = accountId + "_" + ResidentType.MERCHANT;
-                resident.Status = (int)ResidentStatus.ACTIVE_RESIDENT;
+                resident.Status = (int)ResidentStatus.UNVERIFIED_RESIDENT;
                 resident.CreatedDate = DateTime.Now;
                 resident.AccountId = accountId;
                 resident.Type = ResidentType.MERCHANT;
@@ -113,7 +113,7 @@ namespace BLL.Services
             try
             {
                 resident = _mapper.Map(residentUpdateRequest, resident);
-                resident.Status = (int)ResidentStatus.ACTIVE_RESIDENT;
+                resident.Status = (int)ResidentStatus.VERIFIED_RESIDENT;
 
                 _unitOfWork.Residents.Update(resident);
 
@@ -214,6 +214,37 @@ namespace BLL.Services
                 LastPage = residents.LastPage,
                 Total = residents.Total,
             };
+        }
+
+
+        /// <summary>
+        /// Verify Resident
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="marketManagerId"></param>
+        /// <param name="isApprove"></param>
+        /// <returns></returns>
+        public async Task<ExtendResidentResponse> VerifyResident(string id, string marketManagerId, bool isApprove)
+        {
+            Resident resident;
+            try
+            {
+                resident = await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(id));
+
+                resident.Status = isApprove ? (int)ResidentStatus.VERIFIED_RESIDENT : (int)ResidentStatus.REJECTED_RESIDENT;
+                resident.ApproveBy = isApprove ? marketManagerId : default;
+
+                _unitOfWork.Residents.Update(resident);
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ResidentService.VerifyResident()]: " + e.Message);
+                throw;
+            }
+
+            return _mapper.Map<ExtendResidentResponse>(resident);
         }
     }
 }

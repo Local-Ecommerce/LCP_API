@@ -174,7 +174,7 @@ namespace API.Controllers
         [HttpPut("approval")]
         public async Task<IActionResult> ApproveMerchantStore([FromQuery] string id)
         {
-            _logger.Information($"GET api/stores/approval?id={id} START");
+            _logger.Information($"PUT api/stores/approval?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -186,7 +186,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/stores/approval?id={id} END duration: " +
+            _logger.Information($"PUT api/stores/approval?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -200,7 +200,7 @@ namespace API.Controllers
         [HttpPut("rejection")]
         public async Task<IActionResult> RejectCreateMerchantStore([FromQuery] string id)
         {
-            _logger.Information($"GET api/store/rejection?id={id} START");
+            _logger.Information($"PUT api/store/rejection?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -212,7 +212,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"GET api/store/rejection?id={id} END duration: " +
+            _logger.Information($"PUT api/store/rejection?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

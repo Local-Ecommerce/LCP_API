@@ -162,7 +162,7 @@ namespace BLL.Services
                         AccountId = document.Id,
                         CreatedDate = DateTime.Now,
                         UpdatedDate = DateTime.Now,
-                        Status = (int)ResidentStatus.ACTIVE_RESIDENT
+                        Status = (int)ResidentStatus.UNVERIFIED_RESIDENT
                     };
 
                     extendAccountResponse = new ExtendAccountResponse
