@@ -71,7 +71,7 @@ namespace BLL.Mappings
             CreateMap<Poi, ExtendPoiResponse>();
 
             //Menu Mapping
-            CreateMap<MenuRequest, Menu>();
+            CreateMap<MenuRequest, Menu>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<Menu, MenuResponse>();
             CreateMap<Menu, ExtendMenuResponse>();
 

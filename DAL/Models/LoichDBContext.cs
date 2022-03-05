@@ -484,12 +484,12 @@ namespace DAL.Models
             modelBuilder.Entity<RefreshToken>(entity =>
             {
                 entity.HasKey(e => e.Token)
-                    .HasName("PK__RefreshT__1EB4F816E1900CD1");
+                    .HasName("PK__RefreshT__1EB4F81699211FA2");
 
                 entity.ToTable("RefreshToken");
 
                 entity.Property(e => e.Token)
-                    .HasMaxLength(16)
+                    .HasMaxLength(50)
                     .IsUnicode(false);
 
                 entity.Property(e => e.AccessToken).IsUnicode(false);
@@ -502,7 +502,7 @@ namespace DAL.Models
                 entity.HasOne(d => d.Account)
                     .WithMany(p => p.RefreshTokens)
                     .HasForeignKey(d => d.AccountId)
-                    .HasConstraintName("FK__RefreshTo__Accou__5BE2A6F2");
+                    .HasConstraintName("FK__RefreshTo__Accou__619B8048");
             });
 
             modelBuilder.Entity<Resident>(entity =>
