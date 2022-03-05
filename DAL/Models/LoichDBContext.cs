@@ -484,7 +484,7 @@ namespace DAL.Models
             modelBuilder.Entity<RefreshToken>(entity =>
             {
                 entity.HasKey(e => e.Token)
-                    .HasName("PK__RefreshT__1EB4F81699211FA2");
+                    .HasName("PK__RefreshT__1EB4F816516F5113");
 
                 entity.ToTable("RefreshToken");
 
@@ -502,7 +502,7 @@ namespace DAL.Models
                 entity.HasOne(d => d.Account)
                     .WithMany(p => p.RefreshTokens)
                     .HasForeignKey(d => d.AccountId)
-                    .HasConstraintName("FK__RefreshTo__Accou__619B8048");
+                    .HasConstraintName("FK__RefreshTo__Accou__625A9A57");
             });
 
             modelBuilder.Entity<Resident>(entity =>

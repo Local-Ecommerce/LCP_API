@@ -30,7 +30,7 @@ namespace BLL.Mappings
             CreateMap<ProductRequest, UpdateProductRequest>();
             CreateMap<Product, ProductResponse>().ReverseMap();
             CreateMap<Product, ExtendProductResponse>();
-            CreateMap<UpdateProductRequest, Product>();
+            CreateMap<UpdateProductRequest, Product>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             //Apartment Mapping
             CreateMap<ApartmentRequest, Apartment>();
@@ -44,12 +44,14 @@ namespace BLL.Mappings
 
             //SystemCategory Mapping
             CreateMap<SystemCategoryRequest, SystemCategory>();
-            CreateMap<SystemCategoryUpdateRequest, SystemCategory>();
+            CreateMap<SystemCategoryUpdateRequest, SystemCategory>()
+                    .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<SystemCategory, SystemCategoryResponse>().ReverseMap();
 
             //MerchantStore Mapping
             CreateMap<MerchantStoreRequest, MerchantStore>();
-            CreateMap<MerchantStoreUpdateRequest, MerchantStore>();
+            CreateMap<MerchantStoreUpdateRequest, MerchantStore>()
+                    .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<MerchantStore, MerchantStoreResponse>().ReverseMap();
             CreateMap<MerchantStore, ExtendMerchantStoreResponse>().ReverseMap();
 
@@ -60,13 +62,15 @@ namespace BLL.Mappings
 
             //News Mapping
             CreateMap<NewsRequest, News>();
-            CreateMap<NewsUpdateRequest, News>();
+            CreateMap<NewsUpdateRequest, News>()
+                    .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<News, NewsResponse>();
             CreateMap<News, ExtendNewsResponse>();
 
             //POI Mapping
             CreateMap<PoiRequest, Poi>();
-            CreateMap<PoiUpdateRequest, Poi>();
+            CreateMap<PoiUpdateRequest, Poi>()
+                    .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<Poi, PoiResponse>();
             CreateMap<Poi, ExtendPoiResponse>();
 
