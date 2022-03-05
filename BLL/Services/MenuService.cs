@@ -155,7 +155,11 @@ namespace BLL.Services
                 MenuName = "Bảng giá của " + storeName,
                 CreatedDate = DateTime.Now,
                 UpdatedDate = DateTime.Now,
+                TimeStart = new TimeSpan(0, 0, 0),
+                TimeEnd = new TimeSpan(23, 59, 59),
+                RepeatDate = "2345678",
                 Status = (int)MenuStatus.ACTIVE_MENU,
+                MerchantStoreId = merchantStoreId
             };
 
             _unitOfWork.Menus.Add(menu);
