@@ -33,7 +33,7 @@ namespace BLL.Mappings
             CreateMap<UpdateProductRequest, Product>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             //Apartment Mapping
-            CreateMap<ApartmentRequest, Apartment>();
+            CreateMap<ApartmentRequest, Apartment>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<Apartment, ApartmentResponse>().ReverseMap();
             CreateMap<Apartment, ExtendApartmentResponse>().ReverseMap();
 
