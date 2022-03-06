@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using DAL.Constants;
 using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +18,14 @@ namespace DAL.Repositories
         /// Get System Category
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
         /// <param name="propertyName"></param>
         /// <returns></returns>
         public async Task<PagingModel<SystemCategory>> GetSystemCategory(
-            string id, int? limit,
+            string id, int?[] status, int? limit,
             int? queryPage, bool isAsc,
             string propertyName)
         {
@@ -31,13 +33,18 @@ namespace DAL.Repositories
 
             //filter by id
             if (!string.IsNullOrEmpty(id))
-                query = query.Where(sc => sc.SystemCategoryId.Equals(id))
-                             .Include(sc => sc.InverseBelongToNavigation)
-                             .ThenInclude(sc => sc.InverseBelongToNavigation);
+                query = query.Where(sc => sc.SystemCategoryId.Equals(id));
+
+            //filter by status
+            if (status.Length != 0)
+                query = query.Where(sc => status.Contains(sc.Status));
             else
-                query = query.Where(sc => sc.BelongTo == null)
-                             .Include(sc => sc.InverseBelongToNavigation)
-                             .ThenInclude(sc => sc.InverseBelongToNavigation);
+                query = query.Where(sc => sc.BelongTo == null);
+
+            query = query.Include(sc => sc.InverseBelongToNavigation
+                                .Where(sc => sc.Status.Equals((int)SystemCategoryStatus.ACTIVE_SYSTEM_CATEGORY)))
+                            .ThenInclude(sci => sci.InverseBelongToNavigation
+                                    .Where(sc => sc.Status.Equals((int)SystemCategoryStatus.ACTIVE_SYSTEM_CATEGORY)));
 
             //sort
             if (!string.IsNullOrEmpty(propertyName))
