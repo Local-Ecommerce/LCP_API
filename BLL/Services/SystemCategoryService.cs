@@ -132,11 +132,12 @@ namespace BLL.Services
         /// Get System Category
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <returns></returns>
-        public async Task<object> GetSystemCategory(string id, int? limit, int? page, string sort)
+        public async Task<object> GetSystemCategory(string id, int?[] status, int? limit, int? page, string sort)
         {
             PagingModel<SystemCategory> categories;
             string propertyName = default;
@@ -150,7 +151,7 @@ namespace BLL.Services
 
             try
             {
-                categories = await _unitOfWork.SystemCategories.GetSystemCategory(id, limit, page, isAsc, propertyName);
+                categories = await _unitOfWork.SystemCategories.GetSystemCategory(id, status, limit, page, isAsc, propertyName);
             }
             catch (Exception e)
             {
