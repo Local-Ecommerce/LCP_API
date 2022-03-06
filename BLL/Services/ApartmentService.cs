@@ -81,7 +81,7 @@ namespace BLL.Services
             //Delete Apartment
             try
             {
-                apartment.Status = (int)ApartmentStatus.DELETED_APARTMENT;
+                apartment.Status = (int)ApartmentStatus.INACTIVE_APARTMENT;
 
                 _unitOfWork.Apartments.Update(apartment);
 
