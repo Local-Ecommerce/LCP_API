@@ -57,7 +57,6 @@
     public enum ApartmentStatus
     {
         ACTIVE_APARTMENT = 4001,
-        DELETED_APARTMENT = 4002,
         INACTIVE_APARTMENT = 4005
     }
 

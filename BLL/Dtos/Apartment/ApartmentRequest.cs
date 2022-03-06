@@ -7,5 +7,6 @@ namespace BLL.Dtos.Apartment
     {
         public string ApartmentName { get; set; }
         public string Address { get; set; }
+        public int? Status { get; set; }
     }
 }
