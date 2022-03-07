@@ -38,7 +38,7 @@ namespace BLL.Services.Interfaces
         Task<object> GetMenu(
             string id, int?[] status,
             string apartmentId, int? limit,
-            int? page, string sort, string include);
+            int? page, string sort, string[] include);
 
 
         /// <summary>

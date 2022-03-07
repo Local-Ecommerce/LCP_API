@@ -1,4 +1,5 @@
-﻿using BLL.Dtos.ProductInMenu;
+﻿using BLL.Dtos.MerchantStore;
+using BLL.Dtos.ProductInMenu;
 using System;
 using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
@@ -10,5 +11,8 @@ namespace BLL.Dtos.Menu
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public Collection<ProductInMenuResponse> ProductInMenus { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public MerchantStoreResponse MerchantStore { get; set; }
     }
 }
