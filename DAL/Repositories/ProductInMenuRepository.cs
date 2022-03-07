@@ -24,8 +24,8 @@ namespace DAL.Repositories
         /// <param name="propertyName"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<PagingModel<ProductInMenu>> GetProductInMenu(string id, string menuId, 
-            int? limit, int? queryPage, bool isAsc, 
+        public async Task<PagingModel<ProductInMenu>> GetProductInMenu(string id, string menuId,
+            int? limit, int? queryPage, bool isAsc,
             string propertyName, string include)
         {
             IQueryable<ProductInMenu> query = _context.ProductInMenus.Where(pim => pim.ProductInMenuId != null);
@@ -50,7 +50,7 @@ namespace DAL.Repositories
             }
 
             //paging
-            int perPage = limit.GetValueOrDefault(10);
+            int perPage = limit.GetValueOrDefault(Int32.MaxValue);
             int page = queryPage.GetValueOrDefault(1) == 0 ? 1 : queryPage.GetValueOrDefault(1);
             int total = query.Count();
 

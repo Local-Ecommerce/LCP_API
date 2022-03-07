@@ -24,8 +24,8 @@ namespace DAL.Repositories
         /// <param name="propertyName"></param>
         /// <returns></returns>
         public async Task<PagingModel<ProductCategory>> GetProductCategory(
-            string id, int?[] status, 
-            int? limit, int? queryPage, 
+            string id, int?[] status,
+            int? limit, int? queryPage,
             bool isAsc, string propertyName)
         {
             IQueryable<ProductCategory> query = _context.ProductCategories.Where(pc => pc.ProductCategoryId != null);
@@ -45,7 +45,7 @@ namespace DAL.Repositories
             }
 
             //paging
-            int perPage = limit.GetValueOrDefault(10);
+            int perPage = limit.GetValueOrDefault(Int32.MaxValue);
             int page = queryPage.GetValueOrDefault(1) == 0 ? 1 : queryPage.GetValueOrDefault(1);
             int total = query.Count();
 
