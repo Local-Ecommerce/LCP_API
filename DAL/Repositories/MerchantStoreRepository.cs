@@ -77,7 +77,7 @@ namespace DAL.Repositories
             }
 
             //paging
-            int perPage = limit.GetValueOrDefault(10);
+            int perPage = limit.GetValueOrDefault(Int32.MaxValue);
             int page = queryPage.GetValueOrDefault(1) == 0 ? 1 : queryPage.GetValueOrDefault(1);
             int total = query.Count();
 

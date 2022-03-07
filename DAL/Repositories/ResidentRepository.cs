@@ -25,8 +25,8 @@ namespace DAL.Repositories
         /// <param name="propertyName"></param>
         /// <returns></returns>
         public async Task<PagingModel<Resident>> GetResident(
-            string id, string apartmentId, string accountId, 
-            int? limit, int? queryPage, 
+            string id, string apartmentId, string accountId,
+            int? limit, int? queryPage,
             bool isAsc, string propertyName)
         {
             IQueryable<Resident> query = _context.Residents.Where(r => r.ResidentId != null);
@@ -48,7 +48,7 @@ namespace DAL.Repositories
                 query = isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
 
             //paging
-            int perPage = limit.GetValueOrDefault(10);
+            int perPage = limit.GetValueOrDefault(Int32.MaxValue);
             int page = queryPage.GetValueOrDefault(1) == 0 ? 1 : queryPage.GetValueOrDefault(1);
             int total = query.Count();
 
