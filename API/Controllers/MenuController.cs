@@ -65,7 +65,7 @@ namespace API.Controllers
         /// <summary>
         /// Get menu (Authentication required)
         /// </summary>
-        [Authorize]
+        // [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetMenu(
             [FromQuery] string id,
@@ -74,10 +74,11 @@ namespace API.Controllers
             [FromQuery] int? limit,
             [FromQuery] int? page,
             [FromQuery] string sort,
-            [FromQuery] string include)
+            [FromQuery] string[] include)
         {
             _logger.Information($"GET api/menus?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&limit={limit}&page={page}&sort={sort}&include={include} START");
+                $"&apartmentid={apartmentid}&limit={limit}&page={page}&sort={sort}&include="
+                + string.Join("include=", include) + " START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -90,7 +91,8 @@ namespace API.Controllers
             watch.Stop();
 
             _logger.Information($"GET api/menus?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&limit={limit}&page={page}&sort={sort}&include={include} END duration: " +
+                $"&apartmentid={apartmentid}&limit={limit}&page={page}&sort={sort}&include="
+                + string.Join("include=", include) + " END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

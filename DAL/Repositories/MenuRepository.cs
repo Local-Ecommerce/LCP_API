@@ -30,7 +30,7 @@ namespace DAL.Repositories
             string id, int?[] status,
             string apartmentId, int? limit,
             int? queryPage, bool isAsc,
-            string propertyName, string include)
+            string propertyName, string[] include)
         {
             IQueryable<Menu> query = _context.Menus.Where(menu => menu.MenuId != null);
 
@@ -51,6 +51,18 @@ namespace DAL.Repositories
             if (!string.IsNullOrEmpty(propertyName))
             {
                 query = isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
+            }
+
+            //add include
+            if (include.Length > 0)
+            {
+                foreach (var item in include)
+                {
+                    if (item.Equals("store"))
+                        query = query.Include(menu => menu.MerchantStore);
+                    if (item.Equals("product"))
+                        query = query.Include(menu => menu.ProductInMenus);
+                }
             }
 
             //paging

@@ -185,7 +185,7 @@ namespace BLL.Services
         public async Task<object> GetMenu(
             string id, int?[] status,
             string apartmentId, int? limit,
-            int? page, string sort, string include)
+            int? page, string sort, string[] include)
         {
             PagingModel<Menu> menus;
             string propertyName = default;
@@ -196,8 +196,6 @@ namespace BLL.Services
                 isAsc = sort[0].ToString().Equals("+");
                 propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
             }
-
-            include = !string.IsNullOrEmpty(include) ? _utilService.UpperCaseFirstLetter(include) : null;
 
             try
             {
