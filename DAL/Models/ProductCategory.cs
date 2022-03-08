@@ -12,12 +12,10 @@ namespace DAL.Models
         public int? Status { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
-        public string ResidentId { get; set; }
         public string ProductId { get; set; }
         public string SystemCategoryId { get; set; }
 
         public virtual Product Product { get; set; }
-        public virtual Resident Resident { get; set; }
         public virtual SystemCategory SystemCategory { get; set; }
     }
 }

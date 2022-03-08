@@ -377,11 +377,6 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("ProductID");
 
-                entity.Property(e => e.ResidentId)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("ResidentID");
-
                 entity.Property(e => e.SystemCategoryId)
                     .HasMaxLength(20)
                     .IsUnicode(false)
@@ -391,11 +386,6 @@ namespace DAL.Models
                     .WithMany(p => p.ProductCategories)
                     .HasForeignKey(d => d.ProductId)
                     .HasConstraintName("FK_tblProductCategory_tblProduct");
-
-                entity.HasOne(d => d.Resident)
-                    .WithMany(p => p.ProductCategories)
-                    .HasForeignKey(d => d.ResidentId)
-                    .HasConstraintName("FK_ProductCategory_Resident");
 
                 entity.HasOne(d => d.SystemCategory)
                     .WithMany(p => p.ProductCategories)
