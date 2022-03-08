@@ -32,13 +32,11 @@ namespace DAL.Repositories
             int? limit, int? queryPage,
             bool isAsc, string propertyName, string include)
         {
-            IQueryable<Product> query = _context.Products.Where(p => p.ProductId != null);
+            IQueryable<Product> query = _context.Products;
 
             //filter by id
             if (!string.IsNullOrEmpty(id))
                 query = query.Where(p => p.ProductId.Equals(id));
-            else
-                query = query.Where(p => p.BelongTo == null).Include(p => p.InverseBelongToNavigation);
 
             //filter by status
             if (status.Length != 0)
@@ -57,15 +55,16 @@ namespace DAL.Repositories
             {
                 if (include.Equals("related"))
                     query = query.Where(p => p.BelongTo == null).Include(p => p.InverseBelongToNavigation);
-                if (include.Equals("base"))
+                else if (include.Equals("base"))
                     query = query.Where(p => p.BelongTo != null).Include(p => p.BelongToNavigation);
             }
+            else
+                query = query.Where(p => p.BelongTo == null);
+
 
             //sort
             if (!string.IsNullOrEmpty(propertyName))
-            {
                 query = isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
-            }
 
             //paging
             int perPage = limit.GetValueOrDefault(Int32.MaxValue);

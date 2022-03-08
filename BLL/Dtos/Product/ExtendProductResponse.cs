@@ -9,10 +9,7 @@ namespace BLL.Dtos.Product
     public class ExtendProductResponse : ProductResponse
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public Collection<ProductResponse> InverseBelongToNavigation { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public UpdateProductRequest UpdatedProduct { get; set; }
+        public Collection<ProductResponse> RelatedProducts { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public Collection<ExtendProductCategoryResponse> ProductCategories { get; set; }

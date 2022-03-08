@@ -79,28 +79,29 @@ namespace BLL.Services
         public async Task<string> UploadFilesToFirebase(string[] files, string type, string parent, string fileName, int order)
         {
             string urlConcat = string.Empty;
-            foreach (var file in files)
-            {
-                try
+            if (files != null && files.Length != 0)
+                foreach (var file in files)
                 {
-                    string url = await UploadFileToFirebase(file, type, parent,
-                        fileName + (Array.IndexOf(files, file) + order + 1));
+                    try
+                    {
+                        string url = await UploadFileToFirebase(file, type, parent,
+                            fileName + (Array.IndexOf(files, file) + order + 1));
 
-                    if (file == files[^1])
-                    {
-                        urlConcat += url;
+                        if (file == files[^1])
+                        {
+                            urlConcat += url;
+                        }
+                        else
+                        {
+                            urlConcat += url + "|";
+                        }
                     }
-                    else
+                    catch (Exception e)
                     {
-                        urlConcat += url + "|";
+                        _logger.Error(e.Message + "\nCannot upload images to Firebase Storage");
+                        return null;
                     }
                 }
-                catch (Exception e)
-                {
-                    _logger.Error(e.Message + "\nCannot upload images to Firebase Storage");
-                    return null;
-                }
-            }
             return urlConcat;
         }
 

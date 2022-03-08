@@ -27,12 +27,11 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Request Update Product
+        /// Update Product
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="productRequest"></param>
+        /// <param name="productRequests"></param>
         /// <returns></returns>
-        Task<ExtendProductResponse> RequestUpdateProduct(string id, ProductRequest productRequest);
+        Task UpdateProduct(List<UpdateProductRequest> productRequests);
 
 
         /// <summary>
