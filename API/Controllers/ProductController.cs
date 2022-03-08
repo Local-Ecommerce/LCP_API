@@ -135,26 +135,25 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Request Update Product (Merchant)
+        /// Update Product (Merchant)
         /// </summary>
-        [Authorize(Roles = ResidentType.MERCHANT)]
+        // [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut]
-        public async Task<IActionResult> RequestUpdateProduct([FromQuery] string id,
-            [FromBody] ProductRequest productRequest)
+        public async Task<IActionResult> UpdateProduct([FromBody] List<UpdateProductRequest> productRequests)
         {
-            _logger.Information($"PUT api/products?id={id} START Request: {JsonSerializer.Serialize(productRequest)}");
+            _logger.Information($"PUT api/products START Request: {JsonSerializer.Serialize(productRequests)}");
 
             Stopwatch watch = new();
             watch.Start();
 
             //update product
-            ExtendProductResponse response = await _productService.RequestUpdateProduct(id, productRequest);
+            await _productService.UpdateProduct(productRequests);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success());
 
             watch.Stop();
 
-            _logger.Information($"PUT api/products?id={id} END duration: " +
+            _logger.Information($"PUT api/products END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

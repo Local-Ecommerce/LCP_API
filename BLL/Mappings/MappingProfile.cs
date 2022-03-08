@@ -29,11 +29,16 @@ namespace BLL.Mappings
             CreateMap<ProductRequest, Product>();
             CreateMap<ProductRequest, UpdateProductRequest>();
             CreateMap<Product, ProductResponse>().ReverseMap();
-            CreateMap<Product, ExtendProductResponse>();
-            CreateMap<UpdateProductRequest, Product>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<Product, ExtendProductResponse>()
+                .ForMember(dest => dest.RelatedProducts, act => act.MapFrom(src => src.InverseBelongToNavigation));
+            CreateMap<UpdateProductRequest, Product>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<UpdateProductRequest, UpdateProductResponse>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             //Apartment Mapping
-            CreateMap<ApartmentRequest, Apartment>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<ApartmentRequest, Apartment>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<Apartment, ApartmentResponse>().ReverseMap();
             CreateMap<Apartment, ExtendApartmentResponse>().ReverseMap();
 
@@ -75,8 +80,10 @@ namespace BLL.Mappings
             CreateMap<Poi, ExtendPoiResponse>();
 
             //Menu Mapping
-            CreateMap<MenuRequest, Menu>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-            CreateMap<MenuUpdateRequest, Menu>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<MenuRequest, Menu>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<MenuUpdateRequest, Menu>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<Menu, MenuResponse>();
             CreateMap<Menu, ExtendMenuResponse>();
 
@@ -95,7 +102,8 @@ namespace BLL.Mappings
 
             //Resident Mapping
             CreateMap<ResidentRequest, Resident>();
-            CreateMap<ResidentUpdateRequest, Resident>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<ResidentUpdateRequest, Resident>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<Resident, ResidentResponse>().ReverseMap();
             CreateMap<Resident, ExtendResidentResponse>().ReverseMap();
 

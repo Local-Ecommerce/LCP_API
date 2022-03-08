@@ -7,7 +7,7 @@ namespace BLL.Dtos.Product
     [Serializable]
     public class BaseProductRequest : ProductRequest
     {
-        public Collection<ProductRequest> InverseBelongToNavigation { get; set; }
+        public Collection<ProductRequest> RelatedProducts { get; set; }
         public Collection<ProductCategoryRequest> ProductCategories { get; set; }
     }
 }

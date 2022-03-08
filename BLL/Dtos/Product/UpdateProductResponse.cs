@@ -1,10 +1,6 @@
-﻿using System;
-using System.Text.Json.Serialization;
-
 namespace BLL.Dtos.Product
 {
-    [Serializable]
-    public class ProductResponse
+    public class UpdateProductResponse
     {
         public string ProductId { get; set; }
         public string ProductCode { get; set; }
@@ -14,16 +10,9 @@ namespace BLL.Dtos.Product
         public double? DefaultPrice { get; set; }
         public string Image { get; set; }
         public int? Status { get; set; }
-        public DateTime? CreatedDate { get; set; }
-        public DateTime? UpdatedDate { get; set; }
-        public string ApproveBy { get; set; }
         public string Size { get; set; }
         public string Color { get; set; }
         public double? Weight { get; set; }
-        public int? IsFavorite { get; set; }
         public string BelongTo { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public UpdateProductResponse UpdatedProduct { get; set; }
     }
 }

@@ -8,7 +8,6 @@ namespace DAL.Models
     public partial class ProductCategory
     {
         public string ProductCategoryId { get; set; }
-        public string CategoryName { get; set; }
         public int? Status { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }

@@ -368,10 +368,6 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("ProductCategoryID");
 
-                entity.Property(e => e.CategoryName)
-                    .HasMaxLength(200)
-                    .IsUnicode(false);
-
                 entity.Property(e => e.ProductId)
                     .HasMaxLength(20)
                     .IsUnicode(false)

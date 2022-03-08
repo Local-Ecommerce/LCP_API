@@ -73,7 +73,7 @@ namespace BLL.Services
                 product.InverseBelongToNavigation = new Collection<Product>();
 
                 //create related product
-                foreach (ProductRequest relatedProductRequest in baseProductRequest.InverseBelongToNavigation)
+                foreach (ProductRequest relatedProductRequest in baseProductRequest.RelatedProducts)
                 {
                     Product relatedProduct = _mapper.Map<Product>(relatedProductRequest);
 
@@ -164,45 +164,53 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Request Update product
+        /// Update product
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="productRequest"></param>
+        /// <param name="productRequests"></param>
         /// <returns></returns>
-        public async Task<ExtendProductResponse> RequestUpdateProduct(string id, ProductRequest productRequest)
+        public async Task UpdateProduct(List<UpdateProductRequest> productRequests)
         {
-            //validate id
-            Product product;
+            //get Id of updated product
+            List<string> productIds = productRequests.Select(pr => pr.ProductId).ToList();
+
+            //validate ids
+            List<Product> products;
             try
             {
-                product = await _unitOfWork.Products.FindAsync(p => p.ProductId.Equals(id));
+                products = await _unitOfWork.Products.FindListAsync(p => productIds.Contains(p.ProductId));
+
+                foreach (var productRequest in productRequests)
+                {
+                    //get product from database
+                    Product product = products.Where(p => p.ProductId.Equals(productRequest.ProductId)).FirstOrDefault();
+
+                    product.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
+
+                    _unitOfWork.Products.Update(product);
+
+                    //get the order of the last photo
+                    int order = _utilService.LastImageNumber("Image", product.Image);
+
+                    //upload image
+                    string imageUrl = _firebaseService.UploadFilesToFirebase(productRequest.Image, TYPE, product.ProductId, "Image", order)
+                                                      .Result;
+
+                    UpdateProductResponse updateProductResponse = _mapper.Map<UpdateProductResponse>(productRequest);
+                    updateProductResponse.Image = imageUrl;
+
+                    //store product to Redis
+                    _redisService.StoreToList(CACHE_KEY_FOR_UPDATE, updateProductResponse,
+                        new Predicate<UpdateProductResponse>(up => up.ProductId.Equals(updateProductResponse.ProductId)));
+                }
+
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception e)
             {
                 _logger.Error("[ProductService.UpdateProduct()]" + e.Message);
-
-                throw new EntityNotFoundException(typeof(Product), id);
+                throw;
             }
 
-            //get the order of the last photo
-            int order = _utilService.LastImageNumber("Image", product.Image);
-
-            //upload image
-            string imageUrl = _firebaseService.UploadFilesToFirebase(productRequest.Image, TYPE, product.ProductId, "Image", order)
-                                              .Result;
-
-            UpdateProductRequest updateProductRequest = _mapper.Map<UpdateProductRequest>(productRequest);
-            updateProductRequest.Image = imageUrl;
-
-            ExtendProductResponse extendProductResponse = _mapper.Map<ExtendProductResponse>(product);
-            extendProductResponse.UpdatedProduct = updateProductRequest;
-
-            //store product to Redis
-            _redisService.StoreToList(CACHE_KEY_FOR_UPDATE, extendProductResponse,
-                new Predicate<ExtendProductResponse>(up => up.ProductId.Equals(extendProductResponse.ProductId)));
-
-
-            return extendProductResponse;
         }
 
 
@@ -273,7 +281,7 @@ namespace BLL.Services
                 Product product = await _unitOfWork.Products.FindAsync(p => p.ProductId == productId);
 
                 //get new product from redis
-                ExtendProductResponse newProduct = _redisService.GetList<ExtendProductResponse>(CACHE_KEY_FOR_UPDATE)
+                UpdateProductResponse newProduct = _redisService.GetList<UpdateProductResponse>(CACHE_KEY_FOR_UPDATE)
                     .Find(p => p.ProductId == productId);
 
                 if (newProduct != null)
@@ -302,7 +310,7 @@ namespace BLL.Services
             if (isUpdate)
                 //remove from redis
                 _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
-                    new Predicate<ExtendProductResponse>(p => p.ProductId.Equals(productId)));
+                    new Predicate<ProductResponse>(p => p.ProductId.Equals(productId)));
 
             return productResponse;
         }
@@ -346,9 +354,31 @@ namespace BLL.Services
                 throw;
             }
 
+            //get new products if update
+            List<ExtendProductResponse> responses = _mapper.Map<List<ExtendProductResponse>>(products.List);
+
+            if (status.Contains((int)ProductStatus.UNVERIFIED_PRODUCT))
+            {
+                foreach (var response in responses)
+                {
+                    //get new base product
+                    response.UpdatedProduct = _redisService
+                            .GetList<UpdateProductResponse>(CACHE_KEY_FOR_UPDATE)
+                            .FirstOrDefault(p => p.ProductId == response.ProductId);
+
+                    //get new related product
+                    foreach (var related in response.RelatedProducts)
+                    {
+                        related.UpdatedProduct = _redisService
+                                .GetList<UpdateProductResponse>(CACHE_KEY_FOR_UPDATE)
+                                .FirstOrDefault(p => p.ProductId == related.ProductId);
+                    }
+                }
+            }
+
             return new PagingModel<ExtendProductResponse>
             {
-                List = _mapper.Map<List<ExtendProductResponse>>(products.List),
+                List = responses,
                 Page = products.Page,
                 LastPage = products.LastPage,
                 Total = products.Total,
