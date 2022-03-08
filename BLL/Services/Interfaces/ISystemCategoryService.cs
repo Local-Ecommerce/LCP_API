@@ -33,11 +33,12 @@ namespace BLL.Services.Interfaces
         /// Get System Category
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="merchantId"></param>
         /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <returns></returns>
-        Task<object> GetSystemCategory(string id, int?[] status, int? limit, int? page, string sort);
+        Task<object> GetSystemCategory(string id, string merchantId, int?[] status, int? limit, int? page, string sort);
     }
 }

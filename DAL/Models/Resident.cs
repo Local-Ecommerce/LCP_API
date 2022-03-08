@@ -13,7 +13,6 @@ namespace DAL.Models
             News = new HashSet<News>();
             Orders = new HashSet<Order>();
             Pois = new HashSet<Poi>();
-            ProductCategories = new HashSet<ProductCategory>();
             Products = new HashSet<Product>();
         }
 
@@ -37,7 +36,6 @@ namespace DAL.Models
         public virtual ICollection<News> News { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Poi> Pois { get; set; }
-        public virtual ICollection<ProductCategory> ProductCategories { get; set; }
         public virtual ICollection<Product> Products { get; set; }
     }
 }

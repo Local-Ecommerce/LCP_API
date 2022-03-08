@@ -215,7 +215,6 @@ namespace BLL.Services
                     productCategory.CreatedDate = DateTime.Now;
                     productCategory.UpdatedDate = DateTime.Now;
                     productCategory.ProductId = pro.ResidentId;
-                    productCategory.ResidentId = pro.ResidentId;
 
                     productCategories.Add(productCategory);
                 }

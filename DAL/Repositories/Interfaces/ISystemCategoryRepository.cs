@@ -9,6 +9,7 @@ namespace DAL.Repositories.Interfaces
         /// Get System Category
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="merchantId"></param>
         /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
@@ -16,7 +17,7 @@ namespace DAL.Repositories.Interfaces
         /// <param name="propertyName"></param>
         /// <returns></returns>
         Task<PagingModel<SystemCategory>> GetSystemCategory(
-            string id, int?[] status, int? limit,
+            string id, string merchantId, int?[] status, int? limit,
             int? queryPage, bool isAsc,
             string propertyName);
     }
