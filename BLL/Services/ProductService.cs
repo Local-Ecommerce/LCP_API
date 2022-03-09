@@ -186,7 +186,7 @@ namespace BLL.Services
                 {
                     //get product from database
                     Product product = products.Where(p => p.ProductId.Equals(productRequest.ProductId)).FirstOrDefault();
-
+                    
                     product.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
 
                     _unitOfWork.Products.Update(product);

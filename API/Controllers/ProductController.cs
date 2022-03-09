@@ -137,7 +137,7 @@ namespace API.Controllers
         /// <summary>
         /// Update Product (Merchant)
         /// </summary>
-        [Authorize(Roles = ResidentType.MERCHANT)]
+        // [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut]
         public async Task<IActionResult> UpdateProduct([FromBody] List<UpdateProductRequest> productRequests)
         {
