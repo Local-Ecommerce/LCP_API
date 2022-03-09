@@ -9,6 +9,7 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace BLL.Services
 {
@@ -224,6 +225,49 @@ namespace BLL.Services
             }
 
             product.ProductCategories = productCategories;
+            return product;
+        }
+
+
+        /// <summary>
+        /// Delete Product Category By Product Id
+        /// </summary>
+        /// <param name="productIds"></param>
+        /// <returns></returns>
+        public async Task DeleteProCategoryByProductId(List<string> productIds)
+        {
+            List<ProductCategory> productCategories = await _unitOfWork.ProductCategories.FindListAsync(pc => productIds.Contains(pc.ProductId));
+
+            foreach (var proCate in productCategories)
+            {
+                proCate.Status = (int)ProductCategoryStatus.DELETED_PRODUCT_CATEGORY;
+                _unitOfWork.ProductCategories.Update(proCate);
+
+            }
+
+        }
+
+
+        /// <summary>
+        /// Verify Product Category
+        /// </summary>
+        /// <param name="isApprove"></param>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        public Product VerifyProCategory(bool isApprove, Product product)
+        {
+            for (int i = 0; i < product.ProductCategories.Count; i++)
+            {
+                ProductCategory productCategory = product.ProductCategories.ElementAt(i);
+                product.ProductCategories.Remove(productCategory);
+
+                productCategory.UpdatedDate = DateTime.Now;
+                productCategory.Status = isApprove ? (int)ProductCategoryStatus.VERIFIED_PRODUCT_CATEGORY
+                    : (int)ProductCategoryStatus.REJECTED_PRODUCT_CATEGORY;
+
+                product.ProductCategories.Add(productCategory);
+            }
+
             return product;
         }
     }

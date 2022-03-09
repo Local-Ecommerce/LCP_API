@@ -109,11 +109,11 @@ namespace API.Controllers
             [FromQuery] int? limit,
             [FromQuery] int? page,
             [FromQuery] string sort,
-            [FromQuery] string include)
+            [FromQuery] string[] include)
         {
             _logger.Information($"GET api/products" +
                 $"?id={id}&status=" + string.Join("status=", status) + $"&apartmentid={apartmentid}&type={type}" +
-                $"&limit={limit}&page={page}&sort={sort}&include={include} START");
+                $"&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) + " START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -127,7 +127,7 @@ namespace API.Controllers
 
             _logger.Information($"GET api/products" +
                 $"?id={id}&status=" + string.Join("status=", status) + $"&apartmentid={apartmentid}&type={type}" +
-                $"&limit={limit}&page={page}&sort={sort}&include={include} END duration: " +
+                $"&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) + " END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -200,9 +200,9 @@ namespace API.Controllers
             watch.Start();
 
             //approve Product
-            ProductResponse response = await _productService.VerifyProductById(id, true);
+            ExtendProductResponse response = await _productService.VerifyProductById(id, true);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ProductResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
 
             watch.Stop();
 
@@ -226,9 +226,9 @@ namespace API.Controllers
             watch.Start();
 
             //reject Product
-            ProductResponse response = await _productService.VerifyProductById(id, false);
+            ExtendProductResponse response = await _productService.VerifyProductById(id, false);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ProductResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
 
             watch.Stop();
 

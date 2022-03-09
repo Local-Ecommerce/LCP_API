@@ -30,7 +30,7 @@ namespace DAL.Repositories
         public async Task<PagingModel<Product>> GetProduct(
             string id, int?[] status, string apartmentId, string type,
             int? limit, int? queryPage,
-            bool isAsc, string propertyName, string include)
+            bool isAsc, string propertyName, string[] include)
         {
             IQueryable<Product> query = _context.Products;
 
@@ -48,20 +48,24 @@ namespace DAL.Repositories
 
             //filter by type
             if (type != null)
-                if (type.Equals("all"))
-                    query = query.Include(p => p.ProductCategories);
-                else
-                    query = query.Include(p => p.ProductCategories.Where(pc => pc.SystemCategory.Type.Contains(type)));
+                query = query.Include(p => p.ProductCategories.Where(pc => pc.SystemCategory.Type.Contains(type)));
 
             //add include
-            if (!string.IsNullOrEmpty(include))
+            if (include.Length > 0)
             {
-                if (include.Equals("related"))
-                    query = query.Where(p => p.BelongTo == null).Include(p => p.InverseBelongToNavigation);
-                else if (include.Equals("base"))
-                    query = query.Where(p => p.BelongTo != null).Include(p => p.BelongToNavigation);
-                else if (include.Equals("productCategory"))
-                    query = query.Where(p => p.BelongTo == null).Include(p => p.ProductCategories);
+                foreach (var item in include)
+                {
+                    if (item.Equals("base"))
+                        query = query.Where(p => p.BelongTo != null).Include(p => p.BelongToNavigation);
+                    else
+                    {
+                        if (item.Equals("related"))
+                            query = query.Where(p => p.BelongTo == null).Include(p => p.InverseBelongToNavigation);
+
+                        if (item.Equals("productCategory"))
+                            query = query.Where(p => p.BelongTo == null).Include(p => p.ProductCategories);
+                    }
+                }
             }
             else
                 query = query.Where(p => p.BelongTo == null);
