@@ -195,9 +195,9 @@ namespace BLL.Services
         /// Create Product Category
         /// </summary>
         /// <param name="product"></param>
-        /// <param name="requests"></param>
+        /// <param name="systemCategoryIds"></param>
         /// <returns></returns>
-        public Product CreateProCategory(Product product, Collection<ProductCategoryRequest> requests)
+        public Product CreateProCategory(Product product, List<string> systemCategoryIds)
         {
             Collection<ProductCategory> productCategories = new();
             List<Product> products = new();
@@ -207,14 +207,17 @@ namespace BLL.Services
             //create product Category
             foreach (Product pro in products)
             {
-                foreach (var proCate in requests)
+                foreach (var systemCategoryId in systemCategoryIds)
                 {
-                    ProductCategory productCategory = _mapper.Map<ProductCategory>(proCate);
-                    productCategory.ProductCategoryId = _utilService.CreateId(PREFIX);
-                    productCategory.Status = (int)ProductCategoryStatus.UNVERIFIED_PRODUCT_CATEGORY;
-                    productCategory.CreatedDate = DateTime.Now;
-                    productCategory.UpdatedDate = DateTime.Now;
-                    productCategory.ProductId = pro.ResidentId;
+                    ProductCategory productCategory = new ProductCategory
+                    {
+                        ProductCategoryId = _utilService.CreateId(PREFIX),
+                        Status = (int)ProductCategoryStatus.UNVERIFIED_PRODUCT_CATEGORY,
+                        CreatedDate = DateTime.Now,
+                        UpdatedDate = DateTime.Now,
+                        ProductId = pro.ProductId,
+                        SystemCategoryId = systemCategoryId
+                    };
 
                     productCategories.Add(productCategory);
                 }
