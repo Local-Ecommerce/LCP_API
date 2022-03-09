@@ -48,7 +48,10 @@ namespace DAL.Repositories
 
             //filter by type
             if (type != null)
-                query = query.Include(p => p.ProductCategories.Where(pc => pc.SystemCategory.Type.Equals(type)));
+                if (type.Equals("all"))
+                    query = query.Include(p => p.ProductCategories);
+                else
+                    query = query.Include(p => p.ProductCategories.Where(pc => pc.SystemCategory.Type.Contains(type)));
 
             //add include
             if (!string.IsNullOrEmpty(include))
@@ -57,6 +60,8 @@ namespace DAL.Repositories
                     query = query.Where(p => p.BelongTo == null).Include(p => p.InverseBelongToNavigation);
                 else if (include.Equals("base"))
                     query = query.Where(p => p.BelongTo != null).Include(p => p.BelongToNavigation);
+                else if (include.Equals("productCategory"))
+                    query = query.Where(p => p.BelongTo == null).Include(p => p.ProductCategories);
             }
             else
                 query = query.Where(p => p.BelongTo == null);

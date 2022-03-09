@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using BLL.Dtos.ProductCategory;
 
 namespace BLL.Dtos.Product
 {
@@ -8,6 +8,6 @@ namespace BLL.Dtos.Product
     public class BaseProductRequest : ProductRequest
     {
         public Collection<ProductRequest> RelatedProducts { get; set; }
-        public Collection<ProductCategoryRequest> ProductCategories { get; set; }
+        public List<string> SystemCategoryIds { get; set; }
     }
 }

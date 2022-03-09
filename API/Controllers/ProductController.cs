@@ -137,7 +137,7 @@ namespace API.Controllers
         /// <summary>
         /// Update Product (Merchant)
         /// </summary>
-        // [Authorize(Roles = ResidentType.MERCHANT)]
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut]
         public async Task<IActionResult> UpdateProduct([FromBody] List<UpdateProductRequest> productRequests)
         {
@@ -165,21 +165,22 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete]
-        public async Task<IActionResult> DeleteProduct([FromQuery] string id)
+        public async Task<IActionResult> DeleteProduct([FromBody] List<string> ids)
         {
-            _logger.Information($"DELETE api/products?id={id} START");
+            _logger.Information($"DELETE api/products START Request: id="
+            + string.Join(" ,id=", ids));
 
             Stopwatch watch = new();
             watch.Start();
 
-            //delete product
-            ExtendProductResponse response = await _productService.DeleteProduct(id);
+            //delete products
+            await _productService.DeleteProduct(ids);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success());
 
             watch.Stop();
 
-            _logger.Information($"DELETE api/products?id={id} END duration: " +
+            _logger.Information($"DELETE api/products END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

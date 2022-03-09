@@ -53,11 +53,11 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Delete Product by id
+        /// Delete Product by ids
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="ids"></param>
         /// <returns></returns>
-        Task<ExtendProductResponse> DeleteProduct(string id);
+        Task DeleteProduct(List<string> ids);
 
 
         /// <summary>

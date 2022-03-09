@@ -92,7 +92,7 @@ namespace BLL.Services
                 }
 
                 //add productCategory
-                product = _productCategoryService.CreateProCategory(product, baseProductRequest.ProductCategories);
+                product = _productCategoryService.CreateProCategory(product, baseProductRequest.SystemCategoryIds);
 
                 _unitOfWork.Products.Add(product);
 
@@ -121,10 +121,10 @@ namespace BLL.Services
             try
             {
                 //add product category from base product
-                List<ProductCategory> productCategories =
-                    await _unitOfWork.ProductCategories.FindListAsync(pc => pc.ProductId.Equals(baseProductId));
+                Product baseProduct =
+                    (await _unitOfWork.Products.GetProduct(baseProductId, null, null, null, null, null, false, null, "productCategory")).List.First();
 
-                Collection<ProductCategoryRequest> proCateRequest = _mapper.Map<Collection<ProductCategoryRequest>>(productCategories);
+                List<string> systemCategoryIds = baseProduct.ProductCategories.Select(pc => pc.SystemCategoryId).ToList();
 
                 productRequests.ForEach(productRequest =>
                 {
@@ -145,10 +145,13 @@ namespace BLL.Services
                     product.ResidentId = residentId;
                     product.BelongTo = baseProductId;
 
-                    product = _productCategoryService.CreateProCategory(product, proCateRequest);
+                    product = _productCategoryService.CreateProCategory(product, systemCategoryIds);
 
                     _unitOfWork.Products.Add(product);
                 });
+
+                baseProduct.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
+                _unitOfWork.Products.Update(baseProduct);
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -215,11 +218,11 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Delete Product by id
+        /// Delete Product by ids
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="ids"></param>
         /// <returns></returns>
-        public async Task<ExtendProductResponse> DeleteProduct(string id)
+        public async Task DeleteProduct(List<string> ids)
         {
             //biz rule
 
@@ -228,13 +231,13 @@ namespace BLL.Services
             try
             {
                 products = await _unitOfWork.Products
-                                .FindListAsync(p => p.ProductId.Equals(id) || p.BelongTo.Equals(id));
+                                .FindListAsync(p => ids.Contains(p.ProductId) || ids.Contains(p.BelongTo));
             }
             catch (Exception e)
             {
-                _logger.Error("[ProductService.DeleteBaseProduct()]" + e.Message);
+                _logger.Error("[ProductService.DeleteProduct()]" + e.Message);
 
-                throw new EntityNotFoundException(typeof(Product), id);
+                throw new EntityNotFoundException();
             }
 
             //delete product
@@ -257,10 +260,6 @@ namespace BLL.Services
 
                 throw;
             }
-
-            //create response
-
-            return null;
         }
 
 
