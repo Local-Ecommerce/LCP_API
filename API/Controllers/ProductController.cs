@@ -68,7 +68,7 @@ namespace API.Controllers
         [HttpPost("{id}/related")]
         [Authorize(Roles = ResidentType.MERCHANT)]
         [AllowAnonymous]
-        public async Task<IActionResult> AddRelatedProduct(string id, [FromBody] List<ProductRequest> relatedProductRequest)
+        public async Task<IActionResult> AddRelatedProduct(string id, [FromBody] ListProductRequest relatedProductRequest)
         {
             _logger.Information($"POST api/products/related/{id} START Request: {JsonSerializer.Serialize(relatedProductRequest)}");
 
@@ -83,7 +83,7 @@ namespace API.Controllers
             string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
             //add related product
-            object response = await _productService.AddRelatedProduct(id, residentId, relatedProductRequest);
+            object response = await _productService.AddRelatedProduct(id, residentId, relatedProductRequest.Products);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
@@ -139,15 +139,15 @@ namespace API.Controllers
         /// </summary>
         // [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut]
-        public async Task<IActionResult> UpdateProduct([FromBody] List<UpdateProductRequest> productRequests)
+        public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductRequest productRequest)
         {
-            _logger.Information($"PUT api/products START Request: {JsonSerializer.Serialize(productRequests)}");
+            _logger.Information($"PUT api/products START Request: {JsonSerializer.Serialize(productRequest)}");
 
             Stopwatch watch = new();
             watch.Start();
 
             //update product
-            await _productService.UpdateProduct(productRequests);
+            await _productService.UpdateProduct(productRequest);
 
             string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success());
 
@@ -165,16 +165,16 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete]
-        public async Task<IActionResult> DeleteProduct([FromBody] List<string> ids)
+        public async Task<IActionResult> DeleteProduct([FromBody] ProductIdsRequest productIdsRequest)
         {
             _logger.Information($"DELETE api/products START Request: id="
-            + string.Join(" ,id=", ids));
+            + string.Join(" ,id=", productIdsRequest.ProductIds));
 
             Stopwatch watch = new();
             watch.Start();
 
             //delete products
-            await _productService.DeleteProduct(ids);
+            await _productService.DeleteProduct(productIdsRequest.ProductIds);
 
             string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success());
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BLL.Dtos.Product
 {
@@ -14,5 +15,18 @@ namespace BLL.Dtos.Product
         public string Color { get; set; }
         public double Weight { get; set; }
         public string[] Image { get; set; }
+    }
+
+    [Serializable]
+    public class ProductIdsRequest
+    {
+        public List<string> ProductIds { get; set; }
+    }
+
+
+    [Serializable]
+    public class ListProductRequest
+    {
+        public List<ProductRequest> Products { get; set; }
     }
 }

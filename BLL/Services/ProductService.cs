@@ -169,12 +169,12 @@ namespace BLL.Services
         /// <summary>
         /// Update product
         /// </summary>
-        /// <param name="productRequests"></param>
+        /// <param name="productRequest"></param>
         /// <returns></returns>
-        public async Task UpdateProduct(List<UpdateProductRequest> productRequests)
+        public async Task UpdateProduct(UpdateProductRequest productRequest)
         {
             //get Id of updated product
-            List<string> productIds = productRequests.Select(pr => pr.ProductId).ToList();
+            List<string> productIds = productRequest.Products.Select(pr => pr.ProductId).ToList();
 
             //validate ids
             List<Product> products;
@@ -182,11 +182,11 @@ namespace BLL.Services
             {
                 products = await _unitOfWork.Products.FindListAsync(p => productIds.Contains(p.ProductId));
 
-                foreach (var productRequest in productRequests)
+                foreach (var pR in productRequest.Products)
                 {
                     //get product from database
-                    Product product = products.Where(p => p.ProductId.Equals(productRequest.ProductId)).FirstOrDefault();
-                    
+                    Product product = products.Where(p => p.ProductId.Equals(pR.ProductId)).FirstOrDefault();
+
                     product.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
 
                     _unitOfWork.Products.Update(product);
@@ -195,7 +195,7 @@ namespace BLL.Services
                     int order = _utilService.LastImageNumber("Image", product.Image);
 
                     //upload image
-                    string imageUrl = _firebaseService.UploadFilesToFirebase(productRequest.Image, TYPE, product.ProductId, "Image", order)
+                    string imageUrl = _firebaseService.UploadFilesToFirebase(pR.Image, TYPE, product.ProductId, "Image", order)
                                                       .Result;
 
                     UpdateProductResponse updateProductResponse = _mapper.Map<UpdateProductResponse>(productRequest);

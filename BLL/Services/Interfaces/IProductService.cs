@@ -29,9 +29,9 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Update Product
         /// </summary>
-        /// <param name="productRequests"></param>
+        /// <param name="productRequest"></param>
         /// <returns></returns>
-        Task UpdateProduct(List<UpdateProductRequest> productRequests);
+        Task UpdateProduct(UpdateProductRequest productRequest);
 
 
         /// <summary>
