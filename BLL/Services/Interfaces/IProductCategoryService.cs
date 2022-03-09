@@ -1,6 +1,7 @@
 ﻿using BLL.Dtos.ProductCategory;
 using DAL.Models;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -39,6 +40,12 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<ProductCategoryResponse> DeleteProCategory(string id);
 
+        /// <summary>
+        /// Delete Product Category By Product Id
+        /// </summary>
+        /// <param name="productIds"></param>
+        Task DeleteProCategoryByProductId(List<string> productIds);
+
 
         /// <summary>
         /// Get Product Category
@@ -50,5 +57,14 @@ namespace BLL.Services.Interfaces
         /// <param name="sort"></param>
         /// <returns></returns>
         Task<object> GetProCategory(string id, int?[] status, int? limit, int? page, string sort);
+
+
+        /// <summary>
+        /// Verify Product Category
+        /// </summary>
+        /// <param name="isApprove"></param>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        Product VerifyProCategory(bool isApprove, Product product);
     }
 }

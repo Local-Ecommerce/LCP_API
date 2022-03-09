@@ -49,7 +49,7 @@ namespace BLL.Services.Interfaces
         Task<PagingModel<ExtendProductResponse>> GetProduct(
             string id, int?[] status, string apartmentId, string type,
             int? limit, int? page,
-            string sort, string include);
+            string sort, string[] include);
 
 
         /// <summary>
@@ -66,6 +66,6 @@ namespace BLL.Services.Interfaces
         /// <param name="productId"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        Task<ProductResponse> VerifyProductById(string productId, bool isApprove);
+        Task<ExtendProductResponse> VerifyProductById(string productId, bool isApprove);
     }
 }

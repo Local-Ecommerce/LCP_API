@@ -122,7 +122,7 @@ namespace BLL.Services
             {
                 //add product category from base product
                 Product baseProduct =
-                    (await _unitOfWork.Products.GetProduct(baseProductId, null, null, null, null, null, false, null, "productCategory")).List.First();
+                    (await _unitOfWork.Products.GetProduct(baseProductId, new int?[] { }, null, null, null, null, false, null, new string[] { "productCategory" })).List.First();
 
                 List<string> systemCategoryIds = baseProduct.ProductCategories.Select(pc => pc.SystemCategoryId).ToList();
 
@@ -162,7 +162,7 @@ namespace BLL.Services
                 throw;
             }
 
-            return await GetProduct(baseProductId, Array.Empty<int?>(), default, default, default, default, default, "related");
+            return await GetProduct(baseProductId, Array.Empty<int?>(), default, default, default, default, default, new string[] { "related" });
         }
 
 
@@ -252,6 +252,9 @@ namespace BLL.Services
                     _unitOfWork.Products.Update(product);
                 });
 
+                //delete prduct category
+                await _productCategoryService.DeleteProCategoryByProductId(ids);
+
                 await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception e)
@@ -269,47 +272,79 @@ namespace BLL.Services
         /// <param name="productId"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public async Task<ProductResponse> VerifyProductById(string productId, bool isApprove)
+        public async Task<ExtendProductResponse> VerifyProductById(string productId, bool isApprove)
         {
-            ProductResponse productResponse;
-            bool isUpdate = false;
+            ExtendProductResponse productResponse;
 
             try
             {
                 //get old product from database
-                Product product = await _unitOfWork.Products.FindAsync(p => p.ProductId == productId);
+                Product baseProduct =
+                    (await _unitOfWork.Products
+                        .GetProduct(productId, new int?[] { }, null, null, null, null, false, null, new string[] { "productCategory", "related" }))
+                        .List
+                        .First();
 
-                //get new product from redis
-                UpdateProductResponse newProduct = _redisService.GetList<UpdateProductResponse>(CACHE_KEY_FOR_UPDATE)
-                    .Find(p => p.ProductId == productId);
-
-                if (newProduct != null)
+                if (isApprove)
                 {
-                    product = _mapper.Map<Product>(newProduct);
-                    isUpdate = true;
+                    //get base product update if available
+                    UpdateProductResponse newBaseProduct = _redisService.GetList<UpdateProductResponse>(CACHE_KEY_FOR_UPDATE)
+                            .Find(p => p.ProductId == productId);
+
+                    baseProduct = newBaseProduct != null ? _mapper.Map<Product>(newBaseProduct) : baseProduct;
+
+                    //get related product update if available
+                    for (int i = 0; i < baseProduct.InverseBelongToNavigation.Count; i++)
+                    {
+                        Product relatedProduct = baseProduct.InverseBelongToNavigation.ElementAt(i);
+                        baseProduct.InverseBelongToNavigation.Remove(relatedProduct);
+
+                        UpdateProductResponse newRelatedProduct = _redisService.GetList<UpdateProductResponse>(CACHE_KEY_FOR_UPDATE)
+                                .Find(p => p.ProductId == relatedProduct.ProductId);
+
+                        if (newRelatedProduct != null)
+                        {
+                            relatedProduct = _mapper.Map<Product>(newRelatedProduct);
+                            _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
+                                new Predicate<ProductResponse>(p => p.ProductId.Equals(relatedProduct.ProductId)));
+                        }
+
+                        baseProduct.InverseBelongToNavigation.Add(relatedProduct);
+                    }
                 }
 
-                product.UpdatedDate = DateTime.Now;
-                product.Status = isApprove ? (int)ProductStatus.VERIFIED_PRODUCT : (int)ProductStatus.REJECTED_PRODUCT;
-                product.ApproveBy = isApprove ? "Han" : ""; //update later
+                //verify product
+                baseProduct.UpdatedDate = DateTime.Now;
+                baseProduct.Status = isApprove ? (int)ProductStatus.VERIFIED_PRODUCT : (int)ProductStatus.REJECTED_PRODUCT;
+                baseProduct.ApproveBy = isApprove ? "Han" : ""; //update later
 
-                _unitOfWork.Products.Update(product);
+                //verify related product
+                for (int i = 0; i < baseProduct.InverseBelongToNavigation.Count; i++)
+                {
+                    Product relatedProduct = baseProduct.InverseBelongToNavigation.ElementAt(i);
+                    baseProduct.InverseBelongToNavigation.Remove(relatedProduct);
+
+                    relatedProduct.UpdatedDate = DateTime.Now;
+                    relatedProduct.Status = isApprove ? (int)ProductStatus.VERIFIED_PRODUCT : (int)ProductStatus.REJECTED_PRODUCT;
+                    relatedProduct.ApproveBy = isApprove ? "Han" : ""; //update later
+
+                    baseProduct.InverseBelongToNavigation.Add(relatedProduct);
+                }
+
+                //verify product categories
+                baseProduct = _productCategoryService.VerifyProCategory(isApprove, baseProduct);
+
+                _unitOfWork.Products.Update(baseProduct);
 
                 await _unitOfWork.SaveChangesAsync();
 
-                productResponse = _mapper.Map<ProductResponse>(product);
+                productResponse = _mapper.Map<ExtendProductResponse>(baseProduct);
             }
             catch (Exception e)
             {
                 _logger.Error("[ProductService.VerifyCreateProductById()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Product), productId);
+                throw;
             }
-
-            if (isUpdate)
-                //remove from redis
-                _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
-                    new Predicate<ProductResponse>(p => p.ProductId.Equals(productId)));
 
             return productResponse;
         }
@@ -330,7 +365,7 @@ namespace BLL.Services
         public async Task<PagingModel<ExtendProductResponse>> GetProduct(
             string id, int?[] status, string apartmentId, string type,
             int? limit, int? page,
-            string sort, string include)
+            string sort, string[] include)
         {
             PagingModel<Product> products;
             string propertyName = default;

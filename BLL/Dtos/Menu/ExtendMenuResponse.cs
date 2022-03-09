@@ -10,7 +10,7 @@ namespace BLL.Dtos.Menu
     public class ExtendMenuResponse : MenuResponse
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public Collection<ProductInMenuResponse> ProductInMenus { get; set; }
+        public Collection<ExtendProductInMenuResponse> ProductInMenus { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public MerchantStoreResponse MerchantStore { get; set; }

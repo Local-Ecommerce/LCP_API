@@ -61,7 +61,7 @@ namespace DAL.Repositories
                     if (item.Equals("store"))
                         query = query.Include(menu => menu.MerchantStore);
                     if (item.Equals("product"))
-                        query = query.Include(menu => menu.ProductInMenus);
+                        query = query.Include(menu => menu.ProductInMenus).ThenInclude(pim => pim.Product);
                 }
             }
 

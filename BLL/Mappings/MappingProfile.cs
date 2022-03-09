@@ -35,6 +35,9 @@ namespace BLL.Mappings
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<UpdateProductRequest, UpdateProductResponse>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<UpdateProductResponse, Product>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
 
             //Apartment Mapping
             CreateMap<ApartmentRequest, Apartment>()

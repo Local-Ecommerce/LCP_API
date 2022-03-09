@@ -21,6 +21,6 @@ namespace DAL.Repositories.Interfaces
         Task<PagingModel<Product>> GetProduct(
             string id, int?[] status, string apartmentId, string type,
             int? limit, int? queryPage,
-            bool isAsc, string propertyName, string include);
+            bool isAsc, string propertyName, string[] include);
     }
 }

@@ -65,7 +65,7 @@ namespace API.Controllers
         /// <summary>
         /// Get menu (Authentication required)
         /// </summary>
-        // [Authorize]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetMenu(
             [FromQuery] string id,
