@@ -56,7 +56,7 @@ namespace API.Controllers
         /// <summary>
         /// Get System Category (Authentication required)
         /// </summary>
-        [Authorize]
+        // [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetSystemCategory(
             [FromQuery] string id,
@@ -64,23 +64,24 @@ namespace API.Controllers
             [FromQuery] int?[] status,
             [FromQuery] int? limit,
             [FromQuery] int? page,
-            [FromQuery] string sort)
+            [FromQuery] string sort,
+            [FromQuery] string include)
         {
             _logger.Information($"GET api/categories?id={id}&merchantid={merchantid}&status=" + string.Join("status=", status) +
-            $"&limit={limit}&page={page}&sort={sort} START");
+            $"&limit={limit}&page={page}&sort={sort}&include={include} START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //get systemCategory
-            object response = await _systemCategoryService.GetSystemCategory(id, merchantid, status, limit, page, sort);
+            object response = await _systemCategoryService.GetSystemCategory(id, merchantid, status, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
             _logger.Information($"GET api/categories?id={id}&merchantid={merchantid}&status=" + string.Join("status=", status) +
-            $"&limit={limit}&page={page}&sort={sort} END duration: " +
+            $"&limit={limit}&page={page}&sort={sort}&include={include} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

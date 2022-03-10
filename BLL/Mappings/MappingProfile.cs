@@ -55,6 +55,10 @@ namespace BLL.Mappings
             CreateMap<SystemCategoryUpdateRequest, SystemCategory>()
                     .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<SystemCategory, SystemCategoryResponse>().ReverseMap();
+            CreateMap<SystemCategory, ParentSystemCategoryResponse>()
+                .ForMember(dest => dest.Children, act => act.MapFrom(src => src.InverseBelongToNavigation));
+            CreateMap<SystemCategory, ChildSystemCategoryResponse>()
+                .ForMember(dest => dest.Parent, act => act.MapFrom(src => src.BelongToNavigation));
 
             //MerchantStore Mapping
             CreateMap<MerchantStoreRequest, MerchantStore>();

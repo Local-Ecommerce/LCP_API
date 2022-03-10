@@ -36,7 +36,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<SystemCategoryResponse> CreateSystemCategory(SystemCategoryRequest request)
+        public async Task<ParentSystemCategoryResponse> CreateSystemCategory(SystemCategoryRequest request)
         {
             //biz rule
 
@@ -76,10 +76,10 @@ namespace BLL.Services
             }
 
             //create response
-            SystemCategoryResponse systemCategoryResponse = _mapper.Map<SystemCategoryResponse>(systemCategory);
+            ParentSystemCategoryResponse systemCategoryResponse = _mapper.Map<ParentSystemCategoryResponse>(systemCategory);
 
             if (systemCategoryResponse.CategoryLevel != (int)CategoryLevel.THREE)
-                systemCategoryResponse.InverseBelongToNavigation = new Collection<SystemCategoryResponse>();
+                systemCategoryResponse.Children = new Collection<ParentSystemCategoryResponse>();
 
             return systemCategoryResponse;
         }
@@ -137,8 +137,12 @@ namespace BLL.Services
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<object> GetSystemCategory(string id, string merchantId, int?[] status, int? limit, int? page, string sort)
+        public async Task<object> GetSystemCategory(
+            string id, string merchantId,
+            int?[] status, int? limit,
+            int? page, string sort, string include)
         {
             PagingModel<SystemCategory> categories;
             string propertyName = default;
@@ -152,7 +156,8 @@ namespace BLL.Services
 
             try
             {
-                categories = await _unitOfWork.SystemCategories.GetSystemCategory(id, merchantId, status, limit, page, isAsc, propertyName);
+                categories = await _unitOfWork.SystemCategories
+                    .GetSystemCategory(id, merchantId, status, limit, page, isAsc, propertyName, include);
             }
             catch (Exception e)
             {
@@ -160,13 +165,25 @@ namespace BLL.Services
                 throw;
             }
 
-            return new PagingModel<SystemCategoryResponse>
+            if (string.IsNullOrEmpty(include))
+
+
+                return new PagingModel<ParentSystemCategoryResponse>
+                {
+                    List = _mapper.Map<List<ParentSystemCategoryResponse>>(categories.List),
+                    Page = categories.Page,
+                    LastPage = categories.LastPage,
+                    Total = categories.Total,
+                };
+
+            return new PagingModel<ChildSystemCategoryResponse>
             {
-                List = _mapper.Map<List<SystemCategoryResponse>>(categories.List),
+                List = _mapper.Map<List<ChildSystemCategoryResponse>>(categories.List),
                 Page = categories.Page,
                 LastPage = categories.LastPage,
                 Total = categories.Total,
             };
+
         }
 
 
