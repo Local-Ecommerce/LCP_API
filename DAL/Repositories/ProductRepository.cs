@@ -47,9 +47,9 @@ namespace DAL.Repositories
                 query = query.Include(p => p.Resident).Where(p => p.Resident.ApartmentId.Equals(apartmentId));
 
             //filter by sysCateId
-            if (sysCateId != null)
-                query = query.Include(p => p.ProductCategories
-                    .Where(pc => pc.SystemCategory.SystemCategoryId.Equals(sysCateId)));
+            if (!string.IsNullOrEmpty(sysCateId))
+                query = query.Include(p => p.ProductCategories)
+                    .Where(p => p.ProductCategories.Any(pc => pc.SystemCategoryId.Equals(sysCateId)));
 
             //add include
             if (include.Length > 0)
@@ -71,7 +71,6 @@ namespace DAL.Repositories
             }
             else
                 query = query.Where(p => p.BelongTo == null);
-
 
             //sort
             if (!string.IsNullOrEmpty(propertyName))
