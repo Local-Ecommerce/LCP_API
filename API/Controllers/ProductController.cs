@@ -105,28 +105,28 @@ namespace API.Controllers
             [FromQuery] string id,
             [FromQuery] int?[] status,
             [FromQuery] string apartmentid,
-            [FromQuery] string type,
+            [FromQuery] string categoryid,
             [FromQuery] int? limit,
             [FromQuery] int? page,
             [FromQuery] string sort,
             [FromQuery] string[] include)
         {
             _logger.Information($"GET api/products" +
-                $"?id={id}&status=" + string.Join("status=", status) + $"&apartmentid={apartmentid}&type={type}" +
+                $"?id={id}&status=" + string.Join("status=", status) + $"&apartmentid={apartmentid}&categoryid={categoryid}" +
                 $"&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) + " START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //get base product
-            object response = await _productService.GetProduct(id, status, apartmentid, type, limit, page, sort, include);
+            object response = await _productService.GetProduct(id, status, apartmentid, categoryid, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
             _logger.Information($"GET api/products" +
-                $"?id={id}&status=" + string.Join("status=", status) + $"&apartmentid={apartmentid}&type={type}" +
+                $"?id={id}&status=" + string.Join("status=", status) + $"&apartmentid={apartmentid}&categoryid={categoryid}" +
                 $"&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) + " END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 

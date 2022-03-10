@@ -356,14 +356,14 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <param name="apartmentId"></param>
-        /// <param name="type"></param>
+        /// <param name="sysCateId"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<ExtendProductResponse>> GetProduct(
-            string id, int?[] status, string apartmentId, string type,
+            string id, int?[] status, string apartmentId, string sysCateId,
             int? limit, int? page,
             string sort, string[] include)
         {
@@ -380,7 +380,7 @@ namespace BLL.Services
             try
             {
                 products = await _unitOfWork.Products.GetProduct
-                    (id, status, apartmentId, type, limit, page, isAsc, propertyName, include);
+                    (id, status, apartmentId, sysCateId, limit, page, isAsc, propertyName, include);
             }
             catch (Exception e)
             {
