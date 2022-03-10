@@ -20,7 +20,7 @@ namespace DAL.Repositories
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <param name="apartmentId"></param>
-        /// <param name="type"></param>
+        /// <param name="sysCateId"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
@@ -28,7 +28,7 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<Product>> GetProduct(
-            string id, int?[] status, string apartmentId, string type,
+            string id, int?[] status, string apartmentId, string sysCateId,
             int? limit, int? queryPage,
             bool isAsc, string propertyName, string[] include)
         {
@@ -46,9 +46,10 @@ namespace DAL.Repositories
             if (apartmentId != null)
                 query = query.Include(p => p.Resident).Where(p => p.Resident.ApartmentId.Equals(apartmentId));
 
-            //filter by type
-            if (type != null)
-                query = query.Include(p => p.ProductCategories.Where(pc => pc.SystemCategory.Type.Contains(type)));
+            //filter by sysCateId
+            if (sysCateId != null)
+                query = query.Include(p => p.ProductCategories
+                    .Where(pc => pc.SystemCategory.SystemCategoryId.Equals(sysCateId)));
 
             //add include
             if (include.Length > 0)
