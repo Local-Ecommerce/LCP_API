@@ -1,8 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using DAL.Constants;
 using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -60,7 +60,9 @@ namespace DAL.Repositories
                     else
                     {
                         if (item.Equals("related"))
-                            query = query.Where(p => p.BelongTo == null).Include(p => p.InverseBelongToNavigation);
+                            query = query.Where(p => p.BelongTo == null)
+                            .Include(p => p.InverseBelongToNavigation)
+                            .Where(p => p.InverseBelongToNavigation.All(related => related.Status != (int)ProductStatus.DELETED_PRODUCT));
 
                         if (item.Equals("productCategory"))
                             query = query.Where(p => p.BelongTo == null).Include(p => p.ProductCategories);
