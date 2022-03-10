@@ -192,7 +192,7 @@ namespace BLL.Services
                     _unitOfWork.Products.Update(product);
 
                     //get the order of the last photo
-                    int order = _utilService.LastImageNumber("Image", product.Image);
+                    int order = !string.IsNullOrEmpty(product.Image) ? _utilService.LastImageNumber("Image", product.Image) : 0;
 
                     //upload image
                     string imageUrl = _firebaseService.UploadFilesToFirebase(pR.Image, TYPE, product.ProductId, "Image", order)
