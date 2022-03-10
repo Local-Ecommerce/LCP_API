@@ -10,7 +10,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<SystemCategoryResponse> CreateSystemCategory(SystemCategoryRequest request);
+        Task<ParentSystemCategoryResponse> CreateSystemCategory(SystemCategoryRequest request);
 
 
         /// <summary>
@@ -38,7 +38,11 @@ namespace BLL.Services.Interfaces
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
-        Task<object> GetSystemCategory(string id, string merchantId, int?[] status, int? limit, int? page, string sort);
+        Task<object> GetSystemCategory(
+            string id, string merchantId,
+            int?[] status, int? limit,
+            int? page, string sort, string include);
     }
 }

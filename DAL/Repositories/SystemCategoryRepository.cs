@@ -24,11 +24,12 @@ namespace DAL.Repositories
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
         /// <param name="propertyName"></param>
+        /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<SystemCategory>> GetSystemCategory(
             string id, string merchantId, int?[] status, int? limit,
             int? queryPage, bool isAsc,
-            string propertyName)
+            string propertyName, string include)
         {
             IQueryable<SystemCategory> query = _context.SystemCategories.Where(sc => sc.SystemCategoryId != null);
 
@@ -45,13 +46,16 @@ namespace DAL.Repositories
             //filter by status
             if (status.Length != 0)
                 query = query.Where(sc => status.Contains(sc.Status));
-            else
-                query = query.Where(sc => sc.BelongTo == null);
 
-            query = query.Include(sc => sc.InverseBelongToNavigation
-                                .Where(sc => sc.Status.Equals((int)SystemCategoryStatus.ACTIVE_SYSTEM_CATEGORY)))
-                            .ThenInclude(sci => sci.InverseBelongToNavigation
-                                    .Where(sc => sc.Status.Equals((int)SystemCategoryStatus.ACTIVE_SYSTEM_CATEGORY)));
+            //filter by include
+            if (!string.IsNullOrEmpty(include) && include.Equals("parent"))
+                query = query.Include(sc => sc.BelongToNavigation);
+            else
+                query = query.Include(sc => sc.InverseBelongToNavigation
+                                    .Where(sc => sc.Status.Equals((int)SystemCategoryStatus.ACTIVE_SYSTEM_CATEGORY)))
+                                .ThenInclude(sci => sci.InverseBelongToNavigation
+                                        .Where(sc => sc.Status.Equals((int)SystemCategoryStatus.ACTIVE_SYSTEM_CATEGORY)));
+
 
             //sort
             if (!string.IsNullOrEmpty(propertyName))
