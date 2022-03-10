@@ -61,8 +61,7 @@ namespace DAL.Repositories
                     {
                         if (item.Equals("related"))
                             query = query.Where(p => p.BelongTo == null)
-                            .Include(p => p.InverseBelongToNavigation)
-                            .Where(p => p.InverseBelongToNavigation.All(related => related.Status != (int)ProductStatus.DELETED_PRODUCT));
+                            .Include(p => p.InverseBelongToNavigation.Where(related => related.Status != (int)ProductStatus.DELETED_PRODUCT));
 
                         if (item.Equals("productCategory"))
                             query = query.Where(p => p.BelongTo == null).Include(p => p.ProductCategories);
