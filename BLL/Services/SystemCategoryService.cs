@@ -46,7 +46,6 @@ namespace BLL.Services
             {
                 systemCategory.SystemCategoryId = _utilService.CreateId(PREFIX);
                 systemCategory.Status = (int)SystemCategoryStatus.ACTIVE_SYSTEM_CATEGORY;
-                systemCategory.ApproveBy = "";
 
                 int? level;
 
@@ -111,7 +110,6 @@ namespace BLL.Services
             try
             {
                 systemCategory.Status = (int)SystemCategoryStatus.DELETED_SYSTEM_CATEGORY;
-                systemCategory.ApproveBy = "";
 
                 _unitOfWork.SystemCategories.Update(systemCategory);
 
@@ -216,7 +214,6 @@ namespace BLL.Services
             try
             {
                 systemCategory = _mapper.Map(request, systemCategory);
-                systemCategory.ApproveBy = "";
 
                 _unitOfWork.SystemCategories.Update(systemCategory);
 

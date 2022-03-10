@@ -562,8 +562,6 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("SystemCategoryID");
 
-                entity.Property(e => e.ApproveBy).HasMaxLength(250);
-
                 entity.Property(e => e.BelongTo)
                     .HasMaxLength(20)
                     .IsUnicode(false);
