@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
 using System.Linq.Dynamic.Core;
+using DAL.Constants;
 
 namespace DAL.Repositories
 {
@@ -61,7 +62,9 @@ namespace DAL.Repositories
                     if (item.Equals("store"))
                         query = query.Include(menu => menu.MerchantStore);
                     if (item.Equals("product"))
-                        query = query.Include(menu => menu.ProductInMenus).ThenInclude(pim => pim.Product);
+                        query = query.Include(menu => menu.ProductInMenus
+                                        .Where(pim => pim.Status.Equals((int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU)))
+                                    .ThenInclude(pim => pim.Product);
                 }
             }
 
