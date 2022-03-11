@@ -7,6 +7,7 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BLL.Services
@@ -141,35 +142,47 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Update Product In Menu By Id
+        /// Update Products In Menu By Id
         /// </summary>
-        /// <param name="productInMenuId"></param>
-        /// <param name="productInMenuUpdateRequest"></param>
+        /// <param name="productInMenuUpdateRequests"></param>
         /// <returns></returns>
         /// <exception cref="EntityNotFoundException"></exception>
-        public async Task<ExtendProductInMenuResponse> UpdateProductInMenuById(string productInMenuId,
-            ProductInMenuUpdateRequest productInMenuUpdateRequest)
+        public async Task<List<ExtendProductInMenuResponse>> UpdateProductsInMenu(
+            ListProductInMenuUpdateRequest productInMenuUpdateRequests)
         {
-            ProductInMenu productInMenu;
+            //get list Product In Menu Id
+            List<string> productInMenuIds = productInMenuUpdateRequests.ProductInMenus
+                                                .Select(pim => pim.ProductInMenuId).ToList();
+
+            //get list Product In Menu from Databases
+            List<ProductInMenu> productInMenus;
             try
             {
-                productInMenu = await _unitOfWork.ProductInMenus.FindAsync(p => p.ProductInMenuId.Equals(productInMenuId));
+                productInMenus = await _unitOfWork.ProductInMenus.FindListAsync(p => productInMenuIds.Contains(p.ProductInMenuId));
             }
             catch (Exception e)
             {
                 _logger.Error("[MenuService.UpdateProductInMenuById()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(ProductInMenu), productInMenuId);
+                throw new EntityNotFoundException();
             }
 
-            //Update Product In Menu
+            //Update Products In Menu
             try
             {
-                productInMenu.Status = productInMenuUpdateRequest.Status;
-                productInMenu.Price = productInMenuUpdateRequest.Price;
-                productInMenu.UpdatedDate = DateTime.Now;
+                foreach (var productInMenu in productInMenus)
+                {
+                    foreach (var pimUpdate in productInMenuUpdateRequests.ProductInMenus)
+                    {
+                        if (productInMenu.ProductInMenuId.Equals(pimUpdate.ProductInMenuId))
+                        {
+                            productInMenu.Status = pimUpdate.Status;
+                            productInMenu.Price = pimUpdate.Price;
+                            productInMenu.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.ProductInMenus.Update(productInMenu);
+                            _unitOfWork.ProductInMenus.Update(productInMenu);
+                        }
+                    }
+                }
 
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -179,7 +192,7 @@ namespace BLL.Services
                 throw;
             }
 
-            return _mapper.Map<ExtendProductInMenuResponse>(productInMenu);
+            return _mapper.Map<List<ExtendProductInMenuResponse>>(productInMenus);
         }
     }
 }

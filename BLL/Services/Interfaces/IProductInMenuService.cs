@@ -31,13 +31,12 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Update Product In Menu By Id
+        /// Update Products In Menu By Id
         /// </summary>
-        /// <param name="productInMenuId"></param>
-        /// <param name="productInMenuUpdateRequest"></param>
+        /// <param name="productInMenuUpdateRequests"></param>
         /// <returns></returns>
-        Task<ExtendProductInMenuResponse> UpdateProductInMenuById(string productInMenuId,
-            ProductInMenuUpdateRequest productInMenuUpdateRequest);
+        Task<List<ExtendProductInMenuResponse>> UpdateProductsInMenu(
+            ListProductInMenuUpdateRequest productInMenuUpdateRequests);
 
 
         /// <summary>
