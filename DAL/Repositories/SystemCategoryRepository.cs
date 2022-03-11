@@ -51,7 +51,8 @@ namespace DAL.Repositories
             if (!string.IsNullOrEmpty(include) && include.Equals("parent"))
                 query = query.Include(sc => sc.BelongToNavigation);
             else
-                query = query.Include(sc => sc.InverseBelongToNavigation
+                query = query.Where(sc => !string.IsNullOrEmpty(sc.BelongTo))
+                                .Include(sc => sc.InverseBelongToNavigation
                                     .Where(sc => sc.Status.Equals((int)SystemCategoryStatus.ACTIVE_SYSTEM_CATEGORY)))
                                 .ThenInclude(sci => sci.InverseBelongToNavigation
                                         .Where(sc => sc.Status.Equals((int)SystemCategoryStatus.ACTIVE_SYSTEM_CATEGORY)));
