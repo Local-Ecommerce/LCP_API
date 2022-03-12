@@ -19,7 +19,6 @@ using System.Text.Json;
 using System;
 using System.Reflection;
 using System.IO;
-using API.Middleware;
 
 namespace API
 {
@@ -54,7 +53,7 @@ namespace API
             //Add Swagger
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v2.3", new OpenApiInfo { Title = "Local Commerce Platform", Version = "v2.3" });
+                c.SwaggerDoc("v2.5", new OpenApiInfo { Title = "Local Commerce Platform", Version = "v2.5" });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
@@ -147,9 +146,6 @@ namespace API
 
             services.AddSingleton<ITokenService>(new TokenService(key, tokenValidationParameters));
 
-            //add middleware
-            services.AddTransient<CheckBlacklistTokenMiddleware>();
-
             //add application service extensions
             services.AddApplicationServices(Configuration);
 
@@ -168,7 +164,7 @@ namespace API
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = "";
-                c.SwaggerEndpoint("/swagger/v2.3/swagger.json", "LCP v2.3");
+                c.SwaggerEndpoint("/swagger/v2.5/swagger.json", "LCP v2.5");
             });
             //}
 
@@ -182,8 +178,6 @@ namespace API
             app.UseAuthentication();
 
             app.UseAuthorization();
-
-            app.UseMiddleware<CheckBlacklistTokenMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

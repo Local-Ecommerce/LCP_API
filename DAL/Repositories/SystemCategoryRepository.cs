@@ -39,9 +39,7 @@ namespace DAL.Repositories
 
             //filter by merchant Id
             if (!string.IsNullOrEmpty(merchantId))
-                query = query.Include(sc => sc.ProductCategories)
-                    .ThenInclude(pc => pc.Product)
-                    .Where(sc => sc.ProductCategories.All(pc => pc.Product.ResidentId.Equals(merchantId)));
+                query = query.Include(sc => sc.Products.Where(p => p.ResidentId.Equals(merchantId)));
 
             //filter by status
             if (status.Length != 0)

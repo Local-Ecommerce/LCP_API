@@ -14,5 +14,6 @@ namespace BLL.Dtos.Product
         public string Color { get; set; }
         public double? Weight { get; set; }
         public string BelongTo { get; set; }
+        public string SystemCategoryId { get; set; }
     }
 }

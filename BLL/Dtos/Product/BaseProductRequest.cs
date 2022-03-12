@@ -8,6 +8,5 @@ namespace BLL.Dtos.Product
     public class BaseProductRequest : ProductRequest
     {
         public Collection<ProductRequest> RelatedProducts { get; set; }
-        public List<string> SystemCategoryIds { get; set; }
     }
 }

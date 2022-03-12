@@ -16,8 +16,6 @@ namespace DAL.UnitOfWork
         IPaymentMethodRepository PaymentMethods { get; }
         IPaymentRepository Payments { get; }
         IPoiRepository Pois { get; }
-        IProductCategoryRepository ProductCategories { get; }
-        IProductCombinationRepository ProductCombinations { get; }
         IProductInMenuRepository ProductInMenus { get; }
         IProductRepository Products { get; }
         IRefreshTokenRepository RefreshTokens { get; }

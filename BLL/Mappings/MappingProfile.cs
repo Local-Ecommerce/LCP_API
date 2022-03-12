@@ -11,8 +11,6 @@ using BLL.Dtos.Payment;
 using BLL.Dtos.PaymentMethod;
 using BLL.Dtos.POI;
 using BLL.Dtos.Product;
-using BLL.Dtos.ProductCategory;
-using BLL.Dtos.ProductCombination;
 using BLL.Dtos.ProductInMenu;
 using BLL.Dtos.RefreshToken;
 using BLL.Dtos.Resident;
@@ -67,11 +65,6 @@ namespace BLL.Mappings
             CreateMap<MerchantStore, MerchantStoreResponse>().ReverseMap();
             CreateMap<MerchantStore, ExtendMerchantStoreResponse>().ReverseMap();
 
-            //ProCategory Mapping
-            CreateMap<ProductCategoryRequest, ProductCategory>().ReverseMap();
-            CreateMap<ProductCategory, ProductCategoryResponse>().ReverseMap();
-            CreateMap<ProductCategory, ExtendProductCategoryResponse>();
-
             //News Mapping
             CreateMap<NewsRequest, News>();
             CreateMap<NewsUpdateRequest, News>()
@@ -119,10 +112,6 @@ namespace BLL.Mappings
             CreateMap<OrderDetail, OrderDetailResponse>();
             CreateMap<Order, OrderResponse>();
             CreateMap<Order, ExtendOrderResponse>();
-
-            //Product Combination Mapping
-            CreateMap<ProductCombinationRequest, ProductCombination>();
-            CreateMap<ProductCombination, ProductCombinationResponse>();
 
             //MoMo Mapping
             CreateMap<MoMoIPNRequest, MoMoIPNResponse>();

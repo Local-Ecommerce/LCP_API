@@ -10,7 +10,6 @@ namespace BLL.Dtos.ProductInMenu
         public DateTime? CreatedDate { get; set; }
         public int? Status { get; set; }
         public string ProductId { get; set; }
-        public string ProductCombinationId { get; set; }
         public string MenuId { get; set; }
     }
 }

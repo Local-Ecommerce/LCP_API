@@ -14,6 +14,7 @@ namespace BLL.Dtos.Product
         public string Size { get; set; }
         public string Color { get; set; }
         public double Weight { get; set; }
+        public string SystemCategoryId { get; set; }
         public string[] Image { get; set; }
     }
 
