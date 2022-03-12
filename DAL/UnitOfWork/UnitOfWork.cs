@@ -20,8 +20,6 @@ namespace DAL.UnitOfWork
         private IPaymentMethodRepository _paymentMethodRepository;
         private IPaymentRepository _paymentRepository;
         private IPoiRepository _poiRepository;
-        private IProductCategoryRepository _productCategoryRepository;
-        private IProductCombinationRepository _productCombinationRepository;
         private IProductInMenuRepository _productInMenuRepository;
         private IRefreshTokenRepository _refreshTokenRepository;
         private IResidentRepository _residentRepository;
@@ -126,25 +124,6 @@ namespace DAL.UnitOfWork
                 return _productRepository;
             }
         }
-
-        public IProductCategoryRepository ProductCategories
-        {
-            get
-            {
-                if (_productCategoryRepository == null) _productCategoryRepository = new ProductCategoryRepository(_context);
-                return _productCategoryRepository;
-            }
-        }
-
-        public IProductCombinationRepository ProductCombinations
-        {
-            get
-            {
-                if (_productCombinationRepository == null) _productCombinationRepository = new ProductCombinationRepository(_context);
-                return _productCombinationRepository;
-            }
-        }
-
         public IProductInMenuRepository ProductInMenus
         {
             get

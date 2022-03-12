@@ -10,9 +10,6 @@ namespace DAL.Models
         public Product()
         {
             InverseBelongToNavigation = new HashSet<Product>();
-            ProductCategories = new HashSet<ProductCategory>();
-            ProductCombinationBaseProducts = new HashSet<ProductCombination>();
-            ProductCombinationProducts = new HashSet<ProductCombination>();
             ProductInMenus = new HashSet<ProductInMenu>();
         }
 
@@ -33,13 +30,12 @@ namespace DAL.Models
         public int? IsFavorite { get; set; }
         public string BelongTo { get; set; }
         public string ResidentId { get; set; }
+        public string SystemCategoryId { get; set; }
 
         public virtual Product BelongToNavigation { get; set; }
         public virtual Resident Resident { get; set; }
+        public virtual SystemCategory SystemCategory { get; set; }
         public virtual ICollection<Product> InverseBelongToNavigation { get; set; }
-        public virtual ICollection<ProductCategory> ProductCategories { get; set; }
-        public virtual ICollection<ProductCombination> ProductCombinationBaseProducts { get; set; }
-        public virtual ICollection<ProductCombination> ProductCombinationProducts { get; set; }
         public virtual ICollection<ProductInMenu> ProductInMenus { get; set; }
     }
 }

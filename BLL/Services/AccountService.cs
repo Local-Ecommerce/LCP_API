@@ -23,7 +23,6 @@ namespace BLL.Services
         private readonly IFirebaseService _firebaseService;
         private readonly IUtilService _utilService;
         private readonly ITokenService _tokenService;
-        private const string TOKEN_BLACKLIST_KEY = "Token Blacklist";
 
         public AccountService(IUnitOfWork unitOfWork,
             ILogger logger,

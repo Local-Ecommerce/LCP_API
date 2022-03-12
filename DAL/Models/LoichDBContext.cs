@@ -28,8 +28,6 @@ namespace DAL.Models
         public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
         public virtual DbSet<Poi> Pois { get; set; }
         public virtual DbSet<Product> Products { get; set; }
-        public virtual DbSet<ProductCategory> ProductCategories { get; set; }
-        public virtual DbSet<ProductCombination> ProductCombinations { get; set; }
         public virtual DbSet<ProductInMenu> ProductInMenus { get; set; }
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
         public virtual DbSet<Resident> Residents { get; set; }
@@ -348,6 +346,11 @@ namespace DAL.Models
 
                 entity.Property(e => e.Size).HasMaxLength(250);
 
+                entity.Property(e => e.SystemCategoryId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("SystemCategoryID");
+
                 entity.HasOne(d => d.BelongToNavigation)
                     .WithMany(p => p.InverseBelongToNavigation)
                     .HasForeignKey(d => d.BelongTo)
@@ -357,74 +360,11 @@ namespace DAL.Models
                     .WithMany(p => p.Products)
                     .HasForeignKey(d => d.ResidentId)
                     .HasConstraintName("FK_Product_Resident");
-            });
-
-            modelBuilder.Entity<ProductCategory>(entity =>
-            {
-                entity.ToTable("ProductCategory");
-
-                entity.Property(e => e.ProductCategoryId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("ProductCategoryID");
-
-                entity.Property(e => e.ProductId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("ProductID");
-
-                entity.Property(e => e.SystemCategoryId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("SystemCategoryID");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.ProductCategories)
-                    .HasForeignKey(d => d.ProductId)
-                    .HasConstraintName("FK_tblProductCategory_tblProduct");
 
                 entity.HasOne(d => d.SystemCategory)
-                    .WithMany(p => p.ProductCategories)
+                    .WithMany(p => p.Products)
                     .HasForeignKey(d => d.SystemCategoryId)
-                    .HasConstraintName("FK_tblProductCategory_tblSystemCategory");
-            });
-
-            modelBuilder.Entity<ProductCombination>(entity =>
-            {
-                entity.ToTable("ProductCombination");
-
-                entity.Property(e => e.ProductCombinationId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("ProductCombinationID");
-
-                entity.Property(e => e.BaseProductId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("BaseProductID");
-
-                entity.Property(e => e.DateEnd).HasColumnType("date");
-
-                entity.Property(e => e.DateStart).HasColumnType("date");
-
-                entity.Property(e => e.DefaultMax)
-                    .HasMaxLength(10)
-                    .IsFixedLength(true);
-
-                entity.Property(e => e.ProductId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("ProductID");
-
-                entity.HasOne(d => d.BaseProduct)
-                    .WithMany(p => p.ProductCombinationBaseProducts)
-                    .HasForeignKey(d => d.BaseProductId)
-                    .HasConstraintName("FK_tblProductCombination_tblProduct1");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.ProductCombinationProducts)
-                    .HasForeignKey(d => d.ProductId)
-                    .HasConstraintName("FK_tblProductCombination_tblProduct");
+                    .HasConstraintName("FK_Product_SystemCategory");
             });
 
             modelBuilder.Entity<ProductInMenu>(entity =>
@@ -441,11 +381,6 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("MenuID");
 
-                entity.Property(e => e.ProductCombinationId)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("ProductCombinationID");
-
                 entity.Property(e => e.ProductId)
                     .HasMaxLength(20)
                     .IsUnicode(false)
@@ -455,11 +390,6 @@ namespace DAL.Models
                     .WithMany(p => p.ProductInMenus)
                     .HasForeignKey(d => d.MenuId)
                     .HasConstraintName("FK_ProductInMenu_Menu");
-
-                entity.HasOne(d => d.ProductCombination)
-                    .WithMany(p => p.ProductInMenus)
-                    .HasForeignKey(d => d.ProductCombinationId)
-                    .HasConstraintName("FK_ProductInMenu_ProductCombination");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.ProductInMenus)

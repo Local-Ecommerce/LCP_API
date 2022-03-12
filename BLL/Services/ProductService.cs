@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using BLL.Dtos.ProductCategory;
 
 namespace BLL.Services
 {
@@ -20,7 +19,6 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IFirebaseService _firebaseService;
-        private readonly IProductCategoryService _productCategoryService;
         private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
         private const string PREFIX = "PD_";
@@ -34,7 +32,6 @@ namespace BLL.Services
             IMapper mapper,
             IRedisService redisService,
             IUtilService utilService,
-            IProductCategoryService productCategoryService,
             IFirebaseService firebaseService)
         {
             _unitOfWork = unitOfWork;
@@ -43,7 +40,6 @@ namespace BLL.Services
             _mapper = mapper;
             _redisService = redisService;
             _utilService = utilService;
-            _productCategoryService = productCategoryService;
         }
 
 
@@ -56,7 +52,6 @@ namespace BLL.Services
         public async Task<ExtendProductResponse> CreateProduct(string residentId, BaseProductRequest baseProductRequest)
         {
             Product product = _mapper.Map<Product>(baseProductRequest);
-            Collection<ProductCategory> categories = new();
             try
             {
                 product.ProductId = _utilService.CreateId(PREFIX); ;
@@ -91,9 +86,6 @@ namespace BLL.Services
                     product.InverseBelongToNavigation.Add(relatedProduct);
                 }
 
-                //add productCategory
-                product = _productCategoryService.CreateProCategory(product, baseProductRequest.SystemCategoryIds);
-
                 _unitOfWork.Products.Add(product);
 
                 await _unitOfWork.SaveChangesAsync();
@@ -120,11 +112,8 @@ namespace BLL.Services
         {
             try
             {
-                //add product category from base product
-                Product baseProduct =
-                    (await _unitOfWork.Products.GetProduct(baseProductId, new int?[] { }, null, null, null, null, false, null, new string[] { "productCategory" })).List.First();
-
-                List<string> systemCategoryIds = baseProduct.ProductCategories.Select(pc => pc.SystemCategoryId).ToList();
+                //get base product
+                Product baseProduct = await _unitOfWork.Products.FindAsync(p => p.ProductId.Equals(baseProductId));
 
                 productRequests.ForEach(productRequest =>
                 {
@@ -145,8 +134,6 @@ namespace BLL.Services
                     product.ResidentId = residentId;
                     product.BelongTo = baseProductId;
 
-                    product = _productCategoryService.CreateProCategory(product, systemCategoryIds);
-
                     _unitOfWork.Products.Add(product);
                 });
 
@@ -158,11 +145,11 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[ProductService.CreateRelatedProduct()]: " + e.Message);
-
                 throw;
             }
 
-            return await GetProduct(baseProductId, Array.Empty<int?>(), default, default, default, default, default, new string[] { "related" });
+            return await GetProduct(baseProductId, Array.Empty<int?>(),
+                        default, default, default, default, default, new string[] { "related" });
         }
 
 
@@ -252,9 +239,6 @@ namespace BLL.Services
                     _unitOfWork.Products.Update(product);
                 });
 
-                //delete prduct category
-                await _productCategoryService.DeleteProCategoryByProductId(ids);
-
                 await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception e)
@@ -281,7 +265,7 @@ namespace BLL.Services
                 //get old product from database
                 Product baseProduct =
                     (await _unitOfWork.Products
-                        .GetProduct(productId, new int?[] { }, null, null, null, null, false, null, new string[] { "productCategory", "related" }))
+                        .GetProduct(productId, new int?[] { }, null, null, null, null, false, null, new string[] { "related" }))
                         .List
                         .First();
 
@@ -330,9 +314,6 @@ namespace BLL.Services
 
                     baseProduct.InverseBelongToNavigation.Add(relatedProduct);
                 }
-
-                //verify product categories
-                baseProduct = _productCategoryService.VerifyProCategory(isApprove, baseProduct);
 
                 _unitOfWork.Products.Update(baseProduct);
 
