@@ -106,7 +106,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<MenuResponse> DeleteMenuById(string id)
+        public async Task DeleteMenuById(string id)
         {
             //Check id
             Menu menu;
@@ -136,8 +136,6 @@ namespace BLL.Services
                 _logger.Error("[MenuService.DeleteMenuById()]: " + e.Message);
                 throw;
             }
-
-            return _mapper.Map<MenuResponse>(menu);
         }
 
 
@@ -182,7 +180,7 @@ namespace BLL.Services
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<object> GetMenu(
+        public async Task<object> GetMenus(
             string id, int?[] status,
             string apartmentId, int? limit,
             int? page, string sort, string[] include)

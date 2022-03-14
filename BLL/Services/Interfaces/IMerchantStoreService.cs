@@ -27,7 +27,7 @@ namespace BLL.Services.Interfaces
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        Task<object> GetMerchantStore(
+        Task<object> GetMerchantStores(
             string id, string apartmentId, string residentId,
             string role, int?[] status,
             int? limit, int? page,
@@ -35,12 +35,12 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Request Update Merchant Store By Id
+        /// Update Merchant Store By Id
         /// </summary>
         /// <param name="id"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<ExtendMerchantStoreResponse> RequestUpdateMerchantStoreById(string id, MerchantStoreUpdateRequest request);
+        Task<ExtendMerchantStoreResponse> UpdateMerchantStoreById(string id, MerchantStoreUpdateRequest request);
 
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<MerchantStoreResponse> DeleteMerchantStore(string id);
+        Task DeleteMerchantStore(string id);
 
 
         /// <summary>

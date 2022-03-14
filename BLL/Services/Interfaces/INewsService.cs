@@ -48,6 +48,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<NewsResponse> DeleteNewsById(string id);
+        Task DeleteNewsById(string id);
     }
 }

@@ -129,9 +129,9 @@ namespace API.Controllers
             watch.Start();
 
             //Delete Product In Menu By Id
-            string response = await _productInMenuService.DeleteProductInMenu(ids);
+            await _productInMenuService.DeleteProductInMenu(ids);
 
-            string json = JsonSerializer.Serialize(ApiResponse<string>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<string>.Success());
 
             watch.Stop();
 

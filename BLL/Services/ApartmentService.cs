@@ -63,7 +63,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ApartmentResponse> DeleteApartment(string id)
+        public async Task DeleteApartment(string id)
         {
             //Check id
             Apartment apartment;
@@ -92,8 +92,6 @@ namespace BLL.Services
                 _logger.Error("[ApartmentService.DeleteApartment()]: " + e.Message);
                 throw;
             }
-
-            return _mapper.Map<ApartmentResponse>(apartment);
         }
 
 
@@ -149,7 +147,7 @@ namespace BLL.Services
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<object> GetApartment(string id, int?[] status, int? limit, int? page, string sort, string include)
+        public async Task<object> GetApartments(string id, int?[] status, int? limit, int? page, string sort, string include)
         {
             PagingModel<Apartment> apartments;
             string propertyName = default;

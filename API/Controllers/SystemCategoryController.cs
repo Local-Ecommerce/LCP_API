@@ -74,7 +74,7 @@ namespace API.Controllers
             watch.Start();
 
             //get systemCategory
-            object response = await _systemCategoryService.GetSystemCategory(id, merchantid, status, limit, page, sort, include);
+            object response = await _systemCategoryService.GetSystemCategories(id, merchantid, status, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
@@ -128,9 +128,9 @@ namespace API.Controllers
             watch.Start();
 
             //delete systemCategory
-            SystemCategoryResponse response = await _systemCategoryService.DeleteSystemCategory(id);
+            await _systemCategoryService.DeleteSystemCategory(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<SystemCategoryResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<SystemCategoryResponse>.Success());
 
             watch.Stop();
 

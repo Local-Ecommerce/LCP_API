@@ -101,7 +101,7 @@ namespace API.Controllers
 
             //Get Order
             object response = await
-            _orderService.GetOrder(id, residentId, role, merchantstoreid, status, limit, page, sort, include);
+            _orderService.GetOrders(id, residentId, role, merchantstoreid, status, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
@@ -164,10 +164,9 @@ namespace API.Controllers
             watch.Start();
 
             //Delete Order
-            OrderResponse response = await
-            _orderService.DeleteOrderByOrderIdAndResidentId(orderId, residentId);
+            await _orderService.DeleteOrderByOrderId(orderId, residentId);
 
-            string json = JsonSerializer.Serialize(ApiResponse<OrderResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<OrderResponse>.Success());
 
             watch.Stop();
 

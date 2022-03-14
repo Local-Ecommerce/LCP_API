@@ -205,9 +205,9 @@ namespace API.Controllers
             watch.Start();
 
             //delete Resident
-            ResidentResponse response = await _residentService.DeleteResident(id);
+            await _residentService.DeleteResident(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success());
 
             watch.Stop();
 

@@ -154,7 +154,7 @@ namespace BLL.Services
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <returns></returns>
-        public async Task<object> GetPayment(
+        public async Task<object> GetPayments(
             string id, string orderId,
             string paymentMethodId, DateTime date,
             int?[] status, int? limit,

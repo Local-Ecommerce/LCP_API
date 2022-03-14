@@ -131,9 +131,9 @@ namespace API.Controllers
             watch.Start();
 
             //Delete News
-            NewsResponse response = await _newsService.DeleteNewsById(id);
+            await _newsService.DeleteNewsById(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<NewsResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<NewsResponse>.Success());
 
             watch.Stop();
 

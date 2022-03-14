@@ -26,7 +26,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<SystemCategoryResponse> DeleteSystemCategory(string id);
+        Task DeleteSystemCategory(string id);
 
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace BLL.Services.Interfaces
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        Task<object> GetSystemCategory(
+        Task<object> GetSystemCategories(
             string id, string merchantId,
             int?[] status, int? limit,
             int? page, string sort, string include);

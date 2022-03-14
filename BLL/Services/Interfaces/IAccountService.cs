@@ -52,7 +52,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<AccountResponse> DeleteAccount(string id);
+        Task DeleteAccount(string id);
 
 
         /// <summary>

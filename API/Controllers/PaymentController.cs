@@ -77,7 +77,7 @@ namespace API.Controllers
             watch.Start();
 
             //Get payment
-            object response = await _paymentService.GetPayment(id, orderid, paymentmethodid, date, status, limit, page, sort);
+            object response = await _paymentService.GetPayments(id, orderid, paymentmethodid, date, status, limit, page, sort);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 

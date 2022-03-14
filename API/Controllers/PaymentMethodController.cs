@@ -72,7 +72,7 @@ namespace API.Controllers
             watch.Start();
 
             //Get PaymentMethod
-            object response = await _paymentMethodService.GetPaymentMethod(id, status, limit, page, sort);
+            object response = await _paymentMethodService.GetPaymentMethods(id, status, limit, page, sort);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
@@ -127,9 +127,9 @@ namespace API.Controllers
             watch.Start();
 
             //Delete PaymentMethod
-            PaymentMethodResponse response = await _paymentMethodService.DeletePaymentMethod(id);
+            await _paymentMethodService.DeletePaymentMethod(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<PaymentMethodResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<PaymentMethodResponse>.Success());
 
             watch.Stop();
 

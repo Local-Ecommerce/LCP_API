@@ -44,6 +44,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="productInMenuIds"></param>
         /// <returns></returns>
-        Task<string> DeleteProductInMenu(List<string> productInMenuIds);
+        Task DeleteProductInMenu(List<string> productInMenuIds);
     }
 }

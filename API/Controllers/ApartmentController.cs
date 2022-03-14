@@ -75,7 +75,7 @@ namespace API.Controllers
             watch.Start();
 
             //get Apartment
-            object responses = await _apartmentService.GetApartment(id, status, limit, page, sort, include);
+            object responses = await _apartmentService.GetApartments(id, status, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 
@@ -131,9 +131,9 @@ namespace API.Controllers
             watch.Start();
 
             //delete Apartment
-            ApartmentResponse response = await _apartmentService.DeleteApartment(id);
+            await _apartmentService.DeleteApartment(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ApartmentResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<ApartmentResponse>.Success());
 
             watch.Stop();
 

@@ -79,7 +79,7 @@ namespace API.Controllers
 
             //Get Poi
             object response = await _poiService
-                            .GetPoi(id, apartmentid, date, search, status, limit, page, sort, include);
+                            .GetPois(id, apartmentid, date, search, status, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
@@ -133,9 +133,9 @@ namespace API.Controllers
             watch.Start();
 
             //Delete Poi
-            PoiResponse response = await _poiService.DeletePoiById(id);
+            await _poiService.DeletePoiById(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<PoiResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<PoiResponse>.Success());
 
             watch.Stop();
 

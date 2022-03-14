@@ -35,7 +35,7 @@ namespace BLL.Services.Interfaces
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        Task<object> GetMenu(
+        Task<object> GetMenus(
             string id, int?[] status,
             string apartmentId, int? limit,
             int? page, string sort, string[] include);
@@ -55,6 +55,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<MenuResponse> DeleteMenuById(string id);
+        Task DeleteMenuById(string id);
     }
 }

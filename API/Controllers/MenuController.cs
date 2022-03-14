@@ -84,7 +84,7 @@ namespace API.Controllers
             watch.Start();
 
             //get Menu
-            object responses = await _menuService.GetMenu(id, status, apartmentid, limit, page, sort, include);
+            object responses = await _menuService.GetMenus(id, status, apartmentid, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 
@@ -139,9 +139,9 @@ namespace API.Controllers
             watch.Start();
 
             //Delete Menu
-            MenuResponse response = await _menuService.DeleteMenuById(id);
+            await _menuService.DeleteMenuById(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success());
 
             watch.Stop();
 

@@ -28,7 +28,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<ApartmentResponse> DeleteApartment(string id);
+        Task DeleteApartment(string id);
 
 
         /// <summary>
@@ -41,6 +41,6 @@ namespace BLL.Services.Interfaces
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        Task<object> GetApartment(string id, int?[] status, int? limit, int? page, string sort, string include);
+        Task<object> GetApartments(string id, int?[] status, int? limit, int? page, string sort, string include);
     }
 }
