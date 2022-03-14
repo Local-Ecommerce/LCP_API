@@ -80,10 +80,8 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<MerchantStoreResponse> DeleteMerchantStore(string id)
+        public async Task DeleteMerchantStore(string id)
         {
-            //biz rule
-
             //Check id
             MerchantStore merchantStore;
             try
@@ -112,18 +110,16 @@ namespace BLL.Services
 
                 throw;
             }
-
-            return _mapper.Map<MerchantStoreResponse>(merchantStore);
         }
 
 
         /// <summary>
-        /// Request Update Merchant Store By Id
+        /// Update Merchant Store By Id
         /// </summary>
         /// <param name="id"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<ExtendMerchantStoreResponse> RequestUpdateMerchantStoreById(string id,
+        public async Task<ExtendMerchantStoreResponse> UpdateMerchantStoreById(string id,
             MerchantStoreUpdateRequest request)
         {
             ExtendMerchantStoreResponse merchantStoreResponse;
@@ -215,7 +211,7 @@ namespace BLL.Services
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<object> GetMerchantStore(
+        public async Task<object> GetMerchantStores(
             string id, string apartmentId, string residentId,
             string role, int?[] status, int? limit,
             int? page, string sort,

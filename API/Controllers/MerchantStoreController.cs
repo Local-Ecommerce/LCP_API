@@ -98,7 +98,7 @@ namespace API.Controllers
             string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
 
             //Get MerchantStore
-            object response = await _merchantStoreService.GetMerchantStore(id, apartmentid, residentId, role, status, limit, page, sort, include);
+            object response = await _merchantStoreService.GetMerchantStores(id, apartmentid, residentId, role, status, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
@@ -127,7 +127,7 @@ namespace API.Controllers
             watch.Start();
 
             //update MerchantStore
-            ExtendMerchantStoreResponse response = await _merchantStoreService.RequestUpdateMerchantStoreById(id, request);
+            ExtendMerchantStoreResponse response = await _merchantStoreService.UpdateMerchantStoreById(id, request);
 
             string json = JsonSerializer.Serialize(ApiResponse<ExtendMerchantStoreResponse>.Success(response));
 
@@ -154,9 +154,9 @@ namespace API.Controllers
             watch.Start();
 
             //delete MerchantStore
-            MerchantStoreResponse response = await _merchantStoreService.DeleteMerchantStore(id);
+            await _merchantStoreService.DeleteMerchantStore(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<MerchantStoreResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<MerchantStoreResponse>.Success());
 
             watch.Stop();
 

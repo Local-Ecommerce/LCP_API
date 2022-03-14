@@ -117,7 +117,7 @@ namespace BLL.Services
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<object> GetOrder(
+        public async Task<object> GetOrders(
             string id, string residentId,
             string role, string merchantStoreId,
             int?[] status, int? limit,
@@ -185,12 +185,12 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Delete Order By Order Id And Resident Id
+        /// Delete Order By Order Id
         /// </summary>
         /// <param name="orderId"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<OrderResponse> DeleteOrderByOrderIdAndResidentId(string orderId, string residentId)
+        public async Task DeleteOrderByOrderId(string orderId, string residentId)
         {
             Order order;
             try
@@ -212,8 +212,6 @@ namespace BLL.Services
 
             //create response
             OrderResponse orderResponse = _mapper.Map<OrderResponse>(order);
-
-            return _mapper.Map<OrderResponse>(order);
         }
 
 

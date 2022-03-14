@@ -28,7 +28,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<ResidentResponse> DeleteResident(string id);
+        Task DeleteResident(string id);
 
 
         /// <summary>

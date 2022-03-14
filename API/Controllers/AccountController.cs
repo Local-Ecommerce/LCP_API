@@ -181,9 +181,9 @@ namespace API.Controllers
             watch.Start();
 
             //delete account
-            AccountResponse response = await _accountService.DeleteAccount(id);
+            await _accountService.DeleteAccount(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<AccountResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<AccountResponse>.Success());
 
             watch.Stop();
 

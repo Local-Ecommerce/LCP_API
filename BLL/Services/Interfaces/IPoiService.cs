@@ -27,7 +27,7 @@ namespace BLL.Services.Interfaces
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        Task<object> GetPoi(
+        Task<object> GetPois(
             string id, string apartmentId,
             DateTime date, string search,
             int?[] status, int? limit, int? page,
@@ -48,6 +48,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<PoiResponse> DeletePoiById(string id);
+        Task DeletePoiById(string id);
     }
 }

@@ -29,7 +29,7 @@ namespace BLL.Services.Interfaces
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        Task<object> GetOrder(
+        Task<object> GetOrders(
             string id, string residentId,
             string role, string merchantStoreId, int?[] status,
             int? limit, int? page,
@@ -45,12 +45,12 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Delete Order By Order Id And Resident Id
+        /// Delete Order By Order Id
         /// </summary>
         /// <param name="orderId"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<OrderResponse> DeleteOrderByOrderIdAndResidentId(string orderId, string residentId);
+        Task DeleteOrderByOrderId(string orderId, string residentId);
 
 
         /// <summary>

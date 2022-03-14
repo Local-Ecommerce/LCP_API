@@ -68,7 +68,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<PaymentMethodResponse> DeletePaymentMethod(string id)
+        public async Task DeletePaymentMethod(string id)
         {
             //biz rule
 
@@ -100,8 +100,6 @@ namespace BLL.Services
 
                 throw;
             }
-
-            return _mapper.Map<PaymentMethodResponse>(paymentMethod);
         }
 
 
@@ -158,7 +156,7 @@ namespace BLL.Services
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <returns></returns>
-        public async Task<object> GetPaymentMethod(string id, int?[] status, int? limit, int? page, string sort)
+        public async Task<object> GetPaymentMethods(string id, int?[] status, int? limit, int? page, string sort)
         {
             PagingModel<PaymentMethod> paymentMethods;
             string propertyName = default;

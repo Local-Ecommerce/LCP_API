@@ -135,7 +135,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ResidentResponse> DeleteResident(string id)
+        public async Task DeleteResident(string id)
         {
             //biz rule
 
@@ -167,8 +167,6 @@ namespace BLL.Services
 
                 throw;
             }
-
-            return _mapper.Map<ResidentResponse>(resident);
         }
 
 

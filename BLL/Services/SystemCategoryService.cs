@@ -89,7 +89,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<SystemCategoryResponse> DeleteSystemCategory(string id)
+        public async Task DeleteSystemCategory(string id)
         {
             //biz rule
 
@@ -121,8 +121,6 @@ namespace BLL.Services
 
                 throw;
             }
-
-            return _mapper.Map<SystemCategoryResponse>(systemCategory);
         }
 
 
@@ -137,7 +135,7 @@ namespace BLL.Services
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<object> GetSystemCategory(
+        public async Task<object> GetSystemCategories(
             string id, string merchantId,
             int?[] status, int? limit,
             int? page, string sort, string include)

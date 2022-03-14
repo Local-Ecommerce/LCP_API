@@ -111,7 +111,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<PoiResponse> DeletePoiById(string id)
+        public async Task DeletePoiById(string id)
         {
             //Check id
             Poi poi;
@@ -141,8 +141,6 @@ namespace BLL.Services
 
                 throw;
             }
-
-            return _mapper.Map<PoiResponse>(poi);
         }
 
 
@@ -159,7 +157,7 @@ namespace BLL.Services
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<object> GetPoi(
+        public async Task<object> GetPois(
             string id, string apartmentId,
             DateTime date, string search, int?[] status,
             int? limit, int? page, string sort, string[] include)

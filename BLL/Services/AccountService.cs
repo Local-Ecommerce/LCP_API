@@ -62,11 +62,9 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<AccountResponse> DeleteAccount(string id)
+        public async Task DeleteAccount(string id)
         {
-            //biz rule
-
-            //valid id
+            //validate id
             Account account;
             try
             {
@@ -93,19 +91,6 @@ namespace BLL.Services
                 _logger.Error("[AccountService.DeleteAccount()]: " + e.Message);
                 throw;
             }
-
-            //revoke token here
-            // TokenInfo tokenInfo = new()
-            // {
-            //     Token = account.Token,
-            //     ExpiredDate = account.TokenExpiredDate,
-            //     ResidentId = account.RoleId
-            // };
-
-            // _redisService.StoreToList<TokenInfo>(TOKEN_BLACKLIST_KEY, tokenInfo,
-            //     new Predicate<TokenInfo>(ti => ti.Token == tokenInfo.Token));
-
-            return default;
         }
 
 

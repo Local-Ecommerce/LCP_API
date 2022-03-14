@@ -106,7 +106,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<NewsResponse> DeleteNewsById(string id)
+        public async Task DeleteNewsById(string id)
         {
             //Check id
             News news;
@@ -136,8 +136,6 @@ namespace BLL.Services
 
                 throw;
             }
-
-            return _mapper.Map<ExtendNewsResponse>(news);
         }
 
 

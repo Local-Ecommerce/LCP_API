@@ -73,7 +73,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="productInMenuIdz"></param>
         /// <returns></returns>
-        public async Task<string> DeleteProductInMenu(List<string> productInMenuIds)
+        public async Task DeleteProductInMenu(List<string> productInMenuIds)
         {
             List<ProductInMenu> productInMenus;
             try
@@ -92,8 +92,6 @@ namespace BLL.Services
                 _logger.Error("[ProductInMenuService.DeleteProductInMenuById()]: " + e.Message);
                 throw;
             }
-
-            return null;
         }
 
 

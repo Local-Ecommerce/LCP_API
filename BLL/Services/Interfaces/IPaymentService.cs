@@ -26,7 +26,7 @@ namespace BLL.Services.Interfaces
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <returns></returns>
-        Task<object> GetPayment(
+        Task<object> GetPayments(
             string id, string orderId,
             string paymentMethodId, DateTime date,
             int?[] status, int? limit,
