@@ -48,12 +48,12 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Verify Resident
+        /// Update Resident Status
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="status"></param>
         /// <param name="marketManagerId"></param>
-        /// <param name="isApprove"></param>
         /// <returns></returns>
-        Task<ExtendResidentResponse> VerifyResident(string id, string marketManagerId, bool isApprove);
+        Task<ExtendResidentResponse> UpdateResidentStatus(string id, int status, string marketManagerId);
     }
 }

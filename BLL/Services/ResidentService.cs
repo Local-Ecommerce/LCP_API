@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DAL.Models;
 using BLL.Dtos.Exception;
 using DAL.Constants;
+using System.Linq;
 
 namespace BLL.Services
 {
@@ -216,21 +217,37 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Verify Resident
+        /// Update Resident Status
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="status"></param>
         /// <param name="marketManagerId"></param>
-        /// <param name="isApprove"></param>
         /// <returns></returns>
-        public async Task<ExtendResidentResponse> VerifyResident(string id, string marketManagerId, bool isApprove)
+        public async Task<ExtendResidentResponse> UpdateResidentStatus(string id, int status, string marketManagerId)
         {
             Resident resident;
             try
             {
-                resident = await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(id));
+                List<Resident> residents = await _unitOfWork.Residents
+                    .FindListAsync(r => r.ResidentId.Equals(id) || r.ResidentId.Equals(marketManagerId));
 
-                resident.Status = isApprove ? (int)ResidentStatus.VERIFIED_RESIDENT : (int)ResidentStatus.REJECTED_RESIDENT;
-                resident.ApproveBy = isApprove ? marketManagerId : default;
+                //get resident need to update
+                resident = residents.Where(r => r.ResidentId.Equals(id)).First();
+
+                //check apartment of Market Manager
+                if (!residents.Where(r => r.ResidentId.Equals(marketManagerId))
+                            .First().ApartmentId
+                            .Equals(resident.ApartmentId))
+                    throw new BusinessException($"MarketManager with id: {marketManagerId} cannot update resident {id} 's status");
+
+                //check status
+                if (status != (int)ResidentStatus.VERIFIED_RESIDENT &&
+                status != (int)ResidentStatus.REJECTED_RESIDENT &&
+                status != (int)ResidentStatus.INACTIVE_RESIDENT)
+                    throw new BusinessException($"Cannot update status {status} for resident {id}");
+
+                resident.Status = status;
+                resident.ApproveBy = status != (int)ResidentStatus.REJECTED_RESIDENT ? marketManagerId : default;
 
                 _unitOfWork.Residents.Update(resident);
 
