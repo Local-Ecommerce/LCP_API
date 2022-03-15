@@ -73,6 +73,7 @@ namespace API.Controllers
             [FromQuery] string id,
             [FromQuery] string apartmentid,
             [FromQuery] string accountid,
+            [FromQuery] string type,
             [FromQuery] int? limit,
             [FromQuery] int? page,
             [FromQuery] string sort)
@@ -84,7 +85,7 @@ namespace API.Controllers
             watch.Start();
 
             //get Resident
-            object response = await _residentService.GetResident(id, apartmentid, accountid, limit, page, sort);
+            object response = await _residentService.GetResident(id, apartmentid, accountid, type, limit, page, sort);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 

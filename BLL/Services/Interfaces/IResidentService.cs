@@ -37,13 +37,14 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
         /// <param name="accountId"></param>
+        /// <param name="type"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <returns></returns>
         Task<object> GetResident(
             string id, string apartmentId,
-            string accountId, int? limit,
+            string accountId, string type, int? limit,
             int? page, string sort);
 
 
