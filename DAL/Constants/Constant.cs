@@ -60,12 +60,12 @@
         INACTIVE_APARTMENT = 4005
     }
 
-    public enum ProductCategoryStatus
+    public enum OrderStatus
     {
-        VERIFIED_PRODUCT_CATEGORY = 5001,
-        DELETED_PRODUCT_CATEGORY = 5002,
-        REJECTED_PRODUCT_CATEGORY = 5003,
-        UNVERIFIED_PRODUCT_CATEGORY = 5004
+        CART = 5001,
+        DELETED_ORDER = 5002,
+        PAID = 5006,
+        IN_PAYMENT = 5007
     }
 
     public enum MerchantStoreStatus
@@ -102,6 +102,11 @@
         INACTIVE_PRODUCT_IN_MENU = 10005
     }
 
+    public enum MoMoStatus
+    {
+        MOMO_IPN_SIGNATURE_NOT_MATCH = 11008
+    }
+
     public enum PaymentStatus
     {
         ACTIVE_PAYMENT = 12001,
@@ -124,24 +129,5 @@
         UNVERIFIED_RESIDENT = 6004,
         INACTIVE_RESIDENT = 14005,
         INVALID_DATE_OF_BIRTH_RESIDENT = 14009
-    }
-
-    public enum OrderStatus
-    {
-        CART = 15001,
-        DELETED_ORDER = 15002,
-        PAID = 15006,
-        IN_PAYMENT = 15007
-    }
-
-    public enum ProductCombinationStatus
-    {
-        ACTIVE_PRODUCT_COMBINATION = 16001,
-        INACTIVE_PRODUCT_COMBINATION = 16005
-    }
-
-    public enum MoMoStatus
-    {
-        MOMO_IPN_SIGNATURE_NOT_MATCH = 17008
     }
 }
