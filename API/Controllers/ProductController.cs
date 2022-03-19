@@ -1,4 +1,5 @@
-﻿using BLL.Dtos;
+﻿using API.Extensions;
+using BLL.Dtos;
 using BLL.Dtos.Product;
 using BLL.Services.Interfaces;
 using DAL.Constants;
@@ -137,7 +138,7 @@ namespace API.Controllers
         /// <summary>
         /// Update Product (Merchant)
         /// </summary>
-        // [Authorize(Roles = ResidentType.MERCHANT)]
+        [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut]
         public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductRequest productRequest)
         {
@@ -188,9 +189,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Approve  Product With ID (Admin)
+        /// Approve  Product With ID (Admin, Market Manager)
         /// </summary>
-        [Authorize(Roles = RoleId.ADMIN)]
+        [AuthorizeRoles(RoleId.ADMIN, ResidentType.MARKET_MANAGER)]
         [HttpPut("approval")]
         public async Task<IActionResult> ApproveProduct([FromQuery] string id)
         {
@@ -214,9 +215,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Reject Product With ID (Admin)
+        /// Reject Product With ID (Admin, Market Manager)
         /// </summary>
-        [Authorize(Roles = RoleId.ADMIN)]
+        [AuthorizeRoles(RoleId.ADMIN, ResidentType.MARKET_MANAGER)]
         [HttpPut("rejection")]
         public async Task<IActionResult> RejectCreateProduct([FromQuery] string id)
         {

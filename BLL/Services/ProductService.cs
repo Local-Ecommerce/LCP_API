@@ -181,9 +181,22 @@ namespace BLL.Services
                     //get the order of the last photo
                     int order = !string.IsNullOrEmpty(product.Image) ? _utilService.LastImageNumber("Image", product.Image) : 0;
 
-                    //upload image
-                    string imageUrl = _firebaseService.UploadFilesToFirebase(pR.Image, TYPE, product.ProductId, "Image", order)
-                                                      .Result;
+                    //upload new image & remove image
+                    string imageUrl = product.Image;
+                    if (pR.Image.Length > 0)
+                    {
+                        foreach (var image in pR.Image)
+                        {
+                            if (image.Contains("https://firebasestorage.googleapis.com/"))
+                                imageUrl = imageUrl.Replace(image + "|", "");
+                            else
+                            {
+                                string newImageUrl = _firebaseService.UploadFilesToFirebase(pR.Image, TYPE, product.ProductId, "Image", order).Result;
+
+                                imageUrl.Concat(newImageUrl);
+                            }
+                        }
+                    }
 
                     UpdateProductResponse updateProductResponse = _mapper.Map<UpdateProductResponse>(productRequest);
                     updateProductResponse.Image = imageUrl;

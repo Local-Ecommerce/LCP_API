@@ -30,6 +30,8 @@ namespace BLL.Services.Interfaces
         /// <param name="status"></param>
         /// <param name="residentId"></param>
         /// <param name="apartmentId"></param>
+        /// <param name="isActive"></param>
+        /// <param name="type"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
@@ -37,7 +39,7 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<object> GetMenus(
             string id, int?[] status,
-            string apartmentId, int? limit,
+            string apartmentId, bool? isActive, string type, int? limit,
             int? page, string sort, string[] include);
 
 
