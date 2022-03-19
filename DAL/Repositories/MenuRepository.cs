@@ -21,6 +21,8 @@ namespace DAL.Repositories
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <param name="apartmentId"></param>
+        /// <param name="isActive"></param>
+        /// <param name="type"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
@@ -29,7 +31,7 @@ namespace DAL.Repositories
         /// <returns></returns>
         public async Task<PagingModel<Menu>> GetMenu(
             string id, int?[] status,
-            string apartmentId, int? limit,
+            string apartmentId, bool? isActive, string type, int? limit,
             int? queryPage, bool isAsc,
             string propertyName, string[] include)
         {
@@ -48,6 +50,16 @@ namespace DAL.Repositories
                 query = query.Include(menu => menu.MerchantStore)
                              .Where(menu => menu.MerchantStore.ApartmentId.Equals(apartmentId));
 
+            if (isActive != null && isActive == true)
+            {
+                TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                DateTime vnTime = TimeZoneInfo.ConvertTime(DateTime.Now, vnZone);
+
+                query = query.Where(menu => TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)menu.TimeStart) > 0 &&
+                            TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)menu.TimeEnd) < 0);
+            }
+
+
             //sort
             if (!string.IsNullOrEmpty(propertyName))
             {
@@ -64,7 +76,9 @@ namespace DAL.Repositories
                     if (item.Equals("product"))
                         query = query.Include(menu => menu.ProductInMenus
                                         .Where(pim => pim.Status.Equals((int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU)))
-                                    .ThenInclude(pim => pim.Product);
+                                    .ThenInclude(pim => pim.Product)
+                                    .ThenInclude(p => p.SystemCategory)
+                                    .Where(menu => menu.ProductInMenus.Any(pim => pim.Product.SystemCategory.Type.Equals(type)));
                 }
             }
 

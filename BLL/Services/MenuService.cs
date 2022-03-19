@@ -175,6 +175,8 @@ namespace BLL.Services
         /// <param name="status"></param>
         /// <param name="residentId"></param>
         /// <param name="apartmentId"></param>
+        /// <param name="isActive"></param>
+        /// <param name="type"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
@@ -182,7 +184,7 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<object> GetMenus(
             string id, int?[] status,
-            string apartmentId, int? limit,
+            string apartmentId, bool? isActive, string type, int? limit,
             int? page, string sort, string[] include)
         {
             PagingModel<Menu> menus;
@@ -197,7 +199,8 @@ namespace BLL.Services
 
             try
             {
-                menus = await _unitOfWork.Menus.GetMenu(id, status, apartmentId, limit, page, isAsc, propertyName, include);
+                menus = await _unitOfWork.Menus
+                    .GetMenu(id, status, apartmentId, isActive, type, limit, page, isAsc, propertyName, include);
             }
             catch (Exception e)
             {

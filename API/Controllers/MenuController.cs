@@ -71,27 +71,29 @@ namespace API.Controllers
             [FromQuery] string id,
             [FromQuery] int?[] status,
             [FromQuery] string apartmentid,
+            [FromQuery] bool? isActive,
+            [FromQuery] string type,
             [FromQuery] int? limit,
             [FromQuery] int? page,
             [FromQuery] string sort,
             [FromQuery] string[] include)
         {
             _logger.Information($"GET api/menus?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&limit={limit}&page={page}&sort={sort}&include="
+                $"&apartmentid={apartmentid}&isActive={isActive}&type={type}&limit={limit}&page={page}&sort={sort}&include="
                 + string.Join("include=", include) + " START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //get Menu
-            object responses = await _menuService.GetMenus(id, status, apartmentid, limit, page, sort, include);
+            object responses = await _menuService.GetMenus(id, status, apartmentid, isActive, type, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 
             watch.Stop();
 
             _logger.Information($"GET api/menus?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&limit={limit}&page={page}&sort={sort}&include="
+                $"&apartmentid={apartmentid}&isActive={isActive}&type={type}&limit={limit}&page={page}&sort={sort}&include="
                 + string.Join("include=", include) + " END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 

@@ -87,14 +87,7 @@ namespace BLL.Services
                         string url = await UploadFileToFirebase(file, type, parent,
                             fileName + (Array.IndexOf(files, file) + order + 1));
 
-                        if (file == files[^1])
-                        {
-                            urlConcat += url;
-                        }
-                        else
-                        {
-                            urlConcat += url + "|";
-                        }
+                        urlConcat += url + "|";
                     }
                     catch (Exception e)
                     {
