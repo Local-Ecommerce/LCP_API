@@ -74,11 +74,17 @@ namespace DAL.Repositories
                     if (item.Equals("store"))
                         query = query.Include(menu => menu.MerchantStore);
                     if (item.Equals("product"))
+                    {
                         query = query.Include(menu => menu.ProductInMenus
                                         .Where(pim => pim.Status.Equals((int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU)))
                                     .ThenInclude(pim => pim.Product)
-                                    .ThenInclude(p => p.SystemCategory)
-                                    .Where(menu => menu.ProductInMenus.Any(pim => pim.Product.SystemCategory.Type.Equals(type)));
+                                    .ThenInclude(p => p.SystemCategory);
+
+                        if (!string.IsNullOrEmpty(type))
+                        {
+                            query = query.Where(menu => menu.ProductInMenus.Any(pim => pim.Product.SystemCategory.Type.Equals(type)));
+                        }
+                    }
                 }
             }
 
