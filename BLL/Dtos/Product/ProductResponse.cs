@@ -22,6 +22,7 @@ namespace BLL.Dtos.Product
         public double? Weight { get; set; }
         public int? IsFavorite { get; set; }
         public string BelongTo { get; set; }
+        public string ResidentId { get; set; }
         public string SystemCategoryId { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
