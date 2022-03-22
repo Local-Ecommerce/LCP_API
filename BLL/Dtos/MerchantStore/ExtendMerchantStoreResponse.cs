@@ -19,6 +19,6 @@ namespace BLL.Dtos.MerchantStore
         public Collection<MenuResponse> Menus { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public MerchantStoreUpdateRequest UpdatedMerchantStore { get; set; }
+        public MerchantStoreResponse UpdatedMerchantStore { get; set; }
     }
 }
