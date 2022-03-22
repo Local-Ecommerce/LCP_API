@@ -60,7 +60,7 @@ namespace BLL.Mappings
 
             //MerchantStore Mapping
             CreateMap<MerchantStoreRequest, MerchantStore>();
-            CreateMap<MerchantStoreUpdateRequest, MerchantStore>()
+            CreateMap<MerchantStoreUpdateRequest, MerchantStoreResponse>()
                     .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<MerchantStore, MerchantStoreResponse>().ReverseMap();
             CreateMap<MerchantStore, ExtendMerchantStoreResponse>().ReverseMap();

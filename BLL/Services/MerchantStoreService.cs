@@ -8,6 +8,7 @@ using DAL.UnitOfWork;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BLL.Services
 {
@@ -119,31 +120,33 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<ExtendMerchantStoreResponse> UpdateMerchantStoreById(string id,
+        public async Task UpdateMerchantStoreById(string id,
             MerchantStoreUpdateRequest request)
         {
-            ExtendMerchantStoreResponse merchantStoreResponse;
-
+            MerchantStore store;
+            MerchantStoreResponse storeResponse;
             //Check id
             try
             {
-                merchantStoreResponse = _mapper.Map<ExtendMerchantStoreResponse>(
-                    await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id)));
+                store = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id));
+                store.Status = (int)MerchantStoreStatus.UNVERIFIED_MERCHANT_STORE;
 
-                merchantStoreResponse.UpdatedMerchantStore = request;
+                _unitOfWork.MerchantStores.Update(store);
+                await _unitOfWork.SaveChangesAsync();
+
+                storeResponse = _mapper.Map<MerchantStoreResponse>(store);
+                storeResponse = _mapper.Map<MerchantStoreResponse>(request);
             }
             catch (Exception e)
             {
-                _logger.Error("[MerchantStoreService.RequestUpdateMerchantStoreById()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(MerchantStore), id);
+                _logger.Error("[MerchantStoreService.UpdateMerchantStoreById()]: " + e.Message);
+                throw;
             }
 
             //store to Redis
-            _redisService.StoreToList(CACHE_KEY_FOR_UPDATE, merchantStoreResponse,
-                new Predicate<MerchantStoreResponse>(ms => ms.MerchantStoreId.Equals(merchantStoreResponse.MerchantStoreId)));
+            _redisService.StoreToList(CACHE_KEY_FOR_UPDATE, storeResponse,
+                new Predicate<MerchantStoreResponse>(ms => ms.MerchantStoreId.Equals(store.MerchantStoreId)));
 
-            return merchantStoreResponse;
         }
 
 
@@ -164,8 +167,8 @@ namespace BLL.Services
                 MerchantStore merchantStore = await _unitOfWork.MerchantStores.FindAsync(ms => ms.MerchantStoreId.Equals(id));
 
                 //get new data for merchant store from redis
-                MerchantStoreUpdateRequest ms = _redisService.GetList<ExtendMerchantStoreResponse>(CACHE_KEY_FOR_UPDATE)
-                    .Find(ms => ms.MerchantStoreId.Equals(id)).UpdatedMerchantStore;
+                MerchantStoreResponse ms = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY_FOR_UPDATE)
+                    .Find(ms => ms.MerchantStoreId.Equals(id));
 
                 if (ms != null)
                 {
@@ -173,7 +176,8 @@ namespace BLL.Services
                     isUpdate = true;
                 }
 
-                merchantStore.Status = isApprove ? (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE : (int)MerchantStoreStatus.REJECTED_MERCHANT_STORE;
+                if (!isUpdate)
+                    merchantStore.Status = isApprove ? (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE : (int)MerchantStoreStatus.REJECTED_MERCHANT_STORE;
 
                 _unitOfWork.MerchantStores.Update(merchantStore);
 
@@ -191,7 +195,7 @@ namespace BLL.Services
             if (isUpdate)
             {
                 _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
-                new Predicate<ExtendMerchantStoreResponse>(ms => ms.MerchantStoreId.Equals(merchantStoreResponse.MerchantStoreId)));
+                new Predicate<MerchantStoreResponse>(ms => ms.MerchantStoreId.Equals(merchantStoreResponse.MerchantStoreId)));
             }
 
             return merchantStoreResponse;
@@ -244,9 +248,22 @@ namespace BLL.Services
                 throw;
             }
 
+            List<ExtendMerchantStoreResponse> responses = _mapper.Map<List<ExtendMerchantStoreResponse>>(merchantStore.List);
+
+            // get new stores's info if update
+            if (status.Contains((int)MerchantStoreStatus.UNVERIFIED_MERCHANT_STORE))
+            {
+                foreach (var response in responses)
+                {
+                    response.UpdatedMerchantStore = _redisService
+                            .GetList<MerchantStoreResponse>(CACHE_KEY_FOR_UPDATE)
+                            .Find(store => store.MerchantStoreId == response.MerchantStoreId);
+                }
+            }
+
             return new PagingModel<ExtendMerchantStoreResponse>
             {
-                List = _mapper.Map<List<ExtendMerchantStoreResponse>>(merchantStore.List),
+                List = responses,
                 Page = merchantStore.Page,
                 LastPage = merchantStore.LastPage,
                 Total = merchantStore.Total,

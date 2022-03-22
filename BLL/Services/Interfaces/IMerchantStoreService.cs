@@ -40,7 +40,7 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<ExtendMerchantStoreResponse> UpdateMerchantStoreById(string id, MerchantStoreUpdateRequest request);
+        Task UpdateMerchantStoreById(string id, MerchantStoreUpdateRequest request);
 
 
         /// <summary>

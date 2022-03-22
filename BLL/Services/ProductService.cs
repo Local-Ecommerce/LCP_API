@@ -73,9 +73,7 @@ namespace BLL.Services
                     Product relatedProduct = _mapper.Map<Product>(relatedProductRequest);
 
                     relatedProduct.ProductId = _utilService.CreateId(PREFIX);
-                    relatedProduct.Image = _firebaseService
-                                        .UploadFilesToFirebase(relatedProductRequest.Image, TYPE, relatedProduct.ProductId, "Image", 0)
-                                        .Result;
+                    relatedProduct.Image = "";
                     relatedProduct.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
                     relatedProduct.CreatedDate = DateTime.Now;
                     relatedProduct.UpdatedDate = DateTime.Now;
@@ -119,14 +117,10 @@ namespace BLL.Services
                 {
                     string productId = _utilService.CreateId(PREFIX);
 
-                    //upload image
-                    string imageUrl = _firebaseService
-                        .UploadFilesToFirebase(productRequest.Image, TYPE, productId, "Image", 0).Result;
-
                     Product product = _mapper.Map<Product>(productRequest);
 
                     product.ProductId = productId;
-                    product.Image = imageUrl;
+                    product.Image = "";
                     product.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
                     product.CreatedDate = DateTime.Now;
                     product.UpdatedDate = DateTime.Now;
