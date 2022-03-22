@@ -127,9 +127,9 @@ namespace API.Controllers
             watch.Start();
 
             //update MerchantStore
-            ExtendMerchantStoreResponse response = await _merchantStoreService.UpdateMerchantStoreById(id, request);
+            await _merchantStoreService.UpdateMerchantStoreById(id, request);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendMerchantStoreResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendMerchantStoreResponse>.Success());
 
             watch.Stop();
 
