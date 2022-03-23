@@ -135,7 +135,10 @@ namespace BLL.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 storeResponse = _mapper.Map<MerchantStoreResponse>(store);
-                storeResponse = _mapper.Map<MerchantStoreResponse>(request);
+                storeResponse.StoreName = !string.IsNullOrEmpty(request.StoreName) ? request.StoreName : storeResponse.StoreName;
+                storeResponse.ApartmentId =
+                    !string.IsNullOrEmpty(request.ApartmentId) ? request.ApartmentId : storeResponse.ApartmentId;
+                storeResponse.Status = request.Status != null ? request.Status : storeResponse.Status;
             }
             catch (Exception e)
             {
@@ -145,7 +148,7 @@ namespace BLL.Services
 
             //store to Redis
             _redisService.StoreToList(CACHE_KEY_FOR_UPDATE, storeResponse,
-                new Predicate<MerchantStoreResponse>(ms => ms.MerchantStoreId.Equals(store.MerchantStoreId)));
+                new Predicate<MerchantStoreResponse>(ms => ms.MerchantStoreId.Equals(id)));
 
         }
 
