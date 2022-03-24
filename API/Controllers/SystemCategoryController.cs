@@ -62,26 +62,28 @@ namespace API.Controllers
             [FromQuery] string id,
             [FromQuery] string merchantid,
             [FromQuery] int?[] status,
+            [FromQuery] string type,
             [FromQuery] int? limit,
             [FromQuery] int? page,
             [FromQuery] string sort,
             [FromQuery] string include)
         {
             _logger.Information($"GET api/categories?id={id}&merchantid={merchantid}&status=" + string.Join("status=", status) +
-            $"&limit={limit}&page={page}&sort={sort}&include={include} START");
+            $"&type={type}&limit={limit}&page={page}&sort={sort}&include={include} START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //get systemCategory
-            object response = await _systemCategoryService.GetSystemCategories(id, merchantid, status, limit, page, sort, include);
+            object response = await _systemCategoryService
+                .GetSystemCategories(id, merchantid, status, type, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
             _logger.Information($"GET api/categories?id={id}&merchantid={merchantid}&status=" + string.Join("status=", status) +
-            $"&limit={limit}&page={page}&sort={sort}&include={include} END duration: " +
+            $"&type={type}&limit={limit}&page={page}&sort={sort}&include={include} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

@@ -20,6 +20,7 @@ namespace DAL.Repositories
         /// <param name="id"></param>
         /// <param name="merchantId"></param>
         /// <param name="status"></param>
+        /// <param name="type"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
@@ -27,8 +28,9 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<SystemCategory>> GetSystemCategory(
-            string id, string merchantId, int?[] status, int? limit,
-            int? queryPage, bool isAsc,
+            string id, string merchantId,
+            int?[] status, string type,
+            int? limit, int? queryPage, bool isAsc,
             string propertyName, string include)
         {
             IQueryable<SystemCategory> query = _context.SystemCategories.Where(sc => sc.SystemCategoryId != null);
@@ -44,6 +46,10 @@ namespace DAL.Repositories
             //filter by status
             if (status.Length != 0)
                 query = query.Where(sc => status.Contains(sc.Status));
+
+            //filter by type
+            if (!string.IsNullOrEmpty(type))
+                query = query.Where(sc => sc.Type.Equals(type));
 
             //filter by include
             if (!string.IsNullOrEmpty(include) && include.Equals("parent"))
