@@ -134,11 +134,12 @@ namespace BLL.Services
                 _unitOfWork.MerchantStores.Update(store);
                 await _unitOfWork.SaveChangesAsync();
 
+                //add info store to redis
                 storeResponse = _mapper.Map<MerchantStoreResponse>(store);
                 storeResponse.StoreName = !string.IsNullOrEmpty(request.StoreName) ? request.StoreName : storeResponse.StoreName;
                 storeResponse.ApartmentId =
                     !string.IsNullOrEmpty(request.ApartmentId) ? request.ApartmentId : storeResponse.ApartmentId;
-                storeResponse.Status = request.Status != null ? request.Status : storeResponse.Status;
+                storeResponse.Status = request.Status;
             }
             catch (Exception e)
             {
@@ -173,14 +174,27 @@ namespace BLL.Services
                 MerchantStoreResponse ms = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY_FOR_UPDATE)
                     .Find(ms => ms.MerchantStoreId.Equals(id));
 
-                if (ms != null)
-                {
-                    merchantStore = _mapper.Map<MerchantStore>(ms);
-                    isUpdate = true;
-                }
 
-                if (!isUpdate)
-                    merchantStore.Status = isApprove ? (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE : (int)MerchantStoreStatus.REJECTED_MERCHANT_STORE;
+
+                if (isApprove)
+                {
+                    if (ms != null)
+                    {
+                        //map new data
+                        merchantStore.StoreName = !string.IsNullOrEmpty(ms.StoreName) ? ms.StoreName : merchantStore.StoreName;
+
+                        merchantStore.ApartmentId =
+                            !string.IsNullOrEmpty(ms.ApartmentId) ? ms.ApartmentId : merchantStore.ApartmentId;
+
+                        merchantStore.Status = ms.Status != null ? ms.Status : (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE;
+
+                        isUpdate = true;
+                    }
+                    else merchantStore.Status = (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE;
+
+                }
+                else
+                    merchantStore.Status = (int)MerchantStoreStatus.REJECTED_MERCHANT_STORE;
 
                 _unitOfWork.MerchantStores.Update(merchantStore);
 
