@@ -129,10 +129,6 @@ namespace BLL.Services
             try
             {
                 store = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id));
-                store.Status = (int)MerchantStoreStatus.UNVERIFIED_MERCHANT_STORE;
-
-                _unitOfWork.MerchantStores.Update(store);
-                await _unitOfWork.SaveChangesAsync();
 
                 //add info store to redis
                 storeResponse = _mapper.Map<MerchantStoreResponse>(store);
