@@ -156,7 +156,8 @@ namespace BLL.Services
                         AccountId = document.Id,
                         CreatedDate = DateTime.Now,
                         UpdatedDate = DateTime.Now,
-                        Status = (int)ResidentStatus.UNVERIFIED_RESIDENT
+                        Status = (int)ResidentStatus.UNVERIFIED_RESIDENT,
+                        ApartmentId = (string)documentDictionary["apartmentId"]
                     };
 
                     extendAccountResponse = new ExtendAccountResponse
