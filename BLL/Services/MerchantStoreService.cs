@@ -116,7 +116,7 @@ namespace BLL.Services
 
         /// <summary>
         /// Update Merchant Store By Id
-        /// </summary>
+        /// /// </summary>
         /// <param name="id"></param>
         /// <param name="request"></param>
         /// <returns></returns>

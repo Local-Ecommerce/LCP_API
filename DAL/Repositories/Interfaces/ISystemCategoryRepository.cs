@@ -11,6 +11,7 @@ namespace DAL.Repositories.Interfaces
         /// <param name="id"></param>
         /// <param name="merchantId"></param>
         /// <param name="status"></param>
+        /// <param name="type"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
@@ -18,8 +19,9 @@ namespace DAL.Repositories.Interfaces
         /// <param name="include"></param>
         /// <returns></returns>
         Task<PagingModel<SystemCategory>> GetSystemCategory(
-            string id, string merchantId, int?[] status, int? limit,
-            int? queryPage, bool isAsc,
+            string id, string merchantId,
+            int?[] status, string type,
+            int? limit, int? queryPage, bool isAsc,
             string propertyName, string include);
     }
 }
