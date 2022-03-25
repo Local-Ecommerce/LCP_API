@@ -126,8 +126,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
             //update MerchantStore
-            await _merchantStoreService.UpdateMerchantStoreById(id, request);
+            await _merchantStoreService.UpdateMerchantStoreById(id, request, residentId);
 
             string json = JsonSerializer.Serialize(ApiResponse<ExtendMerchantStoreResponse>.Success());
 
@@ -153,8 +160,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
             //delete MerchantStore
-            await _merchantStoreService.DeleteMerchantStore(id);
+            await _merchantStoreService.DeleteMerchantStore(id, residentId);
 
             string json = JsonSerializer.Serialize(ApiResponse<MerchantStoreResponse>.Success());
 
@@ -170,7 +184,7 @@ namespace API.Controllers
         /// <summary>
         /// Approve MerchantStore With ID (Admin, Market Manager)
         /// </summary>
-        [AuthorizeRoles(RoleId.ADMIN, ResidentType.MARKET_MANAGER)]
+        [Authorize(ResidentType.MARKET_MANAGER)]
         [HttpPut("approval")]
         public async Task<IActionResult> ApproveMerchantStore([FromQuery] string id)
         {
@@ -179,8 +193,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
             //approve MerchantStore
-            ExtendMerchantStoreResponse response = await _merchantStoreService.VerifyMerchantStore(id, true);
+            ExtendMerchantStoreResponse response = await _merchantStoreService.VerifyMerchantStore(id, true, residentId);
 
             string json = JsonSerializer.Serialize(ApiResponse<ExtendMerchantStoreResponse>.Success(response));
 
@@ -196,7 +217,7 @@ namespace API.Controllers
         /// <summary>
         /// Reject MerchantStore With ID (Admin, Market Manager)
         /// </summary>
-        [AuthorizeRoles(RoleId.ADMIN, ResidentType.MARKET_MANAGER)]
+        [Authorize(ResidentType.MARKET_MANAGER)]
         [HttpPut("rejection")]
         public async Task<IActionResult> RejectCreateMerchantStore([FromQuery] string id)
         {
@@ -205,8 +226,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
             //reject MerchantStore
-            ExtendMerchantStoreResponse response = await _merchantStoreService.VerifyMerchantStore(id, false);
+            ExtendMerchantStoreResponse response = await _merchantStoreService.VerifyMerchantStore(id, false, residentId);
 
             string json = JsonSerializer.Serialize(ApiResponse<ExtendMerchantStoreResponse>.Success(response));
 
@@ -223,7 +251,7 @@ namespace API.Controllers
         /// Get Unverified Merchant Stores
         /// </summary>
         /// <returns></returns>
-        [AuthorizeRoles(RoleId.ADMIN, ResidentType.MARKET_MANAGER)]
+        [Authorize(ResidentType.MARKET_MANAGER)]
         [HttpGet("unverified-stores")]
         public async Task<IActionResult> GetUnverifiedMerchantStores()
         {
@@ -232,8 +260,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
             //get unverified MerchantStore
-            List<ExtendMerchantStoreResponse> responses = await _merchantStoreService.GetUnverifiedMerchantStores();
+            List<ExtendMerchantStoreResponse> responses = await _merchantStoreService.GetUnverifiedMerchantStores(residentId);
 
             string json = JsonSerializer.Serialize(ApiResponse<List<ExtendMerchantStoreResponse>>.Success(responses));
 

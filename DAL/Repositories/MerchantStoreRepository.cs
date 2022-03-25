@@ -96,10 +96,12 @@ namespace DAL.Repositories
         /// Get Merchant Stores By Ids
         /// </summary>
         /// <param name="ids"></param>
+        /// <param name="apartmentId"></param>
         /// <returns></returns>
-        public async Task<List<MerchantStore>> GetMerchantStoresByIds(List<string> ids)
+        public async Task<List<MerchantStore>> GetMerchantStoresByIdsAndApartmentId(List<string> ids, string apartmentId)
         {
-            return await _context.MerchantStores.Where(ms => ids.Contains(ms.MerchantStoreId)).ToListAsync();
+            return await _context.MerchantStores.Where(ms => ids.Contains(ms.MerchantStoreId) && ms.ApartmentId.Equals(apartmentId))
+                                    .ToListAsync();
         }
     }
 }

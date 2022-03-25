@@ -29,7 +29,8 @@ namespace DAL.Repositories.Interfaces
         /// Get Merchant Stores By Ids
         /// </summary>
         /// <param name="ids"></param>
+        /// <param name="apartmentId"></param>
         /// <returns></returns>
-        Task<List<MerchantStore>> GetMerchantStoresByIds(List<string> ids);
+        Task<List<MerchantStore>> GetMerchantStoresByIdsAndApartmentId(List<string> ids, string apartmentId);
     }
 }
