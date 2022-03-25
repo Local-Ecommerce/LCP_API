@@ -148,8 +148,10 @@ namespace BLL.Services
                 //add info store to redis
                 storeResponse = _mapper.Map<MerchantStoreResponse>(store);
                 storeResponse.StoreName = !string.IsNullOrEmpty(request.StoreName) ? request.StoreName : storeResponse.StoreName;
+
+                int order = _utilService.LastImageNumber("Image", store.StoreImage);
                 storeResponse.StoreImage = _firebaseService
-                                .UploadFileToFirebase(request.StoreImage, TYPE, id, "Image")
+                                .UploadFileToFirebase(request.StoreImage, TYPE, id, "Image" + (order + 1))
                                 .Result;
                 storeResponse.UpdatedDate = DateTime.Now;
             }
@@ -204,10 +206,13 @@ namespace BLL.Services
                         isUpdate = true;
                     }
                     else merchantStore.Status = (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE;
-
                 }
                 else
-                    merchantStore.Status = (int)MerchantStoreStatus.REJECTED_MERCHANT_STORE;
+                {
+                    if (ms == null)
+                        merchantStore.Status = (int)MerchantStoreStatus.REJECTED_MERCHANT_STORE;
+                    else isUpdate = true;
+                }
 
                 _unitOfWork.MerchantStores.Update(merchantStore);
 
