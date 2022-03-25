@@ -150,7 +150,6 @@ namespace API.Controllers
         /// <summary>
         /// Delete Merchant Store (Merchant)
         /// </summary>
-
         [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpDelete]
         public async Task<IActionResult> DeleteMerchantStore([FromQuery] string id)
@@ -182,7 +181,7 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Approve MerchantStore With ID (Admin, Market Manager)
+        /// Approve MerchantStore With ID (Market Manager)
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpPut("approval")]
@@ -215,7 +214,7 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Reject MerchantStore With ID (Admin, Market Manager)
+        /// Reject MerchantStore With ID (Market Manager)
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpPut("rejection")]
@@ -248,7 +247,7 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Unverified Merchant Stores
+        /// Get Unverified Merchant Stores (Market Manager)
         /// </summary>
         /// <returns></returns>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
