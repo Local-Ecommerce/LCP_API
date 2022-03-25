@@ -92,14 +92,16 @@ namespace BLL.Services
         /// Delete Merchant Store
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task DeleteMerchantStore(string id)
+        public async Task DeleteMerchantStore(string id, string residentId)
         {
             //Check id
             MerchantStore merchantStore;
             try
             {
-                merchantStore = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id));
+                merchantStore = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id)
+                                                                        && m.ResidentId.Equals(residentId));
             }
             catch (Exception e)
             {
@@ -120,7 +122,6 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[MerchantStoreService.DeleteMerchantStore()]: " + e.Message);
-
                 throw;
             }
         }
@@ -131,16 +132,18 @@ namespace BLL.Services
         /// /// </summary>
         /// <param name="id"></param>
         /// <param name="request"></param>
+        /// <param name="residentId"></param>
         /// <returns></returns>
         public async Task UpdateMerchantStoreById(string id,
-            MerchantStoreRequest request)
+            MerchantStoreRequest request, string residentId)
         {
             MerchantStore store;
             MerchantStoreResponse storeResponse;
             //Check id
             try
             {
-                store = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id));
+                store = await _unitOfWork.MerchantStores.FindAsync(m => m.MerchantStoreId.Equals(id)
+                                                                    && m.ResidentId.Equals(residentId));
 
                 //add info store to redis
                 storeResponse = _mapper.Map<MerchantStoreResponse>(store);
@@ -168,15 +171,23 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="isCreate"></param>
         /// <param name="isApprove"></param>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<ExtendMerchantStoreResponse> VerifyMerchantStore(string id, bool isApprove)
+        public async Task<ExtendMerchantStoreResponse> VerifyMerchantStore(string id, bool isApprove, string residentId)
         {
             ExtendMerchantStoreResponse merchantStoreResponse = null;
             bool isUpdate = false;
 
             try
             {
-                MerchantStore merchantStore = await _unitOfWork.MerchantStores.FindAsync(ms => ms.MerchantStoreId.Equals(id));
+                //check market manager's permission
+                Resident resident = await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId));
+
+                MerchantStore merchantStore = await _unitOfWork.MerchantStores.FindAsync(ms => ms.MerchantStoreId.Equals(id)
+                                                                                    && ms.ApartmentId.Equals(resident.ApartmentId));
+
+                if (merchantStore is null)
+                    throw new BusinessException($"Market Manager {residentId} does not have right to verify store {id}");
 
                 //get new data for merchant store from redis
                 MerchantStoreResponse ms = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY_FOR_UPDATE)
@@ -293,30 +304,34 @@ namespace BLL.Services
         /// <summary>
         /// Get Unverified Merchant Stores
         /// </summary>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<List<ExtendMerchantStoreResponse>> GetUnverifiedMerchantStores()
+        public async Task<List<ExtendMerchantStoreResponse>> GetUnverifiedMerchantStores(string residentId)
         {
-            //get updated store from redis
-            List<MerchantStoreResponse> storeRedis = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY_FOR_UPDATE);
-
-            List<string> ids = storeRedis.Select(ms => ms.MerchantStoreId).ToList();
-            List<MerchantStore> stores;
+            List<ExtendMerchantStoreResponse> responses;
             try
             {
+                Resident resident = await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId));
+
+                //get updated store from redis
+                List<MerchantStoreResponse> storeRedis = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY_FOR_UPDATE);
+
+                List<string> ids = storeRedis.Select(ms => ms.MerchantStoreId).ToList();
+
                 //get store from database
-                stores = await _unitOfWork.MerchantStores.GetMerchantStoresByIds(ids);
+                List<MerchantStore> stores = await _unitOfWork.MerchantStores.GetMerchantStoresByIdsAndApartmentId(ids, resident.ApartmentId);
+
+                //mapping data
+                responses = _mapper.Map<List<ExtendMerchantStoreResponse>>(stores);
+                foreach (var response in responses)
+                {
+                    response.UpdatedMerchantStore = storeRedis.Where(ms => ms.MerchantStoreId.Equals(response.MerchantStoreId)).First();
+                }
             }
             catch (Exception e)
             {
                 _logger.Error("MerchantStoreService.GetUnverifiedMerchantStores(): " + e.Message);
                 throw;
-            }
-
-            //mapping data
-            List<ExtendMerchantStoreResponse> responses = _mapper.Map<List<ExtendMerchantStoreResponse>>(stores);
-            foreach (var response in responses)
-            {
-                response.UpdatedMerchantStore = storeRedis.Where(ms => ms.MerchantStoreId.Equals(response.MerchantStoreId)).First();
             }
 
             return responses;

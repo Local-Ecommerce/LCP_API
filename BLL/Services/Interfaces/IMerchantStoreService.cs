@@ -38,35 +38,38 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Get Unverified Merchant Stores
         /// </summary>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<List<ExtendMerchantStoreResponse>> GetUnverifiedMerchantStores();
+        Task<List<ExtendMerchantStoreResponse>> GetUnverifiedMerchantStores(string residentId);
 
 
         /// <summary>
         /// Update Merchant Store By Id
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="residentId"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task UpdateMerchantStoreById(string id, MerchantStoreRequest request);
+        Task UpdateMerchantStoreById(string id, MerchantStoreRequest request, string residentId);
 
 
         /// <summary>
         /// Delete Merchant Store
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        Task DeleteMerchantStore(string id);
+        Task DeleteMerchantStore(string id, string residentId);
 
 
         /// <summary>
         /// Verify Merchant Store
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="isCreate"></param>
         /// <param name="isApprove"></param>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<ExtendMerchantStoreResponse> VerifyMerchantStore(string id, bool isApprove);
+        Task<ExtendMerchantStoreResponse> VerifyMerchantStore(string id, bool isApprove, string residentId);
     }
 
 }
