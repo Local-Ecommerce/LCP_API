@@ -24,5 +24,12 @@ namespace DAL.Repositories.Interfaces
             int?[] status, int? limit,
             int? queryPage, bool isAsc,
             string propertyName, string[] include);
+
+        /// <summary>
+        /// Get Merchant Stores By Ids
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        Task<List<MerchantStore>> GetMerchantStoresByIds(List<string> ids);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BLL.Dtos.MerchantStore;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -35,12 +36,19 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
+        /// Get Unverified Merchant Stores
+        /// </summary>
+        /// <returns></returns>
+        Task<List<ExtendMerchantStoreResponse>> GetUnverifiedMerchantStores();
+
+
+        /// <summary>
         /// Update Merchant Store By Id
         /// </summary>
         /// <param name="id"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task UpdateMerchantStoreById(string id, MerchantStoreUpdateRequest request);
+        Task UpdateMerchantStoreById(string id, MerchantStoreRequest request);
 
 
         /// <summary>

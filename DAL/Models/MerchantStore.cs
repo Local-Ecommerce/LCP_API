@@ -16,6 +16,7 @@ namespace DAL.Models
         public string MerchantStoreId { get; set; }
         public string StoreName { get; set; }
         public DateTime? CreatedDate { get; set; }
+        public string StoreImage { get; set; }
         public int? Status { get; set; }
         public string ResidentId { get; set; }
         public string ApartmentId { get; set; }

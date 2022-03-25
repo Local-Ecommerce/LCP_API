@@ -118,7 +118,7 @@ namespace API.Controllers
         [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPut]
         public async Task<IActionResult> UpdateMerchantStore([FromQuery] string id,
-                                                      [FromBody] MerchantStoreUpdateRequest request)
+                                                      [FromBody] MerchantStoreRequest request)
         {
             _logger.Information($"PUT api/stores?id={id}  START Request: " +
                 $"{JsonSerializer.Serialize(request)}");
@@ -200,7 +200,7 @@ namespace API.Controllers
         [HttpPut("rejection")]
         public async Task<IActionResult> RejectCreateMerchantStore([FromQuery] string id)
         {
-            _logger.Information($"PUT api/store/rejection?id={id} START");
+            _logger.Information($"PUT api/stores/rejection?id={id} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -212,10 +212,38 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information($"PUT api/store/rejection?id={id} END duration: " +
+            _logger.Information($"PUT api/stores/rejection?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Get Unverified Merchant Stores
+        /// </summary>
+        /// <returns></returns>
+        [AuthorizeRoles(RoleId.ADMIN, ResidentType.MARKET_MANAGER)]
+        [HttpGet("unverified-stores")]
+        public async Task<IActionResult> GetUnverifiedMerchantStores()
+        {
+            _logger.Information("GET api/stores/unverified-stores START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //get unverified MerchantStore
+            List<ExtendMerchantStoreResponse> responses = await _merchantStoreService.GetUnverifiedMerchantStores();
+
+            string json = JsonSerializer.Serialize(ApiResponse<List<ExtendMerchantStoreResponse>>.Success(responses));
+
+            watch.Stop();
+
+            _logger.Information("GET api/stores/unverified-stores END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
     }
 }

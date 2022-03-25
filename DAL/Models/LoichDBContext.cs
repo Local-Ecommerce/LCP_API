@@ -131,6 +131,8 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("ResidentID");
 
+                entity.Property(e => e.StoreImage).IsUnicode(false);
+
                 entity.Property(e => e.StoreName).HasMaxLength(250);
 
                 entity.HasOne(d => d.Apartment)

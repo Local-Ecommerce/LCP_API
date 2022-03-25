@@ -20,8 +20,10 @@ namespace BLL.Services
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
         private readonly IMenuService _menuService;
+        private readonly IFirebaseService _firebaseService;
         private readonly IRedisService _redisService;
         private const string PREFIX = "MS_";
+        private const string TYPE = "Merchant Store";
         private const string CACHE_KEY_FOR_UPDATE = "Unverified Updated Store";
 
 
@@ -30,6 +32,7 @@ namespace BLL.Services
             IMapper mapper,
             IUtilService utilService,
             IMenuService menuService,
+            IFirebaseService firebaseService,
             IRedisService redisService)
         {
             _unitOfWork = unitOfWork;
@@ -37,6 +40,7 @@ namespace BLL.Services
             _mapper = mapper;
             _utilService = utilService;
             _menuService = menuService;
+            _firebaseService = firebaseService;
             _redisService = redisService;
         }
 
@@ -53,10 +57,19 @@ namespace BLL.Services
             MerchantStore merchantStore = _mapper.Map<MerchantStore>(merchantStoreRequest);
             try
             {
+                //check resident Id
+                Resident resident = await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId));
+                if (!resident.Type.Equals(ResidentType.MERCHANT))
+                    throw new BusinessException($"Resident {residentId} is not a merchant.");
+
                 merchantStore.MerchantStoreId = _utilService.CreateId(PREFIX);
                 merchantStore.Status = (int)MerchantStoreStatus.UNVERIFIED_MERCHANT_STORE;
                 merchantStore.CreatedDate = DateTime.Now;
                 merchantStore.ResidentId = residentId;
+                merchantStore.ApartmentId = resident.ApartmentId;
+                merchantStore.StoreImage = _firebaseService
+                                .UploadFileToFirebase(merchantStoreRequest.StoreName, TYPE, merchantStore.MerchantStoreId, "Image")
+                                .Result;
 
                 _unitOfWork.MerchantStores.Add(merchantStore);
 
@@ -68,7 +81,6 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[MerchantStoreService.CreateMerchantStore()]: " + e.Message);
-
                 throw;
             }
 
@@ -121,7 +133,7 @@ namespace BLL.Services
         /// <param name="request"></param>
         /// <returns></returns>
         public async Task UpdateMerchantStoreById(string id,
-            MerchantStoreUpdateRequest request)
+            MerchantStoreRequest request)
         {
             MerchantStore store;
             MerchantStoreResponse storeResponse;
@@ -133,9 +145,10 @@ namespace BLL.Services
                 //add info store to redis
                 storeResponse = _mapper.Map<MerchantStoreResponse>(store);
                 storeResponse.StoreName = !string.IsNullOrEmpty(request.StoreName) ? request.StoreName : storeResponse.StoreName;
-                storeResponse.ApartmentId =
-                    !string.IsNullOrEmpty(request.ApartmentId) ? request.ApartmentId : storeResponse.ApartmentId;
-                storeResponse.Status = request.Status;
+                storeResponse.StoreImage = _firebaseService
+                                .UploadFileToFirebase(request.StoreName, TYPE, id, "Image")
+                                .Result;
+                storeResponse.UpdatedDate = DateTime.Now;
             }
             catch (Exception e)
             {
@@ -146,7 +159,6 @@ namespace BLL.Services
             //store to Redis
             _redisService.StoreToList(CACHE_KEY_FOR_UPDATE, storeResponse,
                 new Predicate<MerchantStoreResponse>(ms => ms.MerchantStoreId.Equals(id)));
-
         }
 
 
@@ -170,19 +182,13 @@ namespace BLL.Services
                 MerchantStoreResponse ms = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY_FOR_UPDATE)
                     .Find(ms => ms.MerchantStoreId.Equals(id));
 
-
-
                 if (isApprove)
                 {
                     if (ms != null)
                     {
                         //map new data
                         merchantStore.StoreName = !string.IsNullOrEmpty(ms.StoreName) ? ms.StoreName : merchantStore.StoreName;
-
-                        merchantStore.ApartmentId =
-                            !string.IsNullOrEmpty(ms.ApartmentId) ? ms.ApartmentId : merchantStore.ApartmentId;
-
-                        merchantStore.Status = ms.Status != null ? ms.Status : (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE;
+                        merchantStore.StoreImage = !string.IsNullOrEmpty(ms.StoreImage) ? ms.StoreImage : merchantStore.StoreImage;
 
                         isUpdate = true;
                     }
@@ -281,6 +287,39 @@ namespace BLL.Services
                 LastPage = merchantStore.LastPage,
                 Total = merchantStore.Total,
             };
+        }
+
+
+        /// <summary>
+        /// Get Unverified Merchant Stores
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<ExtendMerchantStoreResponse>> GetUnverifiedMerchantStores()
+        {
+            //get updated store from redis
+            List<MerchantStoreResponse> storeRedis = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY_FOR_UPDATE);
+
+            List<string> ids = storeRedis.Select(ms => ms.MerchantStoreId).ToList();
+            List<MerchantStore> stores;
+            try
+            {
+                //get store from database
+                stores = await _unitOfWork.MerchantStores.GetMerchantStoresByIds(ids);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("MerchantStoreService.GetUnverifiedMerchantStores(): " + e.Message);
+                throw;
+            }
+
+            //mapping data
+            List<ExtendMerchantStoreResponse> responses = _mapper.Map<List<ExtendMerchantStoreResponse>>(stores);
+            foreach (var response in responses)
+            {
+                response.UpdatedMerchantStore = storeRedis.Where(ms => ms.MerchantStoreId.Equals(response.MerchantStoreId)).First();
+            }
+
+            return responses;
         }
     }
 }
