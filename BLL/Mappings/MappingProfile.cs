@@ -59,7 +59,8 @@ namespace BLL.Mappings
                 .ForMember(dest => dest.Parent, act => act.MapFrom(src => src.BelongToNavigation));
 
             //MerchantStore Mapping
-            CreateMap<MerchantStoreRequest, MerchantStore>();
+            CreateMap<MerchantStoreRequest, MerchantStore>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<MerchantStore, MerchantStoreResponse>();
             CreateMap<MerchantStore, ExtendMerchantStoreResponse>().ReverseMap();
 

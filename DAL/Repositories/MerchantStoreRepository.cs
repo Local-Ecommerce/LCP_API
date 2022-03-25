@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System;
+using System.Collections.Generic;
 
 namespace DAL.Repositories
 {
@@ -88,6 +89,17 @@ namespace DAL.Repositories
                 Page = page,
                 LastPage = (int)Math.Ceiling(total / (double)perPage)
             };
+        }
+
+
+        /// <summary>
+        /// Get Merchant Stores By Ids
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public async Task<List<MerchantStore>> GetMerchantStoresByIds(List<string> ids)
+        {
+            return await _context.MerchantStores.Where(ms => ids.Contains(ms.MerchantStoreId)).ToListAsync();
         }
     }
 }
