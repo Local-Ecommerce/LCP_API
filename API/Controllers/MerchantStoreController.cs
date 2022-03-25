@@ -184,7 +184,7 @@ namespace API.Controllers
         /// <summary>
         /// Approve MerchantStore With ID (Admin, Market Manager)
         /// </summary>
-        [Authorize(ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpPut("approval")]
         public async Task<IActionResult> ApproveMerchantStore([FromQuery] string id)
         {
@@ -217,7 +217,7 @@ namespace API.Controllers
         /// <summary>
         /// Reject MerchantStore With ID (Admin, Market Manager)
         /// </summary>
-        [Authorize(ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpPut("rejection")]
         public async Task<IActionResult> RejectCreateMerchantStore([FromQuery] string id)
         {
@@ -251,7 +251,7 @@ namespace API.Controllers
         /// Get Unverified Merchant Stores
         /// </summary>
         /// <returns></returns>
-        [Authorize(ResidentType.MARKET_MANAGER)]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpGet("unverified-stores")]
         public async Task<IActionResult> GetUnverifiedMerchantStores()
         {
