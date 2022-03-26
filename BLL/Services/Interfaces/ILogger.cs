@@ -25,5 +25,12 @@
         /// </summary>
         /// <param name="message"></param>
         void Error(string message);
+
+
+        /// <summary>
+        /// User Behavior
+        /// </summary>
+        /// <param name="message"></param>
+        void UserBehavior(string message);
     }
 }
