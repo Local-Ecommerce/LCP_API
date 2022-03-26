@@ -70,9 +70,12 @@ namespace BLL.Services
         public int LastImageNumber(string imageName, string url)
         {
             int t1 = url.LastIndexOf(imageName) + imageName.Length;
-            int t2 = url.LastIndexOf(".");
+            int t2 = url.LastIndexOf("?");
+            string order = url[t1..t2];
+            if (order.Contains("."))
+                order = order[0..order.LastIndexOf(".")];
 
-            return int.Parse(url[t1..t2]);
+            return string.IsNullOrEmpty(order) ? 0 : int.Parse(order);
         }
 
 
