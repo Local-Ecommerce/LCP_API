@@ -4,7 +4,8 @@ namespace BLL.Services
 {
     public class LogNLog : Interfaces.ILogger
     {
-        private static ILogger logger = LogManager.GetCurrentClassLogger();
+        private static ILogger s_logSystem = LogManager.GetLogger("logSystem");
+        private static ILogger s_logUserBehavior = LogManager.GetLogger("logUserBehavior");
 
         public LogNLog() { }
 
@@ -15,7 +16,7 @@ namespace BLL.Services
         /// <param name="message"></param>
         public void Debug(string message)
         {
-            logger.Debug(message);
+            s_logSystem.Debug(message);
         }
 
 
@@ -25,7 +26,7 @@ namespace BLL.Services
         /// <param name="message"></param>
         public void Error(string message)
         {
-            logger.Error(message);
+            s_logSystem.Error(message);
         }
 
 
@@ -35,7 +36,12 @@ namespace BLL.Services
         /// <param name="message"></param>
         public void Information(string message)
         {
-            logger.Info(message);
+            s_logSystem.Info(message);
+        }
+
+        public void UserBehavior(string message)
+        {
+            s_logUserBehavior.Info(message);
         }
 
 
@@ -45,7 +51,7 @@ namespace BLL.Services
         /// <param name="message"></param>
         public void Warning(string message)
         {
-            logger.Warn(message);
+            s_logSystem.Warn(message);
         }
     }
 }
