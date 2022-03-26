@@ -149,7 +149,7 @@ namespace BLL.Services
                 storeResponse = _mapper.Map<MerchantStoreResponse>(store);
                 storeResponse.StoreName = !string.IsNullOrEmpty(request.StoreName) ? request.StoreName : storeResponse.StoreName;
 
-                int order = _utilService.LastImageNumber("Image", store.StoreImage);
+                int order = !string.IsNullOrEmpty(store.StoreImage) ? _utilService.LastImageNumber("Image", store.StoreImage) : 0;
                 storeResponse.StoreImage = _firebaseService
                                 .UploadFileToFirebase(request.StoreImage, TYPE, id, "Image" + (order + 1))
                                 .Result;

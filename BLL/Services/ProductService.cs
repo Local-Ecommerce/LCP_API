@@ -184,11 +184,7 @@ namespace BLL.Services
                             if (image.Contains("https://firebasestorage.googleapis.com/"))
                                 imageUrl = imageUrl.Replace(image + "|", "");
                             else
-                            {
-                                string newImageUrl = _firebaseService.UploadFilesToFirebase(pR.Image, TYPE, product.ProductId, "Image", order).Result;
-
-                                imageUrl.Concat(newImageUrl);
-                            }
+                                imageUrl += _firebaseService.UploadFilesToFirebase(pR.Image, TYPE, product.ProductId, "Image", order).Result;
                         }
                     }
 
