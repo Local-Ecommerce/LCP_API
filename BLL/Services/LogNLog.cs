@@ -39,6 +39,11 @@ namespace BLL.Services
             s_logSystem.Info(message);
         }
 
+
+        /// <summary>
+        /// User Behavior
+        /// </summary>
+        /// <param name="message"></param>
         public void UserBehavior(string message)
         {
             s_logUserBehavior.Info(message);
