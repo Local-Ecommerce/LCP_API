@@ -187,9 +187,9 @@ namespace BLL.Services
                                 imageUrl += _firebaseService
                                     .UploadFilesToFirebase(new string[] { image }, TYPE, product.ProductId, "Image", order).Result;
                         }
-
-                        pR.Image = null;
                     }
+                    pR.Image = null;
+                    pR.ProductId = null;
 
                     product = _mapper.Map<Product>(pR);
                     product.Image = imageUrl;
@@ -253,6 +253,7 @@ namespace BLL.Services
 
                 throw;
             }
+
         }
 
 
