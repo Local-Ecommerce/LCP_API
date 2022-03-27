@@ -98,15 +98,16 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Product
+        /// Get Product (Authorization required)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetProduct(
             [FromQuery] string id,
             [FromQuery] int?[] status,
             [FromQuery] string apartmentid,
             [FromQuery] string categoryid,
+            [FromQuery] string search,
             [FromQuery] int? limit,
             [FromQuery] int? page,
             [FromQuery] string sort,
@@ -114,13 +115,20 @@ namespace API.Controllers
         {
             _logger.Information($"GET api/products" +
                 $"?id={id}&status=" + string.Join("status=", status) + $"&apartmentid={apartmentid}&categoryid={categoryid}" +
-                $"&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) + " START");
+                $"&search={search}&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) + " START");
 
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
             //get base product
-            object response = await _productService.GetProduct(id, status, apartmentid, categoryid, limit, page, sort, include);
+            object response = await _productService.GetProduct(id, status, apartmentid, categoryid, search, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 

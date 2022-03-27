@@ -21,6 +21,7 @@ namespace DAL.Repositories
         /// <param name="status"></param>
         /// <param name="apartmentId"></param>
         /// <param name="categoryId"></param>
+        /// <param name="search"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
@@ -29,7 +30,7 @@ namespace DAL.Repositories
         /// <returns></returns>
         public async Task<PagingModel<Product>> GetProduct(
             string id, int?[] status, string apartmentId, string categoryId,
-            int? limit, int? queryPage,
+            string search, int? limit, int? queryPage,
             bool isAsc, string propertyName, string[] include)
         {
             IQueryable<Product> query = _context.Products;
@@ -49,6 +50,12 @@ namespace DAL.Repositories
             //filter by categoryId
             if (!string.IsNullOrEmpty(categoryId))
                 query = query.Where(p => p.SystemCategoryId.Equals(categoryId));
+
+            //filter by search
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(p => p.ProductName.ToLower().Contains(search.ToLower()) ||
+                                            p.BriefDescription.Contains(search.ToLower()) ||
+                                            p.Description.Contains(search.ToLower()));
 
             //add include
             if (include.Length > 0)

@@ -143,7 +143,7 @@ namespace BLL.Services
             }
 
             return await GetProduct(baseProductId, Array.Empty<int?>(),
-                        default, default, default, default, default, new string[] { "related" });
+                        default, default, default, default, default, default, new string[] { "related" });
         }
 
 
@@ -184,11 +184,12 @@ namespace BLL.Services
                             if (image.Contains("https://firebasestorage.googleapis.com/"))
                                 imageUrl = imageUrl.Replace(image + "|", "");
                             else
-                                imageUrl += _firebaseService.UploadFilesToFirebase(pR.Image, TYPE, product.ProductId, "Image", order).Result;
+                                imageUrl += _firebaseService
+                                    .UploadFilesToFirebase(new string[] { image }, TYPE, product.ProductId, "Image", order).Result;
                         }
                     }
 
-                    UpdateProductResponse updateProductResponse = _mapper.Map<UpdateProductResponse>(productRequest);
+                    UpdateProductResponse updateProductResponse = _mapper.Map<UpdateProductResponse>(pR);
                     updateProductResponse.Image = imageUrl;
 
                     //store product to Redis
@@ -268,7 +269,7 @@ namespace BLL.Services
                 //get old product from database
                 Product baseProduct =
                     (await _unitOfWork.Products
-                        .GetProduct(productId, new int?[] { }, null, null, null, null, false, null, new string[] { "related" }))
+                        .GetProduct(productId, new int?[] { }, null, null, null, null, null, false, null, new string[] { "related" }))
                         .List
                         .First();
 
@@ -341,6 +342,7 @@ namespace BLL.Services
         /// <param name="status"></param>
         /// <param name="apartmentId"></param>
         /// <param name="sysCateId"></param>
+        /// <param name="search"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
@@ -348,7 +350,7 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<PagingModel<ExtendProductResponse>> GetProduct(
             string id, int?[] status, string apartmentId, string sysCateId,
-            int? limit, int? page,
+            string search, int? limit, int? page,
             string sort, string[] include)
         {
             PagingModel<Product> products;
@@ -364,7 +366,7 @@ namespace BLL.Services
             try
             {
                 products = await _unitOfWork.Products.GetProduct
-                    (id, status, apartmentId, sysCateId, limit, page, isAsc, propertyName, include);
+                    (id, status, apartmentId, sysCateId, search, limit, page, isAsc, propertyName, include);
             }
             catch (Exception e)
             {
@@ -380,14 +382,14 @@ namespace BLL.Services
                 foreach (var response in responses)
                 {
                     //get new base product
-                    response.UpdatedProduct = _redisService
+                    response.CurrentProduct = _redisService
                             .GetList<UpdateProductResponse>(CACHE_KEY_FOR_UPDATE)
                             .FirstOrDefault(p => p.ProductId == response.ProductId);
 
                     //get new related product
                     foreach (var related in response.RelatedProducts)
                     {
-                        related.UpdatedProduct = _redisService
+                        related.CurrentProduct = _redisService
                                 .GetList<UpdateProductResponse>(CACHE_KEY_FOR_UPDATE)
                                 .FirstOrDefault(p => p.ProductId == related.ProductId);
                     }
