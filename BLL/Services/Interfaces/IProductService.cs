@@ -48,7 +48,7 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<PagingModel<ExtendProductResponse>> GetProduct(
             string id, int?[] status, string apartmentId, string sysCateId,
-            int? limit, int? page,
+            string search, int? limit, int? page,
             string sort, string[] include);
 
 

@@ -53,7 +53,8 @@ namespace DAL.Repositories
 
             //search contains
             if (!string.IsNullOrEmpty(search))
-                query = query.Where(poi => poi.Title.Contains(search) || poi.Text.Contains(search));
+                query = query.Where(poi => poi.Title.ToLower().Contains(search.ToLower()) ||
+                                            poi.Text.Contains(search.ToLower()));
 
             //add include
             if (include.Length > 0)

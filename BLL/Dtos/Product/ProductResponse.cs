@@ -26,6 +26,6 @@ namespace BLL.Dtos.Product
         public string SystemCategoryId { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public UpdateProductResponse UpdatedProduct { get; set; }
+        public UpdateProductResponse CurrentProduct { get; set; }
     }
 }
