@@ -29,9 +29,9 @@ namespace BLL.Mappings
             CreateMap<Product, ProductResponse>().ReverseMap();
             CreateMap<Product, ExtendProductResponse>()
                 .ForMember(dest => dest.RelatedProducts, act => act.MapFrom(src => src.InverseBelongToNavigation));
-            CreateMap<UpdateProductRequest, Product>()
+            CreateMap<ExtendProductRequest, Product>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-            CreateMap<UpdateProductRequest, UpdateProductResponse>()
+            CreateMap<ExtendProductRequest, UpdateProductResponse>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<UpdateProductResponse, Product>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
