@@ -208,8 +208,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
             //approve Product
-            ExtendProductResponse response = await _productService.VerifyProductById(id, true);
+            ExtendProductResponse response = await _productService.VerifyProductById(id, true, residentId);
 
             string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
 
@@ -234,8 +241,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
             //reject Product
-            ExtendProductResponse response = await _productService.VerifyProductById(id, false);
+            ExtendProductResponse response = await _productService.VerifyProductById(id, false, residentId);
 
             string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
 

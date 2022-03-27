@@ -154,23 +154,23 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task UpdateProduct(UpdateProductRequest productRequest)
         {
-            //get Id of updated product
-            List<string> productIds = productRequest.Products.Select(pr => pr.ProductId).ToList();
-
-            //validate ids
-            List<Product> products;
             try
             {
-                products = await _unitOfWork.Products.FindListAsync(p => productIds.Contains(p.ProductId));
+                //get Id of updated product
+                List<string> productIds = productRequest.Products.Select(pr => pr.ProductId).ToList();
+
+                //validate ids
+                List<Product> products = await _unitOfWork.Products.FindListAsync(p => productIds.Contains(p.ProductId));
 
                 foreach (var pR in productRequest.Products)
                 {
                     //get product from database
                     Product product = products.Where(p => p.ProductId.Equals(pR.ProductId)).FirstOrDefault();
 
-                    product.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
-
-                    _unitOfWork.Products.Update(product);
+                    //store current product to Redis
+                    ProductResponse currentProduct = _mapper.Map<ProductResponse>(product);
+                    _redisService.StoreToList(CACHE_KEY_FOR_UPDATE, currentProduct,
+                        new Predicate<ProductResponse>(up => up.ProductId.Equals(currentProduct.ProductId)));
 
                     //get the order of the last photo
                     int order = !string.IsNullOrEmpty(product.Image) ? _utilService.LastImageNumber("Image", product.Image) : 0;
@@ -191,12 +191,13 @@ namespace BLL.Services
                         pR.Image = null;
                     }
 
-                    UpdateProductResponse updateProductResponse = _mapper.Map<UpdateProductResponse>(pR);
-                    updateProductResponse.Image = imageUrl;
+                    product = _mapper.Map<Product>(pR);
+                    product.Image = imageUrl;
+                    product.ApproveBy = "";
+                    product.UpdatedDate = DateTime.Now;
+                    product.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
 
-                    //store product to Redis
-                    _redisService.StoreToList(CACHE_KEY_FOR_UPDATE, updateProductResponse,
-                        new Predicate<UpdateProductResponse>(up => up.ProductId.Equals(updateProductResponse.ProductId)));
+                    _unitOfWork.Products.Update(product);
                 }
 
                 await _unitOfWork.SaveChangesAsync();
@@ -206,7 +207,6 @@ namespace BLL.Services
                 _logger.Error("[ProductService.UpdateProduct()]" + e.Message);
                 throw;
             }
-
         }
 
 
@@ -262,7 +262,7 @@ namespace BLL.Services
         /// <param name="productId"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public async Task<ExtendProductResponse> VerifyProductById(string productId, bool isApprove)
+        public async Task<ExtendProductResponse> VerifyProductById(string productId, bool isApprove, string residentId)
         {
             ExtendProductResponse productResponse;
 
@@ -278,10 +278,15 @@ namespace BLL.Services
                 if (isApprove)
                 {
                     //get base product update if available
-                    UpdateProductResponse newBaseProduct = _redisService.GetList<UpdateProductResponse>(CACHE_KEY_FOR_UPDATE)
+                    ProductResponse newBaseProduct = _redisService.GetList<ProductResponse>(CACHE_KEY_FOR_UPDATE)
                             .Find(p => p.ProductId == productId);
-
-                    baseProduct = newBaseProduct != null ? _mapper.Map<Product>(newBaseProduct) : baseProduct;
+                    if (newBaseProduct != null)
+                    {
+                        newBaseProduct.ProductId = null;
+                        baseProduct = _mapper.Map<Product>(newBaseProduct);
+                        _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
+                            new Predicate<ProductResponse>(p => p.ProductId.Equals(baseProduct.ProductId)));
+                    }
 
                     //get related product update if available
                     for (int i = 0; i < baseProduct.InverseBelongToNavigation.Count; i++)
@@ -289,11 +294,12 @@ namespace BLL.Services
                         Product relatedProduct = baseProduct.InverseBelongToNavigation.ElementAt(i);
                         baseProduct.InverseBelongToNavigation.Remove(relatedProduct);
 
-                        UpdateProductResponse newRelatedProduct = _redisService.GetList<UpdateProductResponse>(CACHE_KEY_FOR_UPDATE)
+                        ProductResponse newRelatedProduct = _redisService.GetList<ProductResponse>(CACHE_KEY_FOR_UPDATE)
                                 .Find(p => p.ProductId == relatedProduct.ProductId);
 
                         if (newRelatedProduct != null)
                         {
+                            newRelatedProduct.ProductId = null;
                             relatedProduct = _mapper.Map<Product>(newRelatedProduct);
                             _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
                                 new Predicate<ProductResponse>(p => p.ProductId.Equals(relatedProduct.ProductId)));
@@ -306,7 +312,8 @@ namespace BLL.Services
                 //verify product
                 baseProduct.UpdatedDate = DateTime.Now;
                 baseProduct.Status = isApprove ? (int)ProductStatus.VERIFIED_PRODUCT : (int)ProductStatus.REJECTED_PRODUCT;
-                baseProduct.ApproveBy = isApprove ? "Han" : ""; //update later
+                baseProduct.ApproveBy = isApprove ? residentId : "";
+
 
                 //verify related product
                 for (int i = 0; i < baseProduct.InverseBelongToNavigation.Count; i++)
@@ -316,7 +323,7 @@ namespace BLL.Services
 
                     relatedProduct.UpdatedDate = DateTime.Now;
                     relatedProduct.Status = isApprove ? (int)ProductStatus.VERIFIED_PRODUCT : (int)ProductStatus.REJECTED_PRODUCT;
-                    relatedProduct.ApproveBy = isApprove ? "Han" : ""; //update later
+                    relatedProduct.ApproveBy = isApprove ? residentId : "";
 
                     baseProduct.InverseBelongToNavigation.Add(relatedProduct);
                 }
@@ -385,14 +392,14 @@ namespace BLL.Services
                 {
                     //get new base product
                     response.CurrentProduct = _redisService
-                            .GetList<UpdateProductResponse>(CACHE_KEY_FOR_UPDATE)
+                            .GetList<ProductResponse>(CACHE_KEY_FOR_UPDATE)
                             .FirstOrDefault(p => p.ProductId == response.ProductId);
 
                     //get new related product
                     foreach (var related in response.RelatedProducts)
                     {
                         related.CurrentProduct = _redisService
-                                .GetList<UpdateProductResponse>(CACHE_KEY_FOR_UPDATE)
+                                .GetList<ProductResponse>(CACHE_KEY_FOR_UPDATE)
                                 .FirstOrDefault(p => p.ProductId == related.ProductId);
                     }
                 }
