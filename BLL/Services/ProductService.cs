@@ -187,6 +187,8 @@ namespace BLL.Services
                                 imageUrl += _firebaseService
                                     .UploadFilesToFirebase(new string[] { image }, TYPE, product.ProductId, "Image", order).Result;
                         }
+
+                        pR.Image = null;
                     }
 
                     UpdateProductResponse updateProductResponse = _mapper.Map<UpdateProductResponse>(pR);
