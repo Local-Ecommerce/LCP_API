@@ -65,7 +65,8 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="productId"></param>
         /// <param name="type"></param>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<ExtendProductResponse> VerifyProductById(string productId, bool isApprove);
+        Task<ExtendProductResponse> VerifyProductById(string productId, bool isApprove, string residentId);
     }
 }

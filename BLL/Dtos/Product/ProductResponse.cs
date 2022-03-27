@@ -25,7 +25,5 @@ namespace BLL.Dtos.Product
         public string ResidentId { get; set; }
         public string SystemCategoryId { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public UpdateProductResponse CurrentProduct { get; set; }
     }
 }
