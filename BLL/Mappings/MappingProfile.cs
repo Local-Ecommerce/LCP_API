@@ -24,9 +24,8 @@ namespace BLL.Mappings
         public MappingProfile()
         {
             //Product Mapping
-            CreateMap<ProductRequest, Product>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-            CreateMap<ProductRequest, UpdateProductRequest>();
+            // CreateMap<ProductRequest, Product>()
+            //     .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<Product, ProductResponse>().ReverseMap();
             CreateMap<Product, UpdateProductResponse>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
