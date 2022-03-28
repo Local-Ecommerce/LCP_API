@@ -50,9 +50,9 @@ namespace API.Controllers
             string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
             //create product
-            ExtendProductResponse response = await _productService.CreateProduct(residentId, productRequest);
+            BaseProductResponse response = await _productService.CreateProduct(residentId, productRequest);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<BaseProductResponse>.Success(response));
 
             watch.Stop();
 
@@ -158,7 +158,7 @@ namespace API.Controllers
             //update product
             await _productService.UpdateProduct(productRequest);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success());
+            string json = JsonSerializer.Serialize(ApiResponse<BaseProductResponse>.Success());
 
             watch.Stop();
 
@@ -185,7 +185,7 @@ namespace API.Controllers
             //delete products
             await _productService.DeleteProduct(productIdsRequest.ProductIds);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success());
+            string json = JsonSerializer.Serialize(ApiResponse<BaseProductResponse>.Success());
 
             watch.Stop();
 
@@ -216,9 +216,9 @@ namespace API.Controllers
             string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
             //approve Product
-            ExtendProductResponse response = await _productService.VerifyProductById(id, true, residentId);
+            BaseProductResponse response = await _productService.VerifyProductById(id, true, residentId);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<BaseProductResponse>.Success(response));
 
             watch.Stop();
 
@@ -249,9 +249,9 @@ namespace API.Controllers
             string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
             //reject Product
-            ExtendProductResponse response = await _productService.VerifyProductById(id, false, residentId);
+            BaseProductResponse response = await _productService.VerifyProductById(id, false, residentId);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendProductResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<BaseProductResponse>.Success(response));
 
             watch.Stop();
 
