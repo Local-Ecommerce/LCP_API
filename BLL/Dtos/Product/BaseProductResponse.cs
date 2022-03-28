@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace BLL.Dtos.Product
 {
     [Serializable]
-    public class ExtendProductResponse : UpdateProductResponse
+    public class BaseProductResponse : UpdateProductResponse
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public Collection<UpdateProductResponse> RelatedProducts { get; set; }

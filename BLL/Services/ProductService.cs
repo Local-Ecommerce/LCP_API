@@ -49,11 +49,13 @@ namespace BLL.Services
         /// <param name="residentId"></param>
         /// <param name="baseProductRequest"></param>
         /// <returns></returns>
-        public async Task<ExtendProductResponse> CreateProduct(string residentId, BaseProductRequest baseProductRequest)
+        public async Task<BaseProductResponse> CreateProduct(string residentId, BaseProductRequest baseProductRequest)
         {
-            Product product = _mapper.Map<Product>(baseProductRequest);
+            BaseProductResponse response;
             try
             {
+                Product product = _mapper.Map<Product>(baseProductRequest);
+
                 product.ProductId = _utilService.CreateId(PREFIX); ;
                 product.Image = _firebaseService
                                         .UploadFilesToFirebase(baseProductRequest.Image, TYPE, product.ProductId, "Image", 0)
@@ -78,6 +80,7 @@ namespace BLL.Services
                     relatedProduct.CreatedDate = DateTime.Now;
                     relatedProduct.UpdatedDate = DateTime.Now;
                     relatedProduct.ApproveBy = "";
+                    relatedProduct.IsFavorite = 0;
                     relatedProduct.ResidentId = residentId;
                     relatedProduct.BelongTo = product.ProductId;
 
@@ -87,6 +90,8 @@ namespace BLL.Services
                 _unitOfWork.Products.Add(product);
 
                 await _unitOfWork.SaveChangesAsync();
+
+                response = _mapper.Map<BaseProductResponse>(product);
             }
             catch (Exception e)
             {
@@ -94,7 +99,7 @@ namespace BLL.Services
                 throw;
             }
 
-            return _mapper.Map<ExtendProductResponse>(product);
+            return response;
         }
 
 
@@ -105,7 +110,7 @@ namespace BLL.Services
         /// <param name="residentId"></param>
         /// <param name="productRequests"></param>
         /// <returns></returns>
-        public async Task<PagingModel<ExtendProductResponse>> AddRelatedProduct(string baseProductId, string residentId,
+        public async Task<PagingModel<BaseProductResponse>> AddRelatedProduct(string baseProductId, string residentId,
             List<ProductRequest> productRequests)
         {
             try
@@ -263,9 +268,9 @@ namespace BLL.Services
         /// <param name="productId"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public async Task<ExtendProductResponse> VerifyProductById(string productId, bool isApprove, string residentId)
+        public async Task<BaseProductResponse> VerifyProductById(string productId, bool isApprove, string residentId)
         {
-            ExtendProductResponse productResponse;
+            BaseProductResponse productResponse;
 
             try
             {
@@ -333,7 +338,7 @@ namespace BLL.Services
 
                 await _unitOfWork.SaveChangesAsync();
 
-                productResponse = _mapper.Map<ExtendProductResponse>(baseProduct);
+                productResponse = _mapper.Map<BaseProductResponse>(baseProduct);
             }
             catch (Exception e)
             {
@@ -358,7 +363,7 @@ namespace BLL.Services
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<PagingModel<ExtendProductResponse>> GetProduct(
+        public async Task<PagingModel<BaseProductResponse>> GetProduct(
             string id, int?[] status, string apartmentId, string sysCateId,
             string search, int? limit, int? page,
             string sort, string[] include)
@@ -385,7 +390,7 @@ namespace BLL.Services
             }
 
             //get new products if update
-            List<ExtendProductResponse> responses = _mapper.Map<List<ExtendProductResponse>>(products.List);
+            List<BaseProductResponse> responses = _mapper.Map<List<BaseProductResponse>>(products.List);
 
             if (status.Contains((int)ProductStatus.UNVERIFIED_PRODUCT))
             {
@@ -406,7 +411,7 @@ namespace BLL.Services
                 }
             }
 
-            return new PagingModel<ExtendProductResponse>
+            return new PagingModel<BaseProductResponse>
             {
                 List = responses,
                 Page = products.Page,

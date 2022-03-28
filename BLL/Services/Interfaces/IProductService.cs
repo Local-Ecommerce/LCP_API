@@ -12,7 +12,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="baseProductRequest"></param>
         /// <returns></returns>
-        Task<ExtendProductResponse> CreateProduct(string residentId, BaseProductRequest baseProductRequest);
+        Task<BaseProductResponse> CreateProduct(string residentId, BaseProductRequest baseProductRequest);
 
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace BLL.Services.Interfaces
         /// <param name="residentId"></param>
         /// <param name="productRequests"></param>
         /// <returns></returns>
-        Task<PagingModel<ExtendProductResponse>> AddRelatedProduct(string baseProductId, string residentId,
+        Task<PagingModel<BaseProductResponse>> AddRelatedProduct(string baseProductId, string residentId,
             List<ProductRequest> productRequests);
 
 
@@ -46,7 +46,7 @@ namespace BLL.Services.Interfaces
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        Task<PagingModel<ExtendProductResponse>> GetProduct(
+        Task<PagingModel<BaseProductResponse>> GetProduct(
             string id, int?[] status, string apartmentId, string sysCateId,
             string search, int? limit, int? page,
             string sort, string[] include);
@@ -67,6 +67,6 @@ namespace BLL.Services.Interfaces
         /// <param name="type"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<ExtendProductResponse> VerifyProductById(string productId, bool isApprove, string residentId);
+        Task<BaseProductResponse> VerifyProductById(string productId, bool isApprove, string residentId);
     }
 }

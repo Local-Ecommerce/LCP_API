@@ -24,10 +24,13 @@ namespace BLL.Mappings
         public MappingProfile()
         {
             //Product Mapping
-            CreateMap<ProductRequest, Product>();
+            CreateMap<ProductRequest, Product>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<ProductRequest, UpdateProductRequest>();
             CreateMap<Product, ProductResponse>().ReverseMap();
-            CreateMap<Product, ExtendProductResponse>()
+            CreateMap<Product, UpdateProductResponse>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<Product, BaseProductResponse>()
                 .ForMember(dest => dest.RelatedProducts, act => act.MapFrom(src => src.InverseBelongToNavigation));
             CreateMap<ExtendProductRequest, Product>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
