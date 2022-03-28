@@ -159,6 +159,7 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task UpdateProduct(UpdateProductRequest productRequest)
         {
+
             try
             {
                 //get Id of updated product
@@ -196,7 +197,7 @@ namespace BLL.Services
                     pR.Image = null;
                     pR.ProductId = null;
 
-                    product = _mapper.Map<Product>(pR);
+                    product = _mapper.Map<ExtendProductRequest, Product>(pR, product);
                     product.Image = imageUrl;
                     product.ApproveBy = "";
                     product.UpdatedDate = DateTime.Now;
