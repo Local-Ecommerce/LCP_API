@@ -3,6 +3,7 @@ using BLL.Dtos;
 using BLL.Dtos.Product;
 using BLL.Services.Interfaces;
 using DAL.Constants;
+using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -84,9 +85,9 @@ namespace API.Controllers
             string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
             //add related product
-            object response = await _productService.AddRelatedProduct(id, residentId, relatedProductRequest.Products);
+            await _productService.AddRelatedProduct(id, residentId, relatedProductRequest.Products);
 
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success());
 
             watch.Stop();
 
@@ -123,12 +124,22 @@ namespace API.Controllers
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             IEnumerable<Claim> claim = identity.Claims;
 
-            //get resident id from token
-            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
-            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+            //get role from token
+            string claimRole = claim.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault().ToString();
+            string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
 
             //get base product
-            object response = await _productService.GetProduct(id, status, apartmentid, categoryid, search, limit, page, sort, include);
+            PagingModel<BaseProductResponse> response;
+            switch (role)
+            {
+                case "Customer":
+                    response = await _productService.GetProductForCustomer(id, apartmentid, categoryid, search);
+                    break;
+                default:
+                    response = await _productService.GetProduct(role, id, status, apartmentid,
+                                                categoryid, search, limit, page, sort, include);
+                    break;
+            }
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 

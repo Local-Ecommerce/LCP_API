@@ -125,7 +125,7 @@ namespace BLL.Services
         /// <param name="residentId"></param>
         /// <param name="productRequests"></param>
         /// <returns></returns>
-        public async Task<PagingModel<BaseProductResponse>> AddRelatedProduct(string baseProductId, string residentId,
+        public async Task AddRelatedProduct(string baseProductId, string residentId,
             List<ProductRequest> productRequests)
         {
             try
@@ -161,9 +161,6 @@ namespace BLL.Services
                 _logger.Error("[ProductService.CreateRelatedProduct()]: " + e.Message);
                 throw;
             }
-
-            return await GetProduct(baseProductId, Array.Empty<int?>(),
-                        default, default, default, default, default, default, new string[] { "related" });
         }
 
 
@@ -293,7 +290,7 @@ namespace BLL.Services
                 //get old product from database
                 Product baseProduct =
                     (await _unitOfWork.Products
-                        .GetProduct(productId, new int?[] { }, null, null, null, null, null, false, null, new string[] { "related" }))
+                        .GetProduct(id: productId, include: new string[] { "related" }))
                         .List
                         .First();
 
@@ -369,20 +366,22 @@ namespace BLL.Services
         /// <summary>
         /// Get Product
         /// </summary>
+        /// <param name="role"></param>
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <param name="apartmentId"></param>
         /// <param name="sysCateId"></param>
         /// <param name="search"></param>
         /// <param name="limit"></param>
+        /// <param name="search"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<BaseProductResponse>> GetProduct(
-            string id, int?[] status, string apartmentId, string sysCateId,
-            string search, int? limit, int? page,
-            string sort, string[] include)
+            string role, string id = default, int?[] status = default, string apartmentId = default,
+            string sysCateId = default, string search = default, int? limit = default, int? page = default,
+            string sort = default, string[] include = default)
         {
             PagingModel<Product> products;
             string propertyName = default;
@@ -433,6 +432,74 @@ namespace BLL.Services
                 Page = products.Page,
                 LastPage = products.LastPage,
                 Total = products.Total,
+            };
+        }
+
+
+        /// <summary>
+        /// Get Product For Customer
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="apartmentId"></param>
+        /// <param name="sysCateId"></param>
+        /// <param name="search"></param>
+        /// <returns></returns>
+        public async Task<PagingModel<BaseProductResponse>> GetProductForCustomer(
+            string id, string apartmentId, string sysCateId, string search)
+        {
+            List<BaseProductResponse> responses = new List<BaseProductResponse>();
+            PagingModel<Product> productsPaging;
+            TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            DateTime vnTime = TimeZoneInfo.ConvertTime(DateTime.Now, vnZone);
+
+            try
+            {
+                //get product from data base
+                productsPaging = await _unitOfWork.Products.GetProduct
+                    (id: id, status: new int?[] { (int)ProductStatus.VERIFIED_PRODUCT },
+                    apartmentId: apartmentId, categoryId: sysCateId, search: search,
+                    include: new string[] { "related", "menu" });
+
+                //get price for product
+                foreach (Product product in productsPaging.List)
+                {
+                    foreach (ProductInMenu pim in product.ProductInMenus)
+                    {
+                        //check if menu available now
+                        if (TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeStart) > 0 &&
+                            TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeEnd) < 0 &&
+                            pim.Menu.RepeatDate.Contains(((int)vnTime.DayOfWeek).ToString()))
+                        {
+                            BaseProductResponse response = responses.Where(p => p.ProductId.Equals(product.ProductId))
+                                .FirstOrDefault();
+                            //if responses has data and that is price of base menu then update it
+                            if (response != null && !(bool)pim.Menu.BaseMenu)
+                            {
+                                int index = responses.IndexOf(response);
+                                response.DefaultPrice = pim.Price;
+                                responses[index] = response;
+                            }
+                            else
+                            {
+                                response = _mapper.Map<BaseProductResponse>(product);
+                                response.DefaultPrice = pim.Price;
+                                responses.Add(response);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductService.GetProductForCustomer()]: " + e.Message);
+                throw;
+            }
+            return new PagingModel<BaseProductResponse>
+            {
+                List = responses,
+                Page = productsPaging.Page,
+                LastPage = productsPaging.LastPage,
+                Total = responses.Count,
             };
         }
     }

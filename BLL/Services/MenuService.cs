@@ -154,7 +154,7 @@ namespace BLL.Services
                 UpdatedDate = DateTime.Now,
                 TimeStart = new TimeSpan(0, 0, 0),
                 TimeEnd = new TimeSpan(23, 59, 59),
-                RepeatDate = "2345678",
+                RepeatDate = "0123456",
                 Status = (int)MenuStatus.ACTIVE_MENU,
                 MerchantStoreId = merchantStoreId,
                 BaseMenu = true

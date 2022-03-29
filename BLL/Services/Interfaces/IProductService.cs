@@ -22,7 +22,7 @@ namespace BLL.Services.Interfaces
         /// <param name="residentId"></param>
         /// <param name="productRequests"></param>
         /// <returns></returns>
-        Task<PagingModel<BaseProductResponse>> AddRelatedProduct(string baseProductId, string residentId,
+        Task AddRelatedProduct(string baseProductId, string residentId,
             List<ProductRequest> productRequests);
 
 
@@ -37,19 +37,33 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Get Product
         /// </summary>
+        /// <param name="role"></param>
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <param name="apartmentId"></param>
         /// <param name="sysCateId"></param>
+        /// <param name="search"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
         Task<PagingModel<BaseProductResponse>> GetProduct(
-            string id, int?[] status, string apartmentId, string sysCateId,
+            string role, string id, int?[] status, string apartmentId, string sysCateId,
             string search, int? limit, int? page,
             string sort, string[] include);
+
+
+        /// <summary>
+        /// Get Product For Customer
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="apartmentId"></param>
+        /// <param name="sysCateId"></param>
+        /// <param name="search"></param>
+        /// <returns></returns>
+        Task<PagingModel<BaseProductResponse>> GetProductForCustomer(
+            string id, string apartmentId, string sysCateId, string search);
 
 
         /// <summary>
