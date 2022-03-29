@@ -15,6 +15,7 @@ namespace BLL.Dtos.Menu
         [RegularExpression(@"^(?:(?:([01]?\d|2[0-3]):)?([0-5]?\d):)?([0-5]?\d)$")]
         public string TimeEnd { get; set; }
         public string RepeatDate { get; set; }
+        public bool? IncludeBaseMenu { get; set; }
         public string MerchantStoreId { get; set; }
     }
 }

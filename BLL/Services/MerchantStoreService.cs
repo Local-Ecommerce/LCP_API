@@ -74,7 +74,7 @@ namespace BLL.Services
                 _unitOfWork.MerchantStores.Add(merchantStore);
 
                 //create default menu
-                _menuService.CreateDefaultMenu(merchantStore.StoreName, merchantStore.MerchantStoreId);
+                _menuService.CreateBaseMenu(merchantStore.MerchantStoreId);
 
                 await _unitOfWork.SaveChangesAsync();
             }

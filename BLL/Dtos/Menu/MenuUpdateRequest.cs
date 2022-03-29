@@ -14,5 +14,6 @@ namespace BLL.Dtos.Menu
         public string TimeEnd { get; set; }
         public int? Status { get; set; }
         public string RepeatDate { get; set; }
+        public bool? IncludeBaseMenu { get; set; }
     }
 }

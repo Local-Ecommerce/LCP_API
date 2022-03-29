@@ -14,6 +14,8 @@ namespace BLL.Dtos.Menu
         public DateTime? UpdatedDate { get; set; }
         public int? Status { get; set; }
         public string RepeatDate { get; set; }
+        public bool? BaseMenu { get; set; }
+        public bool? IncludeBaseMenu { get; set; }
         public string MerchantStoreId { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using BLL.Dtos.ProductInMenu;
 
 namespace BLL.Services
 {
@@ -21,6 +22,7 @@ namespace BLL.Services
         private readonly IFirebaseService _firebaseService;
         private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
+        private readonly IProductInMenuService _productInMenuService;
         private const string PREFIX = "PD_";
         private const string TYPE = "Product";
         private const string CACHE_KEY = "Product";
@@ -32,6 +34,7 @@ namespace BLL.Services
             IMapper mapper,
             IRedisService redisService,
             IUtilService utilService,
+            IProductInMenuService productInMenuService,
             IFirebaseService firebaseService)
         {
             _unitOfWork = unitOfWork;
@@ -40,6 +43,7 @@ namespace BLL.Services
             _mapper = mapper;
             _redisService = redisService;
             _utilService = utilService;
+            _productInMenuService = productInMenuService;
         }
 
 
@@ -89,7 +93,18 @@ namespace BLL.Services
 
                 _unitOfWork.Products.Add(product);
 
-                await _unitOfWork.SaveChangesAsync();
+                //get base menu Id
+                string baseMenu = await _unitOfWork.Menus.GetBaseMenuId(residentId);
+
+                //store product into base menu
+                await _productInMenuService.AddProductsToMenu(baseMenu, new List<ProductInMenuRequest>()
+                    { new ProductInMenuRequest
+                        {
+                            ProductId = product.ProductId,
+                            Price = product.DefaultPrice
+                        }
+                    }
+                 );
 
                 response = _mapper.Map<BaseProductResponse>(product);
             }
