@@ -46,6 +46,7 @@ namespace BLL.Services
                 menu.CreatedDate = DateTime.Now;
                 menu.UpdatedDate = DateTime.Now;
                 menu.Status = (int)MenuStatus.ACTIVE_MENU;
+                menu.BaseMenu = false;
 
                 _unitOfWork.Menus.Add(menu);
 

@@ -82,5 +82,16 @@ namespace BLL.Services.Interfaces
         /// <param name="residentId"></param>
         /// <returns></returns>
         Task<BaseProductResponse> VerifyProductById(string productId, bool isApprove, string residentId);
+
+
+        /// <summary>
+        /// Get Product From Menu By SysCateId
+        /// </summary>
+        /// <param name="sysCateId"></param>
+        /// <param name="menu"></param>
+        /// <param name="products"></param>
+        /// <returns></returns>
+        List<BaseProductResponse> GetProductFromMenuBySysCateId(string sysCateId, Menu menu,
+            List<BaseProductResponse> products);
     }
 }
