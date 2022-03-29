@@ -15,12 +15,11 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Create Default Menu
+        /// Create Base Menu
         /// </summary>
-        /// <param name="storeName"></param>
         /// <param name="merchantStoreId"></param>
         /// <returns></returns>
-        MenuResponse CreateDefaultMenu(string storeName, string merchantStoreId);
+        MenuResponse CreateBaseMenu(string merchantStoreId);
 
 
         /// <summary>
@@ -31,7 +30,6 @@ namespace BLL.Services.Interfaces
         /// <param name="residentId"></param>
         /// <param name="apartmentId"></param>
         /// <param name="isActive"></param>
-        /// <param name="type"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
@@ -39,7 +37,7 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<object> GetMenus(
             string id, int?[] status,
-            string apartmentId, bool? isActive, string type, int? limit,
+            string apartmentId, bool? isActive, int? limit,
             int? page, string sort, string[] include);
 
 

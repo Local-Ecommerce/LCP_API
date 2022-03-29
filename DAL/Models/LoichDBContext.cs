@@ -500,8 +500,6 @@ namespace DAL.Models
 
                 entity.Property(e => e.SysCategoryName).HasMaxLength(250);
 
-                entity.Property(e => e.Type).HasMaxLength(250);
-
                 entity.HasOne(d => d.BelongToNavigation)
                     .WithMany(p => p.InverseBelongToNavigation)
                     .HasForeignKey(d => d.BelongTo)

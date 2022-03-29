@@ -140,24 +140,24 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Create Default Menu
+        /// Create Base Menu
         /// </summary>
-        /// <param name="storeName"></param>
         /// <param name="merchantStoreId"></param>
         /// <returns></returns>
-        public MenuResponse CreateDefaultMenu(string storeName, string merchantStoreId)
+        public MenuResponse CreateBaseMenu(string merchantStoreId)
         {
             Menu menu = new()
             {
                 MenuId = _utilService.CreateId(PREFIX),
-                MenuName = "Bảng giá của " + storeName,
+                MenuName = "Bảng giá gốc",
                 CreatedDate = DateTime.Now,
                 UpdatedDate = DateTime.Now,
                 TimeStart = new TimeSpan(0, 0, 0),
                 TimeEnd = new TimeSpan(23, 59, 59),
                 RepeatDate = "2345678",
                 Status = (int)MenuStatus.ACTIVE_MENU,
-                MerchantStoreId = merchantStoreId
+                MerchantStoreId = merchantStoreId,
+                BaseMenu = true
             };
 
             _unitOfWork.Menus.Add(menu);
@@ -176,7 +176,6 @@ namespace BLL.Services
         /// <param name="residentId"></param>
         /// <param name="apartmentId"></param>
         /// <param name="isActive"></param>
-        /// <param name="type"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
@@ -184,7 +183,7 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<object> GetMenus(
             string id, int?[] status,
-            string apartmentId, bool? isActive, string type, int? limit,
+            string apartmentId, bool? isActive, int? limit,
             int? page, string sort, string[] include)
         {
             PagingModel<Menu> menus;
@@ -200,7 +199,7 @@ namespace BLL.Services
             try
             {
                 menus = await _unitOfWork.Menus
-                    .GetMenu(id, status, apartmentId, isActive, type, limit, page, isAsc, propertyName, include);
+                    .GetMenu(id, status, apartmentId, isActive, limit, page, isAsc, propertyName, include);
             }
             catch (Exception e)
             {

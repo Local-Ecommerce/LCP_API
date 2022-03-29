@@ -20,7 +20,6 @@ namespace DAL.Repositories
         /// <param name="id"></param>
         /// <param name="merchantId"></param>
         /// <param name="status"></param>
-        /// <param name="type"></param>
         /// <param name="search"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
@@ -30,7 +29,7 @@ namespace DAL.Repositories
         /// <returns></returns>
         public async Task<PagingModel<SystemCategory>> GetSystemCategory(
             string id, string merchantId,
-            int?[] status, string type, string search,
+            int?[] status, string search,
             int? limit, int? queryPage, bool isAsc,
             string propertyName, string include)
         {
@@ -47,10 +46,6 @@ namespace DAL.Repositories
             //filter by status
             if (status.Length != 0)
                 query = query.Where(sc => status.Contains(sc.Status));
-
-            //filter by type
-            if (!string.IsNullOrEmpty(type))
-                query = query.Where(sc => sc.Type.Equals(type));
 
             //filter by search
             if (!string.IsNullOrEmpty(search))

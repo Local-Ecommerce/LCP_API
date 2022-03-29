@@ -14,6 +14,20 @@ namespace DAL.Repositories
 
         public MenuRepository(LoichDBContext context) : base(context) { }
 
+        /// <summary>
+        /// Get Base Menu Id
+        /// </summary>
+        /// <param name="residentId"></param>
+        /// <returns></returns>
+        public async Task<string> GetBaseMenuId(string residentId)
+        {
+            Menu menu = await _context.Menus.Include(menu => menu.MerchantStore)
+                             .Where(menu => menu.MerchantStore.ResidentId.Equals(residentId)
+                             && menu.BaseMenu == true).FirstAsync();
+
+            return menu.MenuId;
+        }
+
 
         /// <summary>
         /// Get Menu
@@ -22,7 +36,6 @@ namespace DAL.Repositories
         /// <param name="status"></param>
         /// <param name="apartmentId"></param>
         /// <param name="isActive"></param>
-        /// <param name="type"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
@@ -31,7 +44,7 @@ namespace DAL.Repositories
         /// <returns></returns>
         public async Task<PagingModel<Menu>> GetMenu(
             string id, int?[] status,
-            string apartmentId, bool? isActive, string type, int? limit,
+            string apartmentId, bool? isActive, int? limit,
             int? queryPage, bool isAsc,
             string propertyName, string[] include)
         {
@@ -79,11 +92,6 @@ namespace DAL.Repositories
                                         .Where(pim => pim.Status.Equals((int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU)))
                                     .ThenInclude(pim => pim.Product)
                                     .ThenInclude(p => p.SystemCategory);
-
-                        if (!string.IsNullOrEmpty(type))
-                        {
-                            query = query.Where(menu => menu.ProductInMenus.Any(pim => pim.Product.SystemCategory.Type.Equals(type)));
-                        }
                     }
                 }
             }

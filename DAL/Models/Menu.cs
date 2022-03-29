@@ -19,8 +19,10 @@ namespace DAL.Models
         public TimeSpan? TimeEnd { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
-        public int? Status { get; set; }
         public string RepeatDate { get; set; }
+        public int? Status { get; set; }
+        public bool? BaseMenu { get; set; }
+        public bool? IncludeBaseMenu { get; set; }
         public string MerchantStoreId { get; set; }
 
         public virtual MerchantStore MerchantStore { get; set; }
