@@ -45,7 +45,7 @@ namespace DAL.Repositories
         public async Task<PagingModel<Menu>> GetMenu(
             string id, int?[] status,
             string apartmentId, bool? isActive, int? limit,
-            int? queryPage, bool isAsc,
+            int? queryPage, bool? isAsc,
             string propertyName, string[] include)
         {
             IQueryable<Menu> query = _context.Menus.Where(menu => menu.MenuId != null);
@@ -63,6 +63,7 @@ namespace DAL.Repositories
                 query = query.Include(menu => menu.MerchantStore)
                              .Where(menu => menu.MerchantStore.ApartmentId.Equals(apartmentId));
 
+            //filter by isActive
             if (isActive != null && isActive == true)
             {
                 TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
@@ -76,7 +77,7 @@ namespace DAL.Repositories
             //sort
             if (!string.IsNullOrEmpty(propertyName))
             {
-                query = isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
+                query = (bool)isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
             }
 
             //add include

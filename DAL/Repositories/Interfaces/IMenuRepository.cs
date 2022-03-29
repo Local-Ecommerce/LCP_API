@@ -21,7 +21,7 @@ namespace DAL.Repositories.Interfaces
         Task<PagingModel<Menu>> GetMenu(
             string id, int?[] status,
             string apartmentId, bool? isActive, int? limit,
-            int? queryPage, bool isAsc,
+            int? queryPage, bool? isAsc,
             string propertyName, string[] include);
 
 

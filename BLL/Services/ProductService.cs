@@ -96,15 +96,18 @@ namespace BLL.Services
                 //get base menu Id
                 string baseMenu = await _unitOfWork.Menus.GetBaseMenuId(residentId);
 
-                //store product into base menu
-                await _productInMenuService.AddProductsToMenu(baseMenu, new List<ProductInMenuRequest>()
+                if (baseProductRequest.ToBaseMenu)
+                    //store product into base menu
+                    await _productInMenuService.AddProductsToMenu(baseMenu, new List<ProductInMenuRequest>()
                     { new ProductInMenuRequest
                         {
                             ProductId = product.ProductId,
                             Price = product.DefaultPrice
                         }
                     }
-                 );
+                     );
+                else
+                    await _unitOfWork.SaveChangesAsync();
 
                 response = _mapper.Map<BaseProductResponse>(product);
             }
@@ -447,47 +450,44 @@ namespace BLL.Services
         public async Task<PagingModel<BaseProductResponse>> GetProductForCustomer(
             string id, string apartmentId, string sysCateId, string search)
         {
-            List<BaseProductResponse> responses = new List<BaseProductResponse>();
-            PagingModel<Product> productsPaging;
+            List<BaseProductResponse> responses = new();
             TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
             DateTime vnTime = TimeZoneInfo.ConvertTime(DateTime.Now, vnZone);
 
             try
             {
-                //get product from data base
-                productsPaging = await _unitOfWork.Products.GetProduct
-                    (id: id, status: new int?[] { (int)ProductStatus.VERIFIED_PRODUCT },
-                    apartmentId: apartmentId, categoryId: sysCateId, search: search,
-                    include: new string[] { "related", "menu" });
+                //get active menu
+                List<Menu> menus = (await _unitOfWork.Menus
+                        .GetMenu(null, new int?[] { (int)MenuStatus.ACTIVE_MENU }, apartmentId, true,
+                        null, null, null, null, new string[] { "product" })).List;
 
-                //get price for product
-                foreach (Product product in productsPaging.List)
-                {
-                    foreach (ProductInMenu pim in product.ProductInMenus)
+                //base menus
+                List<Menu> baseMenus = menus.Where(menu => (bool)menu.BaseMenu).ToList();
+                //other menus : menus
+                menus.RemoveAll(menu => (bool)menu.BaseMenu);
+
+                //add products from other menus
+                if (!_utilService.IsNullOrEmpty(menus))
+                    foreach (Menu menu in menus)
                     {
-                        //check if menu available now
-                        if (TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeStart) > 0 &&
-                            TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeEnd) < 0 &&
-                            pim.Menu.RepeatDate.Contains(((int)vnTime.DayOfWeek).ToString()))
+                        responses.AddRange(GetProductFromMenuBySysCateId(sysCateId, menu, responses));
+
+                        //check if menu includes base menu
+                        if ((bool)menu.IncludeBaseMenu)
                         {
-                            BaseProductResponse response = responses.Where(p => p.ProductId.Equals(product.ProductId))
-                                .FirstOrDefault();
-                            //if responses has data and that is price of base menu then update it
-                            if (response != null && !(bool)pim.Menu.BaseMenu)
-                            {
-                                int index = responses.IndexOf(response);
-                                response.DefaultPrice = pim.Price;
-                                responses[index] = response;
-                            }
-                            else
-                            {
-                                response = _mapper.Map<BaseProductResponse>(product);
-                                response.DefaultPrice = pim.Price;
-                                responses.Add(response);
-                            }
+                            Menu baseMenu = baseMenus.Where(mn => mn.MerchantStoreId.Equals(menu.MerchantStoreId)).First();
+                            baseMenus.Remove(baseMenu);
+
+                            //add product from this base menu
+                            responses.AddRange(GetProductFromMenuBySysCateId(sysCateId, menu, responses));
                         }
                     }
-                }
+
+                //add products from the remaining base menus
+                if (!_utilService.IsNullOrEmpty(baseMenus))
+                    foreach (Menu menu in baseMenus)
+                        responses.AddRange(GetProductFromMenuBySysCateId(sysCateId, menu, responses));
+
             }
             catch (Exception e)
             {
@@ -497,10 +497,44 @@ namespace BLL.Services
             return new PagingModel<BaseProductResponse>
             {
                 List = responses,
-                Page = productsPaging.Page,
-                LastPage = productsPaging.LastPage,
+                Page = 1,
+                LastPage = 1,
                 Total = responses.Count,
             };
+        }
+
+
+        /// <summary>
+        /// Get Product From Menu By SysCateId
+        /// </summary>
+        /// <param name="sysCateId"></param>
+        /// <param name="menu"></param>
+        /// <param name="products"></param>
+        /// <returns></returns>
+        public List<BaseProductResponse> GetProductFromMenuBySysCateId(string sysCateId, Menu menu,
+            List<BaseProductResponse> products)
+        {
+            List<BaseProductResponse> responses = new();
+            List<ProductInMenu> pims = menu.ProductInMenus
+                            .Where(pim => pim.Product.SystemCategoryId.Equals(sysCateId))
+                            .ToList();
+
+            if (!_utilService.IsNullOrEmpty(pims))
+            {
+                foreach (var pim in pims)
+                {
+                    BaseProductResponse response = _mapper.Map<BaseProductResponse>(pim.Product);
+
+                    //check if it was already in list
+                    BaseProductResponse product = products.Where(p => p.ProductId.Equals(response.ProductId)).FirstOrDefault();
+                    if (product == null)
+                    {
+                        response.DefaultPrice = pim.Price;
+                        responses.Add(response);
+                    }
+                }
+            }
+            return responses;
         }
     }
 }
