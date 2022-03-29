@@ -29,9 +29,9 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<Product>> GetProduct(
-            string id, int?[] status, string apartmentId, string categoryId,
-            string search, int? limit, int? queryPage,
-            bool isAsc, string propertyName, string[] include)
+            string id = default, int?[] status = default, string apartmentId = default, string categoryId = default,
+            string search = default, int? limit = default, int? queryPage = default,
+            bool isAsc = default, string propertyName = default, string[] include = default)
         {
             IQueryable<Product> query = _context.Products;
 
@@ -40,7 +40,7 @@ namespace DAL.Repositories
                 query = query.Where(p => p.ProductId.Equals(id));
 
             //filter by status
-            if (status.Length != 0)
+            if (status != null && status.Length != 0)
                 query = query.Where(p => status.Contains(p.Status));
 
             //filter by apartmentId
@@ -58,17 +58,23 @@ namespace DAL.Repositories
                                             p.Description.Contains(search.ToLower()));
 
             //add include
-            if (include.Length > 0)
+            if (include != null && include.Length > 0)
             {
                 foreach (var item in include)
                 {
-                    if (item.Equals("base"))
-                        query = query.Where(p => p.BelongTo != null).Include(p => p.BelongToNavigation);
-                    else
+                    switch (item)
                     {
-                        if (item.Equals("related"))
+                        case "base":
+                            query = query.Where(p => p.BelongTo != null).Include(p => p.BelongToNavigation);
+                            break;
+                        case "related":
                             query = query.Where(p => p.BelongTo == null)
                             .Include(p => p.InverseBelongToNavigation.Where(related => related.Status != (int)ProductStatus.DELETED_PRODUCT));
+                            break;
+                        case "menu":
+                            query = query.Include(p => p.ProductInMenus)
+                                        .ThenInclude(pim => pim.Menu);
+                            break;
                     }
                 }
             }

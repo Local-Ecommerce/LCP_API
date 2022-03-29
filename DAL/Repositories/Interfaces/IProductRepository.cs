@@ -20,8 +20,8 @@ namespace DAL.Repositories.Interfaces
         /// <param name="include"></param>
         /// <returns></returns>
         Task<PagingModel<Product>> GetProduct(
-            string id, int?[] status, string apartmentId, string categoryId,
-            string search, int? limit, int? queryPage,
-            bool isAsc, string propertyName, string[] include);
+            string id = default, int?[] status = default, string apartmentId = default, string categoryId = default,
+            string search = default, int? limit = default, int? queryPage = default,
+            bool isAsc = default, string propertyName = default, string[] include = default);
     }
 }
