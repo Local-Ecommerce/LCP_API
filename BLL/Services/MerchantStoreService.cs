@@ -68,7 +68,7 @@ namespace BLL.Services
                 merchantStore.ResidentId = residentId;
                 merchantStore.ApartmentId = resident.ApartmentId;
                 merchantStore.StoreImage = _firebaseService
-                                .UploadFileToFirebase(merchantStoreRequest.StoreName, TYPE, merchantStore.MerchantStoreId, "Image")
+                                .UploadFileToFirebase(merchantStoreRequest.StoreImage, TYPE, merchantStore.MerchantStoreId, "Image")
                                 .Result;
 
                 _unitOfWork.MerchantStores.Add(merchantStore);

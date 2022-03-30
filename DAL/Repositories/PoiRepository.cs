@@ -40,7 +40,7 @@ namespace DAL.Repositories
                 query = query.Where(poi => poi.PoiId.Equals(id));
 
             //filter by status
-            if (status.Length != 0)
+            if (status != null && status.Length != 0)
                 query = query.Where(poi => status.Contains(poi.Status));
 
             //filter by apartmentId
@@ -57,7 +57,7 @@ namespace DAL.Repositories
                                             poi.Text.Contains(search.ToLower()));
 
             //add include
-            if (include.Length > 0)
+            if (include != null && include.Length > 0)
             {
                 foreach (var item in include)
                 {

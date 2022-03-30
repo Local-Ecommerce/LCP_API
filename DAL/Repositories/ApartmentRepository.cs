@@ -37,7 +37,7 @@ namespace DAL.Repositories
                 query = query.Where(ap => ap.ApartmentId.Equals(id));
 
             //filter by status
-            if (status.Length != 0)
+            if (status != null && status.Length != 0)
                 query = query.Where(ap => status.Contains(ap.Status));
 
             //add include

@@ -40,7 +40,7 @@ namespace DAL.Repositories
                 query = query.Where(ms => ms.MerchantStoreId.Equals(id));
 
             //filter by status
-            if (status.Length != 0)
+            if (status != null && status.Length != 0)
                 query = query.Where(ms => status.Contains(ms.Status));
 
             //filter by apartmentId
