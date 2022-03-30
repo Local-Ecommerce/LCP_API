@@ -1,4 +1,5 @@
 ﻿using BLL.Dtos.Menu;
+using System;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -36,7 +37,7 @@ namespace BLL.Services.Interfaces
         /// <param name="include"></param>
         /// <returns></returns>
         Task<object> GetMenus(
-            string id, int?[] status,
+            string id, int?[] status, string residentId,
             string apartmentId, bool? isActive, int? limit,
             int? page, string sort, string[] include);
 
@@ -46,8 +47,9 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="menuUpdateRequest"></param>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<MenuResponse> UpdateMenuById(string id, MenuUpdateRequest menuUpdateRequest);
+        Task<MenuResponse> UpdateMenuById(string id, MenuUpdateRequest menuUpdateRequest, string residentId);
 
 
         /// <summary>
@@ -56,5 +58,16 @@ namespace BLL.Services.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task DeleteMenuById(string id);
+
+
+        /// <summary>
+        /// Get Other Menu Has Same Time
+        /// </summary>
+        /// <param name="timeStart"></param>
+        /// <param name="timeEnd"></param>
+        /// <param name="repeatDate"></param>
+        /// <param name="residentId"></param>
+        /// <returns></returns>
+        Task<string> GetOtherMenuHasSameTime(TimeSpan timeStart, TimeSpan timeEnd, string repeatDate, string residentId);
     }
 }

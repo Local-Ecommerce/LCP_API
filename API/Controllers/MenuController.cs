@@ -46,7 +46,7 @@ namespace API.Controllers
 
             //get resident id from token
             string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
-            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+            string residentId = claimName[(claimName.LastIndexOf(':') + 2)..];
 
             //Create Menu
             MenuResponse response = await _menuService.CreateMenu(residentId, menuRequest);
@@ -84,8 +84,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName[(claimName.LastIndexOf(':') + 2)..];
+
             //get Menu
-            object responses = await _menuService.GetMenus(id, status, apartmentid, isActive, limit, page, sort, include);
+            object responses = await _menuService.GetMenus(id, status, apartmentid, residentId, isActive, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 
@@ -113,8 +120,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName[(claimName.LastIndexOf(':') + 2)..];
+
             //Update Menu
-            MenuResponse response = await _menuService.UpdateMenuById(id, menuRequest);
+            MenuResponse response = await _menuService.UpdateMenuById(id, menuRequest, residentId);
 
             string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
 

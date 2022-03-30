@@ -10,6 +10,7 @@ namespace DAL.Repositories.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
+        /// <param name="residentId"></param>
         /// <param name="apartmentId"></param>
         /// <param name="isActive"></param>
         /// <param name="limit"></param>
@@ -19,10 +20,10 @@ namespace DAL.Repositories.Interfaces
         /// <param name="include"></param>
         /// <returns></returns>
         Task<PagingModel<Menu>> GetMenu(
-            string id, int?[] status,
-            string apartmentId, bool? isActive, int? limit,
-            int? queryPage, bool? isAsc,
-            string propertyName, string[] include);
+            string id = default, int?[] status = default, string residentId = default,
+            string apartmentId = default, bool? isActive = default, int? limit = default,
+            int? queryPage = default, bool? isAsc = default,
+            string propertyName = default, string[] include = default);
 
 
         /// <summary>

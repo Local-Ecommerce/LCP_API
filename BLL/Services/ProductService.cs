@@ -458,7 +458,7 @@ namespace BLL.Services
             {
                 //get active menu
                 List<Menu> menus = (await _unitOfWork.Menus
-                        .GetMenu(null, new int?[] { (int)MenuStatus.ACTIVE_MENU }, apartmentId, true,
+                        .GetMenu(null, new int?[] { (int)MenuStatus.ACTIVE_MENU }, null, apartmentId, true,
                         null, null, null, null, new string[] { "product" })).List;
 
                 //base menus
@@ -472,12 +472,13 @@ namespace BLL.Services
                     {
                         responses.AddRange(GetProductFromMenuBySysCateId(sysCateId, menu, responses));
 
+                        //get base menu
+                        Menu baseMenu = baseMenus.Where(mn => mn.MerchantStoreId.Equals(menu.MerchantStoreId)).First();
+                        baseMenus.Remove(baseMenu);
+
                         //check if menu includes base menu
                         if ((bool)menu.IncludeBaseMenu)
                         {
-                            Menu baseMenu = baseMenus.Where(mn => mn.MerchantStoreId.Equals(menu.MerchantStoreId)).First();
-                            baseMenus.Remove(baseMenu);
-
                             //add product from this base menu
                             responses.AddRange(GetProductFromMenuBySysCateId(sysCateId, menu, responses));
                         }
