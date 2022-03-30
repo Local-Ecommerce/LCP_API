@@ -56,7 +56,7 @@ namespace DAL.Repositories
                 query = query.Where(menu => menu.MenuId.Equals(id));
 
             //filter by status
-            if (status.Length != 0)
+            if (status != null && status.Length != 0)
                 query = query.Where(menu => status.Contains(menu.Status));
 
             //filter by residentId
@@ -87,7 +87,7 @@ namespace DAL.Repositories
             }
 
             //add include
-            if (include.Length > 0)
+            if (include != null && include.Length > 0)
             {
                 foreach (var item in include)
                 {

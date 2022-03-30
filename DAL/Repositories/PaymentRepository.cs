@@ -51,7 +51,7 @@ namespace DAL.Repositories
                 query = query.Where(p => p.DateTime.Equals(date.Date));
 
             //filter by status
-            if (status.Length != 0)
+            if (status != null && status.Length != 0)
                 query = query.Where(p => status.Contains(p.Status));
 
             //sort

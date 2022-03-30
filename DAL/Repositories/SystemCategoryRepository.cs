@@ -44,7 +44,7 @@ namespace DAL.Repositories
                 query = query.Include(sc => sc.Products.Where(p => p.ResidentId.Equals(merchantId)));
 
             //filter by status
-            if (status.Length != 0)
+            if (status != null && status.Length != 0)
                 query = query.Where(sc => status.Contains(sc.Status));
 
             //filter by search
