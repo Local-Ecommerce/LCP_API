@@ -24,7 +24,7 @@ namespace BLL.Filters
                 case BusinessException:
                     var businessException = (BusinessException)exception;
                     apiResponse.ResultCode = businessException.ErrorCode;
-                    response = new HttpResponseMessage(HttpStatusCode.OK);
+                    response = new HttpResponseMessage(HttpStatusCode.BadRequest);
                     break;
                 case EntityNotFoundException:
                     response = new HttpResponseMessage(HttpStatusCode.NotFound);

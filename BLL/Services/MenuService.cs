@@ -8,6 +8,7 @@ using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace BLL.Services
 {
@@ -42,6 +43,13 @@ namespace BLL.Services
             Menu menu = _mapper.Map<Menu>(menuRequest);
             try
             {
+                //check if another menu use that time
+                string menuName = await GetOtherMenuHasSameTime(TimeSpan.Parse(menuRequest.TimeStart), 
+                    TimeSpan.Parse(menuRequest.TimeEnd), menuRequest.RepeatDate, residentId);
+
+                if(menuName != null)
+                    throw new BusinessException($"Đã có menu {menuName} sử dụng khung giờ đó");
+
                 menu.MenuId = _utilService.CreateId(PREFIX);
                 menu.CreatedDate = DateTime.Now;
                 menu.UpdatedDate = DateTime.Now;
@@ -67,8 +75,9 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="menuUpdateRequest"></param>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<MenuResponse> UpdateMenuById(string id, MenuUpdateRequest menuUpdateRequest)
+        public async Task<MenuResponse> UpdateMenuById(string id, MenuUpdateRequest menuUpdateRequest, string residentId)
         {
             Menu menu;
             try
@@ -85,6 +94,13 @@ namespace BLL.Services
             //Update Menu to DB
             try
             {
+                //check if another menu use that time
+                string menuName = await GetOtherMenuHasSameTime(TimeSpan.Parse(menuUpdateRequest.TimeStart),
+                    TimeSpan.Parse(menuUpdateRequest.TimeEnd), menuUpdateRequest.RepeatDate, residentId);
+
+                if (menuName != null)
+                    throw new BusinessException($"Đã có menu {menuName} sử dụng khung giờ đó");
+
                 menu = _mapper.Map(menuUpdateRequest, menu);
                 menu.UpdatedDate = DateTime.Now;
 
@@ -183,7 +199,7 @@ namespace BLL.Services
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<object> GetMenus(
-            string id, int?[] status,
+            string id, int?[] status, string residentId,
             string apartmentId, bool? isActive, int? limit,
             int? page, string sort, string[] include)
         {
@@ -199,8 +215,10 @@ namespace BLL.Services
 
             try
             {
+                if (!residentId.Equals(ResidentType.MERCHANT))
+                    residentId = null;
                 menus = await _unitOfWork.Menus
-                    .GetMenu(id, status, apartmentId, isActive, limit, page, isAsc, propertyName, include);
+                    .GetMenu(id, status, apartmentId, residentId, isActive, limit, page, isAsc, propertyName, include);
             }
             catch (Exception e)
             {
@@ -215,6 +233,42 @@ namespace BLL.Services
                 LastPage = menus.LastPage,
                 Total = menus.Total,
             };
+        }
+
+
+        /// <summary>
+        /// Get Other Menu Has Same Time
+        /// </summary>
+        /// <param name="timeStart"></param>
+        /// <param name="timeEnd"></param>
+        /// <param name="repeatDate"></param>
+        /// <param name="residentId"></param>
+        /// <returns></returns>
+        public async Task<string> GetOtherMenuHasSameTime(TimeSpan timeStart, TimeSpan timeEnd, string repeatDate, string residentId)
+        {
+            try
+            {
+                string[] repeatDateCharArray = repeatDate.ToCharArray().Select(c => c.ToString()).ToArray();
+
+                List<Menu> menus = (await _unitOfWork.Menus.GetMenu(residentId: residentId)).List;
+                foreach (Menu m in menus)
+                {
+                    //if contain same day of week
+                    if (!(bool)m.BaseMenu && repeatDateCharArray.Any(repeatDate.Contains))
+                    {
+                        //if m.TimeStart <= timeStart or timeEnd <= m.TimeEnd
+                        if ((TimeSpan.Compare(timeStart, (TimeSpan)m.TimeStart) > 1 && (TimeSpan.Compare(timeStart, (TimeSpan)m.TimeEnd) < 1))
+                                || (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeStart) > 1 && (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeEnd) < 1)))
+                            return m.MenuName;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MenuService.IsSameTimeWithOtherMenu()]" + e.Message);
+                throw;
+            }
+            return null;
         }
     }
 }

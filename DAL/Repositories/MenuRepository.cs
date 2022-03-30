@@ -34,6 +34,7 @@ namespace DAL.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
+        /// <param name="residentId"></param>
         /// <param name="apartmentId"></param>
         /// <param name="isActive"></param>
         /// <param name="limit"></param>
@@ -43,10 +44,10 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<Menu>> GetMenu(
-            string id, int?[] status,
-            string apartmentId, bool? isActive, int? limit,
-            int? queryPage, bool? isAsc,
-            string propertyName, string[] include)
+            string id = default, int?[] status = default, string residentId = default,
+            string apartmentId = default, bool? isActive = default, int? limit = default,
+            int? queryPage = default, bool? isAsc = default,
+            string propertyName = default, string[] include = default)
         {
             IQueryable<Menu> query = _context.Menus.Where(menu => menu.MenuId != null);
 
@@ -57,6 +58,11 @@ namespace DAL.Repositories
             //filter by status
             if (status.Length != 0)
                 query = query.Where(menu => status.Contains(menu.Status));
+
+            //filter by residentId
+            if (!string.IsNullOrEmpty(residentId))
+                query = query.Include(menu => menu.MerchantStore)
+                    .Where(menu => menu.MerchantStore.ResidentId.Equals(residentId));
 
             //filter by apartmentId
             if (!string.IsNullOrEmpty(apartmentId))
