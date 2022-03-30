@@ -44,10 +44,10 @@ namespace BLL.Services
             try
             {
                 //check if another menu use that time
-                string menuName = await GetOtherMenuHasSameTime(TimeSpan.Parse(menuRequest.TimeStart), 
+                string menuName = await GetOtherMenuHasSameTime(TimeSpan.Parse(menuRequest.TimeStart),
                     TimeSpan.Parse(menuRequest.TimeEnd), menuRequest.RepeatDate, residentId);
 
-                if(menuName != null)
+                if (menuName != null)
                     throw new BusinessException($"Đã có menu {menuName} sử dụng khung giờ đó");
 
                 menu.MenuId = _utilService.CreateId(PREFIX);
@@ -215,10 +215,10 @@ namespace BLL.Services
 
             try
             {
-                if (!residentId.Equals(ResidentType.MERCHANT))
+                if (!residentId.Contains(ResidentType.MERCHANT))
                     residentId = null;
                 menus = await _unitOfWork.Menus
-                    .GetMenu(id, status, apartmentId, residentId, isActive, limit, page, isAsc, propertyName, include);
+                    .GetMenu(id, status, residentId, apartmentId, isActive, limit, page, isAsc, propertyName, include);
             }
             catch (Exception e)
             {

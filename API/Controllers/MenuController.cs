@@ -92,7 +92,7 @@ namespace API.Controllers
             string residentId = claimName[(claimName.LastIndexOf(':') + 2)..];
 
             //get Menu
-            object responses = await _menuService.GetMenus(id, status, apartmentid, residentId, isActive, limit, page, sort, include);
+            object responses = await _menuService.GetMenus(id, status, residentId, apartmentid, isActive, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 
