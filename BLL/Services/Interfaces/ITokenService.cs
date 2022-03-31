@@ -59,5 +59,12 @@ namespace BLL.Services.Interfaces
         /// <param name="unixTimeStamp"></param>
         /// <returns></returns>
         DateTime UnixTimeStampToDateTime(long unixTimeStamp);
+
+
+        /// <summary>
+        /// Does Token Expired
+        /// </summary>
+        /// <param name="authorization"></param>
+        void CheckTokenExpired(string authorization);
     }
 }

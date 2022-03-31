@@ -13,6 +13,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Net.Http.Headers;
 
 namespace API.Controllers
 {
@@ -24,12 +25,14 @@ namespace API.Controllers
     {
         private readonly ILogger _logger;
         private readonly IOrderService _orderService;
+        private readonly ITokenService _tokenService;
 
         public OrderController(ILogger logger,
-            IOrderService orderService)
+            IOrderService orderService, ITokenService tokenService)
         {
             _logger = logger;
             _orderService = orderService;
+            _tokenService = tokenService;
         }
 
 
@@ -40,6 +43,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] List<OrderDetailRequest> orderDetailRequests)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             IEnumerable<Claim> claim = identity.Claims;
 
@@ -81,6 +87,9 @@ namespace API.Controllers
             [FromQuery] string sort,
             [FromQuery] string include)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"GET api/orders?id={id}&status=" + string.Join("status=", status) +
                 $"&merchantstoreid={merchantstoreid}&limit={limit}&page={page}&sort={sort}&include={include}"
                 + " START");
@@ -124,6 +133,9 @@ namespace API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateOrderStatus([FromQuery] string id, [FromQuery] int status)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/orders?id={id}&status={status} START Request: ");
 
             Stopwatch watch = new();
@@ -152,6 +164,9 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteOrderByOrderIdAndResidentId([FromQuery] string orderId)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             IEnumerable<Claim> claim = identity.Claims;
 

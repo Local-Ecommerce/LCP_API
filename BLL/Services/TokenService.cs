@@ -1,6 +1,7 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using BLL.Dtos.RefreshToken;
@@ -209,5 +210,34 @@ namespace BLL.Services
 
             return dateTimeVal;
         }
+
+
+        /// <summary>
+        /// Does Token Expired
+        /// </summary>
+        /// <param name="authorization"></param>
+        public void CheckTokenExpired(string authorization)
+        {
+            //get token
+            if (AuthenticationHeaderValue.TryParse(authorization, out var headerValue))
+            {
+                var scheme = headerValue.Scheme;
+                var parameter = headerValue.Parameter;
+            }
+
+            _tokenValidationParameters.ValidateLifetime = false;
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+
+            var tokenInVerification = jwtTokenHandler
+                .ValidateToken(headerValue.Parameter, _tokenValidationParameters, out var validatedToken);
+
+            var utcExpiryDate = long.Parse(tokenInVerification.Claims
+                                    .FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+
+            if (UnixTimeStampToDateTime(utcExpiryDate) < DateTime.UtcNow)
+            {
+                throw new TimeoutException();
+            }
+        }
     }
-}
+};

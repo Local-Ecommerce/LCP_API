@@ -5,6 +5,7 @@ using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -18,12 +19,14 @@ namespace API.Controllers
     {
         private readonly ILogger _logger;
         private readonly IApartmentService _apartmentService;
+        private readonly ITokenService _tokenService;
 
         public ApartmentController(ILogger logger,
-            IApartmentService apartmentService)
+            IApartmentService apartmentService, ITokenService tokenService)
         {
             _logger = logger;
             _apartmentService = apartmentService;
+            _tokenService = tokenService;
         }
 
 
@@ -34,6 +37,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateApartment([FromBody] ApartmentRequest apartmentRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"POST api/apartments START Request: " +
                 $"{JsonSerializer.Serialize(apartmentRequest)}");
 
@@ -98,6 +104,9 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateApartmentById([FromQuery] string id,
                                               [FromBody] ApartmentRequest apartmentRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/apartments?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(apartmentRequest)}");
 
@@ -125,6 +134,9 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteApartment([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"DELETE api/apartment?id={id} START");
 
             Stopwatch watch = new();

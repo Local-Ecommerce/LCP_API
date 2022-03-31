@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Net.Http.Headers;
 
 namespace API.Controllers
 {
@@ -21,11 +22,13 @@ namespace API.Controllers
     {
         private readonly ILogger _logger;
         private readonly IMenuService _menuService;
+        private readonly ITokenService _tokenService;
 
-        public MenuController(ILogger logger, IMenuService menuService)
+        public MenuController(ILogger logger, IMenuService menuService, ITokenService tokenService)
         {
             _logger = logger;
             _menuService = menuService;
+            _tokenService = tokenService;
         }
 
         /// <summary>
@@ -35,6 +38,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateMenu([FromBody] MenuRequest menuRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"POST api/menus START Request: " +
                 $"{JsonSerializer.Serialize(menuRequest)}");
 
@@ -77,6 +83,9 @@ namespace API.Controllers
             [FromQuery] string sort,
             [FromQuery] string[] include)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"GET api/menus?id={id}&status=" + string.Join("status=", status) +
                 $"&apartmentid={apartmentid}&isActive={isActive}&limit={limit}&page={page}&sort={sort}&include="
                 + string.Join("include=", include) + " START");
@@ -114,6 +123,9 @@ namespace API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateMenuById([FromQuery] string id, [FromBody] MenuUpdateRequest menuRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/menus?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(menuRequest)}");
 
@@ -148,6 +160,9 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteMenuById([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"DELETE api/menus?id={id} START");
 
             Stopwatch watch = new();

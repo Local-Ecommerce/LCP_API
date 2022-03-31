@@ -2,7 +2,6 @@
 using BLL.Dtos.Account;
 using BLL.Dtos.RefreshToken;
 using BLL.Services.Interfaces;
-using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -21,12 +20,14 @@ namespace API.Controllers
     {
         private readonly ILogger _logger;
         private readonly IAccountService _accountService;
+        private readonly ITokenService _tokenService;
 
         public AccountController(ILogger logger,
-            IAccountService accountService)
+            IAccountService accountService, ITokenService tokenService)
         {
             _logger = logger;
             _accountService = accountService;
+            _tokenService = tokenService;
         }
 
 
@@ -123,6 +124,9 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAccountById([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"GET api/accounts?id={id} START");
 
             Stopwatch watch = new();
@@ -149,6 +153,9 @@ namespace API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateAccount([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/acccounts?id={id} START Request: ");
 
             Stopwatch watch = new();
@@ -175,6 +182,9 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteAccount([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"DELETE api/accounts?id={id} START");
 
             Stopwatch watch = new();
