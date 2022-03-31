@@ -11,8 +11,9 @@ namespace BLL.Services.Interfaces
         /// Create a Product
         /// </summary>
         /// <param name="baseProductRequest"></param>
+        /// <param name="toBaseMenu"></param>
         /// <returns></returns>
-        Task<BaseProductResponse> CreateProduct(string residentId, BaseProductRequest baseProductRequest);
+        Task<BaseProductResponse> CreateProduct(string residentId, BaseProductRequest baseProductRequest, bool toBaseMenu = true);
 
 
         /// <summary>

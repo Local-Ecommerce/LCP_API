@@ -52,8 +52,10 @@ namespace BLL.Services
         /// </summary>
         /// <param name="residentId"></param>
         /// <param name="baseProductRequest"></param>
+        /// <param name="toBaseMenu"></param>
         /// <returns></returns>
-        public async Task<BaseProductResponse> CreateProduct(string residentId, BaseProductRequest baseProductRequest)
+        public async Task<BaseProductResponse> CreateProduct(string residentId, BaseProductRequest baseProductRequest,
+            bool toBaseMenu = true)
         {
             BaseProductResponse response;
             try
@@ -96,7 +98,7 @@ namespace BLL.Services
                 //get base menu Id
                 string baseMenu = await _unitOfWork.Menus.GetBaseMenuId(residentId);
 
-                if (baseProductRequest.ToBaseMenu)
+                if (toBaseMenu)
                     //store product into base menu
                     await _productInMenuService.AddProductsToMenu(baseMenu, new List<ProductInMenuRequest>()
                     { new ProductInMenuRequest
