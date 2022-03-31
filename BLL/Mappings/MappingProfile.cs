@@ -34,9 +34,7 @@ namespace BLL.Mappings
             CreateMap<ExtendProductRequest, Product>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<BaseProductRequest, Product>()
-                .ForSourceMember(src => src.ToBaseMenu, dest => dest.DoNotValidate())
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-
+                .ForSourceMember(src => src.ToBaseMenu, dest => dest.DoNotValidate());
 
             //Apartment Mapping
             CreateMap<ApartmentRequest, Apartment>()

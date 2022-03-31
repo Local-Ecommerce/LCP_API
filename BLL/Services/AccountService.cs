@@ -302,6 +302,7 @@ namespace BLL.Services
 
             return new ExtendRefreshTokenDto
             {
+                Token = refreshTokenDto.Token,
                 AccessToken = accessToken,
                 AccessTokenExpiredDate = expiredDate
             };
