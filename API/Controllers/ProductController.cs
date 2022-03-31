@@ -7,6 +7,7 @@ using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -23,12 +24,14 @@ namespace API.Controllers
     {
         private readonly ILogger _logger;
         private readonly IProductService _productService;
+        private readonly ITokenService _tokenService;
 
         public ProductController(ILogger logger,
-            IProductService productService)
+            IProductService productService, ITokenService tokenService)
         {
             _logger = logger;
             _productService = productService;
+            _tokenService = tokenService;
         }
 
         /// <summary>
@@ -38,6 +41,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBaseProduct([FromBody] BaseProductRequest productRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"POST api/products START Request: {JsonSerializer.Serialize(productRequest)}");
 
             Stopwatch watch = new();
@@ -72,6 +78,9 @@ namespace API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> AddRelatedProduct(string id, [FromBody] ListProductRequest relatedProductRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"POST api/products/related/{id} START Request: {JsonSerializer.Serialize(relatedProductRequest)}");
 
             Stopwatch watch = new();
@@ -114,6 +123,9 @@ namespace API.Controllers
             [FromQuery] string sort,
             [FromQuery] string[] include)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"GET api/products" +
                 $"?id={id}&status=" + string.Join("status=", status) + $"&apartmentid={apartmentid}&categoryid={categoryid}" +
                 $"&search={search}&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) + " START");
@@ -161,6 +173,9 @@ namespace API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductRequest productRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/products START Request: {JsonSerializer.Serialize(productRequest)}");
 
             Stopwatch watch = new();
@@ -187,6 +202,9 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteProduct([FromBody] ProductIdsRequest productIdsRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"DELETE api/products START Request: id="
             + string.Join(" ,id=", productIdsRequest.ProductIds));
 
@@ -214,6 +232,9 @@ namespace API.Controllers
         [HttpPut("approval")]
         public async Task<IActionResult> ApproveProduct([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/products/approval?id={id} START");
 
             Stopwatch watch = new();
@@ -247,6 +268,9 @@ namespace API.Controllers
         [HttpPut("rejection")]
         public async Task<IActionResult> RejectCreateProduct([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/products/rejection?id={id} START");
 
             Stopwatch watch = new();

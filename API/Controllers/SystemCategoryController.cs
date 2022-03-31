@@ -5,6 +5,7 @@ using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
@@ -19,12 +20,14 @@ namespace API.Controllers
     {
         private readonly ILogger _logger;
         private readonly ISystemCategoryService _systemCategoryService;
+        private readonly ITokenService _tokenService;
 
         public SystemCategoryController(ILogger logger,
-            ISystemCategoryService systemCategoryService)
+            ISystemCategoryService systemCategoryService, ITokenService tokenService)
         {
             _logger = logger;
             _systemCategoryService = systemCategoryService;
+            _tokenService = tokenService;
         }
 
         /// <summary>
@@ -34,6 +37,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSystemCategory([FromBody] SystemCategoryRequest systemCategoryRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"POST api/categories START Request: {JsonSerializer.Serialize(systemCategoryRequest)}");
 
             Stopwatch watch = new();
@@ -56,7 +62,7 @@ namespace API.Controllers
         /// <summary>
         /// Get System Category (Authentication required)
         /// </summary>
-        // [Authorize]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetSystemCategory(
             [FromQuery] string id,
@@ -68,6 +74,9 @@ namespace API.Controllers
             [FromQuery] string sort,
             [FromQuery] string include)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"GET api/categories?id={id}&merchantid={merchantid}&status=" + string.Join("status=", status) +
             $"&limit={limit}&search={search}&page={page}&sort={sort}&include={include} START");
 
@@ -98,6 +107,9 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateSystemCategory([FromQuery] string id,
             [FromBody] SystemCategoryUpdateRequest systemCategoryRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/categories?id={id} START Request: {JsonSerializer.Serialize(systemCategoryRequest)}");
 
             Stopwatch watch = new();
@@ -124,6 +136,9 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteSystemCategory([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"DELETE api/categories?id={id} START");
 
             Stopwatch watch = new();

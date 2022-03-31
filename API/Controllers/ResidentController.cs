@@ -5,6 +5,7 @@ using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -21,12 +22,14 @@ namespace API.Controllers
     {
         private readonly ILogger _logger;
         private readonly IResidentService _residentService;
+        private readonly ITokenService _tokenService;
 
         public ResidentController(ILogger logger,
-            IResidentService residentService)
+            IResidentService residentService, ITokenService tokenService)
         {
             _logger = logger;
             _residentService = residentService;
+            _tokenService = tokenService;
         }
 
 
@@ -37,6 +40,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateResident([FromBody] ResidentRequest residentRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"POST api/residents START Request: " +
                 $"{JsonSerializer.Serialize(residentRequest)}");
 
@@ -78,6 +84,9 @@ namespace API.Controllers
             [FromQuery] int? page,
             [FromQuery] string sort)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"GET api/residents?id={id}&apartmentid={apartmentid}&accountid={accountid}" +
                 $"&limit={limit}&page={page}&sort={sort} START");
 
@@ -107,6 +116,9 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateResident([FromQuery] string id,
                                                       [FromBody] ResidentUpdateRequest residentUpdateRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/residents?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(residentUpdateRequest)}");
 
@@ -134,6 +146,9 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateResidentStatus(string id, [FromQuery] int status)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/residents/{id}?status={status} START");
 
             Stopwatch watch = new();
@@ -167,6 +182,9 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteResident([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"DELETE api/residents?id={id} START");
 
             Stopwatch watch = new();

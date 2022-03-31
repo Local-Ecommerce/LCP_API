@@ -174,7 +174,6 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task UpdateProduct(UpdateProductRequest productRequest)
         {
-
             try
             {
                 //get Id of updated product

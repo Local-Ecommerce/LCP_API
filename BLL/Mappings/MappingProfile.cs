@@ -26,7 +26,9 @@ namespace BLL.Mappings
             //Product Mapping
             CreateMap<ProductRequest, Product>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-            CreateMap<Product, ProductResponse>().ReverseMap()
+            CreateMap<Product, ProductResponse>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<ProductResponse, Product>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<Product, UpdateProductResponse>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));

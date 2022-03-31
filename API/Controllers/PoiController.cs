@@ -6,6 +6,7 @@ using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using System;
 using System.Diagnostics;
 using System.Text.Json;
@@ -20,11 +21,13 @@ namespace API.Controllers
     {
         private readonly ILogger _logger;
         private readonly IPoiService _poiService;
+        private readonly ITokenService _tokenService;
 
-        public PoiController(ILogger logger, IPoiService poiService)
+        public PoiController(ILogger logger, IPoiService poiService, ITokenService tokenService)
         {
             _logger = logger;
             _poiService = poiService;
+            _tokenService = tokenService;
         }
 
         /// <summary>
@@ -34,6 +37,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePoi([FromBody] PoiRequest poiRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"POST api/poi START Request: " +
                 $"{JsonSerializer.Serialize(poiRequest)}");
 
@@ -55,9 +61,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get poi
+        /// Get poi (Authentication required)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetPoi(
             [FromQuery] string id,
@@ -70,6 +76,9 @@ namespace API.Controllers
             [FromQuery] string sort,
             [FromQuery] string[] include)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"GET api/poi?id={id}&status=" + string.Join("status=", status) +
                 $"&apartmentid={apartmentid}&date={date}&search={search}&limit={limit}&page={page}&sort={sort}&include="
                 + string.Join("include=", include) + "START");
@@ -100,6 +109,9 @@ namespace API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdatePoiById([FromQuery] string id, [FromBody] PoiUpdateRequest poiRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/poi?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(poiRequest)}");
 
@@ -127,6 +139,9 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeletePoisById([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"DELETE api/poi?id={id} START");
 
             Stopwatch watch = new();

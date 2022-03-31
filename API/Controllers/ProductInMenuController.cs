@@ -6,6 +6,7 @@ using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
@@ -20,11 +21,14 @@ namespace API.Controllers
     {
         private readonly ILogger _logger;
         private readonly IProductInMenuService _productInMenuService;
+        private readonly ITokenService _tokenService;
 
-        public ProductInMenuController(ILogger logger, IProductInMenuService productInMenuService)
+        public ProductInMenuController(ILogger logger, IProductInMenuService productInMenuService,
+        ITokenService tokenService)
         {
             _logger = logger;
             _productInMenuService = productInMenuService;
+            _tokenService = tokenService;
         }
 
         /// <summary>
@@ -35,6 +39,9 @@ namespace API.Controllers
         public async Task<IActionResult> AddProductsToMenu([FromQuery] string menuid,
             [FromBody] List<ProductInMenuRequest> productInMenuRequests)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"POST api/menu-products?menuid={menuid} START");
 
             Stopwatch watch = new();
@@ -67,6 +74,9 @@ namespace API.Controllers
             [FromQuery] string sort,
             [FromQuery] string include)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"GET api/menu-products?id={id}&menu={menuid}" +
                 $"&limit={limit}&page={page}&sort={sort}&include={include} START");
 
@@ -96,6 +106,9 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateProductsInMenu(
             [FromBody] ListProductInMenuUpdateRequest productInMenuUpdateRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/menu-products START Request: "
                 + string.Join("; ", productInMenuUpdateRequest.ProductInMenus));
 
@@ -123,6 +136,9 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteProductInMenuById([FromBody] List<string> ids)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"DELETE api/menu-products START Request: { ids}");
 
             Stopwatch watch = new();

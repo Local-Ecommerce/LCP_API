@@ -174,9 +174,10 @@ namespace BLL.Services
                     return null;
 
                 // Validation 5 - validate the id
-                var id = tokenInVerification.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value;
+                var residentId = tokenInVerification.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value;
+                string accountId = residentId[..residentId.IndexOf("_")];
 
-                if (refreshToken.AccountId != id)
+                if (refreshToken.AccountId != accountId)
                     return null;
 
                 // Validation 6 - validate stored token expiry date
@@ -185,7 +186,7 @@ namespace BLL.Services
 
                 // update current token
                 var role = tokenInVerification.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
-                string accessToken = GenerateAccessToken(id, role, out expiredDate);
+                string accessToken = GenerateAccessToken(accountId, role, out expiredDate);
                 refreshToken.AccessToken = accessToken;
 
                 return accessToken;
