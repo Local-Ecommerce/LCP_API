@@ -5,6 +5,7 @@ using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -18,11 +19,14 @@ namespace API.Controllers
     {
         private readonly ILogger _logger;
         private readonly IPaymentMethodService _paymentMethodService;
+        private readonly ITokenService _tokenService;
 
-        public PaymentMethodController(ILogger logger, IPaymentMethodService paymentMethodService)
+        public PaymentMethodController(ILogger logger, IPaymentMethodService paymentMethodService,
+        ITokenService tokenService)
         {
             _logger = logger;
             _paymentMethodService = paymentMethodService;
+            _tokenService = tokenService;
         }
 
 
@@ -33,6 +37,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePaymentMethod([FromBody] PaymentMethodRequest paymentMethodRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"POST api/payment-methods START Request: " +
                 $"{JsonSerializer.Serialize(paymentMethodRequest)}");
 
@@ -54,9 +61,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Get Payment Method
+        /// Get Payment Method (Authorization required)
         /// </summary>
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetPaymentMethod(
             [FromQuery] string id,
@@ -65,6 +72,9 @@ namespace API.Controllers
             [FromQuery] int? page,
             [FromQuery] string sort)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"GET api/payment-methods?id={id}&status=" + string.Join("status=", status) +
                 $"&limit={limit}&page={page}&sort={sort} START");
 
@@ -94,6 +104,9 @@ namespace API.Controllers
         public async Task<IActionResult> UpdatePaymentMethodById([FromQuery] string id,
         [FromBody] PaymentMethodRequest paymentMethodRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/payment-methods?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(paymentMethodRequest)}");
 
@@ -121,6 +134,9 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeletePaymentMethodById([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"DELETE api/payment-methods?id={id} START");
 
             Stopwatch watch = new();

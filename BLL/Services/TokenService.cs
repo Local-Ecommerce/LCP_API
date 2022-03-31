@@ -1,6 +1,7 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using BLL.Dtos.RefreshToken;
@@ -173,9 +174,10 @@ namespace BLL.Services
                     return null;
 
                 // Validation 5 - validate the id
-                var id = tokenInVerification.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value;
+                var residentId = tokenInVerification.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value;
+                string accountId = residentId[..residentId.IndexOf("_")];
 
-                if (refreshToken.AccountId != id)
+                if (refreshToken.AccountId != accountId)
                     return null;
 
                 // Validation 6 - validate stored token expiry date
@@ -184,7 +186,7 @@ namespace BLL.Services
 
                 // update current token
                 var role = tokenInVerification.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
-                string accessToken = GenerateAccessToken(id, role, out expiredDate);
+                string accessToken = GenerateAccessToken(accountId, role, out expiredDate);
                 refreshToken.AccessToken = accessToken;
 
                 return accessToken;
@@ -209,5 +211,34 @@ namespace BLL.Services
 
             return dateTimeVal;
         }
+
+
+        /// <summary>
+        /// Does Token Expired
+        /// </summary>
+        /// <param name="authorization"></param>
+        public void CheckTokenExpired(string authorization)
+        {
+            //get token
+            if (AuthenticationHeaderValue.TryParse(authorization, out var headerValue))
+            {
+                var scheme = headerValue.Scheme;
+                var parameter = headerValue.Parameter;
+            }
+
+            _tokenValidationParameters.ValidateLifetime = false;
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+
+            var tokenInVerification = jwtTokenHandler
+                .ValidateToken(headerValue.Parameter, _tokenValidationParameters, out var validatedToken);
+
+            var utcExpiryDate = long.Parse(tokenInVerification.Claims
+                                    .FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+
+            if (UnixTimeStampToDateTime(utcExpiryDate) < DateTime.UtcNow)
+            {
+                throw new TimeoutException();
+            }
+        }
     }
-}
+};

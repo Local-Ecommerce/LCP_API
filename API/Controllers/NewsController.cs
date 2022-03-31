@@ -6,6 +6,7 @@ using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using System;
 using System.Diagnostics;
 using System.Text.Json;
@@ -20,11 +21,13 @@ namespace API.Controllers
     {
         private readonly ILogger _logger;
         private readonly INewsService _newsService;
+        private readonly ITokenService _tokenService;
 
-        public NewsController(ILogger logger, INewsService newsService)
+        public NewsController(ILogger logger, INewsService newsService, ITokenService tokenService)
         {
             _logger = logger;
             _newsService = newsService;
+            _tokenService = tokenService;
         }
 
         /// <summary>
@@ -34,6 +37,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNews([FromBody] NewsRequest newsRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"POST api/news START Request: " +
                 $"{JsonSerializer.Serialize(newsRequest)}");
 
@@ -70,6 +76,9 @@ namespace API.Controllers
             [FromQuery] string sort,
             [FromQuery] string[] include)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"GET api/news?id={id}&status=" + string.Join("status=", status) +
                 $"&apartmentid={apartmentid}&date={date}&search={search}&limit={limit}&page={page}&sort={sort}" +
                 $"&include={include} START");
@@ -98,6 +107,9 @@ namespace API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateNewsById([FromQuery] string id, [FromBody] NewsUpdateRequest newsRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/news?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(newsRequest)}");
 
@@ -125,6 +137,9 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteNewsById([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"DELETE api/news?id={id} START");
 
             Stopwatch watch = new();
@@ -142,8 +157,5 @@ namespace API.Controllers
 
             return Ok(json);
         }
-
-
-
     }
 }

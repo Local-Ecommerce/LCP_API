@@ -5,6 +5,7 @@ using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using System;
 using System.Diagnostics;
 using System.Text.Json;
@@ -19,11 +20,13 @@ namespace API.Controllers
     {
         private readonly ILogger _logger;
         private readonly IPaymentService _paymentService;
+        private readonly ITokenService _tokenService;
 
-        public PaymentController(ILogger logger, IPaymentService paymentService)
+        public PaymentController(ILogger logger, IPaymentService paymentService, ITokenService tokenService)
         {
             _logger = logger;
             _paymentService = paymentService;
+            _tokenService = tokenService;
         }
 
 
@@ -34,6 +37,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePayment([FromBody] PaymentRequest paymentRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"POST api/payments START Request: " +
                 $"{JsonSerializer.Serialize(paymentRequest)}");
 
@@ -69,6 +75,9 @@ namespace API.Controllers
             [FromQuery] int? page,
             [FromQuery] string sort)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"GET api/payments?id={id}&orderid={orderid}" +
             $"&paymentmethodid={paymentmethodid}&date={date}&status=" + string.Join("status=", status) +
                 $"&limit={limit}&page={page}&sort={sort} START");
@@ -99,6 +108,9 @@ namespace API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdatePaymentById([FromQuery] string id, [FromBody] PaymentRequest paymentRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/payments?id={id} START Request: " +
                 $"{JsonSerializer.Serialize(paymentRequest)}");
 
@@ -126,6 +138,9 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeletePaymentById([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"DELETE api/payments?id={id} START");
 
             Stopwatch watch = new();

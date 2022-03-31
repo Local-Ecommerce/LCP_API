@@ -287,7 +287,7 @@ namespace BLL.Services
             string accessToken = _tokenService.VerifyAndGenerateToken(refreshTokenDto, refreshToken, out expiredDate);
 
             if (accessToken == null)
-                throw new TimeoutException();
+                throw new UnauthorizedAccessException();
 
             try
             {

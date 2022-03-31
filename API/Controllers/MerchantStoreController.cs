@@ -6,6 +6,7 @@ using DAL.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -22,12 +23,14 @@ namespace API.Controllers
     {
         private readonly ILogger _logger;
         private readonly IMerchantStoreService _merchantStoreService;
+        private readonly ITokenService _tokenService;
 
         public MerchantStoreController(ILogger logger,
-            IMerchantStoreService merchantStoreService)
+            IMerchantStoreService merchantStoreService, ITokenService tokenService)
         {
             _logger = logger;
             _merchantStoreService = merchantStoreService;
+            _tokenService = tokenService;
         }
 
         /// <summary>
@@ -37,6 +40,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateMerchantStore([FromBody] MerchantStoreRequest merchantStoreRequest)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"POST api/stores START Request: " +
                 $"{JsonSerializer.Serialize(merchantStoreRequest)}");
 
@@ -78,6 +84,8 @@ namespace API.Controllers
             [FromQuery] string sort,
             [FromQuery] string[] include)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
             _logger.Information($"GET api/stores?id={id}&status=" + string.Join("status=", status) +
                 $"&apartmentid={apartmentid}&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) +
@@ -120,6 +128,9 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateMerchantStore([FromQuery] string id,
                                                       [FromBody] MerchantStoreRequest request)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/stores?id={id}  START Request: " +
                 $"{JsonSerializer.Serialize(request)}");
 
@@ -154,6 +165,9 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteMerchantStore([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"DELETE api/stores?id={id} START");
 
             Stopwatch watch = new();
@@ -187,6 +201,9 @@ namespace API.Controllers
         [HttpPut("approval")]
         public async Task<IActionResult> ApproveMerchantStore([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/stores/approval?id={id} START");
 
             Stopwatch watch = new();
@@ -220,6 +237,9 @@ namespace API.Controllers
         [HttpPut("rejection")]
         public async Task<IActionResult> RejectCreateMerchantStore([FromQuery] string id)
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information($"PUT api/stores/rejection?id={id} START");
 
             Stopwatch watch = new();
@@ -254,6 +274,9 @@ namespace API.Controllers
         [HttpGet("unverified-stores")]
         public async Task<IActionResult> GetUnverifiedMerchantStores()
         {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
             _logger.Information("GET api/stores/unverified-stores START");
 
             Stopwatch watch = new();
