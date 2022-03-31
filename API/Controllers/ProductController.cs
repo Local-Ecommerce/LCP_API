@@ -36,9 +36,9 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = ResidentType.MERCHANT)]
         [HttpPost]
-        public async Task<IActionResult> CreateBaseProduct([FromBody] BaseProductRequest productRequest, [FromQuery] bool toBaseMenu)
+        public async Task<IActionResult> CreateBaseProduct([FromBody] BaseProductRequest productRequest)
         {
-            _logger.Information($"POST api/products?toBaseMenu={toBaseMenu} START Request: {JsonSerializer.Serialize(productRequest)}");
+            _logger.Information($"POST api/products START Request: {JsonSerializer.Serialize(productRequest)}");
 
             Stopwatch watch = new();
             watch.Start();
@@ -51,7 +51,7 @@ namespace API.Controllers
             string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
             //create product
-            BaseProductResponse response = await _productService.CreateProduct(residentId, productRequest, toBaseMenu);
+            BaseProductResponse response = await _productService.CreateProduct(residentId, productRequest);
 
             string json = JsonSerializer.Serialize(ApiResponse<BaseProductResponse>.Success(response));
 
