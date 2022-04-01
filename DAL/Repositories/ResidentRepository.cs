@@ -19,6 +19,7 @@ namespace DAL.Repositories
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
         /// <param name="accountId"></param>
+        /// <param name="status"></param>
         /// <param name="type"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
@@ -27,7 +28,7 @@ namespace DAL.Repositories
         /// <returns></returns>
         public async Task<PagingModel<Resident>> GetResident(
             string id, string apartmentId, string accountId,
-            string type, int? limit, int? queryPage,
+            int?[] status, string type, int? limit, int? queryPage,
             bool isAsc, string propertyName)
         {
             IQueryable<Resident> query = _context.Residents.Where(r => r.ResidentId != null);
@@ -43,6 +44,10 @@ namespace DAL.Repositories
             //filter by accountId
             if (!string.IsNullOrEmpty(accountId))
                 query = query.Where(r => r.AccountId.Equals(accountId));
+
+            //filter by status
+            if (status != null && status.Length != 0)
+                query = query.Where(r => status.Contains(r.Status));
 
             //filter by type
             if (!string.IsNullOrEmpty(type))

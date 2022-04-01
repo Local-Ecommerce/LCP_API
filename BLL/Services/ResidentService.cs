@@ -177,6 +177,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
         /// <param name="accountId"></param>
+        /// <param name="status"></param>
         /// <param name="type"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
@@ -184,7 +185,7 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<object> GetResident(
             string id, string apartmentId,
-            string accountId, string type, int? limit,
+            string accountId, int?[] status, string type, int? limit,
             int? page, string sort)
         {
             PagingModel<Resident> residents;
@@ -199,7 +200,8 @@ namespace BLL.Services
 
             try
             {
-                residents = await _unitOfWork.Residents.GetResident(id, apartmentId, accountId, type, limit, page, isAsc, propertyName);
+                residents = await _unitOfWork.Residents
+                    .GetResident(id, apartmentId, accountId, status, type, limit, page, isAsc, propertyName);
             }
             catch (Exception e)
             {
