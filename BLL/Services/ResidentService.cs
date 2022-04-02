@@ -60,7 +60,7 @@ namespace BLL.Services
             {
                 resident.ResidentId = accountId + "_" + ResidentType.MERCHANT;
                 resident.Status = (int)ResidentStatus.UNVERIFIED_RESIDENT;
-                resident.CreatedDate = DateTime.Now;
+                resident.CreatedDate = _utilService.CurrentTimeInVietnam();
                 resident.AccountId = accountId;
                 resident.Type = ResidentType.MERCHANT;
 
@@ -114,7 +114,7 @@ namespace BLL.Services
             try
             {
                 resident = _mapper.Map(residentUpdateRequest, resident);
-                resident.UpdatedDate = DateTime.Now;
+                resident.UpdatedDate = _utilService.CurrentTimeInVietnam();
 
                 _unitOfWork.Residents.Update(resident);
 
@@ -241,16 +241,16 @@ namespace BLL.Services
                 if (!residents.Where(r => r.ResidentId.Equals(marketManagerId))
                             .First().ApartmentId
                             .Equals(resident.ApartmentId))
-                    throw new BusinessException($"MarketManager with id: {marketManagerId} cannot update resident {id} 's status");
+                    throw new BusinessException($"Quản lý chung cư không thể cập nhật trạng thái cho cư dân này.");
 
                 //check status
                 if (status != (int)ResidentStatus.VERIFIED_RESIDENT &&
                 status != (int)ResidentStatus.REJECTED_RESIDENT &&
                 status != (int)ResidentStatus.INACTIVE_RESIDENT)
-                    throw new BusinessException($"Cannot update status {status} for resident {id}");
+                    throw new BusinessException($"Quản lý chung cư không thể cập nhật trạng thái cho cư dân này.");
 
                 resident.Status = status;
-                resident.ApproveBy = status != (int)ResidentStatus.REJECTED_RESIDENT ? marketManagerId : default;
+                resident.ApproveBy = status != (int)ResidentStatus.REJECTED_RESIDENT ? marketManagerId : null;
 
                 _unitOfWork.Residents.Update(resident);
 

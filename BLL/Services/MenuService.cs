@@ -51,8 +51,8 @@ namespace BLL.Services
                     throw new BusinessException($"Đã có menu {menuName} sử dụng khung giờ đó");
 
                 menu.MenuId = _utilService.CreateId(PREFIX);
-                menu.CreatedDate = DateTime.Now;
-                menu.UpdatedDate = DateTime.Now;
+                menu.CreatedDate = _utilService.CurrentTimeInVietnam();
+                menu.UpdatedDate = _utilService.CurrentTimeInVietnam();
                 menu.Status = (int)MenuStatus.ACTIVE_MENU;
                 menu.BaseMenu = false;
 
@@ -102,7 +102,7 @@ namespace BLL.Services
                     throw new BusinessException($"Đã có menu {menuName} sử dụng khung giờ đó");
 
                 menu = _mapper.Map(menuUpdateRequest, menu);
-                menu.UpdatedDate = DateTime.Now;
+                menu.UpdatedDate = _utilService.CurrentTimeInVietnam();
 
                 _unitOfWork.Menus.Update(menu);
 
@@ -142,7 +142,7 @@ namespace BLL.Services
             try
             {
                 menu.Status = (int)MenuStatus.DELETED_MENU;
-                menu.UpdatedDate = DateTime.Now;
+                menu.UpdatedDate = _utilService.CurrentTimeInVietnam();
 
                 _unitOfWork.Menus.Update(menu);
 
@@ -167,8 +167,8 @@ namespace BLL.Services
             {
                 MenuId = _utilService.CreateId(PREFIX),
                 MenuName = "Bảng giá gốc",
-                CreatedDate = DateTime.Now,
-                UpdatedDate = DateTime.Now,
+                CreatedDate = _utilService.CurrentTimeInVietnam(),
+                UpdatedDate = _utilService.CurrentTimeInVietnam(),
                 TimeStart = new TimeSpan(0, 0, 0),
                 TimeEnd = new TimeSpan(23, 59, 59),
                 RepeatDate = "0123456",

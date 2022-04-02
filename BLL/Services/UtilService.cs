@@ -90,5 +90,16 @@ namespace BLL.Services
                 return str[0].ToString().ToUpper() + str[1..];
             return str;
         }
+
+
+        /// <summary>
+        /// Current Time In Vietnam
+        /// </summary>
+        /// <returns></returns>
+        public DateTime CurrentTimeInVietnam()
+        {
+            TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            return TimeZoneInfo.ConvertTime(DateTime.Now, vnZone);
+        }
     }
 }

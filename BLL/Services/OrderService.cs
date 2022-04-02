@@ -62,7 +62,7 @@ namespace BLL.Services
                     orderDetail.OrderDetailId = _utilService.CreateId(SUB_PREFIX);
                     orderDetail.OrderId = orderId;
                     orderDetail.FinalAmount = CaculateOrderDetailFinalAmount(orderDetail.UnitPrice, orderDetail.Quantity, orderDetail.Discount);
-                    orderDetail.OrderDate = DateTime.Now;
+                    orderDetail.OrderDate = _utilService.CurrentTimeInVietnam();
                     orderDetail.Status = orderDetailRequest.Status;
 
                     //create order
@@ -70,8 +70,8 @@ namespace BLL.Services
                     {
                         OrderId = orderId,
                         DeliveryAddress = "",
-                        CreatedDate = DateTime.Now,
-                        UpdatedDate = DateTime.Now,
+                        CreatedDate = _utilService.CurrentTimeInVietnam(),
+                        UpdatedDate = _utilService.CurrentTimeInVietnam(),
                         TotalAmount = CaculateOrderTotalAmount(orderDetail),
                         Status = orderDetail.Status,
                         Discount = orderDetail.Discount,
@@ -262,7 +262,7 @@ namespace BLL.Services
             if (!Enum.IsDefined(typeof(OrderStatus), status))
             {
                 _logger.Error($"[OrderService.UpdateOrder()]: Status {status} is invalid");
-                throw new IllegalArgumentException();
+                throw new BusinessException($"Trạng thái đơn hàng: {status} không khả dụng");
             }
 
             //update order

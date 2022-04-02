@@ -56,8 +56,12 @@ namespace BLL.Services
         public async Task<BaseProductResponse> CreateProduct(string residentId, BaseProductRequest baseProductRequest)
         {
             BaseProductResponse response;
+
             try
             {
+                //check image
+                if (baseProductRequest.Image is null | baseProductRequest.Image.Count() == 0)
+                    throw new BusinessException("Sản phẩm này cần hình ảnh");
                 Product product = _mapper.Map<Product>(baseProductRequest);
 
                 product.ProductId = _utilService.CreateId(PREFIX); ;
@@ -65,8 +69,8 @@ namespace BLL.Services
                                         .UploadFilesToFirebase(baseProductRequest.Image, TYPE, product.ProductId, "Image", 0)
                                         .Result;
                 product.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
-                product.CreatedDate = DateTime.Now;
-                product.UpdatedDate = DateTime.Now;
+                product.CreatedDate = _utilService.CurrentTimeInVietnam();
+                product.UpdatedDate = _utilService.CurrentTimeInVietnam();
                 product.IsFavorite = 0;
                 product.ApproveBy = "";
                 product.BelongTo = null;
@@ -81,8 +85,8 @@ namespace BLL.Services
                     relatedProduct.ProductId = _utilService.CreateId(PREFIX);
                     relatedProduct.Image = "";
                     relatedProduct.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
-                    relatedProduct.CreatedDate = DateTime.Now;
-                    relatedProduct.UpdatedDate = DateTime.Now;
+                    relatedProduct.CreatedDate = _utilService.CurrentTimeInVietnam();
+                    relatedProduct.UpdatedDate = _utilService.CurrentTimeInVietnam();
                     relatedProduct.ApproveBy = "";
                     relatedProduct.IsFavorite = 0;
                     relatedProduct.ResidentId = residentId;
@@ -145,8 +149,8 @@ namespace BLL.Services
                     product.ProductId = productId;
                     product.Image = "";
                     product.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
-                    product.CreatedDate = DateTime.Now;
-                    product.UpdatedDate = DateTime.Now;
+                    product.CreatedDate = _utilService.CurrentTimeInVietnam();
+                    product.UpdatedDate = _utilService.CurrentTimeInVietnam();
                     product.ApproveBy = "";
                     product.ResidentId = residentId;
                     product.BelongTo = baseProductId;
@@ -219,7 +223,7 @@ namespace BLL.Services
                     product = _mapper.Map<ExtendProductRequest, Product>(pR, product);
                     product.Image = imageUrl;
                     product.ApproveBy = "";
-                    product.UpdatedDate = DateTime.Now;
+                    product.UpdatedDate = _utilService.CurrentTimeInVietnam();
                     product.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
 
                     _unitOfWork.Products.Update(product);
@@ -239,43 +243,39 @@ namespace BLL.Services
         /// Delete Product by ids
         /// </summary>
         /// <param name="ids"></param>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task DeleteProduct(List<string> ids)
+        public async Task DeleteProduct(List<string> ids, string residentId)
         {
-            //biz rule
-
-            //validate id
-            List<Product> products;
             try
             {
-                products = await _unitOfWork.Products
-                                .FindListAsync(p => ids.Contains(p.ProductId) || ids.Contains(p.BelongTo));
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ProductService.DeleteProduct()]" + e.Message);
+                List<Product> products = await _unitOfWork.Products
+                .FindListAsync(p => (ids.Contains(p.ProductId) || ids.Contains(p.BelongTo))
+                                        && p.ResidentId.Equals(residentId));
 
-                throw new EntityNotFoundException();
-            }
-
-            //delete product
-            try
-            {
+                //delete product
                 products.ForEach(product =>
-                {
-                    product.Status = (int)ProductStatus.DELETED_PRODUCT;
-                    product.UpdatedDate = DateTime.Now;
-                    product.ApproveBy = "";
+                            {
+                                product.Status = (int)ProductStatus.DELETED_PRODUCT;
+                                product.UpdatedDate = _utilService.CurrentTimeInVietnam();
+                                product.ApproveBy = "";
 
-                    _unitOfWork.Products.Update(product);
-                });
+                                _unitOfWork.Products.Update(product);
+                            });
+
+                //delete products in menu
+                List<ProductInMenu> productInMenus = await _unitOfWork.ProductInMenus.FindListAsync(p => ids.Contains(p.ProductId));
+                foreach (var productInMenu in productInMenus)
+                {
+                    productInMenu.Status = (int)ProductInMenuStatus.DELETED_PRODUCT_IN_MENU;
+                    _unitOfWork.ProductInMenus.Update(productInMenu);
+                }
 
                 await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception e)
             {
                 _logger.Error("[ProductService.DeleteBaseProduct()]" + e.Message);
-
                 throw;
             }
 
@@ -302,7 +302,7 @@ namespace BLL.Services
                         .First();
 
                 //verify product
-                baseProduct.UpdatedDate = DateTime.Now;
+                baseProduct.UpdatedDate = _utilService.CurrentTimeInVietnam();
                 baseProduct.Status = isApprove ? (int)ProductStatus.VERIFIED_PRODUCT : (int)ProductStatus.REJECTED_PRODUCT;
                 baseProduct.ApproveBy = isApprove ? residentId : "";
 
@@ -313,7 +313,7 @@ namespace BLL.Services
                     Product relatedProduct = baseProduct.InverseBelongToNavigation.ElementAt(i);
                     baseProduct.InverseBelongToNavigation.Remove(relatedProduct);
 
-                    relatedProduct.UpdatedDate = DateTime.Now;
+                    relatedProduct.UpdatedDate = _utilService.CurrentTimeInVietnam();
                     relatedProduct.Status = isApprove ? (int)ProductStatus.VERIFIED_PRODUCT : (int)ProductStatus.REJECTED_PRODUCT;
                     relatedProduct.ApproveBy = isApprove ? residentId : "";
 
@@ -426,7 +426,7 @@ namespace BLL.Services
         {
             List<BaseProductResponse> responses = new();
             TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-            DateTime vnTime = TimeZoneInfo.ConvertTime(DateTime.Now, vnZone);
+            DateTime vnTime = TimeZoneInfo.ConvertTime(_utilService.CurrentTimeInVietnam(), vnZone);
 
             try
             {

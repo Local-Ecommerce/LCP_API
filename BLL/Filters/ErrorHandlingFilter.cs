@@ -36,9 +36,6 @@ namespace BLL.Filters
                 case TimeoutException:
                     response = new HttpResponseMessage(HttpStatusCode.RequestTimeout);
                     break;
-                case IllegalArgumentException:
-                    response = new HttpResponseMessage(HttpStatusCode.BadRequest);
-                    break;
                 default:
                     response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
                     apiResponse.ResultMessage = CommonResponse.ERROR.ToString();

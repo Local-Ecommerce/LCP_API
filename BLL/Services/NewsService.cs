@@ -43,7 +43,7 @@ namespace BLL.Services
             try
             {
                 news.NewsId = _utilService.CreateId(PREFIX);
-                news.ReleaseDate = DateTime.Now;
+                news.ReleaseDate = _utilService.CurrentTimeInVietnam();
                 news.Status = (int)NewsStatus.ACTIVE_NEWS;
 
                 _unitOfWork.News.Add(news);

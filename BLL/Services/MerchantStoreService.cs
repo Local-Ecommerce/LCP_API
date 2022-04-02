@@ -60,11 +60,11 @@ namespace BLL.Services
                 //check resident Id
                 Resident resident = await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId));
                 if (!resident.Type.Equals(ResidentType.MERCHANT))
-                    throw new BusinessException($"Resident {residentId} is not a merchant.");
+                    throw new BusinessException($"Cư dân này không phải là thương nhân.");
 
                 merchantStore.MerchantStoreId = _utilService.CreateId(PREFIX);
                 merchantStore.Status = (int)MerchantStoreStatus.UNVERIFIED_MERCHANT_STORE;
-                merchantStore.CreatedDate = DateTime.Now;
+                merchantStore.CreatedDate = _utilService.CurrentTimeInVietnam();
                 merchantStore.ResidentId = residentId;
                 merchantStore.ApartmentId = resident.ApartmentId;
                 merchantStore.StoreImage = _firebaseService
@@ -153,7 +153,7 @@ namespace BLL.Services
                 storeResponse.StoreImage = _firebaseService
                                 .UploadFileToFirebase(request.StoreImage, TYPE, id, "Image" + (order + 1))
                                 .Result;
-                storeResponse.UpdatedDate = DateTime.Now;
+                storeResponse.UpdatedDate = _utilService.CurrentTimeInVietnam();
             }
             catch (Exception e)
             {
@@ -189,7 +189,8 @@ namespace BLL.Services
                                                                                     && ms.ApartmentId.Equals(resident.ApartmentId));
 
                 if (merchantStore is null)
-                    throw new BusinessException($"Market Manager {residentId} does not have right to verify store {id}");
+                    throw new BusinessException($"Quản lý chung cư không có quyền xét duyệt cửa hàng này.");
+
 
                 //get new data for merchant store from redis
                 MerchantStoreResponse ms = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY_FOR_UPDATE)
@@ -222,7 +223,7 @@ namespace BLL.Services
             }
             catch (Exception e)
             {
-                _logger.Error("[MerchantStoreService.VerifyMerchantStore()]: " + e.Message);
+                _logger.Error($"[MerchantStoreService.VerifyMerchantStore()] " + e.Message);
                 throw;
             }
 
