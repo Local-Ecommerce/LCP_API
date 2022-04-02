@@ -70,8 +70,9 @@ namespace BLL.Services.Interfaces
         /// Delete Product by ids
         /// </summary>
         /// <param name="ids"></param>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        Task DeleteProduct(List<string> ids);
+        Task DeleteProduct(List<string> ids, string residentId);
 
 
         /// <summary>

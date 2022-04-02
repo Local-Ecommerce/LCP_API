@@ -3,7 +3,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Text;
 using BLL.Dtos.RefreshToken;
 using BLL.Services.Interfaces;
 using DAL.Constants;

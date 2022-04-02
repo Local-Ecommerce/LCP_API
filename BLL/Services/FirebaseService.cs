@@ -21,12 +21,14 @@ namespace BLL.Services
         private IConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly string bucket;
+        private readonly IUtilService _utilService;
 
-        public FirebaseService(IConfiguration configuration, ILogger logger)
+        public FirebaseService(IConfiguration configuration, ILogger logger, IUtilService utilService)
         {
             _configuration = configuration;
             _logger = logger;
             bucket = _configuration.GetValue<string>("Firebase:Bucket");
+            _utilService = utilService;
         }
 
 
@@ -154,8 +156,8 @@ namespace BLL.Services
                         DateOfBirth = (DateTime?)documentDictionary["dob"],
                         Type = documentDictionary.ContainsKey("role") ? (string)documentDictionary["role"] : ResidentType.CUSTOMER,
                         AccountId = document.Id,
-                        CreatedDate = DateTime.Now,
-                        UpdatedDate = DateTime.Now,
+                        CreatedDate = _utilService.CurrentTimeInVietnam(),
+                        UpdatedDate = _utilService.CurrentTimeInVietnam(),
                         Status = (int)ResidentStatus.UNVERIFIED_RESIDENT,
                         ApartmentId = (string)documentDictionary["apartmentId"]
                     };
@@ -166,8 +168,8 @@ namespace BLL.Services
                         Username = documentDictionary.ContainsKey("username") ? (string)documentDictionary["username"] : default,
                         ProfileImage = "",
                         AvatarImage = "",
-                        CreatedDate = DateTime.Now,
-                        UpdatedDate = DateTime.Now,
+                        CreatedDate = _utilService.CurrentTimeInVietnam(),
+                        UpdatedDate = _utilService.CurrentTimeInVietnam(),
                         Status = (int)AccountStatus.ACTIVE_ACCOUNT,
                         RoleId = RoleId.APARTMENT,
                         Residents = new Collection<ResidentResponse> { residentResponse }

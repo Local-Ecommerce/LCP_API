@@ -43,7 +43,7 @@ namespace BLL.Services
             try
             {
                 poi.PoiId = _utilService.CreateId(PREFIX);
-                poi.ReleaseDate = DateTime.Now;
+                poi.ReleaseDate = _utilService.CurrentTimeInVietnam();
                 poi.Status = (int)PoiStatus.ACTIVE_POI;
 
                 _unitOfWork.Pois.Add(poi);

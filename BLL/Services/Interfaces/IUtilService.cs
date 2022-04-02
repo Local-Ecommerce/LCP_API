@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BLL.Services.Interfaces
 {
@@ -51,5 +52,11 @@ namespace BLL.Services.Interfaces
         /// <param name="str"></param>
         /// <returns></returns>
         string UpperCaseFirstLetter(string str);
+
+        /// <summary>
+        /// Current Time In Vietnam
+        /// </summary>
+        /// <returns></returns>
+        DateTime CurrentTimeInVietnam();
     }
 }

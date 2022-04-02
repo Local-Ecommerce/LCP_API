@@ -49,8 +49,8 @@ namespace BLL.Services
                 {
                     productInMenu.ProductInMenuId = _utilService.CreateId(PREFIX);
                     productInMenu.MenuId = menuId;
-                    productInMenu.CreatedDate = DateTime.Now;
-                    productInMenu.UpdatedDate = DateTime.Now;
+                    productInMenu.CreatedDate = _utilService.CurrentTimeInVietnam();
+                    productInMenu.UpdatedDate = _utilService.CurrentTimeInVietnam();
                     productInMenu.Status = (int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU;
 
                     _unitOfWork.ProductInMenus.Add(productInMenu);
@@ -175,7 +175,7 @@ namespace BLL.Services
                         {
                             productInMenu.Status = pimUpdate.Status;
                             productInMenu.Price = pimUpdate.Price;
-                            productInMenu.UpdatedDate = DateTime.Now;
+                            productInMenu.UpdatedDate = _utilService.CurrentTimeInVietnam();
 
                             _unitOfWork.ProductInMenus.Update(productInMenu);
                         }

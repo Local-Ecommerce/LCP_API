@@ -44,7 +44,7 @@ namespace BLL.Services
             try
             {
                 Payment.PaymentId = _utilService.CreateId(PREFIX);
-                Payment.DateTime = DateTime.Now;
+                Payment.DateTime = _utilService.CurrentTimeInVietnam();
                 Payment.Status = (int)PaymentStatus.ACTIVE_PAYMENT;
 
                 _unitOfWork.Payments.Add(Payment);

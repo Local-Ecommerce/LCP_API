@@ -79,7 +79,7 @@ namespace BLL.Services
             //delete account
             try
             {
-                account.UpdatedDate = DateTime.Now;
+                account.UpdatedDate = _utilService.CurrentTimeInVietnam();
                 account.Status = (int)AccountStatus.DELETED_ACCOUNT;
 
                 _unitOfWork.Accounts.Update(account);
@@ -248,7 +248,7 @@ namespace BLL.Services
             //update data
             try
             {
-                account.UpdatedDate = DateTime.Now;
+                account.UpdatedDate = _utilService.CurrentTimeInVietnam();
 
                 _unitOfWork.Accounts.Update(account);
 

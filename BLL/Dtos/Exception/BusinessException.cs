@@ -6,7 +6,7 @@ namespace BLL.Dtos.Exception
     {
         public int ErrorCode { get; set; }
 
-        public BusinessException() : base("Business exception")
+        public BusinessException() : base("Lỗi nhập liệu")
         {
         }
 
