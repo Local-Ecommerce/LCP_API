@@ -21,6 +21,7 @@ namespace DAL.Repositories
         /// <param name="apartmentId"></param>
         /// <param name="residentId"></param>
         /// <param name="status"></param>
+        /// <param name="search"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
@@ -29,7 +30,7 @@ namespace DAL.Repositories
         /// <returns></returns>
         public async Task<PagingModel<MerchantStore>> GetMerchantStore(
             string id, string apartmentId, string residentId,
-            int?[] status, int? limit,
+            int?[] status, string search, int? limit,
             int? queryPage, bool isAsc,
             string propertyName, string[] include)
         {
@@ -46,6 +47,10 @@ namespace DAL.Repositories
             //filter by apartmentId
             if (!string.IsNullOrEmpty(apartmentId))
                 query = query.Where(ms => ms.ApartmentId.Equals(apartmentId));
+
+            //filter by search
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(ms => ms.StoreName.Contains(search));
 
             //filter by residentId
             if (!string.IsNullOrEmpty(residentId))

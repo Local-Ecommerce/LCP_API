@@ -79,6 +79,7 @@ namespace API.Controllers
             [FromQuery] string id,
             [FromQuery] int?[] status,
             [FromQuery] string apartmentid,
+            [FromQuery] string search,
             [FromQuery] int? limit,
             [FromQuery] int? page,
             [FromQuery] string sort,
@@ -88,7 +89,7 @@ namespace API.Controllers
             _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
             _logger.Information($"GET api/stores?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) +
+                $"&apartmentid={apartmentid}&search={search}&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) +
                 $" START");
 
             Stopwatch watch = new();
@@ -106,14 +107,15 @@ namespace API.Controllers
             string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
 
             //Get MerchantStore
-            object response = await _merchantStoreService.GetMerchantStores(id, apartmentid, residentId, role, status, limit, page, sort, include);
+            object response = await _merchantStoreService
+                .GetMerchantStores(id, apartmentid, residentId, role, status, search, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
             _logger.Information($"GET api/stores?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) +
+                $"&apartmentid={apartmentid}&search={search}&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) +
                 $"END duration: {watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

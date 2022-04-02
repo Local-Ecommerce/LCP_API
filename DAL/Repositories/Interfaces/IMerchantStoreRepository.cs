@@ -13,6 +13,7 @@ namespace DAL.Repositories.Interfaces
         /// <param name="apartmentId"></param>
         /// <param name="residentId"></param>
         /// <param name="status"></param>
+        /// <param name="search"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
@@ -21,7 +22,7 @@ namespace DAL.Repositories.Interfaces
         /// <returns></returns>
         Task<PagingModel<MerchantStore>> GetMerchantStore(
             string id, string apartmentId, string residentId,
-            int?[] status, int? limit,
+            int?[] status, string search, int? limit,
             int? queryPage, bool isAsc,
             string propertyName, string[] include);
 

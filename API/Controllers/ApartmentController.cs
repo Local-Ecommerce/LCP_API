@@ -37,7 +37,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateApartment([FromBody] ApartmentRequest apartmentRequest)
         {
-            //check token expired
+            //check token expire
             _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
             _logger.Information($"POST api/apartments START Request: " +
@@ -68,6 +68,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetApartment(
             [FromQuery] string id,
             [FromQuery] int?[] status,
+            [FromQuery] string search,
             [FromQuery] int? limit,
             [FromQuery] int? page,
             [FromQuery] string sort,
@@ -75,13 +76,13 @@ namespace API.Controllers
         {
             _logger.Information($"GET api/apartments" +
                 $"?id={id}&status=" + string.Join("status=", status) +
-                $"&limit={limit}&page={page}&sort={sort}&include={include} START");
+                $"&search={search}&limit={limit}&page={page}&sort={sort}&include={include} START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //get Apartment
-            object responses = await _apartmentService.GetApartments(id, status, limit, page, sort, include);
+            object responses = await _apartmentService.GetApartments(id, status, search, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 
@@ -89,7 +90,7 @@ namespace API.Controllers
 
             _logger.Information($"GET api/apartments" +
                 $"id={id}&status=" + string.Join("status=", status) +
-                $"&limit={limit}&page={page}&sort={sort}&include={include} END duration: " +
+                $"&search={search}&limit={limit}&page={page}&sort={sort}&include={include} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
