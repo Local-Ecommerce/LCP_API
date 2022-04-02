@@ -136,6 +136,10 @@ namespace API.Controllers
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             IEnumerable<Claim> claim = identity.Claims;
 
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
             //get role from token
             string claimRole = claim.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault().ToString();
             string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
@@ -145,7 +149,7 @@ namespace API.Controllers
             switch (role)
             {
                 case "Customer":
-                    response = await _productService.GetProductForCustomer(id, apartmentid, categoryid, search);
+                    response = await _productService.GetProductForCustomer(id, residentId, categoryid, search);
                     break;
                 default:
                     response = await _productService.GetProduct(role, id, status, apartmentid,

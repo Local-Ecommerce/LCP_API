@@ -79,6 +79,7 @@ namespace API.Controllers
             [FromQuery] string id,
             [FromQuery] string apartmentid,
             [FromQuery] string accountid,
+            [FromQuery] int?[] status,
             [FromQuery] string type,
             [FromQuery] int? limit,
             [FromQuery] int? page,
@@ -87,21 +88,20 @@ namespace API.Controllers
             //check token expired
             _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
-            _logger.Information($"GET api/residents?id={id}&apartmentid={apartmentid}&accountid={accountid}" +
-                $"&limit={limit}&page={page}&sort={sort} START");
+            _logger.Information($"GET api/residents?id={id}&apartmentid={apartmentid}&accountid={accountid}&status=" + string.Join("status=", status) + $"&limit={limit}&page={page}&sort={sort} START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //get Resident
-            object response = await _residentService.GetResident(id, apartmentid, accountid, type, limit, page, sort);
+            object response = await _residentService.GetResident(id, apartmentid, accountid, status, type, limit, page, sort);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"GET api/residents?id={id}&apartmentid={apartmentid}&accountid={accountid}" +
-                $"&limit={limit}&page={page}&sort={sort} END duration: " +
+            _logger.Information($"GET api/residents?id={id}&apartmentid={apartmentid}&accountid={accountid}&status=" +
+                string.Join("status=", status) + $"&limit={limit}&page={page}&sort={sort} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

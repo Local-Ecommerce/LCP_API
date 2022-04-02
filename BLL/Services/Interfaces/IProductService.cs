@@ -58,12 +58,12 @@ namespace BLL.Services.Interfaces
         /// Get Product For Customer
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="apartmentId"></param>
+        /// <param name="residentId"></param>
         /// <param name="sysCateId"></param>
         /// <param name="search"></param>
         /// <returns></returns>
         Task<PagingModel<BaseProductResponse>> GetProductForCustomer(
-            string id, string apartmentId, string sysCateId, string search);
+            string id, string residentId, string sysCateId, string search);
 
 
         /// <summary>
