@@ -26,7 +26,7 @@ namespace BLL.Services
         private const string PREFIX = "PD_";
         private const string TYPE = "Product";
         private const string CACHE_KEY = "Product";
-        private const string CACHE_KEY_FOR_UPDATE = "Unverified Updated Product";
+        private const string CACHE_KEY_FOR_UPDATE = "Product Before Update";
 
 
         public ProductService(IUnitOfWork unitOfWork,
@@ -192,20 +192,25 @@ namespace BLL.Services
                     _redisService.StoreToList(CACHE_KEY_FOR_UPDATE, currentProduct,
                         new Predicate<ProductResponse>(up => up.ProductId.Equals(currentProduct.ProductId)));
 
-                    //get the order of the last photo
-                    int order = !string.IsNullOrEmpty(product.Image) ? _utilService.LastImageNumber("Image", product.Image) : 0;
-
-                    //upload new image & remove image
                     string imageUrl = product.Image;
-                    if (pR.Image.Length > 0)
+
+                    //update image
+                    if (pR.Image != null && pR.Image.Count() > 0)
                     {
-                        foreach (var image in pR.Image)
+                        //get the order of the last photo
+                        int order = !string.IsNullOrEmpty(product.Image) ? _utilService.LastImageNumber("Image", product.Image) : 0;
+
+                        //upload new image & remove image
+                        if (pR.Image.Length > 0)
                         {
-                            if (image.Contains("https://firebasestorage.googleapis.com/"))
-                                imageUrl = imageUrl.Replace(image + "|", "");
-                            else
-                                imageUrl += _firebaseService
-                                    .UploadFilesToFirebase(new string[] { image }, TYPE, product.ProductId, "Image", order).Result;
+                            foreach (var image in pR.Image)
+                            {
+                                if (image.Contains("https://firebasestorage.googleapis.com/"))
+                                    imageUrl = imageUrl.Replace(image + "|", "");
+                                else
+                                    imageUrl += _firebaseService
+                                        .UploadFilesToFirebase(new string[] { image }, TYPE, product.ProductId, "Image", order).Result;
+                            }
                         }
                     }
                     pR.Image = null;
@@ -289,46 +294,12 @@ namespace BLL.Services
 
             try
             {
-                //get old product from database
+                //get product from database
                 Product baseProduct =
                     (await _unitOfWork.Products
                         .GetProduct(id: productId, include: new string[] { "related" }))
                         .List
                         .First();
-
-                if (isApprove)
-                {
-                    //get base product update if available
-                    ProductResponse newBaseProduct = _redisService.GetList<ProductResponse>(CACHE_KEY_FOR_UPDATE)
-                            .Find(p => p.ProductId == productId);
-                    if (newBaseProduct != null)
-                    {
-                        newBaseProduct.ProductId = null;
-                        baseProduct = _mapper.Map<Product>(newBaseProduct);
-                        _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
-                            new Predicate<ProductResponse>(p => p.ProductId.Equals(baseProduct.ProductId)));
-                    }
-
-                    //get related product update if available
-                    for (int i = 0; i < baseProduct.InverseBelongToNavigation.Count; i++)
-                    {
-                        Product relatedProduct = baseProduct.InverseBelongToNavigation.ElementAt(i);
-                        baseProduct.InverseBelongToNavigation.Remove(relatedProduct);
-
-                        ProductResponse newRelatedProduct = _redisService.GetList<ProductResponse>(CACHE_KEY_FOR_UPDATE)
-                                .Find(p => p.ProductId == relatedProduct.ProductId);
-
-                        if (newRelatedProduct != null)
-                        {
-                            newRelatedProduct.ProductId = null;
-                            relatedProduct = _mapper.Map<Product>(newRelatedProduct);
-                            _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
-                                new Predicate<ProductResponse>(p => p.ProductId.Equals(relatedProduct.ProductId)));
-                        }
-
-                        baseProduct.InverseBelongToNavigation.Add(relatedProduct);
-                    }
-                }
 
                 //verify product
                 baseProduct.UpdatedDate = DateTime.Now;
@@ -352,6 +323,10 @@ namespace BLL.Services
                 _unitOfWork.Products.Update(baseProduct);
 
                 await _unitOfWork.SaveChangesAsync();
+
+                //remove from redis
+                _redisService.DeleteFromList(CACHE_KEY_FOR_UPDATE,
+                    new Predicate<ProductResponse>(p => p.ProductId.Equals(baseProduct.ProductId)));
 
                 productResponse = _mapper.Map<BaseProductResponse>(baseProduct);
             }
@@ -442,12 +417,12 @@ namespace BLL.Services
         /// Get Product For Customer
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="apartmentId"></param>
+        /// <param name="residentId"></param>
         /// <param name="sysCateId"></param>
         /// <param name="search"></param>
         /// <returns></returns>
         public async Task<PagingModel<BaseProductResponse>> GetProductForCustomer(
-            string id, string apartmentId, string sysCateId, string search)
+            string id, string residentId, string sysCateId, string search)
         {
             List<BaseProductResponse> responses = new();
             TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
@@ -455,6 +430,9 @@ namespace BLL.Services
 
             try
             {
+                //get apartment of resident
+                string apartmentId = (await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId))).ApartmentId;
+
                 //get active menu
                 List<Menu> menus = (await _unitOfWork.Menus
                         .GetMenu(null, new int?[] { (int)MenuStatus.ACTIVE_MENU }, null, apartmentId, true,
