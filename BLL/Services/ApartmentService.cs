@@ -142,12 +142,14 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
+        /// <param name="search"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<object> GetApartments(string id, int?[] status, int? limit, int? page, string sort, string include)
+        public async Task<object> GetApartments(string id, int?[] status, string search,
+            int? limit, int? page, string sort, string include)
         {
             PagingModel<Apartment> apartments;
             string propertyName = default;
@@ -161,7 +163,7 @@ namespace BLL.Services
 
             try
             {
-                apartments = await _unitOfWork.Apartments.GetApartment(id, status, limit, page, isAsc, propertyName, include);
+                apartments = await _unitOfWork.Apartments.GetApartment(id, status, search, limit, page, isAsc, propertyName, include);
             }
             catch (Exception e)
             {

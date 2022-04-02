@@ -36,11 +36,13 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
+        /// <param name="search"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        Task<object> GetApartments(string id, int?[] status, int? limit, int? page, string sort, string include);
+        Task<object> GetApartments(string id, int?[] status, string search,
+            int? limit, int? page, string sort, string include);
     }
 }

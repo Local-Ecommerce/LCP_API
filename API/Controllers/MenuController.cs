@@ -77,6 +77,7 @@ namespace API.Controllers
             [FromQuery] string id,
             [FromQuery] int?[] status,
             [FromQuery] string apartmentid,
+            [FromQuery] string search,
             [FromQuery] bool? isActive,
             [FromQuery] int? limit,
             [FromQuery] int? page,
@@ -87,7 +88,7 @@ namespace API.Controllers
             _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
             _logger.Information($"GET api/menus?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&isActive={isActive}&limit={limit}&page={page}&sort={sort}&include="
+                $"&apartmentid={apartmentid}&search={search}&isActive={isActive}&limit={limit}&page={page}&sort={sort}&include="
                 + string.Join("include=", include) + " START");
 
             Stopwatch watch = new();
@@ -101,14 +102,15 @@ namespace API.Controllers
             string residentId = claimName[(claimName.LastIndexOf(':') + 2)..];
 
             //get Menu
-            object responses = await _menuService.GetMenus(id, status, residentId, apartmentid, isActive, limit, page, sort, include);
+            object responses = await _menuService
+                .GetMenus(id, status, residentId, apartmentid, search, isActive, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 
             watch.Stop();
 
             _logger.Information($"GET api/menus?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&isActive={isActive}&limit={limit}&page={page}&sort={sort}&include="
+                $"&apartmentid={apartmentid}&search={search}&isActive={isActive}&limit={limit}&page={page}&sort={sort}&include="
                 + string.Join("include=", include) + " END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 

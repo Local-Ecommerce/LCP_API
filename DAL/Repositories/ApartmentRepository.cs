@@ -19,6 +19,7 @@ namespace DAL.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
+        /// <param name="search"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
@@ -26,7 +27,7 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<Apartment>> GetApartment(
-            string id, int?[] status,
+            string id, int?[] status, string search,
             int? limit, int? queryPage,
             bool isAsc, string propertyName, string include)
         {
@@ -39,6 +40,10 @@ namespace DAL.Repositories
             //filter by status
             if (status != null && status.Length != 0)
                 query = query.Where(ap => status.Contains(ap.Status));
+
+            //filter by search
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(ap => ap.ApartmentName.Contains(search));
 
             //add include
             if (!string.IsNullOrEmpty(include))

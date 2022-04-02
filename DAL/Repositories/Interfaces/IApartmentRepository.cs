@@ -10,6 +10,7 @@ namespace DAL.Repositories.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
+        /// <param name="search"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
@@ -17,7 +18,7 @@ namespace DAL.Repositories.Interfaces
         /// <param name="include"></param>
         /// <returns></returns>
         Task<PagingModel<Apartment>> GetApartment(
-            string id, int?[] status,
+            string id, int?[] status, string search,
             int? limit, int? queryPage,
             bool isAsc, string propertyName, string include);
     }
