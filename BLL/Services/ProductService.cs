@@ -446,7 +446,7 @@ namespace BLL.Services
                 if (!_utilService.IsNullOrEmpty(menus))
                     foreach (Menu menu in menus)
                     {
-                        responses.AddRange(GetProductFromMenuBySysCateId(sysCateId, menu, responses));
+                        responses.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, menu, responses));
 
                         //get base menu
                         Menu baseMenu = baseMenus.Where(mn => mn.MerchantStoreId.Equals(menu.MerchantStoreId)).First();
@@ -456,14 +456,14 @@ namespace BLL.Services
                         if ((bool)menu.IncludeBaseMenu)
                         {
                             //add product from this base menu
-                            responses.AddRange(GetProductFromMenuBySysCateId(sysCateId, menu, responses));
+                            responses.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, baseMenu, responses));
                         }
                     }
 
                 //add products from the remaining base menus
                 if (!_utilService.IsNullOrEmpty(baseMenus))
                     foreach (Menu menu in baseMenus)
-                        responses.AddRange(GetProductFromMenuBySysCateId(sysCateId, menu, responses));
+                        responses.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, menu, responses));
 
             }
             catch (Exception e)
@@ -482,25 +482,29 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Product From Menu By SysCateId
+        /// Get Product From Menu By SysCateId And ProductId
         /// </summary>
         /// <param name="sysCateId"></param>
         /// <param name="menu"></param>
         /// <param name="products"></param>
         /// <returns></returns>
-        public List<BaseProductResponse> GetProductFromMenuBySysCateId(string sysCateId, Menu menu,
+        public List<BaseProductResponse> GetProductFromMenuBySysCateIdAndProductId(
+            string productId, string sysCateId, Menu menu,
             List<BaseProductResponse> products)
         {
             List<BaseProductResponse> responses = new();
-            List<ProductInMenu> pims = menu.ProductInMenus
+            List<ProductInMenu> pims = sysCateId != null ? menu.ProductInMenus
                             .Where(pim => pim.Product.SystemCategoryId.Equals(sysCateId))
-                            .ToList();
+                            .ToList() : menu.ProductInMenus.ToList();
 
             if (!_utilService.IsNullOrEmpty(pims))
             {
                 foreach (var pim in pims)
                 {
                     BaseProductResponse response = _mapper.Map<BaseProductResponse>(pim.Product);
+
+                    if (productId != null && !response.ProductId.Equals(productId))
+                        continue;
 
                     //check if it was already in list
                     BaseProductResponse product = products.Where(p => p.ProductId.Equals(response.ProductId)).FirstOrDefault();

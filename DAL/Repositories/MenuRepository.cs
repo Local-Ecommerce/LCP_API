@@ -81,9 +81,9 @@ namespace DAL.Repositories
                 DateTime vnTime = TimeZoneInfo.ConvertTime(DateTime.Now, vnZone);
 
                 query = query.Where(menu => TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)menu.TimeStart) > 0 &&
-                            TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)menu.TimeEnd) < 0);
+                            TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)menu.TimeEnd) < 0 &&
+                            menu.RepeatDate.Contains((char)(int)vnTime.DayOfWeek));
             }
-
 
             //sort
             if (!string.IsNullOrEmpty(propertyName))

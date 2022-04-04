@@ -85,13 +85,15 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Product From Menu By SysCateId
+        /// Get Product From Menu By SysCateId And ProductId 
         /// </summary>
+        /// <param name="productId"></param>
         /// <param name="sysCateId"></param>
         /// <param name="menu"></param>
         /// <param name="products"></param>
         /// <returns></returns>
-        List<BaseProductResponse> GetProductFromMenuBySysCateId(string sysCateId, Menu menu,
+        List<BaseProductResponse> GetProductFromMenuBySysCateIdAndProductId(string productId,
+            string sysCateId, Menu menu,
             List<BaseProductResponse> products);
 
 
