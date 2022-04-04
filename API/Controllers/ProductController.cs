@@ -152,7 +152,7 @@ namespace API.Controllers
                     response = await _productService.GetProductForCustomer(id, residentId, categoryid, search);
                     break;
                 default:
-                    response = await _productService.GetProduct(role, id, status, apartmentid,
+                    response = await _productService.GetProduct(id, status, apartmentid,
                                                 categoryid, search, limit, page, sort, include);
                     break;
             }

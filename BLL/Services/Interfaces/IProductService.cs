@@ -37,7 +37,6 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Get Product
         /// </summary>
-        /// <param name="role"></param>
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <param name="apartmentId"></param>
@@ -49,7 +48,7 @@ namespace BLL.Services.Interfaces
         /// <param name="include"></param>
         /// <returns></returns>
         Task<PagingModel<BaseProductResponse>> GetProduct(
-            string role, string id, int?[] status, string apartmentId, string sysCateId,
+            string id, int?[] status, string apartmentId, string sysCateId,
             string search, int? limit, int? page,
             string sort, string[] include);
 
@@ -94,5 +93,13 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         List<BaseProductResponse> GetProductFromMenuBySysCateId(string sysCateId, Menu menu,
             List<BaseProductResponse> products);
+
+
+        /// <summary>
+        /// Get Product Price For Order
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        Task<ProductInfoForOrder> GetProductPriceForOrder(string productId);
     }
 }

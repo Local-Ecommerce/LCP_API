@@ -8,9 +8,9 @@ using DAL.Models;
 using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using BLL.Dtos.Product;
 
 namespace BLL.Services
 {
@@ -19,6 +19,7 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRedisService _redisService;
+        private readonly IProductService _productService;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
         private const string PREFIX = "OD_";
@@ -30,6 +31,7 @@ namespace BLL.Services
             IMapper mapper,
             IUtilService utilService,
             IRedisService redisService,
+            IProductService productService,
             IUnitOfWork unitOfWork)
         {
             _logger = logger;
@@ -37,6 +39,7 @@ namespace BLL.Services
             _utilService = utilService;
             _unitOfWork = unitOfWork;
             _redisService = redisService;
+            _productService = productService;
         }
 
 
@@ -55,15 +58,24 @@ namespace BLL.Services
                 //create new  orders and order details
                 foreach (OrderDetailRequest orderDetailRequest in orderDetailRequests)
                 {
+                    ProductInfoForOrder productInfoForOrder = await _productService
+                                                .GetProductPriceForOrder(orderDetailRequest.ProductId);
+
+                    if (productInfoForOrder == null)
+                        throw new EntityNotFoundException("Sản phẩm không khả dụng");
+
                     string orderId = _utilService.CreateId(PREFIX);
 
                     //Create order Detail
                     OrderDetail orderDetail = _mapper.Map<OrderDetail>(orderDetailRequest);
                     orderDetail.OrderDetailId = _utilService.CreateId(SUB_PREFIX);
                     orderDetail.OrderId = orderId;
-                    orderDetail.FinalAmount = CaculateOrderDetailFinalAmount(orderDetail.UnitPrice, orderDetail.Quantity, orderDetail.Discount);
+                    orderDetail.UnitPrice = productInfoForOrder.Price;
+                    orderDetail.FinalAmount =
+                        CaculateOrderDetailFinalAmount(orderDetail.UnitPrice, orderDetail.Quantity, orderDetail.Discount);
                     orderDetail.OrderDate = _utilService.CurrentTimeInVietnam();
-                    orderDetail.Status = orderDetailRequest.Status;
+                    orderDetail.Status = (int)OrderStatus.OPEN;
+                    orderDetail.ProductInMenuId = productInfoForOrder.ProductInMenuId;
 
                     //create order
                     Order order = new()
@@ -76,7 +88,7 @@ namespace BLL.Services
                         Status = orderDetail.Status,
                         Discount = orderDetail.Discount,
                         ResidentId = residentId,
-                        MerchantStoreId = orderDetailRequest.MerchantStoreId,
+                        MerchantStoreId = productInfoForOrder.MerchantStoreId,
                     };
 
                     //add to db
@@ -85,10 +97,7 @@ namespace BLL.Services
 
                     //map to response
                     ExtendOrderResponse extendOrderResponse = _mapper.Map<ExtendOrderResponse>(order);
-                    extendOrderResponse.OrderDetails = new Collection<OrderDetailResponse>();
-                    extendOrderResponse.OrderDetails.Add(_mapper.Map<OrderDetailResponse>(orderDetail));
                     extendOrderResponses.Add(extendOrderResponse);
-
                 }
 
                 await _unitOfWork.SaveChangesAsync();
@@ -96,8 +105,7 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[OrderService.CreateOrder()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Order), residentId);
+                throw;
             }
 
             return extendOrderResponses;
@@ -126,26 +134,11 @@ namespace BLL.Services
             //check role
             if (role.Equals(ResidentType.MERCHANT))
             {
-                if (merchantStoreId == null)
-                {
-                    _logger.Error("Merchant without merchant store cannot get order");
-                    throw new UnauthorizedAccessException();
-                }
-                else
-                {
-                    //Find out if the store belongs to the merchant
-                    bool flag = false;
-                    foreach (MerchantStore store in await _unitOfWork.MerchantStores.FindListAsync(ms => ms.ResidentId.Equals(residentId)))
-                    {
-                        if (store.MerchantStoreId.Equals(merchantStoreId)) flag = true;
-                        break;
-                    }
-                    if (!flag)
-                    {
-                        _logger.Error("The store does not belongs to the merchant");
-                        throw new UnauthorizedAccessException();
-                    }
-                }
+
+                MerchantStore store = (await _unitOfWork.MerchantStores.FindListAsync(ms => ms.ResidentId.Equals(residentId)))
+                                        .FirstOrDefault();
+
+                merchantStoreId = store.MerchantStoreId;
             }
 
             residentId = !residentId.Equals(ResidentType.CUSTOMER) ? null : residentId;
@@ -164,9 +157,6 @@ namespace BLL.Services
             {
                 orders = await _unitOfWork.Orders.GetOrder
                         (id, residentId, status, merchantStoreId, limit, page, isAsc, propertyName, include);
-
-                if (_utilService.IsNullOrEmpty(orders.List))
-                    throw new EntityNotFoundException(typeof(Order), "in the url");
             }
             catch (Exception e)
             {
@@ -181,37 +171,6 @@ namespace BLL.Services
                 LastPage = orders.LastPage,
                 Total = orders.Total,
             };
-        }
-
-
-        /// <summary>
-        /// Delete Order By Order Id
-        /// </summary>
-        /// <param name="orderId"></param>
-        /// <param name="residentId"></param>
-        /// <returns></returns>
-        public async Task DeleteOrderByOrderId(string orderId, string residentId)
-        {
-            Order order;
-            try
-            {
-                order = await _unitOfWork.Orders.GetOrder(orderId, residentId);
-                order.Status = (int)OrderStatus.DELETED_ORDER;
-
-                OrderDetail orderDetail = order.OrderDetails.FirstOrDefault();
-                orderDetail.Status = (int)OrderStatus.DELETED_ORDER;
-
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[OrderService.DeleteOrderByOrderIdAndResidentId()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Order), orderId);
-            }
-
-            //create response
-            OrderResponse orderResponse = _mapper.Map<OrderResponse>(order);
         }
 
 
@@ -244,30 +203,38 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
+        /// <param name="role"></param>
+        /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<OrderResponse> UpdateOrderStatus(string id, int status)
+        public async Task UpdateOrderStatus(string id, int status, string role, string residentId)
         {
-            Order order;
-            try
-            {
-                order = await _unitOfWork.Orders.FindAsync(o => o.OrderId.Equals(id));
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[OrderService.UpdateOrder()]: " + e.Message);
-                throw new EntityNotFoundException(typeof(Order), "in the url");
-            }
-
-            //check status
-            if (!Enum.IsDefined(typeof(OrderStatus), status))
-            {
-                _logger.Error($"[OrderService.UpdateOrder()]: Status {status} is invalid");
-                throw new BusinessException($"Trạng thái đơn hàng: {status} không khả dụng");
-            }
-
             //update order
             try
             {
+                residentId = role.Equals(ResidentType.CUSTOMER) ? residentId : null;
+
+                Order order = await _unitOfWork.Orders.GetOrder(id);
+
+                //check merchant permission
+                if (role.Equals(ResidentType.MERCHANT))
+                {
+                    MerchantStore store = await _unitOfWork.MerchantStores
+                            .FindAsync(ms => ms.MerchantStoreId.Equals(order.MerchantStoreId));
+
+                    if (!store.ResidentId.Equals(residentId))
+                        throw new BusinessException("Bạn không thể chỉnh sửa đơn hàng này");
+                }
+                else
+                {
+                    //check customer permission
+                    if (!order.ResidentId.Equals(residentId))
+                        throw new BusinessException("Bạn không thể chỉnh sửa đơn hàng này");
+                }
+
+                //check status
+                if (!Enum.IsDefined(typeof(OrderStatus), status))
+                    throw new BusinessException($"Trạng thái đơn hàng: {status} không khả dụng");
+
                 order.Status = status;
                 _unitOfWork.Orders.Update(order);
 
@@ -278,8 +245,6 @@ namespace BLL.Services
                 _logger.Error("[OrderService.UpdateOrder()]: " + e.Message);
                 throw;
             }
-
-            return _mapper.Map<OrderResponse>(order);
         }
     }
 }

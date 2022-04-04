@@ -39,18 +39,12 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Update Order Status
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="status"></param>
-        /// <returns></returns>
-        Task<OrderResponse> UpdateOrderStatus(string id, int status);
-
-
-        /// <summary>
-        /// Delete Order By Order Id
-        /// </summary>
-        /// <param name="orderId"></param>
+        /// <param name="role"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        Task DeleteOrderByOrderId(string orderId, string residentId);
+        Task UpdateOrderStatus(string id, int status, string role, string residentId);
 
 
         /// <summary>

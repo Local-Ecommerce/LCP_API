@@ -14,6 +14,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Net.Http.Headers;
+using API.Extensions;
 
 namespace API.Controllers
 {
@@ -126,10 +127,9 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Order (Authentication required)
+        /// Update Order' Status (Customer, Merchant)
         /// </summary>
-
-        [Authorize]
+        [AuthorizeRoles(ResidentType.CUSTOMER, ResidentType.MERCHANT)]
         [HttpPut]
         public async Task<IActionResult> UpdateOrderStatus([FromQuery] string id, [FromQuery] int status)
         {
@@ -141,51 +141,26 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
-            //Update Order
-            OrderResponse response = await
-            _orderService.UpdateOrderStatus(id, status);
-
-            string json = JsonSerializer.Serialize(ApiResponse<OrderResponse>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"PUT api/orders?id={id}&status={status}  END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-
-        /// <summary>
-        /// Delete Order By Order Id (Customer)
-        /// </summary>
-        [Authorize(Roles = ResidentType.CUSTOMER)]
-        [HttpDelete]
-        public async Task<IActionResult> DeleteOrderByOrderIdAndResidentId([FromQuery] string orderId)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
-
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             IEnumerable<Claim> claim = identity.Claims;
 
+            //get residentId
             string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
             string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
-            _logger.Information($"DELETE api/orders?orderid={orderId} START Request: " + $"Resident Id: {residentId}");
+            //get role from token
+            string claimRole = claim.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault().ToString();
+            string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
 
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Delete Order
-            await _orderService.DeleteOrderByOrderId(orderId, residentId);
+            //Update Order
+            await
+            _orderService.UpdateOrderStatus(id, status, role, residentId);
 
             string json = JsonSerializer.Serialize(ApiResponse<OrderResponse>.Success());
 
             watch.Stop();
 
-            _logger.Information($"DELETE api/orders?orderid={orderId}  END duration: " +
+            _logger.Information($"PUT api/orders?id={id}&status={status}  END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
