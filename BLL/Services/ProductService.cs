@@ -343,7 +343,6 @@ namespace BLL.Services
         /// <summary>
         /// Get Product
         /// </summary>
-        /// <param name="role"></param>
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <param name="apartmentId"></param>
@@ -356,7 +355,7 @@ namespace BLL.Services
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<BaseProductResponse>> GetProduct(
-            string role, string id = default, int?[] status = default, string apartmentId = default,
+            string id = default, int?[] status = default, string apartmentId = default,
             string sysCateId = default, string search = default, int? limit = default, int? page = default,
             string sort = default, string[] include = default)
         {
@@ -513,6 +512,62 @@ namespace BLL.Services
                 }
             }
             return responses;
+        }
+
+
+        /// <summary>
+        /// Get Product Price For Order
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public async Task<ProductInfoForOrder> GetProductPriceForOrder(string productId)
+        {
+            TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            DateTime vnTime = TimeZoneInfo.ConvertTime(_utilService.CurrentTimeInVietnam(), vnZone);
+
+            try
+            {
+                Product product = (await _unitOfWork.Products.GetProduct(id: productId, include: new string[] { "menu" }))
+                                    .List
+                                    .First();
+
+                //get price not in base menu
+                List<ProductInMenu> pdNotInBaseMenu = product.ProductInMenus.Where(pim => !(bool)pim.Menu.BaseMenu).ToList();
+                if (!_utilService.IsNullOrEmpty(pdNotInBaseMenu))
+                    foreach (ProductInMenu pim in pdNotInBaseMenu)
+                    {
+                        //get active menu
+                        if (TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeStart) > 0 &&
+                                TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeEnd) < 0 &&
+                                pim.Menu.Status.Equals((int)MenuStatus.ACTIVE_MENU))
+                        {
+                            return new ProductInfoForOrder
+                            {
+                                MerchantStoreId = pim.Menu.MerchantStoreId,
+                                Price = (double)pim.Price,
+                                ProductInMenuId = pim.ProductInMenuId
+                            };
+                        }
+                    }
+
+                //get base menu
+                ProductInMenu pdInBaseMenu = product.ProductInMenus.Where(pim => (bool)pim.Menu.BaseMenu).FirstOrDefault();
+                if (pdInBaseMenu != null)
+                {
+                    return new ProductInfoForOrder
+                    {
+                        MerchantStoreId = pdInBaseMenu.Menu.MerchantStoreId,
+                        Price = (double)pdInBaseMenu.Price,
+                        ProductInMenuId = pdInBaseMenu.ProductInMenuId
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductService.GetProductPriceForOrder()]: " + e.Message);
+                throw;
+            }
+            return null;
         }
     }
 }

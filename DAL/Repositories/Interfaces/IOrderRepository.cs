@@ -30,8 +30,7 @@ namespace DAL.Repositories.Interfaces
         /// Get Order
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<Order> GetOrder(string id, string residentId);
+        Task<Order> GetOrder(string id);
     }
 }

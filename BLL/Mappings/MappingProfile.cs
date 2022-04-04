@@ -109,7 +109,8 @@ namespace BLL.Mappings
             CreateMap<Resident, ExtendResidentResponse>().ReverseMap();
 
             //Order & Order Detail Mapping
-            CreateMap<OrderDetailRequest, OrderDetail>();
+            CreateMap<OrderDetailRequest, OrderDetail>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); ;
             CreateMap<OrderDetail, OrderDetailResponse>();
             CreateMap<Order, OrderResponse>();
             CreateMap<Order, ExtendOrderResponse>();

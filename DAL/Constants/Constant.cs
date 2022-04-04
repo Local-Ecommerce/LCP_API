@@ -62,10 +62,10 @@
 
     public enum OrderStatus
     {
-        CART = 5001,
-        DELETED_ORDER = 5002,
-        PAID = 5006,
-        IN_PAYMENT = 5007
+        OPEN = 5001,
+        CANCELED_ORDER = 5002,
+        CONFIRMED = 5006,
+        COMPLETED = 5007
     }
 
     public enum MerchantStoreStatus
@@ -109,9 +109,9 @@
 
     public enum PaymentStatus
     {
-        ACTIVE_PAYMENT = 12001,
-        DELETED_PAYMENT = 12002,
-        INACTIVE_PAYMENT = 12005
+        PAID = 12001,
+        FAILED = 12002,
+        UNPAID = 12005
     }
 
     public enum PaymentMethodStatus

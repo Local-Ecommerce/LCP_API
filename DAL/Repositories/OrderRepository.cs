@@ -74,12 +74,19 @@ namespace DAL.Repositories
                 Page = page,
                 LastPage = (int)Math.Ceiling(total / (double)perPage)
             };
+
         }
 
-        public async Task<Order> GetOrder(string id, string residentId)
+
+        /// <summary>
+        /// Get Order
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Order> GetOrder(string id)
         {
             return await _context.Orders
-                                .Where(o => o.OrderId.Equals(id) && o.ResidentId.Equals(residentId))
+                                .Where(o => o.OrderId.Equals(id))
                                 .FirstAsync();
         }
     }
