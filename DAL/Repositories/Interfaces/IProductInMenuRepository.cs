@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Models;
 
@@ -16,7 +17,9 @@ namespace DAL.Repositories.Interfaces
         /// <param name="propertyName"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        Task<PagingModel<ProductInMenu>> GetProductInMenu(string id, string menuId, 
+        Task<PagingModel<ProductInMenu>> GetProductInMenu(string id, string menuId,
             int? limit, int? queryPage, bool isAsc, string propertyName, string include);
+
+        Task<List<ProductInMenu>> GetProductsInMenu(List<string> productInMenuIds);
     }
 }
