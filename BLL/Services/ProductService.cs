@@ -56,6 +56,7 @@ namespace BLL.Services
         public async Task<BaseProductResponse> CreateProduct(string residentId, BaseProductRequest baseProductRequest)
         {
             BaseProductResponse response;
+            List<ProductInMenuRequest> pimRequest = new();
 
             try
             {
@@ -77,6 +78,8 @@ namespace BLL.Services
                 product.ResidentId = residentId;
                 product.InverseBelongToNavigation = new Collection<Product>();
 
+                pimRequest.Add(new ProductInMenuRequest { ProductId = product.ProductId, Price = product.DefaultPrice });
+
                 //create related product
                 foreach (ProductRequest relatedProductRequest in baseProductRequest.RelatedProducts)
                 {
@@ -93,6 +96,10 @@ namespace BLL.Services
                     relatedProduct.BelongTo = product.ProductId;
 
                     product.InverseBelongToNavigation.Add(relatedProduct);
+
+                    pimRequest.Add(new ProductInMenuRequest
+                    { ProductId = relatedProduct.ProductId, Price = relatedProduct.DefaultPrice });
+
                 }
 
                 _unitOfWork.Products.Add(product);
@@ -102,14 +109,7 @@ namespace BLL.Services
 
                 if (baseProductRequest.ToBaseMenu)
                     //store product into base menu
-                    await _productInMenuService.AddProductsToMenu(baseMenu, new List<ProductInMenuRequest>()
-                    { new ProductInMenuRequest
-                        {
-                            ProductId = product.ProductId,
-                            Price = product.DefaultPrice
-                        }
-                    }
-                     );
+                    await _productInMenuService.AddProductsToMenu(baseMenu, pimRequest);
                 else
                     await _unitOfWork.SaveChangesAsync();
 
@@ -424,6 +424,7 @@ namespace BLL.Services
             string id, string residentId, string sysCateId, string search)
         {
             List<BaseProductResponse> responses = new();
+            List<UpdateProductResponse> allProducts = new();
             TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
             DateTime vnTime = TimeZoneInfo.ConvertTime(_utilService.CurrentTimeInVietnam(), vnZone);
 
@@ -446,7 +447,7 @@ namespace BLL.Services
                 if (!_utilService.IsNullOrEmpty(menus))
                     foreach (Menu menu in menus)
                     {
-                        responses.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, menu, responses));
+                        allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, menu, allProducts));
 
                         //get base menu
                         Menu baseMenu = baseMenus.Where(mn => mn.MerchantStoreId.Equals(menu.MerchantStoreId)).First();
@@ -456,15 +457,27 @@ namespace BLL.Services
                         if ((bool)menu.IncludeBaseMenu)
                         {
                             //add product from this base menu
-                            responses.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, baseMenu, responses));
+                            allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, baseMenu, allProducts));
                         }
                     }
 
                 //add products from the remaining base menus
                 if (!_utilService.IsNullOrEmpty(baseMenus))
                     foreach (Menu menu in baseMenus)
-                        responses.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, menu, responses));
+                        allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, menu, allProducts));
 
+                //create response
+                foreach (var product in allProducts)
+                {
+                    if (product.BelongTo == null)
+                    {
+                        BaseProductResponse response = _mapper.Map<BaseProductResponse>(product);
+                        List<UpdateProductResponse> rP = allProducts.FindAll(p => p.BelongTo.Equals(response.ProductId));
+                        response.RelatedProducts = new Collection<UpdateProductResponse>(rP);
+
+                        responses.Add(response);
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -488,11 +501,11 @@ namespace BLL.Services
         /// <param name="menu"></param>
         /// <param name="products"></param>
         /// <returns></returns>
-        public List<BaseProductResponse> GetProductFromMenuBySysCateIdAndProductId(
+        public List<UpdateProductResponse> GetProductFromMenuBySysCateIdAndProductId(
             string productId, string sysCateId, Menu menu,
-            List<BaseProductResponse> products)
+            List<UpdateProductResponse> products)
         {
-            List<BaseProductResponse> responses = new();
+            List<UpdateProductResponse> responses = new();
             List<ProductInMenu> pims = sysCateId != null ? menu.ProductInMenus
                             .Where(pim => pim.Product.SystemCategoryId.Equals(sysCateId))
                             .ToList() : menu.ProductInMenus.ToList();
@@ -501,13 +514,13 @@ namespace BLL.Services
             {
                 foreach (var pim in pims)
                 {
-                    BaseProductResponse response = _mapper.Map<BaseProductResponse>(pim.Product);
-
+                    //if product is base product
+                    UpdateProductResponse response = _mapper.Map<UpdateProductResponse>(pim.Product);
                     if (productId != null && !response.ProductId.Equals(productId))
                         continue;
 
                     //check if it was already in list
-                    BaseProductResponse product = products.Where(p => p.ProductId.Equals(response.ProductId)).FirstOrDefault();
+                    UpdateProductResponse product = products.Where(p => p.ProductId.Equals(response.ProductId)).FirstOrDefault();
                     if (product == null)
                     {
                         response.DefaultPrice = pim.Price;

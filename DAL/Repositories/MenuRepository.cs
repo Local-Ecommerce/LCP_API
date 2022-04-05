@@ -79,10 +79,11 @@ namespace DAL.Repositories
             {
                 TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime vnTime = TimeZoneInfo.ConvertTime(DateTime.Now, vnZone);
+                int dayOfWeek = (int)vnTime.DayOfWeek;
 
                 query = query.Where(menu => TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)menu.TimeStart) > 0 &&
                             TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)menu.TimeEnd) < 0 &&
-                            menu.RepeatDate.Contains((char)(int)vnTime.DayOfWeek));
+                            menu.RepeatDate.Contains(dayOfWeek.ToString()));
             }
 
             //sort
