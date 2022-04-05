@@ -78,9 +78,23 @@ namespace BLL.Services
             List<ProductInMenu> productInMenus;
             try
             {
-                productInMenus = await _unitOfWork.ProductInMenus.FindListAsync(p => productInMenuIds.Contains(p.ProductInMenuId));
+                productInMenus = await _unitOfWork.ProductInMenus.GetProductsInMenu(productInMenuIds);
                 foreach (var productInMenu in productInMenus)
                 {
+                    if (!_utilService.IsNullOrEmpty(productInMenu.Product.InverseBelongToNavigation))
+                    {
+                        foreach (var product in productInMenu.Product.InverseBelongToNavigation)
+                        {
+                            if (!productInMenuIds.Contains(product.ProductId))
+                            {
+                                ProductInMenu pim = await _unitOfWork.ProductInMenus
+                                    .FindAsync(pim => pim.ProductId.Equals(product.ProductId));
+                                pim.Status = (int)ProductInMenuStatus.DELETED_PRODUCT_IN_MENU;
+                                _unitOfWork.ProductInMenus.Update(pim);
+                            }
+                        }
+                    }
+
                     productInMenu.Status = (int)ProductInMenuStatus.DELETED_PRODUCT_IN_MENU;
                     _unitOfWork.ProductInMenus.Update(productInMenu);
                 }

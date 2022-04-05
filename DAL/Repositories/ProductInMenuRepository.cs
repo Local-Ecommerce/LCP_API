@@ -5,6 +5,7 @@ using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System;
+using System.Collections.Generic;
 
 namespace DAL.Repositories
 {
@@ -61,6 +62,14 @@ namespace DAL.Repositories
                 Page = page,
                 LastPage = (int)Math.Ceiling(total / (double)perPage)
             };
+        }
+
+        public async Task<List<ProductInMenu>> GetProductsInMenu(List<string> productInMenuIds)
+        {
+            return await _context.ProductInMenus.Where(pim => productInMenuIds.Contains(pim.ProductInMenuId))
+                            .Include(pim => pim.Product)
+                            .ThenInclude(p => p.InverseBelongToNavigation)
+                            .ToListAsync();
         }
     }
 }

@@ -255,11 +255,13 @@ namespace BLL.Services
                 foreach (Menu m in menus)
                 {
                     //if contain same day of week
-                    if (!(bool)m.BaseMenu && repeatDateCharArray.Any(repeatDate.Contains))
+                    if (!(bool)m.BaseMenu && repeatDateCharArray.Any(m.RepeatDate.Contains))
                     {
                         //if m.TimeStart <= timeStart or timeEnd <= m.TimeEnd
-                        if ((TimeSpan.Compare(timeStart, (TimeSpan)m.TimeStart) > 1 && (TimeSpan.Compare(timeStart, (TimeSpan)m.TimeEnd) < 1))
-                                || (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeStart) > 1 && (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeEnd) < 1)))
+                        if ((TimeSpan.Compare(timeStart, (TimeSpan)m.TimeStart) > 0 &&
+                                        (TimeSpan.Compare(timeStart, (TimeSpan)m.TimeEnd) < 0))
+                            || (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeStart) > 0 &&
+                                        (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeEnd) < 0)))
                             return m.MenuName;
                     }
                 }
