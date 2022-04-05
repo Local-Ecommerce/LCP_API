@@ -93,6 +93,8 @@ namespace BLL.Mappings
             CreateMap<ProductInMenuRequest, ProductInMenu>();
             CreateMap<ProductInMenu, ProductInMenuResponse>();
             CreateMap<ProductInMenu, ExtendProductInMenuResponse>();
+            CreateMap<ExtendProductInMenuResponse, BaseProductInMenuResponse>();
+            CreateMap<ProductInMenu, BaseProductInMenuResponse>();
 
             //Payment Mapping
             CreateMap<PaymentRequest, Payment>();

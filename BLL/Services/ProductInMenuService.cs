@@ -107,9 +107,10 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<object> GetProductsInMenu(string id, string menuId, int? limit, int? page, string sort, string include)
         {
-            PagingModel<ProductInMenu> pims;
             string propertyName = default;
             bool isAsc = false;
+
+            List<BaseProductInMenuResponse> responses = new();
 
             if (!string.IsNullOrEmpty(sort))
             {
@@ -121,7 +122,32 @@ namespace BLL.Services
 
             try
             {
-                pims = await _unitOfWork.ProductInMenus.GetProductInMenu(id, menuId, limit, page, isAsc, propertyName, include);
+                List<ProductInMenu> pims =
+                    (await _unitOfWork.ProductInMenus.GetProductInMenu(id, menuId, limit, page, isAsc, propertyName, include))
+                    .List;
+
+                //check if contains product
+                List<ProductInMenu> pimsContainProduct = pims.Where(pim => pim.Product != null).ToList();
+                if (!_utilService.IsNullOrEmpty(pimsContainProduct))
+                {
+                    List<ExtendProductInMenuResponse> extendPIMResponses =
+                        _mapper.Map<List<ExtendProductInMenuResponse>>(pimsContainProduct);
+
+                    foreach (var extendPIMResponse in extendPIMResponses)
+                    {
+                        if (extendPIMResponse.Product.BelongTo != null)
+                        {
+                            BaseProductInMenuResponse basePIM = _mapper.Map<BaseProductInMenuResponse>(extendPIMResponse);
+                            basePIM.RelatedProductInMenu = extendPIMResponses.FindAll(pim => pim.Product.BelongTo.Equals(basePIM.ProductId));
+
+                            responses.Add(basePIM);
+                        }
+                    }
+                }
+
+                //if not contains products
+                if (_utilService.IsNullOrEmpty(responses))
+                    responses = _mapper.Map<List<BaseProductInMenuResponse>>(pims);
             }
             catch (Exception e)
             {
@@ -129,13 +155,7 @@ namespace BLL.Services
                 throw;
             }
 
-            return new PagingModel<ExtendProductInMenuResponse>
-            {
-                List = _mapper.Map<List<ExtendProductInMenuResponse>>(pims.List),
-                Page = pims.Page,
-                LastPage = pims.LastPage,
-                Total = pims.Total,
-            };
+            return responses;
         }
 
 
