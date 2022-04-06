@@ -69,6 +69,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetProductsInMenu(
             [FromQuery] string id,
             [FromQuery] string menuid,
+            [FromQuery] int?[] status,
             [FromQuery] int? limit,
             [FromQuery] int? page,
             [FromQuery] string sort,
@@ -77,20 +78,20 @@ namespace API.Controllers
             //check token expired
             _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
-            _logger.Information($"GET api/menu-products?id={id}&menu={menuid}" +
+            _logger.Information($"GET api/menu-products?id={id}&menu={menuid}&status=" + string.Join("status=", status) +
                 $"&limit={limit}&page={page}&sort={sort}&include={include} START");
 
             Stopwatch watch = new();
             watch.Start();
 
             //Get Product in Menu
-            object response = await _productInMenuService.GetProductsInMenu(id, menuid, limit, page, sort, include);
+            object response = await _productInMenuService.GetProductsInMenu(id, menuid, status, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"GET api/menu-products?id={id}&menu={menuid}" +
+            _logger.Information($"GET api/menu-products?id={id}&menu={menuid}&status=" + string.Join("status=", status) +
                 $"&limit={limit}&page={page}&sort={sort}&include={include} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
@@ -139,7 +140,7 @@ namespace API.Controllers
             //check token expired
             _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
-            _logger.Information($"DELETE api/menu-products START Request: { ids}");
+            _logger.Information($"DELETE api/menu-products START Request: {ids}");
 
             Stopwatch watch = new();
             watch.Start();

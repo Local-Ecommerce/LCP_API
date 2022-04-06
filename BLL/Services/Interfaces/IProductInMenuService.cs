@@ -20,13 +20,14 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="menuId"></param>
+        /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
         Task<object> GetProductsInMenu(
-            string id, string menuId,
+            string id, string menuId, int?[] status,
             int? limit, int? page, string sort, string include);
 
 

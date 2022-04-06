@@ -114,12 +114,14 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="menuId"></param>
+        /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
-        public async Task<object> GetProductsInMenu(string id, string menuId, int? limit, int? page, string sort, string include)
+        public async Task<object> GetProductsInMenu(string id, string menuId, int?[] status,
+            int? limit, int? page, string sort, string include)
         {
             string propertyName = default;
             bool isAsc = false;
@@ -137,7 +139,7 @@ namespace BLL.Services
             try
             {
                 List<ProductInMenu> pims =
-                    (await _unitOfWork.ProductInMenus.GetProductInMenu(id, menuId, limit, page, isAsc, propertyName, include))
+                    (await _unitOfWork.ProductInMenus.GetProductInMenu(id, menuId, status, limit, page, isAsc, propertyName, include))
                     .List;
 
                 //check if contains product

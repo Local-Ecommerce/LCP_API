@@ -19,6 +19,7 @@ namespace DAL.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <param name="menuId"></param>
+        /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
@@ -26,7 +27,7 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<ProductInMenu>> GetProductInMenu(string id, string menuId,
-            int? limit, int? queryPage, bool isAsc,
+            int?[] status, int? limit, int? queryPage, bool isAsc,
             string propertyName, string include)
         {
             IQueryable<ProductInMenu> query = _context.ProductInMenus.Where(pim => pim.ProductInMenuId != null);
@@ -38,6 +39,10 @@ namespace DAL.Repositories
             //filter by menuId
             if (!string.IsNullOrEmpty(menuId))
                 query = query.Where(pim => pim.MenuId.Equals(menuId));
+
+            //filter by status
+            if (status != null && status.Length != 0)
+                query = query.Where(pim => status.Contains(pim.Status));
 
             //add include
             if (!string.IsNullOrEmpty(include))
