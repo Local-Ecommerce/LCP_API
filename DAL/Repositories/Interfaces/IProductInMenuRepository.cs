@@ -11,6 +11,7 @@ namespace DAL.Repositories.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="menuId"></param>
+        /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
         /// <param name="isAsc"></param>
@@ -18,7 +19,8 @@ namespace DAL.Repositories.Interfaces
         /// <param name="include"></param>
         /// <returns></returns>
         Task<PagingModel<ProductInMenu>> GetProductInMenu(string id, string menuId,
-            int? limit, int? queryPage, bool isAsc, string propertyName, string include);
+            int?[] status, int? limit, int? queryPage,
+            bool isAsc, string propertyName, string include);
 
         Task<List<ProductInMenu>> GetProductsInMenu(List<string> productInMenuIds);
     }
