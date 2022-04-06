@@ -498,6 +498,8 @@ namespace DAL.Models
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
+                entity.Property(e => e.CategoryImage).IsUnicode(false);
+
                 entity.Property(e => e.SysCategoryName).HasMaxLength(250);
 
                 entity.HasOne(d => d.BelongToNavigation)

@@ -19,17 +19,21 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
+        private readonly IFirebaseService _firebaseService;
         private const string PREFIX = "SC_";
+        private const string TYPE = "Category";
 
         public SystemCategoryService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IUtilService utilService)
+            IUtilService utilService,
+            IFirebaseService firebaseService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
+            _firebaseService = firebaseService;
         }
 
         /// <summary>
@@ -64,6 +68,9 @@ namespace BLL.Services
                     level = (int)CategoryLevel.ONE;
 
                 systemCategory.CategoryLevel = level;
+                systemCategory.CategoryImage = _firebaseService
+                        .UploadFileToFirebase(request.CategoryImage, TYPE, systemCategory.SystemCategoryId, "Image")
+                        .Result;
 
                 _unitOfWork.SystemCategories.Add(systemCategory);
 
@@ -194,26 +201,19 @@ namespace BLL.Services
         public async Task<SystemCategoryResponse> UpdateSystemCategory(string id,
             SystemCategoryUpdateRequest request)
         {
-            //biz rule
-
-            //validate id
             SystemCategory systemCategory;
             try
             {
                 systemCategory = await _unitOfWork.SystemCategories
                                            .FindAsync(p => p.SystemCategoryId.Equals(id));
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[SystemCategoryService.UpdateSystemCategory()]" + e.Message);
 
-                throw new EntityNotFoundException(typeof(SystemCategory), id);
-            }
+                int order = !string.IsNullOrEmpty(systemCategory.CategoryImage) ?
+                        _utilService.LastImageNumber("Image", systemCategory.CategoryImage) : 0;
 
-            //update data
-            try
-            {
                 systemCategory = _mapper.Map(request, systemCategory);
+                systemCategory.CategoryImage = _firebaseService
+                                .UploadFileToFirebase(systemCategory.CategoryImage, TYPE, id, "Image" + (order + 1))
+                                .Result;
 
                 _unitOfWork.SystemCategories.Update(systemCategory);
 
