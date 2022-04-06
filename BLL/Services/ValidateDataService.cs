@@ -1,5 +1,6 @@
 ﻿using BLL.Services.Interfaces;
 using System;
+using System.Text.RegularExpressions;
 
 namespace BLL.Services
 {
@@ -19,6 +20,19 @@ namespace BLL.Services
             }
 
             return true;
+        }
+
+
+        /// <summary>
+        /// Is Valid Time
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public bool IsValidTime(string time)
+        {
+            var regex = new Regex(@"^(?:(?:([01]?\d|2[0-3]):)?([0-5]?\d):)?([0-5]?\d)$");
+
+            return regex.IsMatch(time);
         }
     }
 }

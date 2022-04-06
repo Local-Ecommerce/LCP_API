@@ -18,18 +18,21 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
+        private readonly IValidateDataService _validateDataService;
         private const string PREFIX = "MN_";
 
         public MenuService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IUtilService utilService
+            IUtilService utilService,
+            IValidateDataService validateDataService
             )
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
+            _validateDataService = validateDataService;
         }
 
         /// <summary>
@@ -94,6 +97,11 @@ namespace BLL.Services
             //Update Menu to DB
             try
             {
+                //check is valid time
+                if ((menuUpdateRequest.TimeStart != null && !_validateDataService.IsValidTime(menuUpdateRequest.TimeStart)) ||
+                (menuUpdateRequest.TimeEnd != null && !_validateDataService.IsValidTime(menuUpdateRequest.TimeEnd)))
+                    throw new BusinessException("Định dạng thời gian không hợp lệ");
+
                 //check if another menu use that time
                 string menuName = await GetOtherMenuHasSameTime(TimeSpan.Parse(menuUpdateRequest.TimeStart),
                     TimeSpan.Parse(menuUpdateRequest.TimeEnd), menuUpdateRequest.RepeatDate, residentId);
