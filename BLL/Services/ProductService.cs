@@ -449,15 +449,18 @@ namespace BLL.Services
                     {
                         allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, menu, allProducts));
 
-                        //get base menu
-                        Menu baseMenu = baseMenus.Where(mn => mn.MerchantStoreId.Equals(menu.MerchantStoreId)).First();
-                        baseMenus.Remove(baseMenu);
-
                         //check if menu includes base menu
                         if ((bool)menu.IncludeBaseMenu)
                         {
-                            //add product from this base menu
-                            allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, baseMenu, allProducts));
+                            //get base menu
+                            Menu baseMenu = baseMenus.Where(mn => mn.MerchantStoreId.Equals(menu.MerchantStoreId)).FirstOrDefault();
+                            if (baseMenu != null)
+                            {
+                                baseMenus.Remove(baseMenu);
+
+                                //add product from this base menu
+                                allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, baseMenu, allProducts));
+                            }
                         }
                     }
 
