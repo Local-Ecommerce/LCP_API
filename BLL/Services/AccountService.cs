@@ -161,7 +161,7 @@ namespace BLL.Services
                         else
                             resident = residents.Where(r => r.Type.Equals(ResidentType.MERCHANT)).FirstOrDefault();
 
-                    else resident = residents.FirstOrDefault(); //market manager
+                    else resident = residents.FirstOrDefault(); //market manager or customer
 
                     if (resident is null)
                         throw new UnauthorizedAccessException($"Role {accountRequest.Role} is invalid.");
