@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace BLL.Services
 {
@@ -226,6 +227,52 @@ namespace BLL.Services
             }
 
             return _mapper.Map<SystemCategoryResponse>(systemCategory);
+        }
+
+
+        /// <summary>
+        /// Get System Category Ids By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<string>> GetSystemCategoryIdsById(string id)
+        {
+            if (id == null)
+                return null;
+
+            List<string> categoryIds = new();
+            SystemCategory systemCategory = (await _unitOfWork.SystemCategories
+                    .GetSystemCategory(id, null, new int?[] { }, null, null, null, false, null, null))
+                    .List.FirstOrDefault();
+
+            //if sysCate lv1
+            if (systemCategory != null)
+            {
+                categoryIds.Add(systemCategory.SystemCategoryId);
+                if (!_utilService.IsNullOrEmpty(systemCategory.InverseBelongToNavigation))
+                {
+                    foreach (var scLvDown in systemCategory.InverseBelongToNavigation)
+                    {
+                        categoryIds.Add(scLvDown.SystemCategoryId);
+                        if (!_utilService.IsNullOrEmpty(scLvDown.InverseBelongToNavigation))
+                        {
+                            foreach (var sc2LvDown in scLvDown.InverseBelongToNavigation)
+                            {
+                                categoryIds.Add(scLvDown.SystemCategoryId);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //if sysCate lv2, lv3
+                List<SystemCategory> systemCategories = await _unitOfWork.SystemCategories
+                    .FindListAsync(sc => sc.SystemCategoryId.Equals(id) || (sc.BelongTo != null && sc.BelongTo.Equals(id)));
+
+                categoryIds = systemCategories.Select(sc => sc.SystemCategoryId).ToList();
+            }
+            return categoryIds;
         }
     }
 }

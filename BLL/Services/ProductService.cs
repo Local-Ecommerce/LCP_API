@@ -23,6 +23,7 @@ namespace BLL.Services
         private readonly IRedisService _redisService;
         private readonly IUtilService _utilService;
         private readonly IProductInMenuService _productInMenuService;
+        private readonly ISystemCategoryService _systemCategoryService;
         private const string PREFIX = "PD_";
         private const string TYPE = "Product";
         private const string CACHE_KEY = "Product";
@@ -35,7 +36,8 @@ namespace BLL.Services
             IRedisService redisService,
             IUtilService utilService,
             IProductInMenuService productInMenuService,
-            IFirebaseService firebaseService)
+            IFirebaseService firebaseService,
+            ISystemCategoryService systemCategoryService)
         {
             _unitOfWork = unitOfWork;
             _firebaseService = firebaseService;
@@ -44,6 +46,7 @@ namespace BLL.Services
             _redisService = redisService;
             _utilService = utilService;
             _productInMenuService = productInMenuService;
+            _systemCategoryService = systemCategoryService;
         }
 
 
@@ -427,9 +430,10 @@ namespace BLL.Services
             List<UpdateProductResponse> allProducts = new();
             TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
             DateTime vnTime = TimeZoneInfo.ConvertTime(_utilService.CurrentTimeInVietnam(), vnZone);
-
             try
             {
+                //get all category belong to syscateId
+                List<string> categoryIds = await _systemCategoryService.GetSystemCategoryIdsById(sysCateId);
                 //get apartment of resident
                 string apartmentId = (await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId))).ApartmentId;
 
@@ -447,7 +451,7 @@ namespace BLL.Services
                 if (!_utilService.IsNullOrEmpty(menus))
                     foreach (Menu menu in menus)
                     {
-                        allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, menu, allProducts));
+                        allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, categoryIds, menu, allProducts));
 
                         //check if menu includes base menu
                         if ((bool)menu.IncludeBaseMenu)
@@ -459,7 +463,7 @@ namespace BLL.Services
                                 baseMenus.Remove(baseMenu);
 
                                 //add product from this base menu
-                                allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, baseMenu, allProducts));
+                                allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, categoryIds, baseMenu, allProducts));
                             }
                         }
                     }
@@ -467,7 +471,7 @@ namespace BLL.Services
                 //add products from the remaining base menus
                 if (!_utilService.IsNullOrEmpty(baseMenus))
                     foreach (Menu menu in baseMenus)
-                        allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, sysCateId, menu, allProducts));
+                        allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, categoryIds, menu, allProducts));
 
                 //create response
                 foreach (var product in allProducts)
@@ -500,17 +504,18 @@ namespace BLL.Services
         /// <summary>
         /// Get Product From Menu By SysCateId And ProductId
         /// </summary>
-        /// <param name="sysCateId"></param>
+        /// <param name="productId"></param>
+        /// <param name="sysCateIds"></param>
         /// <param name="menu"></param>
         /// <param name="products"></param>
         /// <returns></returns>
         public List<UpdateProductResponse> GetProductFromMenuBySysCateIdAndProductId(
-            string productId, string sysCateId, Menu menu,
+            string productId, List<string> sysCateIds, Menu menu,
             List<UpdateProductResponse> products)
         {
             List<UpdateProductResponse> responses = new();
-            List<ProductInMenu> pims = sysCateId != null ? menu.ProductInMenus
-                            .Where(pim => pim.Product.SystemCategoryId.Equals(sysCateId))
+            List<ProductInMenu> pims = !_utilService.IsNullOrEmpty(sysCateIds) ? menu.ProductInMenus
+                            .Where(pim => sysCateIds.Contains(pim.Product.SystemCategoryId))
                             .ToList() : menu.ProductInMenus.ToList();
 
             if (!_utilService.IsNullOrEmpty(pims))
