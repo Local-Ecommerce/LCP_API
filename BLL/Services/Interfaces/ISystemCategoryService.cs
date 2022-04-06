@@ -1,4 +1,5 @@
 ﻿using BLL.Dtos.SystemCategory;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -45,5 +46,13 @@ namespace BLL.Services.Interfaces
             string id, string merchantId,
             int?[] status, string search, int? limit,
             int? page, string sort, string include);
+
+
+        /// <summary>
+        /// Get System Category Ids By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<List<string>> GetSystemCategoryIdsById(string id);
     }
 }
