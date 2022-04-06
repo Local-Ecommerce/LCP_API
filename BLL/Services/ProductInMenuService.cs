@@ -147,14 +147,35 @@ namespace BLL.Services
                     List<ExtendProductInMenuResponse> extendPIMResponses =
                         _mapper.Map<List<ExtendProductInMenuResponse>>(pimsContainProduct);
 
+                    //get all Product' Id
+                    List<string> productIds = extendPIMResponses.Select(pim => pim.ProductId).ToList();
+
                     foreach (var extendPIMResponse in extendPIMResponses)
                     {
-                        if (extendPIMResponse.Product.BelongTo != null)
+                        if (extendPIMResponse.Product.BelongTo == null)
                         {
                             BaseProductInMenuResponse basePIM = _mapper.Map<BaseProductInMenuResponse>(extendPIMResponse);
-                            basePIM.RelatedProductInMenu = extendPIMResponses.FindAll(pim => pim.Product.BelongTo.Equals(basePIM.ProductId));
+                            basePIM.RelatedProductInMenu = extendPIMResponses
+                                .FindAll(pim => pim.Product.BelongTo != null && pim.Product.BelongTo.Equals(basePIM.ProductId));
+
+                            //remove id from all Product' Id
+                            productIds.Remove(basePIM.ProductId);
+                            List<string> relatedPIMId = basePIM.RelatedProductInMenu.Select(pim => pim.ProductId).ToList();
+                            productIds = productIds.Except(relatedPIMId).ToList();
 
                             responses.Add(basePIM);
+                        }
+                    }
+
+                    //check if any product are missing
+                    if (!_utilService.IsNullOrEmpty(productIds))
+                    {
+                        foreach (var productId in productIds)
+                        {
+                            ExtendProductInMenuResponse pim = extendPIMResponses
+                                .Where(pim => pim.ProductId.Equals(productId))
+                                .FirstOrDefault();
+                            if (pim != null) responses.Add(_mapper.Map<BaseProductInMenuResponse>(pim));
                         }
                     }
                 }
