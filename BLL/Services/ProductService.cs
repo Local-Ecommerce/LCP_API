@@ -472,7 +472,7 @@ namespace BLL.Services
                     if (product.BelongTo == null)
                     {
                         BaseProductResponse response = _mapper.Map<BaseProductResponse>(product);
-                        List<UpdateProductResponse> rP = allProducts.FindAll(p => p.BelongTo.Equals(response.ProductId));
+                        List<UpdateProductResponse> rP = allProducts.Where(p => p.BelongTo != null && p.BelongTo.Equals(product.ProductId)).ToList();
                         response.RelatedProducts = new Collection<UpdateProductResponse>(rP);
 
                         responses.Add(response);
@@ -514,7 +514,6 @@ namespace BLL.Services
             {
                 foreach (var pim in pims)
                 {
-                    //if product is base product
                     UpdateProductResponse response = _mapper.Map<UpdateProductResponse>(pim.Product);
                     if (productId != null && !response.ProductId.Equals(productId))
                         continue;
