@@ -356,11 +356,13 @@ namespace BLL.Services
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <param name="include"></param>
+        /// <param name="residentId"></param>
+        /// <param name="role"></param>
         /// <returns></returns>
         public async Task<PagingModel<BaseProductResponse>> GetProduct(
             string id = default, int?[] status = default, string apartmentId = default,
             string sysCateId = default, string search = default, int? limit = default, int? page = default,
-            string sort = default, string[] include = default)
+            string sort = default, string[] include = default, string residentId = default, string role = default)
         {
             PagingModel<Product> products;
             string propertyName = default;
@@ -372,10 +374,13 @@ namespace BLL.Services
                 propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
             }
 
+            if (role != null && !role.Equals(ResidentType.MERCHANT))
+                residentId = null;
+
             try
             {
                 products = await _unitOfWork.Products.GetProduct
-                    (id, status, apartmentId, sysCateId, search, limit, page, isAsc, propertyName, include);
+                    (id, status, apartmentId, sysCateId, search, limit, page, isAsc, propertyName, include, residentId);
             }
             catch (Exception e)
             {

@@ -46,11 +46,13 @@ namespace BLL.Services.Interfaces
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <param name="include"></param>
+        /// <param name="residentId"></param>
+        /// <param name="role"></param>
         /// <returns></returns>
         Task<PagingModel<BaseProductResponse>> GetProduct(
             string id, int?[] status, string apartmentId, string sysCateId,
             string search, int? limit, int? page,
-            string sort, string[] include);
+            string sort, string[] include, string residentId, string role);
 
 
         /// <summary>

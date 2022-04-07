@@ -153,7 +153,7 @@ namespace API.Controllers
                     break;
                 default:
                     response = await _productService.GetProduct(id, status, apartmentid,
-                                                categoryid, search, limit, page, sort, include);
+                                                categoryid, search, limit, page, sort, include, residentId, role);
                     break;
             }
 
