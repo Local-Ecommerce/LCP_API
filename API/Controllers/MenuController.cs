@@ -101,9 +101,13 @@ namespace API.Controllers
             string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
             string residentId = claimName[(claimName.LastIndexOf(':') + 2)..];
 
+            //get role from token
+            string claimRole = claim.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault().ToString();
+            string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
+
             //get Menu
             object responses = await _menuService
-                .GetMenus(id, status, residentId, apartmentid, search, isActive, limit, page, sort, include);
+                .GetMenus(id, status, residentId, apartmentid, search, isActive, limit, page, sort, include, role);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 

@@ -206,11 +206,12 @@ namespace BLL.Services
         /// <param name="page"></param>
         /// <param name="sort"></param>
         /// <param name="include"></param>
+        /// <param name="role"></param>
         /// <returns></returns>
         public async Task<object> GetMenus(
             string id, int?[] status, string residentId,
             string apartmentId, string search, bool? isActive, int? limit,
-            int? page, string sort, string[] include)
+            int? page, string sort, string[] include, string role)
         {
             PagingModel<Menu> menus;
             string propertyName = default;
@@ -224,7 +225,7 @@ namespace BLL.Services
 
             try
             {
-                if (!residentId.Contains(ResidentType.MERCHANT))
+                if (!role.Equals(ResidentType.MERCHANT))
                     residentId = null;
                 menus = await _unitOfWork.Menus
                     .GetMenu(id, status, residentId, apartmentId, search, isActive, limit, page, isAsc, propertyName, include);
