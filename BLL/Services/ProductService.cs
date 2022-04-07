@@ -523,8 +523,12 @@ namespace BLL.Services
                 foreach (var pim in pims)
                 {
                     UpdateProductResponse response = _mapper.Map<UpdateProductResponse>(pim.Product);
-                    if (productId != null && !response.ProductId.Equals(productId))
-                        continue;
+                    if (productId != null)
+                    {
+                        if (!(response.ProductId.Equals(productId) ||
+                                (response.BelongTo != null && response.BelongTo.Equals(productId))))
+                            continue;
+                    }
 
                     //check if it was already in list
                     UpdateProductResponse product = products.Where(p => p.ProductId.Equals(response.ProductId)).FirstOrDefault();
