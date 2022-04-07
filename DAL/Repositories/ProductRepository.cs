@@ -53,7 +53,7 @@ namespace DAL.Repositories
                 query = query.Where(p => p.SystemCategoryId.Equals(categoryId));
 
             //filter by residentId
-            if (!string.IsNullOrEmpty(categoryId))
+            if (!string.IsNullOrEmpty(residentId))
                 query = query.Where(p => p.ResidentId.Equals(residentId));
 
             //filter by search
