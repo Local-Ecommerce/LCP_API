@@ -138,6 +138,7 @@ namespace BLL.Services
         public async Task AddRelatedProduct(string baseProductId, string residentId,
             List<ProductRequest> productRequests)
         {
+            List<ProductInMenuRequest> pimRequest = new();
             try
             {
                 //get base product
@@ -157,6 +158,7 @@ namespace BLL.Services
                     product.ApproveBy = "";
                     product.ResidentId = residentId;
                     product.BelongTo = baseProductId;
+                    pimRequest.Add(new ProductInMenuRequest { ProductId = product.ProductId, Price = product.DefaultPrice });
 
                     _unitOfWork.Products.Add(product);
                 });
@@ -164,7 +166,16 @@ namespace BLL.Services
                 baseProduct.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
                 _unitOfWork.Products.Update(baseProduct);
 
-                await _unitOfWork.SaveChangesAsync();
+                //get base menu Id
+                string baseMenu = await _unitOfWork.Menus.GetBaseMenuId(residentId);
+
+                //check if base product in base menu
+                if ((await _unitOfWork.ProductInMenus
+                        .FindAsync(pim => pim.ProductId.Equals(baseProductId) && pim.MenuId.Equals(baseMenu))) != null)
+                    //store product into base menu
+                    await _productInMenuService.AddProductsToMenu(baseMenu, pimRequest);
+                else
+                    await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception e)
             {
