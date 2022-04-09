@@ -402,21 +402,24 @@ namespace BLL.Services
             //get new products if update
             List<BaseProductResponse> responses = _mapper.Map<List<BaseProductResponse>>(products.List);
 
-            if (status.Contains((int)ProductStatus.UNVERIFIED_PRODUCT))
+            if (status.Contains((int)ProductStatus.UNVERIFIED_PRODUCT) && role.Equals(ResidentType.MARKET_MANAGER))
             {
                 foreach (var response in responses)
                 {
-                    //get new base product
-                    response.CurrentProduct = _redisService
-                            .GetList<ProductResponse>(CACHE_KEY_FOR_UPDATE)
-                            .FirstOrDefault(p => p.ProductId == response.ProductId);
-
-                    //get new related product
-                    foreach (var related in response.RelatedProducts)
+                    if (response.Status.Equals((int)ProductStatus.UNVERIFIED_PRODUCT))
                     {
-                        related.CurrentProduct = _redisService
+                        //get new base product
+                        response.CurrentProduct = _redisService
                                 .GetList<ProductResponse>(CACHE_KEY_FOR_UPDATE)
-                                .FirstOrDefault(p => p.ProductId == related.ProductId);
+                                .FirstOrDefault(p => p.ProductId == response.ProductId);
+
+                        //get new related product
+                        foreach (var related in response.RelatedProducts)
+                        {
+                            related.CurrentProduct = _redisService
+                                    .GetList<ProductResponse>(CACHE_KEY_FOR_UPDATE)
+                                    .FirstOrDefault(p => p.ProductId == related.ProductId);
+                        }
                     }
                 }
             }
