@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Models;
 
@@ -24,5 +25,13 @@ namespace DAL.Repositories.Interfaces
             string id = default, int?[] status = default, string apartmentId = default, string categoryId = default,
             string search = default, int? limit = default, int? queryPage = default,
             bool isAsc = default, string propertyName = default, string[] include = default, string residentId = default);
+
+
+        /// <summary>
+        /// Get Products By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<List<Product>> GetProductsById(string id);
     }
 }

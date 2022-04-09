@@ -56,6 +56,14 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
+        /// Get Unverified Product For MarketManager
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<PagingModel<BaseProductResponse>> GetUnverifiedProductForMarketManager(string id);
+
+
+        /// <summary>
         /// Get Product For Customer
         /// </summary>
         /// <param name="id"></param>

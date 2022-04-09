@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -102,6 +103,17 @@ namespace DAL.Repositories
                 Page = page,
                 LastPage = (int)Math.Ceiling(total / (double)perPage)
             };
+        }
+
+
+        /// <summary>
+        /// Get Products By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<Product>> GetProductsById(string id)
+        {
+            return await _context.Products.Where(p => p.ProductId.Equals(id) || (p.BelongTo != null && p.BelongTo.Equals(id))).ToListAsync();
         }
     }
 }
