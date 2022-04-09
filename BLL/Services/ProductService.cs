@@ -375,6 +375,10 @@ namespace BLL.Services
             string sysCateId = default, string search = default, int? limit = default, int? page = default,
             string sort = default, string[] include = default, string residentId = default, string role = default)
         {
+            // get unverified product for market manager
+            if (id != null && role.Equals(ResidentType.MARKET_MANAGER) && status.Contains((int)ProductStatus.UNVERIFIED_PRODUCT))
+                return await GetUnverifiedProductForMarketManager(id);
+
             PagingModel<Product> products;
             string propertyName = default;
             bool isAsc = false;
@@ -399,30 +403,7 @@ namespace BLL.Services
                 throw;
             }
 
-            //get new products if update
             List<BaseProductResponse> responses = _mapper.Map<List<BaseProductResponse>>(products.List);
-
-            if (status.Contains((int)ProductStatus.UNVERIFIED_PRODUCT) && role.Equals(ResidentType.MARKET_MANAGER))
-            {
-                foreach (var response in responses)
-                {
-                    if (response.Status.Equals((int)ProductStatus.UNVERIFIED_PRODUCT))
-                    {
-                        //get new base product
-                        response.CurrentProduct = _redisService
-                                .GetList<ProductResponse>(CACHE_KEY_FOR_UPDATE)
-                                .FirstOrDefault(p => p.ProductId == response.ProductId);
-
-                        //get new related product
-                        foreach (var related in response.RelatedProducts)
-                        {
-                            related.CurrentProduct = _redisService
-                                    .GetList<ProductResponse>(CACHE_KEY_FOR_UPDATE)
-                                    .FirstOrDefault(p => p.ProductId == related.ProductId);
-                        }
-                    }
-                }
-            }
 
             return new PagingModel<BaseProductResponse>
             {
@@ -430,6 +411,49 @@ namespace BLL.Services
                 Page = products.Page,
                 LastPage = products.LastPage,
                 Total = products.Total,
+            };
+        }
+
+
+        /// <summary>
+        /// Get Unverified Product For MarketManager
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<PagingModel<BaseProductResponse>> GetUnverifiedProductForMarketManager(string id)
+        {
+            List<BaseProductResponse> responses = new();
+            try
+            {
+                List<UpdateProductResponse> products = _mapper.Map<List<UpdateProductResponse>>(
+                            await _unitOfWork.Products.GetProductsById(id));
+
+                List<string> productIds = products.Select(p => p.ProductId)
+                                                    .ToList();
+                List<ProductResponse> currentProducts = _redisService.GetList<ProductResponse>(CACHE_KEY_FOR_UPDATE)
+                    .FindAll(p => productIds.Contains(p.ProductId));
+
+                foreach (var product in products)
+                    product.CurrentProduct = currentProducts.Find(p => p.ProductId.Equals(product.ProductId));
+
+                BaseProductResponse response = _mapper.Map<BaseProductResponse>(products.Find(p => p.BelongTo == null));
+                products.Remove(products.Find(p => p.BelongTo == null));
+                response.RelatedProducts = new Collection<UpdateProductResponse>(products);
+
+                responses.Add(response);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductService.GetUnverifiedProductForMarketManager()]" + e.Message);
+                throw;
+            }
+
+            return new PagingModel<BaseProductResponse>
+            {
+                List = responses,
+                Page = 1,
+                LastPage = 1,
+                Total = 1
             };
         }
 
@@ -616,5 +640,7 @@ namespace BLL.Services
             }
             return null;
         }
+
+
     }
 }
