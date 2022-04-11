@@ -9,7 +9,7 @@ namespace BLL.Dtos.Resident
         [RegularExpression(@"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s\W|_]+$")]
         public string ResidentName { get; set; }
 
-        [RegularExpression(@"^((09(\d){8})|(086(\d){7})|(088(\d){7})|(089(\d){7})|(01(\d){9}))$")]
+        [RegularExpression(@"(84|0[3|5|7|8|9])+([0-9]{8})\b")]
         public string PhoneNumber { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string Gender { get; set; }

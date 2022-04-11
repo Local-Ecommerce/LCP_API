@@ -16,6 +16,16 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<List<ExtendOrderResponse>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId);
 
+
+        /// <summary>
+        /// Create Order By Market Manager
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="marketManagerId"></param>
+        /// <returns></returns>
+        Task<List<ExtendOrderResponse>> CreateOrderByMarketManager(OrderRequest request, string marketManagerId);
+
+
         /// <summary>
         /// Get Order
         /// </summary>
