@@ -18,5 +18,12 @@ namespace BLL.Services.Interfaces
         /// <param name="time"></param>
         /// <returns></returns>
         bool IsValidTime(string time);
+
+        /// <summary>
+        /// Is Vietnamese Phone Number
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <returns></returns>
+        bool IsVietnamesePhoneNumber(string phone);
     }
 }

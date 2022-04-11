@@ -34,5 +34,18 @@ namespace BLL.Services
 
             return regex.IsMatch(time);
         }
+
+
+        /// <summary>
+        /// Is Vietnamese Phone Number
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <returns></returns>
+        public bool IsVietnamesePhoneNumber(string phone)
+        {
+            var regex = new Regex(@"(84|0[3|5|7|8|9])+([0-9]{8})\b");
+
+            return regex.IsMatch(phone);
+        }
     }
 }

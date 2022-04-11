@@ -15,6 +15,16 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
+        /// Create Guest
+        /// </summary>
+        /// <param name="guest"></param>
+        /// <param name="apartmentId"></param>
+        /// <param name="marketManagerId"></param>
+        /// <returns>residentId</returns>
+        Task<string> CreateGuest(ResidentGuest guest, string apartmentId, string marketManagerId);
+
+
+        /// <summary>
         /// Update Resident By Id
         /// </summary>
         /// <param name="id"></param>
