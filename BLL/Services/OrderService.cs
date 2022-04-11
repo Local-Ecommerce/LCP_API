@@ -20,6 +20,7 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRedisService _redisService;
         private readonly IProductService _productService;
+        private readonly IResidentService _residentService;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
         private const string PREFIX = "OD_";
@@ -32,6 +33,7 @@ namespace BLL.Services
             IUtilService utilService,
             IRedisService redisService,
             IProductService productService,
+            IResidentService residentService,
             IUnitOfWork unitOfWork)
         {
             _logger = logger;
@@ -40,6 +42,7 @@ namespace BLL.Services
             _unitOfWork = unitOfWork;
             _redisService = redisService;
             _productService = productService;
+            _residentService = residentService;
         }
 
 
@@ -108,6 +111,35 @@ namespace BLL.Services
                 throw;
             }
 
+            return extendOrderResponses;
+        }
+
+
+        /// <summary>
+        /// Create Order By Market Manager
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="marketManagerId"></param>
+        /// <returns></returns>
+        public async Task<List<ExtendOrderResponse>> CreateOrderByMarketManager(OrderRequest request, string marketManagerId)
+        {
+            List<ExtendOrderResponse> extendOrderResponses = new();
+
+            try
+            {
+                string apartmentId = (await _unitOfWork.Residents
+                                    .FindAsync(r => r.ResidentId.Equals(marketManagerId)))
+                                    .ApartmentId;
+                string residentId = request.ResidentId != null ? request.ResidentId :
+                                await _residentService.CreateGuest(request.Resident, apartmentId, marketManagerId);
+
+                extendOrderResponses = await CreateOrder(request.Products, residentId);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[OrderService.CreateOrderByMarketManager()]: " + e.Message);
+                throw;
+            }
             return extendOrderResponses;
         }
 
@@ -246,5 +278,6 @@ namespace BLL.Services
                 throw;
             }
         }
+
     }
 }

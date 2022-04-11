@@ -165,5 +165,45 @@ namespace API.Controllers
 
             return Ok(json);
         }
+
+
+        /// <summary>
+        /// Create order for guest
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("guest")]
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        public async Task<IActionResult> CreateOrderByMarketManager([FromBody] OrderRequest request)
+        {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
+            _logger.Information($"POST api/orders/guest START Request: " +
+                $"{JsonSerializer.Serialize(request)}" + $"Resident Id: {residentId}");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //Create Order
+            List<ExtendOrderResponse> response = await
+            _orderService.CreateOrderByMarketManager(request, residentId);
+
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
+
+            watch.Stop();
+
+            _logger.Information("POST api/orders/guest END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
     }
 }

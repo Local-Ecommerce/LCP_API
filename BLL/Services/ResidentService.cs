@@ -264,5 +264,52 @@ namespace BLL.Services
 
             return _mapper.Map<ExtendResidentResponse>(resident);
         }
+
+
+        /// <summary>
+        /// Create Guest
+        /// </summary>
+        /// <param name="guest"></param>
+        /// <param name="apartmentId"></param>
+        /// <param name="marketManagerId"></param>
+        /// <returns></returns>
+        public async Task<string> CreateGuest(ResidentGuest guest, string apartmentId, string marketManagerId)
+        {
+            Resident resident;
+
+            try
+            {
+                //get resident by phone number
+                if (_validateDataService.IsVietnamesePhoneNumber(guest.PhoneNumber))
+                {
+                    resident = await _unitOfWork.Residents.FindAsync(r => r.PhoneNumber.Equals(guest.PhoneNumber));
+                    if (resident != null)
+                        throw new BusinessException("Đã có cư dân sử dụng số điện thoại này");
+                }
+
+                resident = new Resident
+                {
+                    ResidentId = _utilService.CreateId("") + "_GUEST",
+                    PhoneNumber = guest.PhoneNumber,
+                    ResidentName = guest.ResidentName,
+                    DeliveryAddress = guest.DeliveryAddress,
+                    Type = ResidentType.CUSTOMER,
+                    CreatedDate = _utilService.CurrentTimeInVietnam(),
+                    UpdatedDate = _utilService.CurrentTimeInVietnam(),
+                    Status = (int)ResidentStatus.VERIFIED_RESIDENT,
+                    ApartmentId = apartmentId,
+                    ApproveBy = marketManagerId
+                };
+
+                _unitOfWork.Residents.Add(resident);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ResidentService.CreateGuest()" + e.Message);
+                throw;
+            }
+
+            return resident.ResidentId;
+        }
     }
 }
