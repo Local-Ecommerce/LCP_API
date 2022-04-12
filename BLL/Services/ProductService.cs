@@ -381,7 +381,7 @@ namespace BLL.Services
             {
                 if (id != null && status.Contains((int)ProductStatus.UNVERIFIED_PRODUCT))
                     return await GetUnverifiedProductForMarketManager(id);
-                else
+                else if (!status.Contains((int)ProductStatus.UNVERIFIED_PRODUCT))
                     return await GetProductForCustomer(id, residentId, sysCateId, search);
             }
 
