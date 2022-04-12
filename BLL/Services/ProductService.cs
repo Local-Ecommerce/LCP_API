@@ -158,6 +158,7 @@ namespace BLL.Services
                     product.ApproveBy = "";
                     product.ResidentId = residentId;
                     product.BelongTo = baseProductId;
+                    product.SystemCategoryId = baseProduct.SystemCategoryId;
                     pimRequest.Add(new ProductInMenuRequest { ProductId = product.ProductId, Price = product.DefaultPrice });
 
                     _unitOfWork.Products.Add(product);
