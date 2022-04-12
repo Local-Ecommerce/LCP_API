@@ -375,9 +375,14 @@ namespace BLL.Services
             string sysCateId = default, string search = default, int? limit = default, int? page = default,
             string sort = default, string[] include = default, string residentId = default, string role = default)
         {
-            // get unverified product for market manager
-            if (id != null && role.Equals(ResidentType.MARKET_MANAGER) && status.Contains((int)ProductStatus.UNVERIFIED_PRODUCT))
-                return await GetUnverifiedProductForMarketManager(id);
+            // get product for market manager
+            if (role.Equals(ResidentType.MARKET_MANAGER))
+            {
+                if (id != null && status.Contains((int)ProductStatus.UNVERIFIED_PRODUCT))
+                    return await GetUnverifiedProductForMarketManager(id);
+                else
+                    return await GetProductForCustomer(id, residentId, sysCateId, search);
+            }
 
             PagingModel<Product> products;
             string propertyName = default;
@@ -640,7 +645,5 @@ namespace BLL.Services
             }
             return null;
         }
-
-
     }
 }

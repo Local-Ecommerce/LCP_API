@@ -54,8 +54,8 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<List<ExtendOrderResponse>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId)
         {
+            List<Order> orders = new();
             List<ExtendOrderResponse> extendOrderResponses = new();
-
             try
             {
                 //create new  orders and order details
@@ -67,41 +67,64 @@ namespace BLL.Services
                     if (productInfoForOrder == null)
                         throw new EntityNotFoundException("Sản phẩm không khả dụng");
 
-                    string orderId = _utilService.CreateId(PREFIX);
+                    Order order = orders.Find(o => o.MerchantStoreId.Equals(productInfoForOrder.MerchantStoreId));
 
-                    //Create order Detail
-                    OrderDetail orderDetail = _mapper.Map<OrderDetail>(orderDetailRequest);
-                    orderDetail.OrderDetailId = _utilService.CreateId(SUB_PREFIX);
-                    orderDetail.OrderId = orderId;
-                    orderDetail.UnitPrice = productInfoForOrder.Price;
-                    orderDetail.FinalAmount =
-                        CaculateOrderDetailFinalAmount(orderDetail.UnitPrice, orderDetail.Quantity, orderDetail.Discount);
-                    orderDetail.OrderDate = _utilService.CurrentTimeInVietnam();
-                    orderDetail.Status = (int)OrderStatus.OPEN;
-                    orderDetail.ProductInMenuId = productInfoForOrder.ProductInMenuId;
-
-                    //create order
-                    Order order = new()
+                    if (order == null)
                     {
-                        OrderId = orderId,
-                        DeliveryAddress = "",
-                        CreatedDate = _utilService.CurrentTimeInVietnam(),
-                        UpdatedDate = _utilService.CurrentTimeInVietnam(),
-                        TotalAmount = CaculateOrderTotalAmount(orderDetail),
-                        Status = orderDetail.Status,
-                        Discount = orderDetail.Discount,
-                        ResidentId = residentId,
-                        MerchantStoreId = productInfoForOrder.MerchantStoreId,
-                    };
+                        string orderId = _utilService.CreateId(PREFIX);
 
-                    //add to db
-                    _unitOfWork.Orders.Add(order);
-                    _unitOfWork.OrderDetails.Add(orderDetail);
+                        //Create order Detail
+                        OrderDetail orderDetail = _mapper.Map<OrderDetail>(orderDetailRequest);
+                        orderDetail.OrderDetailId = _utilService.CreateId(SUB_PREFIX);
+                        orderDetail.OrderId = orderId;
+                        orderDetail.UnitPrice = productInfoForOrder.Price;
+                        orderDetail.FinalAmount =
+                            CaculateOrderDetailFinalAmount(orderDetail.UnitPrice, orderDetail.Quantity, orderDetail.Discount);
+                        orderDetail.OrderDate = _utilService.CurrentTimeInVietnam();
+                        orderDetail.Status = (int)OrderStatus.OPEN;
+                        orderDetail.ProductInMenuId = productInfoForOrder.ProductInMenuId;
 
-                    //map to response
-                    ExtendOrderResponse extendOrderResponse = _mapper.Map<ExtendOrderResponse>(order);
-                    extendOrderResponses.Add(extendOrderResponse);
+                        //create order
+                        order = new()
+                        {
+                            OrderId = orderId,
+                            DeliveryAddress = "",
+                            CreatedDate = _utilService.CurrentTimeInVietnam(),
+                            UpdatedDate = _utilService.CurrentTimeInVietnam(),
+                            TotalAmount = CaculateOrderTotalAmount(orderDetail),
+                            Status = orderDetail.Status,
+                            Discount = orderDetail.Discount,
+                            ResidentId = residentId,
+                            MerchantStoreId = productInfoForOrder.MerchantStoreId,
+                        };
+
+                        _unitOfWork.OrderDetails.Add(orderDetail);
+                        orders.Add(order);
+                    }
+                    else
+                    {
+                        //Create order Detail
+                        OrderDetail orderDetail = _mapper.Map<OrderDetail>(orderDetailRequest);
+                        orderDetail.OrderDetailId = _utilService.CreateId(SUB_PREFIX);
+                        orderDetail.OrderId = order.OrderId;
+                        orderDetail.UnitPrice = productInfoForOrder.Price;
+                        orderDetail.FinalAmount =
+                            CaculateOrderDetailFinalAmount(orderDetail.UnitPrice, orderDetail.Quantity, orderDetail.Discount);
+                        orderDetail.OrderDate = _utilService.CurrentTimeInVietnam();
+                        orderDetail.Status = (int)OrderStatus.OPEN;
+                        orderDetail.ProductInMenuId = productInfoForOrder.ProductInMenuId;
+
+                        _unitOfWork.OrderDetails.Add(orderDetail);
+                    }
                 }
+                //add to db
+                foreach (var order in orders)
+                {
+                    _unitOfWork.Orders.Add(order);
+                }
+
+                //map to response
+                extendOrderResponses = _mapper.Map<List<ExtendOrderResponse>>(orders);
 
                 await _unitOfWork.SaveChangesAsync();
             }
