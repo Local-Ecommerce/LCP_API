@@ -18,6 +18,8 @@ namespace DAL.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
+        /// <param name="isPriority"></param>
+        /// <param name="type"></param>
         /// <param name="date"></param>
         /// <param name="search"></param>
         /// <param name="status"></param>
@@ -28,7 +30,7 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<Poi>> GetPoi(
-            string id, string apartmentId,
+            string id, string apartmentId, bool? isPriority, string type,
             DateTime date, string search,
             int?[] status, int? limit, int? queryPage,
             bool isAsc, string propertyName, string[] include)
@@ -46,6 +48,11 @@ namespace DAL.Repositories
             //filter by apartmentId
             if (!string.IsNullOrEmpty(apartmentId))
                 query = query.Where(poi => poi.ApartmentId.Equals(apartmentId));
+            query = query.Where(poi => status.Contains(poi.Status));
+
+            //filter by type
+            if (!string.IsNullOrEmpty(type))
+                query = query.Where(poi => poi.Type.Equals(type));
 
             //filter by date
             if (date != DateTime.MinValue)
@@ -68,11 +75,12 @@ namespace DAL.Repositories
                 }
             }
 
+            if (isPriority != null && isPriority == true)
+                query.OrderBy("Priority");
+
             //sort
             if (!string.IsNullOrEmpty(propertyName))
-            {
                 query = isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
-            }
 
             //paging
             int perPage = limit.GetValueOrDefault(Int32.MaxValue);
