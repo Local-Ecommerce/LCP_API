@@ -153,7 +153,7 @@ namespace BLL.Services
                         ResidentName = documentDictionary.ContainsKey("fullname") ? (string)documentDictionary["fullname"] : default,
                         Gender = documentDictionary.ContainsKey("gender") ? (string)documentDictionary["gender"] : default,
                         DeliveryAddress = documentDictionary.ContainsKey("deliveryAddress") ? (string)documentDictionary["deliveryAddress"] : default,
-                        DateOfBirth = (DateTime?)documentDictionary["dob"],
+                        DateOfBirth = documentDictionary.ContainsKey("dob") ? DateTime.Parse((string)documentDictionary["dob"]) : null,
                         Type = documentDictionary.ContainsKey("role") ? (string)documentDictionary["role"] : ResidentType.CUSTOMER,
                         AccountId = document.Id,
                         CreatedDate = _utilService.CurrentTimeInVietnam(),

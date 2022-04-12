@@ -79,6 +79,7 @@ namespace API.Controllers
             [FromQuery] string id,
             [FromQuery] int?[] status,
             [FromQuery] string apartmentid,
+            [FromQuery] string residendid,
             [FromQuery] string search,
             [FromQuery] int? limit,
             [FromQuery] int? page,
@@ -89,7 +90,7 @@ namespace API.Controllers
             _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
             _logger.Information($"GET api/stores?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&search={search}&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) +
+                $"&apartmentid={apartmentid}&residentid={residendid}&search={search}&limit={limit}&page={page}&sort={sort}&include=" + string.Join("include=", include) +
                 $" START");
 
             Stopwatch watch = new();
@@ -100,7 +101,7 @@ namespace API.Controllers
 
             //get resident id from token
             string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
-            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+            string residentId = residendid != null ? residendid : claimName.Substring(claimName.LastIndexOf(':') + 2);
 
             //get role from token
             string claimRole = claim.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault().ToString();

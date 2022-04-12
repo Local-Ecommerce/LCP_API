@@ -18,6 +18,8 @@ namespace DAL.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
+        /// <param name="isPriority"></param>
+        /// <param name="type"></param>
         /// <param name="date"></param>
         /// <param name="search"></param>
         /// <param name="status"></param>
@@ -28,7 +30,7 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<News>> GetNews(
-            string id, string apartmentId,
+            string id, string apartmentId, bool? isPriority, string type,
             DateTime date, string search, int?[] status,
             int? limit, int? queryPage,
             bool isAsc, string propertyName, string[] include)
@@ -51,6 +53,10 @@ namespace DAL.Repositories
             if (date != DateTime.MinValue)
                 query = query.Where(news => news.ReleaseDate.Equals(date.Date));
 
+            //filter by type
+            if (!string.IsNullOrEmpty(type))
+                query = query.Where(news => news.Type.Equals(type));
+
             //search contains
             if (!string.IsNullOrEmpty(search))
                 query = query.Where(news => news.Title.ToLower().Contains(search.ToLower()) ||
@@ -67,6 +73,9 @@ namespace DAL.Repositories
                         query = query.Include(news => news.Apartment);
                 }
             }
+
+            if (isPriority != null && isPriority == true)
+                query.OrderBy("Priority");
 
             //sort
             if (!string.IsNullOrEmpty(propertyName))
