@@ -579,6 +579,10 @@ namespace BLL.Services
                             continue;
                     }
 
+                    if (!pim.Status.Equals((int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU) ||
+                        !response.Status.Equals((int)ProductStatus.VERIFIED_PRODUCT))
+                        continue;
+
                     //check if it was already in list
                     UpdateProductResponse product = products.Where(p => p.ProductId.Equals(response.ProductId)).FirstOrDefault();
                     if (product == null)
