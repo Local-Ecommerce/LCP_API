@@ -30,7 +30,7 @@ namespace DAL.Repositories
             string id, string residentId, int?[] status,
             string merchantStoreId, int? limit,
             int? queryPage, bool isAsc,
-            string propertyName, string include)
+            string propertyName, string[] include)
         {
             IQueryable<Order> query = _context.Orders.Where(o => o.OrderId != null);
 
@@ -57,9 +57,25 @@ namespace DAL.Repositories
             }
 
             //add include
-            if (!string.IsNullOrEmpty(include) && include.Equals("detail"))
+            if (include != null && include.Length > 0)
             {
-                query = query.Include(o => o.OrderDetails);
+                foreach (string item in include)
+                {
+                    switch (item)
+                    {
+                        case "detail":
+                            query = query.Include(o => o.OrderDetails);
+                            break;
+                        case "product":
+                            query = query.Include(o => o.OrderDetails)
+                                            .ThenInclude(od => od.ProductInMenu)
+                                            .ThenInclude(pim => pim.Product);
+                            break;
+                        case "resident":
+                            query = query.Include(o => o.Resident);
+                            break;
+                    }
+                }
             }
 
             //paging

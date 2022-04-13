@@ -184,7 +184,7 @@ namespace BLL.Services
             string id, string residentId,
             string role, string merchantStoreId,
             int?[] status, int? limit,
-            int? page, string sort, string include)
+            int? page, string sort, string[] include)
         {
             //check role
             if (role.Equals(ResidentType.MERCHANT))

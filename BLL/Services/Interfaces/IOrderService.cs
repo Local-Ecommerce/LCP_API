@@ -43,7 +43,7 @@ namespace BLL.Services.Interfaces
             string id, string residentId,
             string role, string merchantStoreId, int?[] status,
             int? limit, int? page,
-            string sort, string include);
+            string sort, string[] include);
 
 
         /// <summary>
