@@ -86,14 +86,14 @@ namespace API.Controllers
             [FromQuery] int? limit,
             [FromQuery] int? page,
             [FromQuery] string sort,
-            [FromQuery] string include)
+            [FromQuery] string[] include)
         {
             //check token expired
             _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
             _logger.Information($"GET api/orders?id={id}&status=" + string.Join("status=", status) +
-                $"&merchantstoreid={merchantstoreid}&limit={limit}&page={page}&sort={sort}&include={include}"
-                + " START");
+                $"&merchantstoreid={merchantstoreid}&limit={limit}&page={page}&sort={sort}&include="
+                + string.Join("include=", include) + "START");
 
             Stopwatch watch = new();
             watch.Start();

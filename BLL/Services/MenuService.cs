@@ -200,6 +200,7 @@ namespace BLL.Services
         /// <param name="status"></param>
         /// <param name="residentId"></param>
         /// <param name="apartmentId"></param>
+        /// <param name="merchantStoreId"></param>
         /// <param name="search"></param>
         /// <param name="isActive"></param>
         /// <param name="limit"></param>
@@ -210,7 +211,7 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<object> GetMenus(
             string id, int?[] status, string residentId,
-            string apartmentId, string search, bool? isActive, int? limit,
+            string apartmentId, string merchantStoreId, string search, bool? isActive, int? limit,
             int? page, string sort, string[] include, string role)
         {
             PagingModel<Menu> menus;
@@ -228,7 +229,7 @@ namespace BLL.Services
                 if (!role.Equals(ResidentType.MERCHANT))
                     residentId = null;
                 menus = await _unitOfWork.Menus
-                    .GetMenu(id, status, residentId, apartmentId, search, isActive, limit, page, isAsc, propertyName, include);
+                    .GetMenu(id, status, residentId, apartmentId, merchantStoreId, search, isActive, limit, page, isAsc, propertyName, include);
             }
             catch (Exception e)
             {
@@ -267,10 +268,10 @@ namespace BLL.Services
                     if (!(bool)m.BaseMenu && repeatDateCharArray.Any(m.RepeatDate.Contains))
                     {
                         //if m.TimeStart <= timeStart or timeEnd <= m.TimeEnd
-                        if ((TimeSpan.Compare(timeStart, (TimeSpan)m.TimeStart) > 0 &&
+                        if ((TimeSpan.Compare(timeStart, (TimeSpan)m.TimeStart) >= 0 &&
                                         (TimeSpan.Compare(timeStart, (TimeSpan)m.TimeEnd) < 0))
                             || (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeStart) > 0 &&
-                                        (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeEnd) < 0)))
+                                        (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeEnd) <= 0)))
                             return m.MenuName;
                     }
                 }

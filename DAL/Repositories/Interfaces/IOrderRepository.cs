@@ -23,7 +23,7 @@ namespace DAL.Repositories.Interfaces
             string merchantStoreId,
             int? limit, int? queryPage,
             bool isAsc, string propertyName,
-            string include);
+            string[] include);
 
 
         /// <summary>
