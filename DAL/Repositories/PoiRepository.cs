@@ -48,7 +48,6 @@ namespace DAL.Repositories
             //filter by apartmentId
             if (!string.IsNullOrEmpty(apartmentId))
                 query = query.Where(poi => poi.ApartmentId.Equals(apartmentId));
-            query = query.Where(poi => status.Contains(poi.Status));
 
             //filter by type
             if (!string.IsNullOrEmpty(type))

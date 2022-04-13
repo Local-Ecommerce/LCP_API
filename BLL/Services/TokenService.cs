@@ -174,7 +174,7 @@ namespace BLL.Services
 
                 // Validation 5 - validate the id
                 var residentId = tokenInVerification.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value;
-                string accountId = residentId[..residentId.IndexOf("_")];
+                string accountId = residentId.Contains("_") ? residentId[..residentId.IndexOf("_")] : residentId;
 
                 if (refreshToken.AccountId != accountId)
                     return null;
