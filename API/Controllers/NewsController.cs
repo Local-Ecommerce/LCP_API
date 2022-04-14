@@ -69,7 +69,6 @@ namespace API.Controllers
             [FromQuery] string id,
             [FromQuery] int?[] status,
             [FromQuery] string apartmentid,
-            [FromQuery] bool? isPriority,
             [FromQuery] string type,
             [FromQuery] DateTime date,
             [FromQuery] string search,
@@ -82,7 +81,7 @@ namespace API.Controllers
             _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
             _logger.Information($"GET api/news?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&isPriority={isPriority}&type={type}&date={date}&search={search}" +
+                $"&apartmentid={apartmentid}&type={type}&date={date}&search={search}" +
                 $"&limit={limit}&page={page}&sort={sort}" +
                 $"&include={include} START");
 
@@ -90,14 +89,14 @@ namespace API.Controllers
             watch.Start();
 
             //Get News
-            object response = await _newsService.GetNews(id, apartmentid, isPriority, type, date, search, status, limit, page, sort, include);
+            object response = await _newsService.GetNews(id, apartmentid, type, date, search, status, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
             watch.Stop();
 
             _logger.Information($"GET api/news?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&isPriority={isPriority}&type={type}&date={date}&search={search}" +
+                $"&apartmentid={apartmentid}&type={type}&date={date}&search={search}" +
                 $"&limit={limit}&page={page}&sort={sort}" +
                 $"&include={include} END duration: {watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
