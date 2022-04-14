@@ -488,7 +488,7 @@ namespace BLL.Services
 
                 //get active menu
                 List<Menu> menus = (await _unitOfWork.Menus
-                        .GetMenu(null, new int?[] { (int)MenuStatus.ACTIVE_MENU }, null, apartmentId, null, null, true,
+                        .GetMenu(null, new int?[] { (int)MenuStatus.ACTIVE_MENU }, null, apartmentId, null, null, null, true,
                             null, null, null, null, new string[] { "product" })).List;
 
                 //base menus

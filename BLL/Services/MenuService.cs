@@ -103,11 +103,19 @@ namespace BLL.Services
                     throw new BusinessException("Định dạng thời gian không hợp lệ");
 
                 //check if another menu use that time
-                string menuName = await GetOtherMenuHasSameTime(TimeSpan.Parse(menuUpdateRequest.TimeStart),
-                    TimeSpan.Parse(menuUpdateRequest.TimeEnd), menuUpdateRequest.RepeatDate, residentId);
+                if (menuUpdateRequest.TimeStart != null || menuUpdateRequest.TimeEnd != null)
+                {
+                    TimeSpan timeStart = menuUpdateRequest.TimeStart != null ?
+                        TimeSpan.Parse(menuUpdateRequest.TimeStart) : (TimeSpan)menu.TimeStart;
 
-                if (menuName != null)
-                    throw new BusinessException($"Đã có menu {menuName} sử dụng khung giờ đó");
+                    TimeSpan timeEnd = menuUpdateRequest.TimeEnd != null ?
+                        TimeSpan.Parse(menuUpdateRequest.TimeEnd) : (TimeSpan)menu.TimeEnd;
+
+                    string menuName = await GetOtherMenuHasSameTime(timeStart, timeEnd, menuUpdateRequest.RepeatDate, residentId);
+
+                    if (menuName != null)
+                        throw new BusinessException($"Đã có menu {menuName} sử dụng khung giờ đó");
+                }
 
                 menu = _mapper.Map(menuUpdateRequest, menu);
                 menu.UpdatedDate = _utilService.CurrentTimeInVietnam();
@@ -201,6 +209,7 @@ namespace BLL.Services
         /// <param name="residentId"></param>
         /// <param name="apartmentId"></param>
         /// <param name="merchantStoreId"></param>
+        /// <param name="productId"></param>
         /// <param name="search"></param>
         /// <param name="isActive"></param>
         /// <param name="limit"></param>
@@ -211,7 +220,8 @@ namespace BLL.Services
         /// <returns></returns>
         public async Task<object> GetMenus(
             string id, int?[] status, string residentId,
-            string apartmentId, string merchantStoreId, string search, bool? isActive, int? limit,
+            string apartmentId, string merchantStoreId, string productId,
+            string search, bool? isActive, int? limit,
             int? page, string sort, string[] include, string role)
         {
             PagingModel<Menu> menus;
@@ -229,7 +239,8 @@ namespace BLL.Services
                 if (!role.Equals(ResidentType.MERCHANT))
                     residentId = null;
                 menus = await _unitOfWork.Menus
-                    .GetMenu(id, status, residentId, apartmentId, merchantStoreId, search, isActive, limit, page, isAsc, propertyName, include);
+                    .GetMenu(id, status, residentId, apartmentId, merchantStoreId,
+                        productId, search, isActive, limit, page, isAsc, propertyName, include);
             }
             catch (Exception e)
             {
