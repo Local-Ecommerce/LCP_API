@@ -74,7 +74,7 @@ namespace API.Controllers
             [FromQuery] string search,
             [FromQuery] int? limit,
             [FromQuery] int? page,
-            [FromQuery] string sort,
+            [FromQuery] string[] sort,
             [FromQuery] string[] include)
         {
             //check token expired
@@ -82,7 +82,7 @@ namespace API.Controllers
 
             _logger.Information($"GET api/news?id={id}&status=" + string.Join("status=", status) +
                 $"&apartmentid={apartmentid}&type={type}&date={date}&search={search}" +
-                $"&limit={limit}&page={page}&sort={sort}" +
+                $"&limit={limit}&page={page}&sort=" + string.Join("sort=", sort) +
                 $"&include={include} START");
 
             Stopwatch watch = new();
@@ -97,7 +97,7 @@ namespace API.Controllers
 
             _logger.Information($"GET api/news?id={id}&status=" + string.Join("status=", status) +
                 $"&apartmentid={apartmentid}&type={type}&date={date}&search={search}" +
-                $"&limit={limit}&page={page}&sort={sort}" +
+                $"&limit={limit}&page={page}&sort=" + string.Join("sort=", sort) +
                 $"&include={include} END duration: {watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
