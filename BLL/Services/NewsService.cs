@@ -144,7 +144,6 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
-        /// <param name="isPriority"></param>
         /// <param name="type"></param>
         /// <param name="date"></param>
         /// <param name="search"></param>
@@ -155,7 +154,7 @@ namespace BLL.Services
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<object> GetNews(
-            string id, string apartmentId, bool? isPriority, string type,
+            string id, string apartmentId, string type,
             DateTime date, string search, int?[] status,
             int? limit, int? page,
             string sort, string[] include)
@@ -177,7 +176,7 @@ namespace BLL.Services
             try
             {
                 news = await _unitOfWork.News
-                    .GetNews(id, apartmentId, isPriority, type, date, search, status, limit, page, isAsc, propertyName, include);
+                    .GetNews(id, apartmentId, type, date, search, status, limit, page, isAsc, propertyName, include);
             }
             catch (Exception e)
             {

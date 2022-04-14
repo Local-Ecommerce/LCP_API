@@ -19,7 +19,6 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
-        /// <param name="isPriority"></param>
         /// <param name="type"></param>
         /// <param name="date"></param>        
         /// <param name="search"></param>
@@ -30,7 +29,7 @@ namespace BLL.Services.Interfaces
         /// <param name="include"></param>
         /// <returns></returns>
         Task<object> GetPois(
-            string id, string apartmentId, bool? isPriority, string type,
+            string id, string apartmentId, string type,
             DateTime date, string search,
             int?[] status, int? limit, int? page,
             string sort, string[] include);

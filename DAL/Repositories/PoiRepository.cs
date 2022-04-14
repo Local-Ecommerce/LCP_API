@@ -18,7 +18,6 @@ namespace DAL.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
-        /// <param name="isPriority"></param>
         /// <param name="type"></param>
         /// <param name="date"></param>
         /// <param name="search"></param>
@@ -30,7 +29,7 @@ namespace DAL.Repositories
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<Poi>> GetPoi(
-            string id, string apartmentId, bool? isPriority, string type,
+            string id, string apartmentId, string type,
             DateTime date, string search,
             int?[] status, int? limit, int? queryPage,
             bool isAsc, string propertyName, string[] include)
@@ -73,9 +72,6 @@ namespace DAL.Repositories
                         query = query.Include(poi => poi.Apartment);
                 }
             }
-
-            if (isPriority != null && isPriority == true)
-                query.OrderBy("Priority");
 
             //sort
             if (!string.IsNullOrEmpty(propertyName))
