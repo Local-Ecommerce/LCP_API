@@ -161,26 +161,31 @@ namespace BLL.Services
         public async Task<object> GetPois(
             string id, string apartmentId, string type,
             DateTime date, string search, int?[] status,
-            int? limit, int? page, string sort, string[] include)
+            int? limit, int? page, string[] sort, string[] include)
         {
             PagingModel<Poi> poi;
-            string propertyName = default;
-            bool isAsc = false;
 
-            if (!string.IsNullOrEmpty(sort))
+            //sort
+            List<string> sortProperty = null;
+            if (!_utilService.IsNullOrEmpty(sort))
             {
-                isAsc = sort[0].ToString().Equals("+");
-                propertyName = _utilService.UpperCaseFirstLetter(sort[1..]);
+                sortProperty = new();
+                foreach (var param in sort)
+                    if (!string.IsNullOrEmpty(param))
+                    {
+                        string direction = sort[0].ToString().Equals("+") ? "" : " descending";
+                        sortProperty.Add(_utilService.UpperCaseFirstLetter(param[1..]) + direction);
+                    }
             }
+
+            //include
             for (int i = 0; i < include.Length; i++)
-            {
                 include[i] = !string.IsNullOrEmpty(include[i]) ? _utilService.UpperCaseFirstLetter(include[i]) : null;
-            }
 
             try
             {
                 poi = await _unitOfWork.Pois
-                    .GetPoi(id, apartmentId, type, date, search, status, limit, page, isAsc, propertyName, include);
+                    .GetPoi(id, apartmentId, type, date, search, status, limit, page, sortProperty, include);
             }
             catch (Exception e)
             {

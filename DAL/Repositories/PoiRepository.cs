@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
 using System.Linq.Dynamic.Core;
+using System.Collections.Generic;
 
 namespace DAL.Repositories
 {
@@ -24,15 +25,14 @@ namespace DAL.Repositories
         /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
-        /// <param name="isAsc"></param>
-        /// <param name="propertyName"></param>
+        /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<PagingModel<Poi>> GetPoi(
             string id, string apartmentId, string type,
             DateTime date, string search,
             int?[] status, int? limit, int? queryPage,
-            bool isAsc, string propertyName, string[] include)
+            List<string> sort, string[] include)
         {
             IQueryable<Poi> query = _context.Pois.Where(poi => poi.PoiId != null);
 
@@ -74,8 +74,15 @@ namespace DAL.Repositories
             }
 
             //sort
-            if (!string.IsNullOrEmpty(propertyName))
-                query = isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
+            if (sort != null)
+            {
+                var result = query.OrderBy(sort.First());
+
+                foreach (var property in sort.Skip(1))
+                    result = result.ThenBy(property);
+
+                query = result;
+            }
 
             //paging
             int perPage = limit.GetValueOrDefault(Int32.MaxValue);

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Models;
 
@@ -17,14 +18,13 @@ namespace DAL.Repositories.Interfaces
         /// <param name="status"></param>
         /// <param name="limit"></param>
         /// <param name="queryPage"></param>
-        /// <param name="isAsc"></param>
-        /// <param name="propertyName"></param>
+        /// <param name="sort"></param>
         /// <param name="include"></param>
         /// <returns></returns>
         Task<PagingModel<Poi>> GetPoi(
             string id, string apartmentId, string type,
             DateTime date, string search,
              int?[] status, int? limit, int? queryPage,
-            bool isAsc, string propertyName, string[] include);
+            List<string> sort, string[] include);
     }
 }
