@@ -158,6 +158,8 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("ApartmentID");
 
+                entity.Property(e => e.Image).IsUnicode(false);
+
                 entity.Property(e => e.ResidentId)
                     .HasMaxLength(50)
                     .IsUnicode(false)
@@ -293,6 +295,8 @@ namespace DAL.Models
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("ApartmentID");
+
+                entity.Property(e => e.Image).IsUnicode(false);
 
                 entity.Property(e => e.ResidentId)
                     .HasMaxLength(50)

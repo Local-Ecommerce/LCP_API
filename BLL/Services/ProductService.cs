@@ -220,16 +220,13 @@ namespace BLL.Services
                         int order = !string.IsNullOrEmpty(product.Image) ? _utilService.LastImageNumber("Image", product.Image) : 0;
 
                         //upload new image & remove image
-                        if (pR.Image.Length > 0)
+                        foreach (var image in pR.Image)
                         {
-                            foreach (var image in pR.Image)
-                            {
-                                if (image.Contains("https://firebasestorage.googleapis.com/"))
-                                    imageUrl = imageUrl.Replace(image + "|", "");
-                                else
-                                    imageUrl += _firebaseService
-                                        .UploadFilesToFirebase(new string[] { image }, TYPE, product.ProductId, "Image", order).Result;
-                            }
+                            if (image.Contains("https://firebasestorage.googleapis.com/"))
+                                imageUrl = imageUrl.Replace(image + "|", "");
+                            else
+                                imageUrl += _firebaseService
+                                    .UploadFilesToFirebase(new string[] { image }, TYPE, product.ProductId, "Image", order).Result;
                         }
                     }
                     pR.Image = null;
