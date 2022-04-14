@@ -17,18 +17,22 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
+        private readonly IFirebaseService _firebaseService;
         private const string PREFIX = "POI_";
+        private const string TYPE = "POI";
 
         public PoiService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IUtilService utilService
+            IUtilService utilService,
+            IFirebaseService firebaseService
             )
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
+            _firebaseService = firebaseService;
         }
 
         /// <summary>
@@ -45,6 +49,9 @@ namespace BLL.Services
                 poi.PoiId = _utilService.CreateId(PREFIX);
                 poi.ReleaseDate = _utilService.CurrentTimeInVietnam();
                 poi.Status = (int)PoiStatus.ACTIVE_POI;
+                poi.Image = _firebaseService
+                        .UploadFilesToFirebase(poiRequest.Image, TYPE, poi.PoiId, "Image", 0)
+                        .Result;
 
                 _unitOfWork.Pois.Add(poi);
 
@@ -89,7 +96,27 @@ namespace BLL.Services
             //Update Poi to DB
             try
             {
+                string imageUrl = poi.Image;
+
+                //update image
+                if (poiUpdateRequest.Image != null && poiUpdateRequest.Image.Length > 0)
+                {
+                    //get the order of the last photo
+                    int order = !string.IsNullOrEmpty(poi.Image) ? _utilService.LastImageNumber("Image", poi.Image) : 0;
+
+                    //upload new image & remove image
+                    foreach (var image in poiUpdateRequest.Image)
+                    {
+                        if (image.Contains("https://firebasestorage.googleapis.com/"))
+                            imageUrl = imageUrl.Replace(image + "|", "");
+                        else
+                            imageUrl += _firebaseService
+                                .UploadFilesToFirebase(new string[] { image }, TYPE, poi.PoiId, "Image", order).Result;
+                    }
+                }
+
                 poi = _mapper.Map(poiUpdateRequest, poi);
+                poi.Image = imageUrl;
 
                 _unitOfWork.Pois.Update(poi);
 

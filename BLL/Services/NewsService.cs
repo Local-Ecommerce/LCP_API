@@ -17,18 +17,22 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
+        private readonly IFirebaseService _firebaseService;
         private const string PREFIX = "NS_";
+        private const string TYPE = "News";
 
         public NewsService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IUtilService utilService
+            IUtilService utilService,
+            IFirebaseService firebaseService
             )
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
+            _firebaseService = firebaseService;
         }
 
         /// <summary>
@@ -45,6 +49,9 @@ namespace BLL.Services
                 news.NewsId = _utilService.CreateId(PREFIX);
                 news.ReleaseDate = _utilService.CurrentTimeInVietnam();
                 news.Status = (int)NewsStatus.ACTIVE_NEWS;
+                news.Image = _firebaseService
+                        .UploadFilesToFirebase(newsRequest.Image, TYPE, news.NewsId, "Image", 0)
+                        .Result;
 
                 _unitOfWork.News.Add(news);
 
@@ -84,7 +91,27 @@ namespace BLL.Services
             //Update News to DB
             try
             {
+                string imageUrl = news.Image;
+
+                //update image
+                if (newsUpdateRequest.Image != null && newsUpdateRequest.Image.Length > 0)
+                {
+                    //get the order of the last photo
+                    int order = !string.IsNullOrEmpty(news.Image) ? _utilService.LastImageNumber("Image", news.Image) : 0;
+
+                    //upload new image & remove image
+                    foreach (var image in newsUpdateRequest.Image)
+                    {
+                        if (image.Contains("https://firebasestorage.googleapis.com/"))
+                            imageUrl = imageUrl.Replace(image + "|", "");
+                        else
+                            imageUrl += _firebaseService
+                                .UploadFilesToFirebase(new string[] { image }, TYPE, news.NewsId, "Image", order).Result;
+                    }
+                }
+
                 news = _mapper.Map(newsUpdateRequest, news);
+                news.Image = imageUrl;
 
                 _unitOfWork.News.Update(news);
 
