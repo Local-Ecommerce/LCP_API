@@ -47,7 +47,8 @@ namespace DAL.Repositories
         /// <returns></returns>
         public async Task<PagingModel<Menu>> GetMenu(
             string id = default, int?[] status = default, string residentId = default,
-            string apartmentId = default, string merchantStoreId = default, string search = default,
+            string apartmentId = default, string merchantStoreId = default,
+            string productId = default, string search = default,
             bool? isActive = default, int? limit = default,
             int? queryPage = default, bool? isAsc = default,
             string propertyName = default, string[] include = default)
@@ -75,6 +76,12 @@ namespace DAL.Repositories
             //filter by merchantStoreId
             if (!string.IsNullOrEmpty(merchantStoreId))
                 query = query.Where(menu => menu.MerchantStoreId.Equals(merchantStoreId));
+
+            //filter by productId
+            if (!string.IsNullOrEmpty(productId))
+                query = query.Include(menu => menu.ProductInMenus)
+                .ThenInclude(pim => pim.Product)
+                .Where(menu => menu.ProductInMenus.All(pim => pim.Product.ProductId.Equals(productId)));
 
             //filter by id
             if (!string.IsNullOrEmpty(search))
