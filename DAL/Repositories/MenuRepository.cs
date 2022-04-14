@@ -79,11 +79,9 @@ namespace DAL.Repositories
 
             //filter by productId
             if (!string.IsNullOrEmpty(productId))
-                query = query.Include(menu => menu.ProductInMenus)
-                .ThenInclude(pim => pim.Product)
-                .Where(menu => menu.ProductInMenus.All(pim => pim.Product.ProductId.Equals(productId)));
+                query = query.Include(menu => menu.ProductInMenus.Where(pim => pim.ProductId.Equals(productId)));
 
-            //filter by id
+            //filter by search
             if (!string.IsNullOrEmpty(search))
                 query = query.Where(menu => menu.MenuName.Contains(search) || menu.MenuDescription.Contains(search));
 
