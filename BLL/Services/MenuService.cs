@@ -47,7 +47,7 @@ namespace BLL.Services
             try
             {
                 //check if another menu use that time
-                string menuName = await GetOtherMenuHasSameTime(TimeSpan.Parse(menuRequest.TimeStart),
+                string menuName = await GetOtherMenuHasSameTime(null, TimeSpan.Parse(menuRequest.TimeStart),
                     TimeSpan.Parse(menuRequest.TimeEnd), menuRequest.RepeatDate, residentId);
 
                 if (menuName != null)
@@ -111,7 +111,7 @@ namespace BLL.Services
                     TimeSpan timeEnd = menuUpdateRequest.TimeEnd != null ?
                         TimeSpan.Parse(menuUpdateRequest.TimeEnd) : (TimeSpan)menu.TimeEnd;
 
-                    string menuName = await GetOtherMenuHasSameTime(timeStart, timeEnd, menuUpdateRequest.RepeatDate, residentId);
+                    string menuName = await GetOtherMenuHasSameTime(id, timeStart, timeEnd, menuUpdateRequest.RepeatDate, residentId);
 
                     if (menuName != null)
                         throw new BusinessException($"Đã có menu {menuName} sử dụng khung giờ đó");
@@ -261,12 +261,14 @@ namespace BLL.Services
         /// <summary>
         /// Get Other Menu Has Same Time
         /// </summary>
+        /// <param name="menuId"></param>
         /// <param name="timeStart"></param>
         /// <param name="timeEnd"></param>
         /// <param name="repeatDate"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<string> GetOtherMenuHasSameTime(TimeSpan timeStart, TimeSpan timeEnd, string repeatDate, string residentId)
+        public async Task<string> GetOtherMenuHasSameTime(string menuId, TimeSpan timeStart,
+            TimeSpan timeEnd, string repeatDate, string residentId)
         {
             try
             {
@@ -283,7 +285,7 @@ namespace BLL.Services
                                         (TimeSpan.Compare(timeStart, (TimeSpan)m.TimeEnd) < 0))
                             || (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeStart) > 0 &&
                                         (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeEnd) <= 0))) &&
-                                        !m.Status.Equals((int)MenuStatus.DELETED_MENU))
+                                        !m.Status.Equals((int)MenuStatus.DELETED_MENU) && !m.MenuId.Equals(menuId))
                             return m.MenuName;
                     }
                 }
