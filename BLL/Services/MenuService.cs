@@ -47,7 +47,7 @@ namespace BLL.Services
             try
             {
                 //check if another menu use that time
-                string menuName = await GetOtherMenuHasSameTime(TimeSpan.Parse(menuRequest.TimeStart),
+                string menuName = await GetOtherMenuHasSameTime(null, TimeSpan.Parse(menuRequest.TimeStart),
                     TimeSpan.Parse(menuRequest.TimeEnd), menuRequest.RepeatDate, residentId);
 
                 if (menuName != null)
