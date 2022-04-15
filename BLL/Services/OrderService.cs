@@ -72,8 +72,8 @@ namespace BLL.Services
 
                     Order order = orders.Find(o => o.MerchantStoreId.Equals(productInfoForOrder.MerchantStoreId));
 
-                    Collection<OrderDetail> details = order == null ?
-                        (Collection<OrderDetail>)order.OrderDetails : new Collection<OrderDetail>();
+                    Collection<OrderDetail> details = order == null ? new Collection<OrderDetail>()
+                        : (Collection<OrderDetail>)order.OrderDetails;
 
                     string orderId = order == null ? _utilService.CreateId(PREFIX) : order.OrderId;
 
