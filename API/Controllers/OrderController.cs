@@ -61,7 +61,7 @@ namespace API.Controllers
 
             //Create Order
             List<ExtendOrderResponse> response = await
-            _orderService.CreateOrder(orderDetailRequests, residentId);
+            _orderService.CreateOrder(orderDetailRequests, residentId, null);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 

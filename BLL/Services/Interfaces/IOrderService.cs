@@ -14,8 +14,10 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="orderDetailRequests"></param>
         /// <param name="residentId"></param>
+        /// <param name="resident"></param>
         /// <returns></returns>
-        Task<List<ExtendOrderResponse>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId);
+        Task<List<ExtendOrderResponse>> CreateOrder(
+            List<OrderDetailRequest> orderDetailRequests, string residentId, Resident resident);
 
 
         /// <summary>
