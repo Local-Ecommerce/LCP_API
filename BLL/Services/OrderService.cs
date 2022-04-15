@@ -157,7 +157,7 @@ namespace BLL.Services
                                     .FindAsync(r => r.ResidentId.Equals(marketManagerId)))
                                     .ApartmentId;
 
-                if (request.ResidentId != null)
+                if (!string.IsNullOrEmpty(request.ResidentId))
                     extendOrderResponses = await CreateOrder(request.Products, request.ResidentId, null);
                 else
                 {
