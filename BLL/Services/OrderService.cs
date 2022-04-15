@@ -52,14 +52,17 @@ namespace BLL.Services
         /// </summary>
         /// <param name="orderDetailRequests"></param>
         /// <param name="residentId"></param>
+        /// <param name="resident"></param>
         /// <returns></returns>
-        public async Task<List<ExtendOrderResponse>> CreateOrder(List<OrderDetailRequest> orderDetailRequests, string residentId)
+        public async Task<List<ExtendOrderResponse>> CreateOrder(
+            List<OrderDetailRequest> orderDetailRequests, string residentId, Resident resident)
         {
             List<Order> orders = new();
             List<ExtendOrderResponse> extendOrderResponses = new();
             try
             {
-                Resident resident = await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId));
+                resident = resident == null ?
+                    await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId)) : resident;
 
                 //create new  orders and order details
                 foreach (OrderDetailRequest orderDetailRequest in orderDetailRequests)
@@ -99,6 +102,7 @@ namespace BLL.Services
                             DeliveryAddress = resident.DeliveryAddress,
                             CreatedDate = _utilService.CurrentTimeInVietnam(),
                             UpdatedDate = _utilService.CurrentTimeInVietnam(),
+                            TotalAmount = 0,
                             Status = orderDetail.Status,
                             Discount = orderDetail.Discount,
                             ResidentId = residentId,
@@ -106,6 +110,13 @@ namespace BLL.Services
                         };
 
                         order.OrderDetails = details;
+                        orders.Add(order);
+                    }
+                    else
+                    {
+                        order.OrderDetails = details;
+                        orders.Remove(order);
+                        orders.Add(order);
                     }
                 }
                 //add to db
@@ -145,10 +156,14 @@ namespace BLL.Services
                 string apartmentId = (await _unitOfWork.Residents
                                     .FindAsync(r => r.ResidentId.Equals(marketManagerId)))
                                     .ApartmentId;
-                string residentId = request.ResidentId != null ? request.ResidentId :
-                                await _residentService.CreateGuest(request.Resident, apartmentId, marketManagerId);
 
-                extendOrderResponses = await CreateOrder(request.Products, residentId);
+                if (request.ResidentId != null)
+                    extendOrderResponses = await CreateOrder(request.Products, request.ResidentId, null);
+                else
+                {
+                    Resident resident = await _residentService.CreateGuest(request.Resident, apartmentId, marketManagerId);
+                    extendOrderResponses = await CreateOrder(request.Products, resident.ResidentId, resident);
+                }
             }
             catch (Exception e)
             {

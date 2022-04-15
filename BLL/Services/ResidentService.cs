@@ -273,7 +273,7 @@ namespace BLL.Services
         /// <param name="apartmentId"></param>
         /// <param name="marketManagerId"></param>
         /// <returns></returns>
-        public async Task<string> CreateGuest(ResidentGuest guest, string apartmentId, string marketManagerId)
+        public async Task<Resident> CreateGuest(ResidentGuest guest, string apartmentId, string marketManagerId)
         {
             Resident resident;
 
@@ -298,7 +298,8 @@ namespace BLL.Services
                     UpdatedDate = _utilService.CurrentTimeInVietnam(),
                     Status = (int)ResidentStatus.VERIFIED_RESIDENT,
                     ApartmentId = apartmentId,
-                    ApproveBy = marketManagerId
+                    ApproveBy = marketManagerId,
+                    AccountId = null
                 };
 
                 _unitOfWork.Residents.Add(resident);
@@ -309,7 +310,7 @@ namespace BLL.Services
                 throw;
             }
 
-            return resident.ResidentId;
+            return resident;
         }
     }
 }

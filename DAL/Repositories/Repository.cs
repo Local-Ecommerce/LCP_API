@@ -34,7 +34,7 @@ namespace DAL.Repositories
         {
             List<T> list = await _dbSet.Where(expression).ToListAsync();
 
-            return list.First();
+            return list.Count > 0 ? list.First() : null;
         }
 
         public async Task<List<T>> FindListAsync(Expression<Func<T, bool>> expression)

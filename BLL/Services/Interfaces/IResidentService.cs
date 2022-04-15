@@ -1,4 +1,5 @@
 ﻿using BLL.Dtos.Resident;
+using DAL.Models;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -21,7 +22,7 @@ namespace BLL.Services.Interfaces
         /// <param name="apartmentId"></param>
         /// <param name="marketManagerId"></param>
         /// <returns>residentId</returns>
-        Task<string> CreateGuest(ResidentGuest guest, string apartmentId, string marketManagerId);
+        Task<Resident> CreateGuest(ResidentGuest guest, string apartmentId, string marketManagerId);
 
 
         /// <summary>
