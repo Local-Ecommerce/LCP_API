@@ -53,7 +53,7 @@ namespace API
             //Add Swagger
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v2.9", new OpenApiInfo { Title = "Local Commerce Platform", Version = "v2.9" });
+                c.SwaggerDoc("v3.0", new OpenApiInfo { Title = "Local Commerce Platform", Version = "v3.0" });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
@@ -164,7 +164,7 @@ namespace API
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = "";
-                c.SwaggerEndpoint("/swagger/v2.9/swagger.json", "LCP v2.9");
+                c.SwaggerEndpoint("/swagger/v3.0/swagger.json", "LCP v3.0");
             });
             //}
 

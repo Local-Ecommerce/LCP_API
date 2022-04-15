@@ -1,4 +1,5 @@
-﻿using BLL.Dtos.MoMo.CaptureWallet;
+﻿using System.Threading.Tasks;
+using BLL.Dtos.MoMo.CaptureWallet;
 using BLL.Dtos.MoMo.IPN;
 
 namespace BLL.Services.Interfaces
@@ -18,13 +19,13 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="momoIPNRequest"></param>
         /// <returns></returns>
-        MoMoIPNResponse ProcessIPN(MoMoIPNRequest momoIPNRequest);
+        Task<MoMoIPNResponse> ProcessIPN(MoMoIPNRequest momoIPNRequest);
 
 
         /// <summary>
         /// Send Momo Payment Response To Client
         /// </summary>
         /// <param name="momoIPNRequest"></param>
-        void SendMomoPaymentResponseToClient(MoMoIPNRequest momoIPNRequest);
+        Task SendMomoPaymentResponseToClient(MoMoIPNRequest momoIPNRequest);
     }
 }

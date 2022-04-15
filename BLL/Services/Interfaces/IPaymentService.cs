@@ -11,7 +11,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="paymentRequest"></param>
         /// <returns></returns>
-        Task<PaymentResponse> CreatePayment(PaymentRequest paymentRequest);
+        Task<PaymentLinkResponse> CreatePayment(PaymentRequest paymentRequest);
 
 
         /// <summary>
