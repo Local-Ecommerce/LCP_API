@@ -279,10 +279,11 @@ namespace BLL.Services
                     if (!(bool)m.BaseMenu && repeatDateCharArray.Any(m.RepeatDate.Contains))
                     {
                         //if m.TimeStart <= timeStart or timeEnd <= m.TimeEnd
-                        if ((TimeSpan.Compare(timeStart, (TimeSpan)m.TimeStart) >= 0 &&
+                        if (((TimeSpan.Compare(timeStart, (TimeSpan)m.TimeStart) >= 0 &&
                                         (TimeSpan.Compare(timeStart, (TimeSpan)m.TimeEnd) < 0))
                             || (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeStart) > 0 &&
-                                        (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeEnd) <= 0)))
+                                        (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeEnd) <= 0))) &&
+                                        !m.Status.Equals((int)MenuStatus.DELETED_MENU))
                             return m.MenuName;
                     }
                 }
