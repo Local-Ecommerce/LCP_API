@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BLL.Dtos.Product;
+using System.Collections.ObjectModel;
 
 namespace BLL.Services
 {
@@ -186,6 +187,8 @@ namespace BLL.Services
             int?[] status, int? limit,
             int? page, string sort, string[] include)
         {
+            List<ExtendOrderResponse> responses = new();
+
             //check role
             if (role.Equals(ResidentType.MERCHANT))
             {
@@ -196,7 +199,7 @@ namespace BLL.Services
                 merchantStoreId = store.MerchantStoreId;
             }
 
-            residentId = !residentId.Equals(ResidentType.CUSTOMER) ? null : residentId;
+            residentId = !role.Equals(ResidentType.CUSTOMER) ? null : residentId;
 
             PagingModel<Order> orders;
             string propertyName = default;
@@ -212,6 +215,26 @@ namespace BLL.Services
             {
                 orders = await _unitOfWork.Orders.GetOrder
                         (id, residentId, status, merchantStoreId, limit, page, isAsc, propertyName, include);
+
+                if (include.Contains("product"))
+                {
+                    foreach (var order in orders.List)
+                    {
+                        Collection<OrderDetailResponse> details = new();
+
+                        foreach (var orderDetail in order.OrderDetails)
+                        {
+                            RelatedProductResponse product = _mapper.Map<RelatedProductResponse>(orderDetail.ProductInMenu.Product);
+                            OrderDetailResponse detail = _mapper.Map<OrderDetailResponse>(orderDetail);
+                            detail.Product = product;
+                            details.Add(detail);
+                        }
+                        ExtendOrderResponse response = _mapper.Map<ExtendOrderResponse>(order);
+                        response.OrderDetails = details;
+
+                        responses.Add(response);
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -221,7 +244,7 @@ namespace BLL.Services
 
             return new PagingModel<ExtendOrderResponse>
             {
-                List = _mapper.Map<List<ExtendOrderResponse>>(orders.List),
+                List = responses,
                 Page = orders.Page,
                 LastPage = orders.LastPage,
                 Total = orders.Total,

@@ -1,4 +1,5 @@
 ﻿using System;
+using BLL.Dtos.Product;
 
 namespace BLL.Dtos.OrderDetail
 {
@@ -13,5 +14,6 @@ namespace BLL.Dtos.OrderDetail
         public int? Status { get; set; }
         public string OrderId { get; set; }
         public string ProductInMenuId { get; set; }
+        public RelatedProductResponse Product { get; set; }
     }
 }
