@@ -39,6 +39,8 @@ namespace BLL.Mappings
             CreateMap<BaseProductRequest, Product>()
                 .ForSourceMember(src => src.ToBaseMenu, dest => dest.DoNotValidate());
             CreateMap<UpdateProductResponse, BaseProductResponse>();
+            CreateMap<Product, RelatedProductResponse>()
+                .ForMember(dest => dest.BaseProduct, act => act.MapFrom(src => src.BelongToNavigation));
 
             //Apartment Mapping
             CreateMap<ApartmentRequest, Apartment>()

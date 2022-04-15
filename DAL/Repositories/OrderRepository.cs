@@ -13,6 +13,7 @@ namespace DAL.Repositories
         public OrderRepository(LoichDBContext context) : base(context) { }
 
 
+
         /// <summary>
         /// Get Order
         /// </summary>
@@ -69,7 +70,8 @@ namespace DAL.Repositories
                         case "product":
                             query = query.Include(o => o.OrderDetails)
                                             .ThenInclude(od => od.ProductInMenu)
-                                            .ThenInclude(pim => pim.Product);
+                                            .ThenInclude(pim => pim.Product)
+                                            .ThenInclude(p => p.BelongToNavigation);
                             break;
                         case "resident":
                             query = query.Include(o => o.Resident);
