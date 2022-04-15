@@ -47,9 +47,9 @@ namespace API.Controllers
             watch.Start();
 
             //Create payment
-            PaymentResponse response = await _paymentService.CreatePayment(paymentRequest);
+            PaymentLinkResponse response = await _paymentService.CreatePayment(paymentRequest);
 
-            string json = JsonSerializer.Serialize(ApiResponse<PaymentResponse>.Success(response));
+            string json = JsonSerializer.Serialize(ApiResponse<PaymentLinkResponse>.Success(response));
 
             watch.Stop();
 
@@ -104,59 +104,59 @@ namespace API.Controllers
         /// <summary>
         /// Update Payment By Id (Customer)
         /// </summary>
-        [Authorize(Roles = ResidentType.CUSTOMER)]
-        [HttpPut]
-        public async Task<IActionResult> UpdatePaymentById([FromQuery] string id, [FromBody] PaymentRequest paymentRequest)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+        // [Authorize(Roles = ResidentType.CUSTOMER)]
+        // [HttpPut]
+        // public async Task<IActionResult> UpdatePaymentById([FromQuery] string id, [FromBody] PaymentRequest paymentRequest)
+        // {
+        //     //check token expired
+        //     _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
-            _logger.Information($"PUT api/payments?id={id} START Request: " +
-                $"{JsonSerializer.Serialize(paymentRequest)}");
+        //     _logger.Information($"PUT api/payments?id={id} START Request: " +
+        //         $"{JsonSerializer.Serialize(paymentRequest)}");
 
-            Stopwatch watch = new();
-            watch.Start();
+        //     Stopwatch watch = new();
+        //     watch.Start();
 
-            //Update payment
-            PaymentResponse response = await _paymentService.UpdatePaymentById(id, paymentRequest);
+        //     //Update payment
+        //     PaymentResponse response = await _paymentService.UpdatePaymentById(id, paymentRequest);
 
-            string json = JsonSerializer.Serialize(ApiResponse<PaymentResponse>.Success(response));
+        //     string json = JsonSerializer.Serialize(ApiResponse<PaymentResponse>.Success(response));
 
-            watch.Stop();
+        //     watch.Stop();
 
-            _logger.Information($"PUT api/payments?id={id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+        //     _logger.Information($"PUT api/payments?id={id} END duration: " +
+        //         $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
-            return Ok(json);
-        }
+        //     return Ok(json);
+        // }
 
 
-        /// <summary>
-        /// Delete Payment By Id (Customer)
-        /// </summary>
-        [Authorize(Roles = ResidentType.CUSTOMER)]
-        [HttpDelete]
-        public async Task<IActionResult> DeletePaymentById([FromQuery] string id)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+        // /// <summary>
+        // /// Delete Payment By Id (Customer)
+        // /// </summary>
+        // [Authorize(Roles = ResidentType.CUSTOMER)]
+        // [HttpDelete]
+        // public async Task<IActionResult> DeletePaymentById([FromQuery] string id)
+        // {
+        //     //check token expired
+        //     _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
-            _logger.Information($"DELETE api/payments?id={id} START");
+        //     _logger.Information($"DELETE api/payments?id={id} START");
 
-            Stopwatch watch = new();
-            watch.Start();
+        //     Stopwatch watch = new();
+        //     watch.Start();
 
-            //Delete payment
-            PaymentResponse response = await _paymentService.DeletePaymentById(id);
+        //     //Delete payment
+        //     PaymentResponse response = await _paymentService.DeletePaymentById(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<PaymentResponse>.Success(response));
+        //     string json = JsonSerializer.Serialize(ApiResponse<PaymentResponse>.Success(response));
 
-            watch.Stop();
+        //     watch.Stop();
 
-            _logger.Information($"DELETE api/payments?id={id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+        //     _logger.Information($"DELETE api/payments?id={id} END duration: " +
+        //         $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
-            return Ok(json);
-        }
+        //     return Ok(json);
+        // }
     }
 }

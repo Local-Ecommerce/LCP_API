@@ -259,6 +259,8 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("PaymentMethodID");
 
+                entity.Property(e => e.TransactionId).HasColumnName("TransactionID");
+
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.Payments)
                     .HasForeignKey(d => d.OrderId)

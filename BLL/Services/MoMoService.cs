@@ -11,6 +11,9 @@ using System.Text.Json;
 using DAL.Constants;
 using System.IO;
 using BLL.Dtos.Exception;
+using System;
+using DAL.Models;
+using System.Threading.Tasks;
 
 namespace BLL.Services
 {
@@ -99,7 +102,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="momoIPNRequest"></param>
         /// <returns></returns>
-        public MoMoIPNResponse ProcessIPN(MoMoIPNRequest momoIPNRequest)
+        public async Task<MoMoIPNResponse> ProcessIPN(MoMoIPNRequest momoIPNRequest)
         {
             // Validate signature
             List<string> ignoreFields = new List<string>() { "signature", "partnerName", "storeId", "lang" };
@@ -119,7 +122,7 @@ namespace BLL.Services
             }
 
             // update data donate and response to client
-            SendMomoPaymentResponseToClient(momoIPNRequest);
+            await SendMomoPaymentResponseToClient(momoIPNRequest);
 
             //response to MoMo
             MoMoIPNResponse momoIPNResponse = _mapper.Map<MoMoIPNResponse>(momoIPNRequest);
@@ -133,9 +136,23 @@ namespace BLL.Services
         /// Send Momo Payment Response To Client
         /// </summary>
         /// <param name="momoIPNRequest"></param>
-        public void SendMomoPaymentResponseToClient(MoMoIPNRequest momoIPNRequest)
+        public async Task SendMomoPaymentResponseToClient(MoMoIPNRequest momoIPNRequest)
         {
-            //not now dude
+            try
+            {
+                Payment payment = await _unitOfWork.Payments.FindAsync(p => p.OrderId.Equals(momoIPNRequest.OrderId));
+                payment.TransactionId = momoIPNRequest.TransId;
+                payment.ResultCode = momoIPNRequest.ResultCode;
+                payment.Status = momoIPNRequest.ResultCode == 0 ? (int)PaymentStatus.PAID : (int)PaymentStatus.FAILED;
+
+                _unitOfWork.Payments.Update(payment);
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[MoMoService.SendMomoPaymentResponseToClient()]: " + e.Message);
+                throw;
+            }
         }
     }
 }

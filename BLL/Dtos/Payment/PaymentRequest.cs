@@ -5,5 +5,6 @@
         public double? PaymentAmount { get; set; }
         public string OrderId { get; set; }
         public string PaymentMethodId { get; set; }
+        public string RedirectUrl { get; set; }
     }
 }

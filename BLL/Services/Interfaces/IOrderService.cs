@@ -2,6 +2,7 @@
 using BLL.Dtos.OrderDetail;
 using DAL.Models;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -70,8 +71,8 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Caculate Order Total Amount
         /// </summary>
-        /// <param name="orderDetail"></param>
+        /// <param name="orderDetails"></param>
         /// <returns></returns>
-        double? CaculateOrderTotalAmount(OrderDetail orderDetail);
+        double? CaculateOrderTotalAmount(Collection<OrderDetail> orderDetails);
     }
 }

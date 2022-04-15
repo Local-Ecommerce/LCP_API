@@ -8,6 +8,8 @@ using DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BLL.Dtos.MoMo.CaptureWallet;
+using Microsoft.Extensions.Configuration;
 
 namespace BLL.Services
 {
@@ -17,18 +19,28 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
+        private readonly IConfiguration _configuration;
+        private readonly ISecurityService _securityService;
+        private readonly IMoMoService _moMoService;
         private const string PREFIX = "PM_";
+        private const string MOMO = "PM_MOMO";
 
         public PaymentService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IUtilService utilService
+            IUtilService utilService,
+            IConfiguration configuration,
+            ISecurityService securityService,
+            IMoMoService moMoService
             )
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
+            _configuration = configuration;
+            _securityService = securityService;
+            _moMoService = moMoService;
         }
 
 
@@ -37,15 +49,58 @@ namespace BLL.Services
         /// </summary>
         /// <param name="paymentRequest"></param>
         /// <returns></returns>
-        public async Task<PaymentResponse> CreatePayment(PaymentRequest paymentRequest)
+        public async Task<PaymentLinkResponse> CreatePayment(PaymentRequest paymentRequest)
         {
-            Payment Payment = _mapper.Map<Payment>(paymentRequest);
+            PaymentLinkResponse response = null;
 
             try
             {
+                //check payment amount
+                Order order = await _unitOfWork.Orders.FindAsync(o => o.OrderId.Equals(paymentRequest.OrderId));
+                if (order.TotalAmount != paymentRequest.PaymentAmount)
+                    throw new BusinessException("Số tiền thanh toán không trùng khớp với giá trị đơn hàng");
+
+                //if payment method is MoMo
+                if (paymentRequest.PaymentMethodId.Equals(MOMO))
+                {
+                    MoMoCaptureWalletRequest momoRequest = new MoMoCaptureWalletRequest
+                    {
+                        PartnerCode = _configuration.GetValue<string>("MoMo:PartnerCode"),
+                        RequestId = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds().ToString(),
+                        Amount = Convert.ToInt64(paymentRequest.PaymentAmount),
+                        OrderId = paymentRequest.OrderId,
+                        OrderInfo = $"Thanh toán đơn hàng {paymentRequest.OrderId} từ LCP",
+                        RedirectUrl = paymentRequest.RedirectUrl,
+                        IpnUrl = "https://localcommercialplatform-api.azurewebsites.net/api/ipn",
+                        RequestType = "captureWallet",
+                        ExtraData = ""
+                    };
+
+                    // Validate signature
+                    List<string> ignoreFields = new List<string>() { "signature", "partnerName", "storeId", "lang" };
+
+                    string rawData = _securityService.GetRawDataSignature(momoRequest, ignoreFields);
+
+                    rawData = "accessKey=" + _configuration.GetValue<string>("MoMo:AccessKey") + "&" + rawData;
+
+                    string merchantSignature = _securityService.SignHmacSHA256(rawData, _configuration.GetValue<string>("MoMo:SecretKey"));
+
+                    momoRequest.Signature = merchantSignature;
+
+                    MoMoCaptureWalletResponse momoResponse = _moMoService.CreateCaptureWallet(momoRequest);
+
+                    response = new PaymentLinkResponse
+                    {
+                        Deeplink = momoResponse.Deeplink,
+                        PayUrl = momoResponse.PayUrl
+                    };
+                }
+
+                Payment Payment = _mapper.Map<Payment>(paymentRequest);
+
                 Payment.PaymentId = _utilService.CreateId(PREFIX);
                 Payment.DateTime = _utilService.CurrentTimeInVietnam();
-                Payment.Status = (int)PaymentStatus.PAID;
+                Payment.Status = (int)PaymentStatus.UNPAID;
 
                 _unitOfWork.Payments.Add(Payment);
 
@@ -54,11 +109,10 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[PaymentService.CreatePayment()]: " + e.Message);
-
                 throw;
             }
 
-            return _mapper.Map<PaymentResponse>(Payment);
+            return response;
         }
 
 

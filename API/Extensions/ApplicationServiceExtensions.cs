@@ -23,6 +23,7 @@ namespace API.Extensions
             services.AddScoped<IValidateDataService, ValidateDataService>();
             services.AddScoped<IUtilService, UtilService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ISecurityService, SecurityService>();
             services.AddScoped<IApartmentService, ApartmentService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ISystemCategoryService, SystemCategoryService>();
@@ -31,13 +32,12 @@ namespace API.Extensions
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IPoiService, PoiService>();
             services.AddScoped<IMenuService, MenuService>();
-            services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IPaymentMethodService, PaymentMethodService>();
             services.AddScoped<IFirebaseService, FirebaseService>();
             services.AddScoped<IResidentService, ResidentService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IMoMoService, MoMoService>();
-            services.AddScoped<ISecurityService, SecurityService>();
+            services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IProductInMenuService, ProductInMenuService>();
 
             return services;

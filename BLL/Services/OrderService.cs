@@ -59,6 +59,8 @@ namespace BLL.Services
             List<ExtendOrderResponse> extendOrderResponses = new();
             try
             {
+                Resident resident = await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId));
+
                 //create new  orders and order details
                 foreach (OrderDetailRequest orderDetailRequest in orderDetailRequests)
                 {
@@ -70,57 +72,46 @@ namespace BLL.Services
 
                     Order order = orders.Find(o => o.MerchantStoreId.Equals(productInfoForOrder.MerchantStoreId));
 
+                    Collection<OrderDetail> details = order == null ?
+                        (Collection<OrderDetail>)order.OrderDetails : new Collection<OrderDetail>();
+
+                    string orderId = order == null ? _utilService.CreateId(PREFIX) : order.OrderId;
+
+                    //Create order Detail
+                    OrderDetail orderDetail = _mapper.Map<OrderDetail>(orderDetailRequest);
+                    orderDetail.OrderDetailId = _utilService.CreateId(SUB_PREFIX);
+                    orderDetail.OrderId = orderId;
+                    orderDetail.UnitPrice = productInfoForOrder.Price;
+                    orderDetail.FinalAmount =
+                        CaculateOrderDetailFinalAmount(orderDetail.UnitPrice, orderDetail.Quantity, orderDetail.Discount);
+                    orderDetail.OrderDate = _utilService.CurrentTimeInVietnam();
+                    orderDetail.Status = (int)OrderStatus.OPEN;
+                    orderDetail.ProductInMenuId = productInfoForOrder.ProductInMenuId;
+
+                    details.Add(orderDetail);
+
                     if (order == null)
                     {
-                        string orderId = _utilService.CreateId(PREFIX);
-
-                        //Create order Detail
-                        OrderDetail orderDetail = _mapper.Map<OrderDetail>(orderDetailRequest);
-                        orderDetail.OrderDetailId = _utilService.CreateId(SUB_PREFIX);
-                        orderDetail.OrderId = orderId;
-                        orderDetail.UnitPrice = productInfoForOrder.Price;
-                        orderDetail.FinalAmount =
-                            CaculateOrderDetailFinalAmount(orderDetail.UnitPrice, orderDetail.Quantity, orderDetail.Discount);
-                        orderDetail.OrderDate = _utilService.CurrentTimeInVietnam();
-                        orderDetail.Status = (int)OrderStatus.OPEN;
-                        orderDetail.ProductInMenuId = productInfoForOrder.ProductInMenuId;
-
                         //create order
                         order = new()
                         {
                             OrderId = orderId,
-                            DeliveryAddress = "",
+                            DeliveryAddress = resident.DeliveryAddress,
                             CreatedDate = _utilService.CurrentTimeInVietnam(),
                             UpdatedDate = _utilService.CurrentTimeInVietnam(),
-                            TotalAmount = CaculateOrderTotalAmount(orderDetail),
                             Status = orderDetail.Status,
                             Discount = orderDetail.Discount,
                             ResidentId = residentId,
                             MerchantStoreId = productInfoForOrder.MerchantStoreId,
                         };
 
-                        _unitOfWork.OrderDetails.Add(orderDetail);
-                        orders.Add(order);
-                    }
-                    else
-                    {
-                        //Create order Detail
-                        OrderDetail orderDetail = _mapper.Map<OrderDetail>(orderDetailRequest);
-                        orderDetail.OrderDetailId = _utilService.CreateId(SUB_PREFIX);
-                        orderDetail.OrderId = order.OrderId;
-                        orderDetail.UnitPrice = productInfoForOrder.Price;
-                        orderDetail.FinalAmount =
-                            CaculateOrderDetailFinalAmount(orderDetail.UnitPrice, orderDetail.Quantity, orderDetail.Discount);
-                        orderDetail.OrderDate = _utilService.CurrentTimeInVietnam();
-                        orderDetail.Status = (int)OrderStatus.OPEN;
-                        orderDetail.ProductInMenuId = productInfoForOrder.ProductInMenuId;
-
-                        _unitOfWork.OrderDetails.Add(orderDetail);
+                        order.OrderDetails = details;
                     }
                 }
                 //add to db
                 foreach (var order in orders)
                 {
+                    order.TotalAmount = CaculateOrderTotalAmount((Collection<OrderDetail>)order.OrderDetails);
                     _unitOfWork.Orders.Add(order);
                 }
 
@@ -261,18 +252,23 @@ namespace BLL.Services
         /// <returns></returns>
         public double? CaculateOrderDetailFinalAmount(double? price, int? quantity, double? discount)
         {
-            return price - price * discount;
+            return price * quantity - price * quantity * discount;
         }
 
 
         /// <summary>
         /// Caculate Order Total Amount
         /// </summary>
-        /// <param name="orderDetail"></param>
+        /// <param name="orderDetails"></param>
         /// <returns></returns>
-        public double? CaculateOrderTotalAmount(OrderDetail orderDetail)
+        public double? CaculateOrderTotalAmount(Collection<OrderDetail> orderDetails)
         {
-            return orderDetail.FinalAmount * orderDetail.Quantity;
+            double result = 0;
+            foreach (var detail in orderDetails)
+            {
+                result += (double)detail.FinalAmount;
+            }
+            return result;
         }
 
 
