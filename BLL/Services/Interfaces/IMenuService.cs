@@ -68,11 +68,13 @@ namespace BLL.Services.Interfaces
         /// <summary>
         /// Get Other Menu Has Same Time
         /// </summary>
+        /// <param name="menuId"></param>
         /// <param name="timeStart"></param>
         /// <param name="timeEnd"></param>
         /// <param name="repeatDate"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<string> GetOtherMenuHasSameTime(TimeSpan timeStart, TimeSpan timeEnd, string repeatDate, string residentId);
+        Task<string> GetOtherMenuHasSameTime(string menuId, TimeSpan timeStart, TimeSpan timeEnd,
+            string repeatDate, string residentId);
     }
 }
