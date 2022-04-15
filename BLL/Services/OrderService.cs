@@ -289,8 +289,6 @@ namespace BLL.Services
             //update order
             try
             {
-                residentId = role.Equals(ResidentType.CUSTOMER) ? residentId : null;
-
                 Order order = await _unitOfWork.Orders.GetOrder(id);
 
                 //check merchant permission
