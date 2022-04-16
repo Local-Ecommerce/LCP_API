@@ -267,7 +267,7 @@ namespace BLL.Services
         /// <returns></returns>
         public double? CaculateOrderDetailFinalAmount(double? price, int? quantity, double? discount)
         {
-            return price * quantity - price * quantity * discount;
+            return discount != null ? price * quantity - price * quantity * discount : price * quantity;
         }
 
 
