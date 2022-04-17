@@ -9,6 +9,7 @@ namespace DAL.Models
     {
         public Product()
         {
+            Feedbacks = new HashSet<Feedback>();
             InverseBelongToNavigation = new HashSet<Product>();
             ProductInMenus = new HashSet<ProductInMenu>();
         }
@@ -35,6 +36,7 @@ namespace DAL.Models
         public virtual Product BelongToNavigation { get; set; }
         public virtual Resident Resident { get; set; }
         public virtual SystemCategory SystemCategory { get; set; }
+        public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Product> InverseBelongToNavigation { get; set; }
         public virtual ICollection<ProductInMenu> ProductInMenus { get; set; }
     }

@@ -1,4 +1,5 @@
-﻿using BLL.Dtos;
+﻿using API.Extensions;
+using BLL.Dtos;
 using BLL.Dtos.Resident;
 using BLL.Services.Interfaces;
 using DAL.Constants;
@@ -111,7 +112,7 @@ namespace API.Controllers
         /// <summary>
         /// Update Resident (Apartment Roles)
         /// </summary>
-        [Authorize(Roles = RoleId.APARTMENT)]
+        [AuthorizeRoles(ResidentType.CUSTOMER, ResidentType.MERCHANT, ResidentType.MARKET_MANAGER)]
         [HttpPut]
         public async Task<IActionResult> UpdateResident([FromQuery] string id,
                                                       [FromBody] ResidentUpdateRequest residentUpdateRequest)

@@ -11,6 +11,7 @@ namespace DAL.UnitOfWork
         private LoichDBContext _context;
         private IAccountRepository _accountRepository;
         private IApartmentRepository _apartmentRepository;
+        private IFeedbackRepository _feedbackRepository;
         private IMenuRepository _menuRepository;
         private IOrderRepository _orderRepository;
         private IMerchantStoreRepository _merchantStoreRepository;
@@ -41,6 +42,15 @@ namespace DAL.UnitOfWork
             {
                 if (_apartmentRepository == null) _apartmentRepository = new ApartmentRepository(_context);
                 return _apartmentRepository;
+            }
+        }
+
+        public IFeedbackRepository Feedbacks
+        {
+            get
+            {
+                if (_feedbackRepository == null) _feedbackRepository = new FeedbackRepository(_context);
+                return _feedbackRepository;
             }
         }
 
