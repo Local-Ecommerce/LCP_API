@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BLL.Dtos.Account;
 using BLL.Dtos.Apartment;
+using BLL.Dtos.Feedback;
 using BLL.Dtos.Menu;
 using BLL.Dtos.MerchantStore;
 using BLL.Dtos.MoMo.IPN;
@@ -115,7 +116,7 @@ namespace BLL.Mappings
 
             //Order & Order Detail Mapping
             CreateMap<OrderDetailRequest, OrderDetail>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); ;
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<OrderDetail, OrderDetailResponse>();
             CreateMap<Order, OrderResponse>();
             CreateMap<Order, ExtendOrderResponse>();
@@ -126,6 +127,11 @@ namespace BLL.Mappings
             //Refresh Token Mapping
             CreateMap<RefreshToken, RefreshTokenDto>().ReverseMap();
             CreateMap<RefreshToken, ExtendRefreshTokenDto>().ReverseMap();
+
+            //Feedback Mapping
+            CreateMap<FeedbackRequest, Feedback>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<Feedback, FeedbackResponse>();
         }
     }
 }
