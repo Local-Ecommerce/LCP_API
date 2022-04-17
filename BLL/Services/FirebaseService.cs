@@ -159,7 +159,8 @@ namespace BLL.Services
                         CreatedDate = _utilService.CurrentTimeInVietnam(),
                         UpdatedDate = _utilService.CurrentTimeInVietnam(),
                         Status = (int)ResidentStatus.UNVERIFIED_RESIDENT,
-                        ApartmentId = (string)documentDictionary["apartmentId"]
+                        ApartmentId = (string)documentDictionary["apartmentId"],
+                        PhoneNumber = documentDictionary.ContainsKey("phoneNumber") ? (string)documentDictionary["phoneNumber"] : null
                     };
 
                     extendAccountResponse = new ExtendAccountResponse

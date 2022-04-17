@@ -19,6 +19,7 @@ namespace DAL.Models
 
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<Apartment> Apartments { get; set; }
+        public virtual DbSet<Feedback> Feedbacks { get; set; }
         public virtual DbSet<Menu> Menus { get; set; }
         public virtual DbSet<MerchantStore> MerchantStores { get; set; }
         public virtual DbSet<News> News { get; set; }
@@ -82,6 +83,38 @@ namespace DAL.Models
                 entity.Property(e => e.Address).HasMaxLength(250);
 
                 entity.Property(e => e.ApartmentName).HasMaxLength(250);
+            });
+
+            modelBuilder.Entity<Feedback>(entity =>
+            {
+                entity.ToTable("Feedback");
+
+                entity.Property(e => e.FeedbackId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("FeedbackID");
+
+                entity.Property(e => e.Image).IsUnicode(false);
+
+                entity.Property(e => e.ProductId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("ProductID");
+
+                entity.Property(e => e.ResidentId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("ResidentID");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.ProductId)
+                    .HasConstraintName("FK_Feedback_Product");
+
+                entity.HasOne(d => d.Resident)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.ResidentId)
+                    .HasConstraintName("FK_Feedback_Resident");
             });
 
             modelBuilder.Entity<Menu>(entity =>
