@@ -289,11 +289,13 @@ namespace BLL.Services
 
             //get updated store from redis
             List<MerchantStoreResponse> storeRedis = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY_FOR_UPDATE);
-
-            foreach (var response in responses)
+            if (storeRedis != null)
             {
-                response.UpdatedMerchantStore = storeRedis.Where(ms => ms.MerchantStoreId.Equals(response.MerchantStoreId))
-                    .First();
+                foreach (var response in responses)
+                {
+                    response.UpdatedMerchantStore = storeRedis.Where(ms => ms.MerchantStoreId.Equals(response.MerchantStoreId))
+                        .First();
+                }
             }
 
             return new PagingModel<ExtendMerchantStoreResponse>
