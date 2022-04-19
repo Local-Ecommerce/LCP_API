@@ -232,7 +232,7 @@ namespace BLL.Services
                         {
                             RelatedProductResponse product = _mapper.Map<RelatedProductResponse>(orderDetail.ProductInMenu.Product);
                             product.Image = product.BaseProduct.Image;
-                            OrderDetailResponse = _mapper.Map<OrderDetailResponse>(orderDetail);
+                            OrderDetailResponse detail = _mapper.Map<OrderDetailResponse>(orderDetail);
                             detail.Product = product;
                             details.Add(detail);
                         }
