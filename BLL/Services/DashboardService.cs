@@ -39,9 +39,12 @@ namespace BLL.Services
             try
             {
                 DateTime currentDate = _utilService.CurrentTimeInVietnam();
-                DateTime previousDate = currentDate.Subtract(new TimeSpan(-days, 0, 0, 0));
+                DateTime previousDate = currentDate.Subtract(new TimeSpan(days, 0, 0, 0));
 
-                List<Order> orders = await _unitOfWork.Orders.FindListAsync(o => o.ResidentId.Equals(residentId)
+                string storeId = (await _unitOfWork.MerchantStores.FindAsync(ms => ms.ResidentId.Equals(residentId)))
+                                    .MerchantStoreId;
+
+                List<Order> orders = await _unitOfWork.Orders.FindListAsync(o => o.MerchantStoreId.Equals(storeId)
                     && o.UpdatedDate.Value.Date <= currentDate.Date && o.UpdatedDate.Value.Date >= previousDate.Date);
 
                 dashboardForMerchant.TotalOrder = orders.Count;
