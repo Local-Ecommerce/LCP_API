@@ -231,7 +231,8 @@ namespace BLL.Services
                         foreach (var orderDetail in order.OrderDetails)
                         {
                             RelatedProductResponse product = _mapper.Map<RelatedProductResponse>(orderDetail.ProductInMenu.Product);
-                            OrderDetailResponse detail = _mapper.Map<OrderDetailResponse>(orderDetail);
+                            product.Image = product.BaseProduct.Image;
+                            OrderDetailResponse = _mapper.Map<OrderDetailResponse>(orderDetail);
                             detail.Product = product;
                             details.Add(detail);
                         }
