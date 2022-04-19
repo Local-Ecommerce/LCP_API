@@ -223,49 +223,6 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Update Account
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="accountImageForm"></param>
-        /// <returns></returns>
-        public async Task<ExtendAccountResponse> UpdateAccount(string id)
-        {
-            //biz rule
-
-            //valid id
-            Account account;
-            try
-            {
-                account = await _unitOfWork.Accounts.FindAsync(a => a.AccountId.Equals(id));
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[AccountService.UpdateAccount()]: " + e.Message);
-
-                throw new EntityNotFoundException(typeof(Account), id);
-            }
-
-            //update data
-            try
-            {
-                account.UpdatedDate = _utilService.CurrentTimeInVietnam();
-
-                _unitOfWork.Accounts.Update(account);
-
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[AccountService.UpdateAccount()]: " + e.Message);
-
-                throw;
-            }
-
-            return _mapper.Map<ExtendAccountResponse>(account);
-        }
-
-
-        /// <summary>
         /// Refresh Token
         /// </summary>
         /// <param name="refreshTokenDto"></param>
