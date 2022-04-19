@@ -287,15 +287,13 @@ namespace BLL.Services
 
             List<ExtendMerchantStoreResponse> responses = _mapper.Map<List<ExtendMerchantStoreResponse>>(merchantStore.List);
 
-            // get new stores's info if update
-            if (status.Contains((int)MerchantStoreStatus.UNVERIFIED_MERCHANT_STORE))
+            //get updated store from redis
+            List<MerchantStoreResponse> storeRedis = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY_FOR_UPDATE);
+
+            foreach (var response in responses)
             {
-                foreach (var response in responses)
-                {
-                    response.UpdatedMerchantStore = _redisService
-                            .GetList<MerchantStoreResponse>(CACHE_KEY_FOR_UPDATE)
-                            .Find(store => store.MerchantStoreId == response.MerchantStoreId);
-                }
+                response.UpdatedMerchantStore = storeRedis.Where(ms => ms.MerchantStoreId.Equals(response.MerchantStoreId))
+                    .First();
             }
 
             return new PagingModel<ExtendMerchantStoreResponse>
@@ -332,7 +330,8 @@ namespace BLL.Services
                 responses = _mapper.Map<List<ExtendMerchantStoreResponse>>(stores);
                 foreach (var response in responses)
                 {
-                    response.UpdatedMerchantStore = storeRedis.Where(ms => ms.MerchantStoreId.Equals(response.MerchantStoreId)).First();
+                    response.UpdatedMerchantStore = storeRedis.Where(ms => ms.MerchantStoreId.Equals(response.MerchantStoreId))
+                        .First();
                 }
             }
             catch (Exception e)
