@@ -147,35 +147,6 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Update Account (Authentication required)
-        /// </summary>
-        [Authorize]
-        [HttpPut]
-        public async Task<IActionResult> UpdateAccount([FromQuery] string id)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
-
-            _logger.Information($"PUT api/acccounts?id={id} START Request: ");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //update account
-            ExtendAccountResponse response = await _accountService.UpdateAccount(id);
-
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendAccountResponse>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information($"PUT api/accounts?id={id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
         /// Delete Account (Authentication required)
         /// </summary>
         [Authorize]

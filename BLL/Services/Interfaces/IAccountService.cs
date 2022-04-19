@@ -40,14 +40,6 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Update Account
-        /// </summary>
-        /// <param name="accountRequest"></param>
-        /// <returns></returns>
-        Task<ExtendAccountResponse> UpdateAccount(string id);
-
-
-        /// <summary>
         /// Delete Account by id
         /// </summary>
         /// <param name="id"></param>
