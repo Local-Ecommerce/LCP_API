@@ -40,6 +40,7 @@ namespace API.Extensions
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IProductInMenuService, ProductInMenuService>();
             services.AddScoped<IFeedbackService, FeedbackService>();
+            services.AddScoped<IDashboardService, DashboardService>();
 
             return services;
         }
