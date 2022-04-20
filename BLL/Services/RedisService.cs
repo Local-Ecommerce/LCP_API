@@ -41,7 +41,7 @@ namespace BLL.Services
         {
             string cache = _distributedCache.GetString(key);
 
-            if (cache is null)
+            if (string.IsNullOrEmpty(cache) || cache.Equals("[]"))
             {
                 _logger.Information($"[RedisService.GetList()] No data for key '{key}'.");
 
@@ -113,7 +113,7 @@ namespace BLL.Services
             List<T> list = GetList<T>(listKey);
             T t = list.Find(predicate);
 
-            if(t != null)
+            if (t != null)
             {
                 list.Remove(t);
             }

@@ -289,7 +289,7 @@ namespace BLL.Services
 
             //get updated store from redis
             List<MerchantStoreResponse> storeRedis = _redisService.GetList<MerchantStoreResponse>(CACHE_KEY_FOR_UPDATE);
-            if (storeRedis != null)
+            if (!_utilService.IsNullOrEmpty(storeRedis))
             {
                 foreach (var response in responses)
                 {
