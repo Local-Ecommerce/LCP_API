@@ -19,19 +19,22 @@ namespace BLL.Services
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
         private readonly IValidateDataService _validateDataService;
-
+        private readonly IFirebaseService _firebaseService;
+        private const string TYPE = "Profile Image";
 
         public ResidentService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
             IUtilService utilService,
-            IValidateDataService validateDataService)
+            IValidateDataService validateDataService,
+            IFirebaseService firebaseService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
             _validateDataService = validateDataService;
+            _firebaseService = firebaseService;
         }
 
 
@@ -88,6 +91,7 @@ namespace BLL.Services
         public async Task<ResidentResponse> UpdateResidentById(string id, ResidentUpdateRequest residentUpdateRequest)
         {
             Resident resident;
+            Account account;
 
             //check valid dob
             if (!_validateDataService.IsLaterThanPresent(residentUpdateRequest.DateOfBirth))
@@ -95,13 +99,13 @@ namespace BLL.Services
                 _logger.Error($"[Invalid Date Of Birth : '{residentUpdateRequest.DateOfBirth}']");
 
                 throw new BusinessException(ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT.ToString(), (int)ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT);
-
             }
 
             //Check id
             try
             {
                 resident = await _unitOfWork.Residents.FindAsync(resident => resident.ResidentId.Equals(id));
+                account = await _unitOfWork.Accounts.FindAsync(a => a.AccountId.Equals(resident.AccountId));
             }
             catch (Exception e)
             {
@@ -117,6 +121,12 @@ namespace BLL.Services
                 resident.UpdatedDate = _utilService.CurrentTimeInVietnam();
 
                 _unitOfWork.Residents.Update(resident);
+
+                account.ProfileImage = _firebaseService
+                .UploadFileToFirebase(residentUpdateRequest.ProfileImage, TYPE, account.AccountId, "Image")
+                .Result;
+
+                _unitOfWork.Accounts.Update(account);
 
                 await _unitOfWork.SaveChangesAsync();
             }
