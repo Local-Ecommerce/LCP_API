@@ -86,7 +86,7 @@ namespace BLL.Services
                     orderDetail.OrderId = orderId;
                     orderDetail.UnitPrice = productInfoForOrder.Price;
                     orderDetail.FinalAmount =
-                        CaculateOrderDetailFinalAmount(orderDetail.UnitPrice, orderDetail.Quantity, orderDetail.Discount);
+                        CaculateOrderDetailFinalAmount(orderDetail.UnitPrice, orderDetail.Quantity);
                     orderDetail.OrderDate = _utilService.CurrentTimeInVietnam();
                     orderDetail.Status = (int)OrderStatus.OPEN;
                     orderDetail.ProductInMenuId = productInfoForOrder.ProductInMenuId;
@@ -104,7 +104,6 @@ namespace BLL.Services
                             UpdatedDate = _utilService.CurrentTimeInVietnam(),
                             TotalAmount = 0,
                             Status = orderDetail.Status,
-                            Discount = orderDetail.Discount,
                             ResidentId = residentId,
                             MerchantStoreId = productInfoForOrder.MerchantStoreId,
                         };
@@ -265,11 +264,10 @@ namespace BLL.Services
         /// </summary>
         /// <param name="price"></param>
         /// <param name="quantity"></param>
-        /// <param name="discount"></param>
         /// <returns></returns>
-        public double? CaculateOrderDetailFinalAmount(double? price, int? quantity, double? discount)
+        public double? CaculateOrderDetailFinalAmount(double? price, int? quantity)
         {
-            return discount != null ? price * quantity - price * quantity * discount : price * quantity;
+            return price * quantity;
         }
 
 

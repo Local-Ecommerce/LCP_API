@@ -56,8 +56,6 @@ namespace DAL.Models
                     .IsUnicode(false)
                     .HasColumnName("AccountID");
 
-                entity.Property(e => e.AvatarImage).IsUnicode(false);
-
                 entity.Property(e => e.ProfileImage).IsUnicode(false);
 
                 entity.Property(e => e.RoleId)

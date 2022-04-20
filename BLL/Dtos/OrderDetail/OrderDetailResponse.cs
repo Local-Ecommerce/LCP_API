@@ -9,7 +9,6 @@ namespace BLL.Dtos.OrderDetail
         public int? Quantity { get; set; }
         public DateTime? OrderDate { get; set; }
         public double? FinalAmount { get; set; }
-        public double? Discount { get; set; }
         public double? UnitPrice { get; set; }
         public int? Status { get; set; }
         public string OrderId { get; set; }

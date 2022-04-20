@@ -65,9 +65,8 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="price"></param>
         /// <param name="quantity"></param>
-        /// <param name="discount"></param>
         /// <returns></returns>
-        double? CaculateOrderDetailFinalAmount(double? price, int? quantity, double? discount);
+        double? CaculateOrderDetailFinalAmount(double? price, int? quantity);
 
 
         /// <summary>

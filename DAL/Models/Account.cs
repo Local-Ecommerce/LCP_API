@@ -15,7 +15,6 @@ namespace DAL.Models
 
         public string AccountId { get; set; }
         public string ProfileImage { get; set; }
-        public string AvatarImage { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string RoleId { get; set; }
