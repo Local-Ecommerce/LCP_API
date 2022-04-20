@@ -168,7 +168,6 @@ namespace BLL.Services
                         AccountId = document.Id,
                         Username = documentDictionary.ContainsKey("username") ? (string)documentDictionary["username"] : default,
                         ProfileImage = "",
-                        AvatarImage = "",
                         CreatedDate = _utilService.CurrentTimeInVietnam(),
                         UpdatedDate = _utilService.CurrentTimeInVietnam(),
                         Status = (int)AccountStatus.ACTIVE_ACCOUNT,

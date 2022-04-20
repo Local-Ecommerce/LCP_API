@@ -19,7 +19,6 @@ namespace DAL.Models
         public DateTime? UpdatedDate { get; set; }
         public double? TotalAmount { get; set; }
         public int? Status { get; set; }
-        public double? Discount { get; set; }
         public string ResidentId { get; set; }
         public string MerchantStoreId { get; set; }
 
