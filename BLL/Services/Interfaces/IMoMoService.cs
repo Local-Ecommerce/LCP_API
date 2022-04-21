@@ -23,9 +23,9 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Send Momo Payment Response To Client
+        /// Update Payment Result
         /// </summary>
         /// <param name="momoIPNRequest"></param>
-        Task SendMomoPaymentResponseToClient(MoMoIPNRequest momoIPNRequest);
+        Task UpdatePaymentResult(MoMoIPNRequest momoIPNRequest);
     }
 }

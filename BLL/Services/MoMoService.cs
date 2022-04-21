@@ -65,7 +65,7 @@ namespace BLL.Services
             request.Timeout = (int)TimeUnit.TIMEOUT_20_SEC;
             request.ReadWriteTimeout = (int)TimeUnit.READ_WRITE_TIMEOUT;
 
-            _logger.Information($"[MoMoCaptureWallet] Start request with data: {jsonData}");
+            _logger.Information($"[MoMoService.CreateCaptureWallet] Start request with data: {jsonData}");
 
             // Open request stream to send data
             Stream requestStream = request.GetRequestStream();
@@ -90,10 +90,9 @@ namespace BLL.Services
             response.Close();
             responseStream.Close();
 
-            _logger.Information($"[MoMoCaptureWallet] End request with data: {responseString}");
+            _logger.Information($"[MoMoService.CreateCaptureWallet] End request with data: {responseString}");
 
             result = JsonSerializer.Deserialize<MoMoCaptureWalletResponse>(responseString);
-            _logger.Information($"Result: {result.ToString()}");
 
             return result;
         }
@@ -107,24 +106,25 @@ namespace BLL.Services
         public async Task<MoMoIPNResponse> ProcessIPN(MoMoIPNRequest momoIPNRequest)
         {
             // Validate signature
-            List<string> ignoreFields = new List<string>() { "signature", "partnerName", "storeId", "lang" };
+            List<string> ignoreFields = new List<string>() { "Signature", "PartnerName", "StoreId", "Lang" };
             string rawData = _securityService.GetRawDataSignature(momoIPNRequest, ignoreFields);
             rawData = "accessKey=" + _configuration.GetValue<string>("MoMo:AccessKey") + "&" + rawData;
 
             string merchantSignature = _securityService.SignHmacSHA256(rawData, _configuration.GetValue<string>("MoMo:SecretKey"));
 
-            _logger.Information($"[MoMo IPN] MoMo - Merchant signature: {momoIPNRequest.Signature} - {merchantSignature}");
+            _logger.Information("[MoMoService.ProcessIPN] MoMo - Merchant signature: " +
+                $"{momoIPNRequest.Signature} - {merchantSignature}");
 
             if (!merchantSignature.Equals(momoIPNRequest.Signature))
             {
-                _logger.Error("[MoMoIPN] Signature not match!");
+                _logger.Error("[MoMoService.ProcessIPN] Signature not match!");
 
                 throw new BusinessException(MoMoStatus.MOMO_IPN_SIGNATURE_NOT_MATCH.ToString(), (int)MoMoStatus.MOMO_IPN_SIGNATURE_NOT_MATCH);
 
             }
 
-            // update data donate and response to client
-            await SendMomoPaymentResponseToClient(momoIPNRequest);
+            // update payment
+            await UpdatePaymentResult(momoIPNRequest);
 
             //response to MoMo
             MoMoIPNResponse momoIPNResponse = _mapper.Map<MoMoIPNResponse>(momoIPNRequest);
@@ -135,10 +135,10 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Send Momo Payment Response To Client
+        /// Update Payment Result
         /// </summary>
         /// <param name="momoIPNRequest"></param>
-        public async Task SendMomoPaymentResponseToClient(MoMoIPNRequest momoIPNRequest)
+        public async Task UpdatePaymentResult(MoMoIPNRequest momoIPNRequest)
         {
             try
             {
@@ -152,7 +152,7 @@ namespace BLL.Services
             }
             catch (Exception e)
             {
-                _logger.Error("[MoMoService.SendMomoPaymentResponseToClient()]: " + e.Message);
+                _logger.Error("[MoMoService.UpdatePaymentResult()]: " + e.Message);
                 throw;
             }
         }
