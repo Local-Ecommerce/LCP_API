@@ -31,22 +31,5 @@ namespace BLL.Services.Interfaces
             string paymentMethodId, DateTime date,
             int?[] status, int? limit,
             int? page, string sort);
-
-
-        /// <summary>
-        /// update Payment
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="PaymentRequest"></param>
-        /// <returns></returns>
-        Task<PaymentResponse> UpdatePaymentById(string id, PaymentRequest PaymentRequest);
-
-
-        /// <summary>
-        /// delete Payment
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<PaymentResponse> DeletePaymentById(string id);
     }
 }
