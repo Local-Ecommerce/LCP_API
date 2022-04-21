@@ -5,7 +5,8 @@
         THIRTY_DAYS = 30,
         ONE_HOUR = 1,
         TWENTY_FOUR_HOUR = 24,
-        TIMEOUT_20_SEC = 20000
+        TIMEOUT_20_SEC = 20000,
+        READ_WRITE_TIMEOUT = 30000
     }
 
     public enum CategoryLevel

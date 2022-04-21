@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json.Linq;
 
 namespace BLL.Dtos.MoMo.CaptureWallet
 {
@@ -18,5 +20,29 @@ namespace BLL.Dtos.MoMo.CaptureWallet
         public string ExtraData { get; set; }
         public string Lang { get; set; } = "vi";
         public string Signature { get; set; }
+
+        [JsonIgnore]
+        public JObject ToJson
+        {
+            get
+            {
+                return new JObject
+                {
+                { "partnerCode", this.PartnerCode },
+                { "partnerName", "Test" },
+                { "storeId", "MomoTestStore" },
+                { "requestId", this.RequestId },
+                { "amount", this.Amount },
+                { "orderId", this.OrderId },
+                { "orderInfo", this.OrderInfo },
+                { "redirectUrl", this.RedirectUrl },
+                { "ipnUrl", this.IpnUrl },
+                { "lang", "en" },
+                { "extraData", this.ExtraData },
+                { "requestType", this.RequestType },
+                { "signature", this.Signature }
+                };
+            }
+        }
     }
 }

@@ -12,10 +12,13 @@ namespace BLL.Services
     public class SecurityService : ISecurityService
     {
         private readonly ILogger _logger;
+        private readonly IUtilService _utilService;
 
-        public SecurityService(ILogger logger)
+        public SecurityService(ILogger logger,
+        IUtilService utilService)
         {
             _logger = logger;
+            _utilService = utilService;
         }
 
 
@@ -43,7 +46,7 @@ namespace BLL.Services
                     {
                         continue;
                     }
-                    result += props[i].Name + "=" + props[i].GetValue(obj, null);
+                    result += _utilService.LowerCaseFirstLetter(props[i].Name) + "=" + props[i].GetValue(obj, null);
                     if (i != props.Length - 1) result += "&";
                 }
 
@@ -52,7 +55,6 @@ namespace BLL.Services
                     result = result.Remove(result.Length - 1, 1);
                 }
 
-                _logger.Information($"[GetRawDataSignature] Value: {result}");
                 return result;
             }
             catch (Exception ex)

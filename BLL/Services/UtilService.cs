@@ -93,6 +93,19 @@ namespace BLL.Services
 
 
         /// <summary>
+        /// Lower Case First Letter
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public string LowerCaseFirstLetter(string str)
+        {
+            if (!string.IsNullOrEmpty(str))
+                return str[0].ToString().ToLower() + str[1..];
+            return str;
+        }
+
+
+        /// <summary>
         /// Current Time In Vietnam
         /// </summary>
         /// <returns></returns>
