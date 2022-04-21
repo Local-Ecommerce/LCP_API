@@ -52,17 +52,18 @@ namespace BLL.Services
             //try
             //{
             // Convert object to json string
-            string jsonData = JsonSerializer.Serialize(requestData);
+            string jsonData = requestData.ToJson.ToString();
 
             // Encoding to UTF8 before pass params
             byte[] byteData = Encoding.UTF8.GetBytes(jsonData);
 
             request = (HttpWebRequest)WebRequest.Create(Endpoint.MOMO_TEST + Endpoint.MOMO_CREATE_PAYMENT);
+            request.ProtocolVersion = HttpVersion.Version11;
             request.Method = "POST";
             request.ContentType = "application/json";
             request.ContentLength = byteData.Length;
             request.Timeout = (int)TimeUnit.TIMEOUT_20_SEC;
-            request.ReadWriteTimeout = (int)TimeUnit.TIMEOUT_20_SEC;
+            request.ReadWriteTimeout = (int)TimeUnit.READ_WRITE_TIMEOUT;
 
             _logger.Information($"[MoMoCaptureWallet] Start request with data: {jsonData}");
 
@@ -92,6 +93,7 @@ namespace BLL.Services
             _logger.Information($"[MoMoCaptureWallet] End request with data: {responseString}");
 
             result = JsonSerializer.Deserialize<MoMoCaptureWalletResponse>(responseString);
+            _logger.Information($"Result: {result.ToString()}");
 
             return result;
         }

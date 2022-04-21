@@ -4,17 +4,17 @@ namespace BLL.Dtos.MoMo.CaptureWallet
 {
     public class MoMoCaptureWalletResponse
     {
-        public string PartnerCode { get; set; }
-        public string RequestId { get; set; }
-        public string OrderId { get; set; }
-        public long Amount { get; set; }
-        public long ResponseTime { get; set; }
-        public string Message { get; set; }
-        public int ResultCode { get; set; }
-        public string PayUrl { get; set; }
-        public string Deeplink { get; set; }
-        public string QrCodeUrl { get; set; }
-        public string DeeplinkWebInApp { get; set; }
-        public string DeeplinkMiniApp { get; set; }
+        public string partnerCode { get; set; }
+        public string requestId { get; set; }
+        public string orderId { get; set; }
+        public long amount { get; set; }
+        public long responseTime { get; set; }
+        public string message { get; set; }
+        public int resultCode { get; set; }
+        public string payUrl { get; set; }
+        public string deeplink { get; set; }
+        public string qrCodeUrl { get; set; }
+        public string deeplinkWebInApp { get; set; }
+        public string deeplinkMiniApp { get; set; }
     }
 }

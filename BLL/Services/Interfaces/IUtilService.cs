@@ -53,6 +53,15 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         string UpperCaseFirstLetter(string str);
 
+
+        /// <summary>
+        /// Lower Case First Letter
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        string LowerCaseFirstLetter(string str);
+
+
         /// <summary>
         /// Current Time In Vietnam
         /// </summary>

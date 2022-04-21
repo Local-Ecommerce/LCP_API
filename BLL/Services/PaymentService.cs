@@ -66,22 +66,24 @@ namespace BLL.Services
                     MoMoCaptureWalletRequest momoRequest = new MoMoCaptureWalletRequest
                     {
                         PartnerCode = _configuration.GetValue<string>("MoMo:PartnerCode"),
-                        RequestId = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds().ToString(),
+                        RequestId = Guid.NewGuid().ToString(),
                         Amount = Convert.ToInt64(paymentRequest.PaymentAmount),
                         OrderId = paymentRequest.OrderId,
                         OrderInfo = $"Thanh toán đơn hàng {paymentRequest.OrderId} từ LCP",
                         RedirectUrl = paymentRequest.RedirectUrl,
                         IpnUrl = "https://localcommercialplatform-api.azurewebsites.net/api/ipn",
                         RequestType = "captureWallet",
-                        ExtraData = ""
+                        ExtraData = "",
+                        StoreId = "Test_01"
                     };
 
                     // Validate signature
-                    List<string> ignoreFields = new List<string>() { "signature", "partnerName", "storeId", "lang" };
+                    List<string> ignoreFields = new List<string>() { "Signature", "PartnerName", "StoreId", "Lang", "ToJson" };
 
                     string rawData = _securityService.GetRawDataSignature(momoRequest, ignoreFields);
 
                     rawData = "accessKey=" + _configuration.GetValue<string>("MoMo:AccessKey") + "&" + rawData;
+                    _logger.Information($"[GetRawDataSignature] Value: {rawData}");
 
                     string merchantSignature = _securityService.SignHmacSHA256(rawData, _configuration.GetValue<string>("MoMo:SecretKey"));
 
@@ -91,8 +93,8 @@ namespace BLL.Services
 
                     response = new PaymentLinkResponse
                     {
-                        Deeplink = momoResponse.Deeplink,
-                        PayUrl = momoResponse.PayUrl
+                        Deeplink = momoResponse.deeplink,
+                        PayUrl = momoResponse.payUrl
                     };
                 }
 
