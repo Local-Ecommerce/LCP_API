@@ -300,7 +300,10 @@ namespace BLL.Services
             //update order
             try
             {
-                Order order = await _unitOfWork.Orders.FindAsync(o => o.OrderId.Equals(id));
+                Order order =
+                    (await _unitOfWork.Orders.GetOrder(id, null, null, null, null, null, false, null, new string[] { "payment" }))
+                        .List
+                        .FirstOrDefault();
 
                 //check merchant permission
                 if (role.Equals(ResidentType.MERCHANT))
@@ -323,6 +326,12 @@ namespace BLL.Services
                     throw new BusinessException($"Trạng thái đơn hàng: {status} không khả dụng");
 
                 order.Status = status;
+                if (status.Equals((int)OrderStatus.COMPLETED) && order.Payments.Any(p => p.PaymentMethodId.Equals("PM_CASH")))
+                {
+                    Payment payment = order.Payments.Where(p => p.PaymentMethod.Equals("PM_CASH")).FirstOrDefault();
+                    payment.Status = (int)PaymentStatus.PAID;
+                }
+
                 _unitOfWork.Orders.Update(order);
 
                 await _unitOfWork.SaveChangesAsync();
@@ -333,6 +342,5 @@ namespace BLL.Services
                 throw;
             }
         }
-
     }
 }
