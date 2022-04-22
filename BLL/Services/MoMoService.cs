@@ -103,14 +103,13 @@ namespace BLL.Services
         /// </summary>
         /// <param name="momoIPNRequest"></param>
         /// <returns></returns>
-        public async Task<MoMoIPNResponse> ProcessIPN(MoMoIPNRequest momoIPNRequest)
+        public async Task ProcessIPN(MoMoIPNRequest momoIPNRequest)
         {
             // Validate signature
             List<string> ignoreFields = new List<string>() { "Signature", "PartnerName", "StoreId", "Lang" };
-            string rawData = _securityService.GetRawDataSignature(momoIPNRequest, ignoreFields);
-            rawData = "accessKey=" + _configuration.GetValue<string>("MoMo:AccessKey") + "&" + rawData;
 
-            string merchantSignature = _securityService.SignHmacSHA256(rawData, _configuration.GetValue<string>("MoMo:SecretKey"));
+            string merchantSignature = _securityService.GetSignature(momoIPNRequest, ignoreFields,
+                _configuration.GetValue<string>("MoMo:AccessKey"), _configuration.GetValue<string>("MoMo:SecretKey"));
 
             _logger.Information("[MoMoService.ProcessIPN] MoMo - Merchant signature: " +
                 $"{momoIPNRequest.Signature} - {merchantSignature}");
@@ -125,12 +124,6 @@ namespace BLL.Services
 
             // update payment
             await UpdatePaymentResult(momoIPNRequest);
-
-            //response to MoMo
-            MoMoIPNResponse momoIPNResponse = _mapper.Map<MoMoIPNResponse>(momoIPNRequest);
-            momoIPNResponse.Signature = _securityService.GetRawDataSignature(momoIPNResponse, ignoreFields);
-
-            return momoIPNResponse;
         }
 
 

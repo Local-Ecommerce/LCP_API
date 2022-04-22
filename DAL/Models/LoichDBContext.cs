@@ -374,8 +374,6 @@ namespace DAL.Models
 
                 entity.Property(e => e.Image).IsUnicode(false);
 
-                entity.Property(e => e.IsFavorite).HasColumnName("isFavorite");
-
                 entity.Property(e => e.ProductCode)
                     .HasMaxLength(200)
                     .IsUnicode(false);

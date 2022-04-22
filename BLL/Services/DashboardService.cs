@@ -70,5 +70,17 @@ namespace BLL.Services
 
             return dashboardForMerchant;
         }
+
+
+        /// <summary>
+        /// Get Dashboard For Market Manager
+        /// </summary>
+        /// <param name="residentId"></param>
+        /// <param name="days"></param>
+        /// <returns></returns>
+        public Task<DashboardForMarketManager> GetDashboardForMarketManager(string residentId, int days)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

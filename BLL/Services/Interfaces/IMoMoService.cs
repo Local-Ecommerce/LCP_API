@@ -19,7 +19,7 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="momoIPNRequest"></param>
         /// <returns></returns>
-        Task<MoMoIPNResponse> ProcessIPN(MoMoIPNRequest momoIPNRequest);
+        Task ProcessIPN(MoMoIPNRequest momoIPNRequest);
 
 
         /// <summary>

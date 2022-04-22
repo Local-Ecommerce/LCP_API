@@ -36,10 +36,9 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
-            //Create payment
-            MoMoIPNResponse momoIPNResponse = await _momoService.ProcessIPN(momoIPNRequest);
+            await _momoService.ProcessIPN(momoIPNRequest);
 
-            string json = JsonSerializer.Serialize(ApiResponse<MoMoIPNResponse>.Success(momoIPNResponse));
+            string json = JsonSerializer.Serialize(ApiResponse<object>.Success());
 
             watch.Stop();
 

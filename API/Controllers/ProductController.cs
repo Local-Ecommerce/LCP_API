@@ -277,7 +277,7 @@ namespace API.Controllers
         /// </summary>
         [AuthorizeRoles(RoleId.ADMIN, ResidentType.MARKET_MANAGER)]
         [HttpPut("rejection")]
-        public async Task<IActionResult> RejectCreateProduct([FromQuery] string id)
+        public async Task<IActionResult> RejectProduct([FromQuery] string id)
         {
             //check token expired
             _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
