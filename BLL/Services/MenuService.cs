@@ -280,12 +280,19 @@ namespace BLL.Services
                     //if contain same day of week
                     if (!(bool)m.BaseMenu && repeatDateCharArray.Any(m.RepeatDate.Contains))
                     {
-                        //if m.TimeStart <= timeStart or timeEnd <= m.TimeEnd
-                        if (((TimeSpan.Compare(timeStart, (TimeSpan)m.TimeStart) >= 0 &&
+                        if (
+                            //if m.TimeStart <= timeStart or timeEnd <= m.TimeEnd
+                            (((TimeSpan.Compare(timeStart, (TimeSpan)m.TimeStart) >= 0 &&
                                         (TimeSpan.Compare(timeStart, (TimeSpan)m.TimeEnd) < 0))
                             || (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeStart) > 0 &&
-                                        (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeEnd) <= 0))) &&
-                                        !m.Status.Equals((int)MenuStatus.DELETED_MENU) && !m.MenuId.Equals(menuId))
+                                        (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeEnd) <= 0)))
+
+                            //timeStart <= m.TimeStart < m.TimeEnd <= timeEnd
+                            || ((TimeSpan.Compare(timeStart, (TimeSpan)m.TimeStart) <= 0 &&
+                                        (TimeSpan.Compare(timeEnd, (TimeSpan)m.TimeEnd) >= 0))))
+
+                            && !m.Status.Equals((int)MenuStatus.DELETED_MENU) && !m.MenuId.Equals(menuId)
+                           )
                             return m.MenuName;
                     }
                 }
