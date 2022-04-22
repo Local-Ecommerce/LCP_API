@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -97,15 +98,15 @@ namespace DAL.Repositories
 
 
         /// <summary>
-        /// Get Order
+        /// Get Order By Apartment Id
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="apartmentId"></param>
         /// <returns></returns>
-        public async Task<Order> GetOrder(string id)
+        public async Task<List<Order>> GetOrderByApartmentId(string apartmentId)
         {
-            return await _context.Orders
-                                .Where(o => o.OrderId.Equals(id))
-                                .FirstAsync();
+            return await _context.Orders.Include(o => o.Resident)
+                                        .Where(o => o.Resident.ApartmentId.Equals(apartmentId))
+                                        .ToListAsync();
         }
     }
 }

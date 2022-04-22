@@ -69,7 +69,7 @@ namespace API.Controllers
             }
             else
             {
-
+                response = await _dashboardService.GetDashboardForMarketManager(residentId, role, days);
             }
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));

@@ -300,7 +300,7 @@ namespace BLL.Services
             //update order
             try
             {
-                Order order = await _unitOfWork.Orders.GetOrder(id);
+                Order order = await _unitOfWork.Orders.FindAsync(o => o.OrderId.Equals(id));
 
                 //check merchant permission
                 if (role.Equals(ResidentType.MERCHANT))

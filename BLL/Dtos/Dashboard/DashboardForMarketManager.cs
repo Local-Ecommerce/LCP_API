@@ -9,6 +9,7 @@ namespace BLL.Dtos.Dashboard
             this.TotalFeedback = 0;
             this.TotalProduct = 0;
             this.TotalStore = 0;
+            this.TotalMenu = 0;
         }
 
         public int TotalCompletedOrder { get; set; }
@@ -16,5 +17,6 @@ namespace BLL.Dtos.Dashboard
         public int TotalFeedback { get; set; }
         public int TotalProduct { get; set; }
         public int TotalStore { get; set; }
+        public int TotalMenu { get; set; }
     }
 }

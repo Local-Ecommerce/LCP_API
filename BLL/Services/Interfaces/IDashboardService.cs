@@ -18,8 +18,9 @@ namespace BLL.Services.Interfaces
         /// Get Dashboard For Market Manager
         /// </summary>
         /// <param name="residentId"></param>
+        /// <param name="role"></param>
         /// <param name="days"></param>
         /// <returns></returns>
-        Task<DashboardForMarketManager> GetDashboardForMarketManager(string residentId, int days);
+        Task<DashboardForMarketManager> GetDashboardForMarketManager(string residentId, string role, int days);
     }
 }
