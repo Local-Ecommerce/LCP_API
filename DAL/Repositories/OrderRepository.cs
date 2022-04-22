@@ -77,6 +77,9 @@ namespace DAL.Repositories
                         case "resident":
                             query = query.Include(o => o.Resident);
                             break;
+                        case "payment":
+                            query = query.Include(o => o.Payments);
+                            break;
                     }
                 }
             }
