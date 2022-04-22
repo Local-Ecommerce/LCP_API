@@ -88,11 +88,7 @@ namespace BLL.Services
 
                     MoMoCaptureWalletResponse momoResponse = _moMoService.CreateCaptureWallet(momoRequest);
 
-                    response = new PaymentLinkResponse
-                    {
-                        Deeplink = momoResponse.deeplink,
-                        PayUrl = momoResponse.payUrl
-                    };
+                    response = new PaymentLinkResponse { PayUrl = momoResponse.payUrl };
                 }
 
                 Payment Payment = _mapper.Map<Payment>(paymentRequest);
