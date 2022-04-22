@@ -75,7 +75,6 @@ namespace BLL.Services
                 product.Status = (int)ProductStatus.UNVERIFIED_PRODUCT;
                 product.CreatedDate = _utilService.CurrentTimeInVietnam();
                 product.UpdatedDate = _utilService.CurrentTimeInVietnam();
-                product.IsFavorite = 0;
                 product.ApproveBy = "";
                 product.BelongTo = null;
                 product.ResidentId = residentId;
@@ -94,7 +93,6 @@ namespace BLL.Services
                     relatedProduct.CreatedDate = _utilService.CurrentTimeInVietnam();
                     relatedProduct.UpdatedDate = _utilService.CurrentTimeInVietnam();
                     relatedProduct.ApproveBy = "";
-                    relatedProduct.IsFavorite = 0;
                     relatedProduct.ResidentId = residentId;
                     relatedProduct.BelongTo = product.ProductId;
 

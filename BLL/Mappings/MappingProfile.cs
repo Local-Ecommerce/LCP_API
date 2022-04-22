@@ -121,9 +121,6 @@ namespace BLL.Mappings
             CreateMap<Order, OrderResponse>();
             CreateMap<Order, ExtendOrderResponse>();
 
-            //MoMo Mapping
-            CreateMap<MoMoIPNRequest, MoMoIPNResponse>();
-
             //Refresh Token Mapping
             CreateMap<RefreshToken, RefreshTokenDto>().ReverseMap();
             CreateMap<RefreshToken, ExtendRefreshTokenDto>().ReverseMap();

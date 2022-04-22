@@ -14,12 +14,14 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
-        /// Get Raw Data Signature
+        /// Get Signature
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <param name="ignoreField"></param>
+        /// <param name="accessKey"></param>
+        /// <param name="secretKey"></param>
+        /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        string GetRawDataSignature<T>(T obj, List<string> ignoreField);
+        string GetSignature<T>(T obj, List<string> ignoreField, string accessKey, string secretKey);
     }
 }

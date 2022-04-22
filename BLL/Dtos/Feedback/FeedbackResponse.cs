@@ -8,7 +8,6 @@ namespace BLL.Dtos.Feedback
         public string FeedbackDetail { get; set; }
         public DateTime? FeedbackDate { get; set; }
         public string Image { get; set; }
-        public double? Rating { get; set; }
         public string ResidentId { get; set; }
         public string ProductId { get; set; }
     }

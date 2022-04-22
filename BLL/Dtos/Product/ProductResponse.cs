@@ -19,7 +19,6 @@ namespace BLL.Dtos.Product
         public string Size { get; set; }
         public string Color { get; set; }
         public double? Weight { get; set; }
-        public int? IsFavorite { get; set; }
         public string BelongTo { get; set; }
         public string ResidentId { get; set; }
         public string SystemCategoryId { get; set; }

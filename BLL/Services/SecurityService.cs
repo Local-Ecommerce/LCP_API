@@ -1,11 +1,9 @@
 ﻿using BLL.Services.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BLL.Services
 {
@@ -23,15 +21,17 @@ namespace BLL.Services
 
 
         /// <summary>
-        /// Get Raw Data Signature
+        /// Get Signature
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <param name="ignoreField"></param>
+        /// <param name="accessKey"></param>
+        /// <param name="secretKey"></param>
+        /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public string GetRawDataSignature<T>(T obj, List<string> ignoreField)
+        public string GetSignature<T>(T obj, List<string> ignoreField, string accessKey, string secretKey)
         {
-            string result = "";
+            string result = "accessKey=" + accessKey + "&";
             try
             {
                 PropertyInfo[] props = obj.GetType().GetProperties();
@@ -55,11 +55,14 @@ namespace BLL.Services
                     result = result.Remove(result.Length - 1, 1);
                 }
 
+                _logger.Information($"[SecurityService.GetSignature] Value: {result}");
+
+                result = SignHmacSHA256(result, secretKey);
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.Error($"[GetRawDataSignature] Catch exception: {ex.Message}");
+                _logger.Error($"[SecurityService.GetSignature()] Catch exception: {ex.Message}");
                 return "";
             }
         }
@@ -91,7 +94,7 @@ namespace BLL.Services
             }
             catch (Exception ex)
             {
-                _logger.Error($"[SignHmacSHA256] Error: {ex.Message}");
+                _logger.Error($"[SecurityService.SignHmacSHA256()] Error: {ex.Message}");
                 return "";
             }
         }

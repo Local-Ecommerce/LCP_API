@@ -12,5 +12,14 @@ namespace BLL.Services.Interfaces
         /// <param name="days"></param>
         /// <returns></returns>
         Task<DashboardForMerchant> GetDashboardForMerchant(string residentId, int days);
+
+
+        /// <summary>
+        /// Get Dashboard For Market Manager
+        /// </summary>
+        /// <param name="residentId"></param>
+        /// <param name="days"></param>
+        /// <returns></returns>
+        Task<DashboardForMarketManager> GetDashboardForMarketManager(string residentId, int days);
     }
 }

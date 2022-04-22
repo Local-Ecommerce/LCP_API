@@ -71,7 +71,8 @@ namespace BLL.Services
                         OrderId = paymentRequest.OrderId,
                         OrderInfo = $"Thanh toán đơn hàng {paymentRequest.OrderId} từ LCP",
                         RedirectUrl = paymentRequest.RedirectUrl,
-                        IpnUrl = "https://localcommercialplatform-api.azurewebsites.net/api/ipn",
+                        // IpnUrl = "https://localcommercialplatform-api.azurewebsites.net/api/ipn",
+                        IpnUrl = "https://eeb8-171-240-159-178.ap.ngrok.io/api/ipn",
                         RequestType = "captureWallet",
                         ExtraData = "",
                         StoreId = "Test_01"
@@ -80,12 +81,8 @@ namespace BLL.Services
                     // Validate signature
                     List<string> ignoreFields = new List<string>() { "Signature", "PartnerName", "StoreId", "Lang", "ToJson" };
 
-                    string rawData = _securityService.GetRawDataSignature(momoRequest, ignoreFields);
-
-                    rawData = "accessKey=" + _configuration.GetValue<string>("MoMo:AccessKey") + "&" + rawData;
-                    _logger.Information($"[GetRawDataSignature] Value: {rawData}");
-
-                    string merchantSignature = _securityService.SignHmacSHA256(rawData, _configuration.GetValue<string>("MoMo:SecretKey"));
+                    string merchantSignature = _securityService.GetSignature(momoRequest, ignoreFields,
+                        _configuration.GetValue<string>("MoMo:AccessKey"), _configuration.GetValue<string>("MoMo:SecretKey"));
 
                     momoRequest.Signature = merchantSignature;
 
