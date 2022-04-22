@@ -76,11 +76,77 @@ namespace BLL.Services
         /// Get Dashboard For Market Manager
         /// </summary>
         /// <param name="residentId"></param>
+        /// <param name="role"></param>
         /// <param name="days"></param>
         /// <returns></returns>
-        public Task<DashboardForMarketManager> GetDashboardForMarketManager(string residentId, int days)
+        public async Task<DashboardForMarketManager> GetDashboardForMarketManager(string residentId, string role, int days)
         {
-            throw new NotImplementedException();
+            DashboardForMarketManager dashboardForMarketManager = new();
+            try
+            {
+                DateTime currentDate = _utilService.CurrentTimeInVietnam();
+                DateTime previousDate = currentDate.Subtract(new TimeSpan(days, 0, 0, 0));
+
+                string apartmentId = role.Equals(ResidentType.MARKET_MANAGER) ? (await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId))).ApartmentId : null;
+
+                List<Order> orders = await _unitOfWork.Orders.GetOrderByApartmentId(apartmentId);
+
+                //get total completed and canceled order
+                foreach (var order in orders)
+                {
+                    switch (order.Status)
+                    {
+                        case (int)OrderStatus.COMPLETED:
+                            dashboardForMarketManager.TotalCompletedOrder++;
+                            break;
+                        case (int)OrderStatus.CANCELED_ORDER:
+                            dashboardForMarketManager.TotalCanceledOrder++;
+                            break;
+                    }
+                }
+
+                //get total product
+                List<Product> products =
+                    (await _unitOfWork.Products.GetProduct(apartmentId: apartmentId, include: new string[] { "feedback" }))
+                    .List;
+
+                foreach (var product in products)
+                {
+                    if (product.CreatedDate.Value.Date >= previousDate && product.CreatedDate <= currentDate)
+                        dashboardForMarketManager.TotalProduct++;
+
+                    //get total feedback
+                    foreach (var feedback in product.Feedbacks)
+                    {
+                        if (feedback.FeedbackDate.Value.Date >= previousDate && feedback.FeedbackDate.Value.Date <= currentDate)
+                            dashboardForMarketManager.TotalFeedback++;
+                    }
+                }
+
+                //get total store
+                List<MerchantStore> stores = (await _unitOfWork.MerchantStores.GetMerchantStore(null, apartmentId, null, null, null, null, null, false, null, new string[] { "menu" })).List;
+
+                foreach (var store in stores)
+                {
+                    if (store.CreatedDate.Value.Date >= previousDate && store.CreatedDate <= currentDate)
+                        dashboardForMarketManager.TotalStore++;
+
+                    //get total menu
+                    foreach (var menu in store.Menus)
+                    {
+                        if (menu.CreatedDate.Value.Date >= previousDate && menu.CreatedDate.Value.Date <= currentDate)
+                            dashboardForMarketManager.TotalMenu++;
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[DashboardService.GetDashboardForMarketManager()]: " + e.Message);
+                throw;
+            }
+
+            return dashboardForMarketManager;
         }
     }
 }

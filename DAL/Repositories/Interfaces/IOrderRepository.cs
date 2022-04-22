@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Models;
 
@@ -27,10 +28,10 @@ namespace DAL.Repositories.Interfaces
 
 
         /// <summary>
-        /// Get Order
+        /// Get Order By Apartment Id
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="apartmentId"></param>
         /// <returns></returns>
-        Task<Order> GetOrder(string id);
+        Task<List<Order>> GetOrderByApartmentId(string apartmentId);
     }
 }

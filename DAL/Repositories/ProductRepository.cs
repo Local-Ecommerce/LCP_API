@@ -81,6 +81,9 @@ namespace DAL.Repositories
                             query = query.Include(p => p.ProductInMenus)
                                         .ThenInclude(pim => pim.Menu);
                             break;
+                        case "feedback":
+                            query = query.Include(p => p.Feedbacks);
+                            break;
                     }
                 }
             }
