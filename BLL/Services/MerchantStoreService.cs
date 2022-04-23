@@ -293,8 +293,9 @@ namespace BLL.Services
             {
                 foreach (var response in responses)
                 {
-                    response.UpdatedMerchantStore = storeRedis.Where(ms => ms.MerchantStoreId.Equals(response.MerchantStoreId))
-                        .First();
+                    if (storeRedis.Where(ms => ms.MerchantStoreId.Equals(response.MerchantStoreId)).FirstOrDefault() != null)
+                        response.UpdatedMerchantStore = storeRedis.Where(ms => ms.MerchantStoreId.Equals(response.MerchantStoreId))
+                            .First();
                 }
             }
 
