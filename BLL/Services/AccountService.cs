@@ -22,6 +22,7 @@ namespace BLL.Services
         private readonly IRedisService _redisService;
         private readonly IFirebaseService _firebaseService;
         private readonly IUtilService _utilService;
+        private readonly IResidentService _residentService;
         private readonly ITokenService _tokenService;
 
         public AccountService(IUnitOfWork unitOfWork,
@@ -30,7 +31,8 @@ namespace BLL.Services
             IRedisService redisService,
             IFirebaseService firebaseService,
             IUtilService utilService,
-            ITokenService tokenService)
+            ITokenService tokenService,
+            IResidentService residentService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -39,6 +41,7 @@ namespace BLL.Services
             _firebaseService = firebaseService;
             _tokenService = tokenService;
             _utilService = utilService;
+            _residentService = residentService;
         }
 
         /// <summary>
@@ -153,15 +156,21 @@ namespace BLL.Services
                 if (!account.RoleId.Equals(RoleId.ADMIN))
                 {
                     List<Resident> residents = account.Residents.ToList();
-                    Resident resident;
+                    Resident resident = null;
 
-                    if (residents.Count == 2) //has 2 role: Customer and Merchant
-                        if (accountRequest.Role.Equals(ResidentType.CUSTOMER))
-                            resident = residents.Where(r => r.Type.Equals(ResidentType.CUSTOMER)).FirstOrDefault();
-                        else
+                    if (accountRequest.Role.Equals(ResidentType.CUSTOMER))
+                        resident = residents.Where(r => r.Type.Equals(ResidentType.CUSTOMER)).FirstOrDefault();
+                    else if (string.IsNullOrEmpty(accountRequest.Role))
+                    {
+                        if (residents.Count == 2)
                             resident = residents.Where(r => r.Type.Equals(ResidentType.MERCHANT)).FirstOrDefault();
-
-                    else resident = residents.FirstOrDefault(); //market manager or customer
+                        else
+                        {
+                            resident = residents.FirstOrDefault();
+                            if (resident.Type.Equals(ResidentType.CUSTOMER))
+                                resident = await _residentService.CreateMerchant(resident.ResidentId);
+                        }
+                    }
 
                     if (resident is null)
                         throw new UnauthorizedAccessException($"Role {accountRequest.Role} is invalid.");

@@ -41,44 +41,33 @@ namespace BLL.Services
         /// <summary>
         /// Create Resident
         /// </summary>
-        /// <param name="residentRequest"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        public async Task<ResidentResponse> CreateResident(ResidentRequest residentRequest, string residentId)
+        public async Task<Resident> CreateMerchant(string residentId)
         {
-            //check valid dob
-            if (!_validateDataService.IsLaterThanPresent(residentRequest.DateOfBirth))
-            {
-                _logger.Error($"[Invalid Date Of Birth : '{residentRequest.DateOfBirth}']");
-
-                throw new BusinessException(ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT.ToString(), (int)ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT);
-            }
-
             //get account Id
             string accountId = residentId.Substring(0, residentId.IndexOf("_"));
 
             //Store Resident To Database
-            Resident resident = _mapper.Map<Resident>(residentRequest);
-            try
+            Resident resident = await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId));
+
+            Resident residentMerchant = new()
             {
-                resident.ResidentId = accountId + "_" + ResidentType.MERCHANT;
-                resident.Status = (int)ResidentStatus.UNVERIFIED_RESIDENT;
-                resident.CreatedDate = _utilService.CurrentTimeInVietnam();
-                resident.AccountId = accountId;
-                resident.Type = ResidentType.MERCHANT;
+                ResidentId = accountId + "_" + ResidentType.MERCHANT,
+                Status = (int)ResidentStatus.UNVERIFIED_RESIDENT,
+                CreatedDate = _utilService.CurrentTimeInVietnam(),
+                UpdatedDate = _utilService.CurrentTimeInVietnam(),
+                AccountId = accountId,
+                Type = ResidentType.MERCHANT,
+                PhoneNumber = resident.PhoneNumber,
+                DateOfBirth = resident.DateOfBirth,
+                Gender = resident.Gender,
+                ApartmentId = resident.ApartmentId
+            };
 
-                _unitOfWork.Residents.Add(resident);
+            _unitOfWork.Residents.Add(resident);
 
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ResidentService.CreateResident()]: " + e.Message);
-
-                throw;
-            }
-
-            return _mapper.Map<ResidentResponse>(resident);
+            return residentMerchant;
         }
 
 
@@ -122,11 +111,13 @@ namespace BLL.Services
 
                 _unitOfWork.Residents.Update(resident);
 
-                account.ProfileImage = _firebaseService
-                .UploadFileToFirebase(residentUpdateRequest.ProfileImage, TYPE, account.AccountId, "Image")
-                .Result;
-
-                _unitOfWork.Accounts.Update(account);
+                if (residentUpdateRequest.ProfileImage != null)
+                {
+                    account.ProfileImage = _firebaseService
+                                    .UploadFileToFirebase(residentUpdateRequest.ProfileImage, TYPE, account.AccountId, "Image")
+                                    .Result;
+                    _unitOfWork.Accounts.Update(account);
+                }
 
                 await _unitOfWork.SaveChangesAsync();
             }
