@@ -108,7 +108,6 @@ namespace BLL.Mappings
             CreateMap<PaymentMethod, PaymentMethodResponse>();
 
             //Resident Mapping
-            CreateMap<ResidentRequest, Resident>();
             CreateMap<ResidentUpdateRequest, Resident>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<Resident, ResidentResponse>().ReverseMap();

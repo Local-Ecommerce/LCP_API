@@ -35,43 +35,6 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Create a Merchant (Customer)
-        /// </summary>
-        [Authorize(Roles = ResidentType.CUSTOMER)]
-        [HttpPost]
-        public async Task<IActionResult> CreateResident([FromBody] ResidentRequest residentRequest)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
-
-            _logger.Information($"POST api/residents START Request: " +
-                $"{JsonSerializer.Serialize(residentRequest)}");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            IEnumerable<Claim> claim = identity.Claims;
-
-            //get resident id from token
-            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
-            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
-
-            //create Resident
-            ResidentResponse response = await _residentService.CreateResident(residentRequest, residentId);
-
-            string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information("POST api/residents END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
-
-
-        /// <summary>
         /// Get Resident (Authentication required)
         /// </summary>
         [Authorize]

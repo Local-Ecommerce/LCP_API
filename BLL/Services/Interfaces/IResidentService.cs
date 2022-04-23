@@ -7,12 +7,11 @@ namespace BLL.Services.Interfaces
     public interface IResidentService
     {
         /// <summary>
-        /// Create Resident
+        /// Create Merchant
         /// </summary>
-        /// <param name="residentRequest"></param>
         /// <param name="residentId"></param>
         /// <returns></returns>
-        Task<ResidentResponse> CreateResident(ResidentRequest residentRequest, string residentId);
+        Task<Resident> CreateMerchant(string residentId);
 
 
         /// <summary>
