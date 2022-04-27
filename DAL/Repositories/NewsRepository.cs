@@ -46,7 +46,7 @@ namespace DAL.Repositories
 
             //filter by apartmentId
             if (!string.IsNullOrEmpty(apartmentId))
-                query = query.Where(news => news.ApartmentId.Equals(apartmentId));
+                query = query.Where(news => news.ApartmentId.Equals(apartmentId) || news.ApartmentId == null);
 
             //filter by date
             if (date != null)

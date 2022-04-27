@@ -53,6 +53,7 @@ namespace BLL.Services
                 feedback.Image = _firebaseService
                         .UploadFilesToFirebase(request.Image, TYPE, feedback.FeedbackId, "Image", 0)
                         .Result;
+                feedback.FeedbackDate = _utilService.CurrentTimeInVietnam();
                 feedback.ResidentId = residentId;
 
                 _unitOfWork.Feedbacks.Add(feedback);
