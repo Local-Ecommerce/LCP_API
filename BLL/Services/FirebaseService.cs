@@ -13,6 +13,9 @@ using BLL.Dtos.Resident;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using System.Collections.ObjectModel;
+using Firebase.Database;
+using Newtonsoft.Json.Linq;
+using Firebase.Database.Query;
 
 namespace BLL.Services
 {
@@ -21,6 +24,7 @@ namespace BLL.Services
         private IConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly string bucket;
+        private readonly string auth;
         private readonly IUtilService _utilService;
 
         public FirebaseService(IConfiguration configuration, ILogger logger, IUtilService utilService)
@@ -28,6 +32,7 @@ namespace BLL.Services
             _configuration = configuration;
             _logger = logger;
             bucket = _configuration.GetValue<string>("Firebase:Bucket");
+            auth = _configuration.GetValue<string>("Firebase:auth");
             _utilService = utilService;
         }
 
@@ -181,6 +186,34 @@ namespace BLL.Services
                 }
             }
             return extendAccountResponse;
+        }
+
+
+        /// <summary>
+        /// Push Notification
+        /// </summary>
+        /// <param name="senderId"></param>
+        /// <param name="receiverId"></param>
+        /// <param name="image"></param>
+        public async Task PushNotification(string senderId, string receiverId, string image)
+        {
+            var firebaseClient = new FirebaseClient(
+                    "https://lcp-mobile-8c400-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            new FirebaseOptions { AuthTokenAsyncFactory = () => Task.FromResult(auth) });
+
+            JObject jObject = new()
+            {
+                {"createdDate" , (long)(_utilService.CurrentTimeInVietnam().Subtract(new DateTime(1970, 1, 1))).TotalSeconds},
+                {"data", new JObject(){{"image", image}, {"name", ""}, {"id", ""}}},
+                {"read", 0},
+                {"receiverId", receiverId},
+                { "senderId", senderId},
+                { "type", "301"}
+            };
+
+            var post = await firebaseClient.Child("Notification")
+                                            .Child(receiverId)
+                                            .PostAsync(jObject.ToString());
         }
     }
 }
