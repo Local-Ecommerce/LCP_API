@@ -31,8 +31,7 @@ namespace BLL.Services
             ISecurityService securityService,
             IConfiguration configuration,
             IMapper mapper,
-            IUnitOfWork unitOfWork,
-            IPaymentService paymentService)
+            IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _securityService = securityService;
