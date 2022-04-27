@@ -204,7 +204,7 @@ namespace BLL.Services
             JObject jObject = new()
             {
                 {"createdDate" , (long)(_utilService.CurrentTimeInVietnam().Subtract(new DateTime(1970, 1, 1))).TotalSeconds},
-                {"data", new JObject(){{"image", image}, {"name", ""}, {"id", ""}}},
+                {"data", new JObject(){{"image", $"{image}"}, {"name", ""}, {"id", ""}}},
                 {"read", 0},
                 {"receiverId", receiverId},
                 { "senderId", senderId},

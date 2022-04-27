@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BLL.Dtos.MoMo.CaptureWallet;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace BLL.Services
 {
@@ -21,6 +22,7 @@ namespace BLL.Services
         private readonly IUtilService _utilService;
         private readonly IConfiguration _configuration;
         private readonly ISecurityService _securityService;
+        private readonly IFirebaseService _firebaseService;
         private readonly IMoMoService _moMoService;
         private const string PREFIX = "PM_";
         private const string MOMO = "PM_MOMO";
@@ -32,7 +34,8 @@ namespace BLL.Services
             IUtilService utilService,
             IConfiguration configuration,
             ISecurityService securityService,
-            IMoMoService moMoService
+            IMoMoService moMoService,
+            IFirebaseService firebaseService
             )
         {
             _unitOfWork = unitOfWork;
@@ -41,6 +44,7 @@ namespace BLL.Services
             _utilService = utilService;
             _configuration = configuration;
             _securityService = securityService;
+            _firebaseService = firebaseService;
             _moMoService = moMoService;
         }
 
@@ -57,7 +61,10 @@ namespace BLL.Services
             try
             {
                 //check payment amount
-                Order order = await _unitOfWork.Orders.FindAsync(o => o.OrderId.Equals(paymentRequest.OrderId));
+                Order order = (await _unitOfWork.Orders.GetOrder(paymentRequest.OrderId, null, null, null, null, null, false, null, new string[] { "product" }))
+                    .List
+                    .First();
+
                 if (order.TotalAmount != paymentRequest.PaymentAmount)
                     throw new BusinessException("Số tiền thanh toán không trùng khớp với giá trị đơn hàng");
 
@@ -101,6 +108,15 @@ namespace BLL.Services
                 _unitOfWork.Payments.Add(Payment);
 
                 await _unitOfWork.SaveChangesAsync();
+
+                //push notification
+                Product product = order.OrderDetails
+                    .Where(od => od.ProductInMenu.Product.BelongTo == null)
+                    .First()
+                    .ProductInMenu
+                    .Product;
+
+                await _firebaseService.PushNotification(order.ResidentId, product.ResidentId, product.Image);
             }
             catch (Exception e)
             {
