@@ -47,20 +47,25 @@ namespace BLL.Services
                 List<Order> orders = await _unitOfWork.Orders.FindListAsync(o => o.MerchantStoreId.Equals(storeId)
                     && o.UpdatedDate.Value.Date <= currentDate.Date && o.UpdatedDate.Value.Date >= previousDate.Date);
 
-                dashboardForMerchant.TotalOrder = orders.Count;
-                foreach (var order in orders)
+                if (!_utilService.IsNullOrEmpty(orders))
                 {
-                    switch (order.Status)
+                    dashboardForMerchant.TotalOrder = orders.Count;
+
+                    foreach (var order in orders)
                     {
-                        case (int)OrderStatus.COMPLETED:
-                            dashboardForMerchant.CompletedOrder++;
-                            dashboardForMerchant.TotalRevenue += order.TotalAmount.Value;
-                            break;
-                        case (int)OrderStatus.CANCELED_ORDER:
-                            dashboardForMerchant.CanceledOrder++;
-                            break;
+                        switch (order.Status)
+                        {
+                            case (int)OrderStatus.COMPLETED:
+                                dashboardForMerchant.CompletedOrder++;
+                                dashboardForMerchant.TotalRevenue += order.TotalAmount.Value;
+                                break;
+                            case (int)OrderStatus.CANCELED_ORDER:
+                                dashboardForMerchant.CanceledOrder++;
+                                break;
+                        }
                     }
                 }
+
             }
             catch (Exception e)
             {
@@ -110,34 +115,38 @@ namespace BLL.Services
                     (await _unitOfWork.Products.GetProduct(apartmentId: apartmentId, include: new string[] { "feedback" }))
                     .List;
 
-                foreach (var product in products)
-                {
-                    if (product.CreatedDate.Value.Date >= previousDate && product.CreatedDate <= currentDate)
-                        dashboardForMarketManager.TotalProduct++;
-
-                    //get total feedback
-                    foreach (var feedback in product.Feedbacks)
+                if (!_utilService.IsNullOrEmpty(products))
+                    foreach (var product in products)
                     {
-                        if (feedback.FeedbackDate.Value.Date >= previousDate && feedback.FeedbackDate.Value.Date <= currentDate)
-                            dashboardForMarketManager.TotalFeedback++;
+                        if (product.CreatedDate.Value.Date >= previousDate && product.CreatedDate <= currentDate)
+                            dashboardForMarketManager.TotalProduct++;
+
+                        if (!_utilService.IsNullOrEmpty(product.Feedbacks))
+                            //get total feedback
+                            foreach (var feedback in product.Feedbacks)
+                            {
+                                if (feedback.FeedbackDate.Value.Date >= previousDate && feedback.FeedbackDate.Value.Date <= currentDate)
+                                    dashboardForMarketManager.TotalFeedback++;
+                            }
                     }
-                }
 
                 //get total store
                 List<MerchantStore> stores = (await _unitOfWork.MerchantStores.GetMerchantStore(null, apartmentId, null, null, null, null, null, false, null, new string[] { "menu" })).List;
 
-                foreach (var store in stores)
-                {
-                    if (store.CreatedDate.Value.Date >= previousDate && store.CreatedDate <= currentDate)
-                        dashboardForMarketManager.TotalStore++;
-
-                    //get total menu
-                    foreach (var menu in store.Menus)
+                if (!_utilService.IsNullOrEmpty(stores))
+                    foreach (var store in stores)
                     {
-                        if (menu.CreatedDate.Value.Date >= previousDate && menu.CreatedDate.Value.Date <= currentDate)
-                            dashboardForMarketManager.TotalMenu++;
+                        if (store.CreatedDate.Value.Date >= previousDate && store.CreatedDate <= currentDate)
+                            dashboardForMarketManager.TotalStore++;
+
+                        if (!_utilService.IsNullOrEmpty(store.Menus))
+                            //get total menu
+                            foreach (var menu in store.Menus)
+                            {
+                                if (menu.CreatedDate.Value.Date >= previousDate && menu.CreatedDate.Value.Date <= currentDate)
+                                    dashboardForMarketManager.TotalMenu++;
+                            }
                     }
-                }
 
             }
             catch (Exception e)
