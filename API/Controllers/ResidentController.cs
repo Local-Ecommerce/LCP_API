@@ -130,7 +130,7 @@ namespace API.Controllers
             string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
 
             //Update Resident status
-            ResidentResponse response = await _residentService.UpdateResidentStatus(id, status, managerId);
+            ResidentResponse response = await _residentService.UpdateResidentStatus(id, status, managerId, role);
 
             string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success(response));
 
