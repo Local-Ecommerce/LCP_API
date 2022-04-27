@@ -42,5 +42,15 @@ namespace BLL.Services.Interfaces
         /// <param name="uid"></param>
         /// <returns></returns>
         Task<ExtendAccountResponse> GetUserDataFromFirestoreByUID(string uid);
+
+
+        /// <summary>
+        /// Push Notification
+        /// </summary>
+        /// <param name="senderId"></param>
+        /// <param name="receiverId"></param>
+        /// <param name="image"></param>
+        /// <returns></returns>
+        Task PushNotification(string senderId, string receiverId, string image);
     }
 }

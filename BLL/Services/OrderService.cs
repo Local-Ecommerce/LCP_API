@@ -56,9 +56,10 @@ namespace BLL.Services
         /// <param name="orderDetailRequests"></param>
         /// <param name="residentId"></param>
         /// <param name="resident"></param>
+        /// <param name="forGuest"></param>
         /// <returns></returns>
         public async Task<List<ExtendOrderResponse>> CreateOrder(
-            List<OrderDetailRequest> orderDetailRequests, string residentId, Resident resident)
+            List<OrderDetailRequest> orderDetailRequests, string residentId, Resident resident, bool forGuest)
         {
             List<Order> orders = new();
             List<ExtendOrderResponse> extendOrderResponses = new();
@@ -128,7 +129,7 @@ namespace BLL.Services
                     _unitOfWork.Orders.Add(order);
 
                     //create payment for guest
-                    if (resident.AccountId == null)
+                    if (forGuest)
                         _paymentService.CreatePaymentForGuest(order.TotalAmount, order.OrderId);
                 }
 
@@ -164,11 +165,11 @@ namespace BLL.Services
                                     .ApartmentId;
 
                 if (!string.IsNullOrEmpty(request.ResidentId))
-                    extendOrderResponses = await CreateOrder(request.Products, request.ResidentId, null);
+                    extendOrderResponses = await CreateOrder(request.Products, request.ResidentId, null, true);
                 else
                 {
                     Resident resident = await _residentService.CreateGuest(request.Resident, apartmentId, marketManagerId);
-                    extendOrderResponses = await CreateOrder(request.Products, resident.ResidentId, resident);
+                    extendOrderResponses = await CreateOrder(request.Products, resident.ResidentId, resident, true);
                 }
             }
             catch (Exception e)
