@@ -22,6 +22,7 @@ namespace BLL.Services
         private readonly IRedisService _redisService;
         private readonly IProductService _productService;
         private readonly IResidentService _residentService;
+        private readonly IPaymentService _paymentService;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
         private const string PREFIX = "OD_";
@@ -35,7 +36,8 @@ namespace BLL.Services
             IRedisService redisService,
             IProductService productService,
             IResidentService residentService,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IPaymentService paymentService)
         {
             _logger = logger;
             _mapper = mapper;
@@ -44,6 +46,7 @@ namespace BLL.Services
             _redisService = redisService;
             _productService = productService;
             _residentService = residentService;
+            _paymentService = paymentService;
         }
 
 
@@ -123,6 +126,10 @@ namespace BLL.Services
                 {
                     order.TotalAmount = CaculateOrderTotalAmount((Collection<OrderDetail>)order.OrderDetails);
                     _unitOfWork.Orders.Add(order);
+
+                    //create payment for guest
+                    if (resident.AccountId == null)
+                        _paymentService.CreatePaymentForGuest(order.TotalAmount, order.OrderId);
                 }
 
                 //map to response

@@ -24,6 +24,7 @@ namespace BLL.Services
         private readonly IMoMoService _moMoService;
         private const string PREFIX = "PM_";
         private const string MOMO = "PM_MOMO";
+        private const string CASH = "PM_CASH";
 
         public PaymentService(IUnitOfWork unitOfWork,
             ILogger logger,
@@ -157,6 +158,25 @@ namespace BLL.Services
                 LastPage = paymentMethods.LastPage,
                 Total = paymentMethods.Total,
             };
+        }
+
+
+        /// <summary>
+        /// Create Payment ForGuest
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="orderId"></param>
+        public void CreatePaymentForGuest(double? amount, string orderId)
+        {
+            Payment Payment = new()
+            {
+                PaymentId = _utilService.CreateId(PREFIX),
+                PaymentAmount = amount,
+                DateTime = _utilService.CurrentTimeInVietnam(),
+                Status = (int)PaymentStatus.UNPAID
+            };
+
+            _unitOfWork.Payments.Add(Payment);
         }
     }
 }

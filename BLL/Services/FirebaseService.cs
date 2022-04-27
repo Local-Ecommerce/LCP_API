@@ -147,6 +147,8 @@ namespace BLL.Services
                 {
                     Dictionary<string, object> documentDictionary = document.ToDictionary();
 
+                    string residentType = documentDictionary.ContainsKey("role") ? (string)documentDictionary["role"] : ResidentType.CUSTOMER;
+
                     ResidentResponse residentResponse = new ResidentResponse
                     {
                         ResidentId = document.Id + "_" + (documentDictionary.ContainsKey("role") ? (string)documentDictionary["role"] : ResidentType.CUSTOMER),
@@ -154,11 +156,11 @@ namespace BLL.Services
                         Gender = documentDictionary.ContainsKey("gender") ? (string)documentDictionary["gender"] : default,
                         DeliveryAddress = documentDictionary.ContainsKey("deliveryAddress") ? (string)documentDictionary["deliveryAddress"] : default,
                         DateOfBirth = documentDictionary.ContainsKey("dob") ? DateTime.Parse((string)documentDictionary["dob"]) : null,
-                        Type = documentDictionary.ContainsKey("role") ? (string)documentDictionary["role"] : ResidentType.CUSTOMER,
+                        Type = residentType,
                         AccountId = document.Id,
                         CreatedDate = _utilService.CurrentTimeInVietnam(),
                         UpdatedDate = _utilService.CurrentTimeInVietnam(),
-                        Status = (int)ResidentStatus.UNVERIFIED_RESIDENT,
+                        Status = residentType.Equals("MarketManager") ? (int)ResidentStatus.VERIFIED_RESIDENT : (int)ResidentStatus.UNVERIFIED_RESIDENT,
                         ApartmentId = (string)documentDictionary["apartmentId"],
                         PhoneNumber = documentDictionary.ContainsKey("phoneNumber") ? (string)documentDictionary["phoneNumber"] : null
                     };

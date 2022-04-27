@@ -23,7 +23,7 @@ namespace DAL.Repositories.Interfaces
         /// <returns></returns>
         Task<PagingModel<News>> GetNews(
             string id, string apartmentId, string type,
-            DateTime date, string search, int?[] status,
+            DateTime? date, string search, int?[] status,
             int? limit, int? queryPage,
             List<string> sort, string[] include);
     }

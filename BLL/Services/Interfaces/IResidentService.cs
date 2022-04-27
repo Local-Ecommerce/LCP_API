@@ -64,8 +64,9 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
-        /// <param name="marketManagerId"></param>
+        /// <param name="managerId"></param>
+        /// <param name="role"></param>
         /// <returns></returns>
-        Task<ExtendResidentResponse> UpdateResidentStatus(string id, int status, string marketManagerId);
+        Task<ExtendResidentResponse> UpdateResidentStatus(string id, int status, string managerId, string role);
     }
 }

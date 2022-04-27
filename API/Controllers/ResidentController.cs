@@ -106,7 +106,7 @@ namespace API.Controllers
         /// <summary>
         /// Update Resident Status (Market Manager)
         /// </summary>
-        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [AuthorizeRoles(ResidentType.MARKET_MANAGER, RoleId.ADMIN)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateResidentStatus(string id, [FromQuery] int status)
         {
@@ -123,10 +123,14 @@ namespace API.Controllers
 
             //get resident id from token
             string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
-            string marketManagerId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+            string managerId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
-            //approve Resident
-            ResidentResponse response = await _residentService.UpdateResidentStatus(id, status, marketManagerId);
+            //get role from token
+            string claimRole = claim.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault().ToString();
+            string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
+
+            //Update Resident status
+            ResidentResponse response = await _residentService.UpdateResidentStatus(id, status, managerId);
 
             string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success(response));
 
