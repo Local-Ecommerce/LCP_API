@@ -620,7 +620,8 @@ namespace BLL.Services
                         //get active menu
                         if (TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeStart) > 0 &&
                                 TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeEnd) < 0 &&
-                                pim.Menu.Status.Equals((int)MenuStatus.ACTIVE_MENU))
+                                pim.Menu.Status.Equals((int)MenuStatus.ACTIVE_MENU) &&
+                                pim.Menu.RepeatDate.Contains($"{(int)vnTime.DayOfWeek}"))
                         {
                             return new ProductInfoForOrder
                             {
