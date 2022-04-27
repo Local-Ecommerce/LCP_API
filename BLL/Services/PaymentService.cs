@@ -175,7 +175,7 @@ namespace BLL.Services
                 DateTime = _utilService.CurrentTimeInVietnam(),
                 Status = (int)PaymentStatus.UNPAID,
                 OrderId = orderId,
-                PaymentMethodId = "PM_GUEST"
+                PaymentMethodId = "PM_CASH"
             };
 
             _unitOfWork.Payments.Add(Payment);

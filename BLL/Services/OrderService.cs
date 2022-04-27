@@ -335,7 +335,7 @@ namespace BLL.Services
                 order.Status = status;
                 if (status.Equals((int)OrderStatus.COMPLETED) && order.Payments.Any(p => p.PaymentMethodId.Equals("PM_CASH")))
                 {
-                    Payment payment = order.Payments.Where(p => p.PaymentMethod.Equals("PM_CASH")).FirstOrDefault();
+                    Payment payment = order.Payments.Where(p => p.PaymentMethodId.Equals("PM_CASH")).FirstOrDefault();
                     payment.Status = (int)PaymentStatus.PAID;
                 }
 
