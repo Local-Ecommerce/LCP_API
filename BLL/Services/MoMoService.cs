@@ -31,7 +31,8 @@ namespace BLL.Services
             ISecurityService securityService,
             IConfiguration configuration,
             IMapper mapper,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IPaymentService paymentService)
         {
             _logger = logger;
             _securityService = securityService;
@@ -142,6 +143,7 @@ namespace BLL.Services
 
                 _unitOfWork.Payments.Update(payment);
                 await _unitOfWork.SaveChangesAsync();
+
             }
             catch (Exception e)
             {
