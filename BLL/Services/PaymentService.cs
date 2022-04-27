@@ -99,19 +99,18 @@ namespace BLL.Services
                     response = new PaymentLinkResponse { PayUrl = momoResponse.payUrl };
                 }
 
-                Payment Payment = _mapper.Map<Payment>(paymentRequest);
+                Payment payment = _mapper.Map<Payment>(paymentRequest);
 
-                Payment.PaymentId = _utilService.CreateId(PREFIX);
-                Payment.DateTime = _utilService.CurrentTimeInVietnam();
-                Payment.Status = (int)PaymentStatus.UNPAID;
+                payment.PaymentId = _utilService.CreateId(PREFIX);
+                payment.DateTime = _utilService.CurrentTimeInVietnam();
+                payment.Status = (int)PaymentStatus.UNPAID;
 
-                _unitOfWork.Payments.Add(Payment);
+                _unitOfWork.Payments.Add(payment);
 
                 await _unitOfWork.SaveChangesAsync();
 
                 //push notification
                 Product product = order.OrderDetails
-                    .Where(od => od.ProductInMenu.Product.BelongTo == null)
                     .First()
                     .ProductInMenu
                     .Product;
