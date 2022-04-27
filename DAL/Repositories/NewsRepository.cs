@@ -30,7 +30,7 @@ namespace DAL.Repositories
         /// <returns></returns>
         public async Task<PagingModel<News>> GetNews(
             string id, string apartmentId, string type,
-            DateTime date, string search, int?[] status,
+            DateTime? date, string search, int?[] status,
             int? limit, int? queryPage,
             List<string> sort, string[] include)
         {
@@ -42,19 +42,19 @@ namespace DAL.Repositories
 
             //filter by status
             if (status != null && status.Length != 0)
-                query = query.Where(news => status.Contains(news.Status));
+                query = query.Where(news => status.Contains(news.Status) || news.ResidentId == null);
 
             //filter by apartmentId
             if (!string.IsNullOrEmpty(apartmentId))
-                query = query.Where(news => news.ApartmentId.Equals(apartmentId));
+                query = query.Where(news => news.ApartmentId.Equals(apartmentId) || news.ResidentId == null);
 
             //filter by date
-            if (date != DateTime.MinValue)
-                query = query.Where(news => news.ReleaseDate.Equals(date.Date));
+            if (date != null)
+                query = query.Where(news => news.ReleaseDate.Equals(date.Value.Date) || news.ResidentId == null);
 
             //filter by type
             if (!string.IsNullOrEmpty(type))
-                query = query.Where(news => news.Type.Equals(type));
+                query = query.Where(news => news.Type.Equals(type) || news.ResidentId == null);
 
             //search contains
             if (!string.IsNullOrEmpty(search))

@@ -30,7 +30,7 @@ namespace BLL.Services.Interfaces
         /// <returns></returns>
         Task<object> GetNews(
             string id, string apartmentId, string type,
-            DateTime date, string search, int?[] status,
+            DateTime? date, string search, int?[] status,
             int? limit, int? page,
             string[] sort, string[] include);
 

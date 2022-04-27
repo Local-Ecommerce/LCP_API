@@ -70,7 +70,7 @@ namespace API.Controllers
             [FromQuery] int?[] status,
             [FromQuery] string apartmentid,
             [FromQuery] string type,
-            [FromQuery] DateTime date,
+            [FromQuery] DateTime? date,
             [FromQuery] string search,
             [FromQuery] int? limit,
             [FromQuery] int? page,

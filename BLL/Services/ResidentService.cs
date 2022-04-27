@@ -225,33 +225,35 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
-        /// <param name="marketManagerId"></param>
+        /// <param name="managerId"></param>
+        /// <param name="role"></param>
         /// <returns></returns>
-        public async Task<ExtendResidentResponse> UpdateResidentStatus(string id, int status, string marketManagerId)
+        public async Task<ExtendResidentResponse> UpdateResidentStatus(string id, int status, string managerId, string role)
         {
             Resident resident;
             try
             {
                 List<Resident> residents = await _unitOfWork.Residents
-                    .FindListAsync(r => r.ResidentId.Equals(id) || r.ResidentId.Equals(marketManagerId));
+                    .FindListAsync(r => r.ResidentId.Equals(id) || r.ResidentId.Equals(managerId));
 
                 //get resident need to update
                 resident = residents.Where(r => r.ResidentId.Equals(id)).First();
 
-                //check apartment of Market Manager
-                if (!residents.Where(r => r.ResidentId.Equals(marketManagerId))
-                            .First().ApartmentId
-                            .Equals(resident.ApartmentId))
-                    throw new BusinessException($"Quản lý chung cư không thể cập nhật trạng thái cho cư dân này.");
+                if (role.Equals(ResidentType.MARKET_MANAGER))
+                    //check apartment of Market Manager
+                    if (!residents.Where(r => r.ResidentId.Equals(managerId))
+                                .First().ApartmentId
+                                .Equals(resident.ApartmentId))
+                        throw new BusinessException($"Không thể cập nhật trạng thái cho cư dân này.");
 
                 //check status
                 if (status != (int)ResidentStatus.VERIFIED_RESIDENT &&
                 status != (int)ResidentStatus.REJECTED_RESIDENT &&
                 status != (int)ResidentStatus.INACTIVE_RESIDENT)
-                    throw new BusinessException($"Quản lý chung cư không thể cập nhật trạng thái cho cư dân này.");
+                    throw new BusinessException($"Không thể cập nhật trạng thái cho cư dân này.");
 
                 resident.Status = status;
-                resident.ApproveBy = status != (int)ResidentStatus.REJECTED_RESIDENT ? marketManagerId : null;
+                resident.ApproveBy = status != (int)ResidentStatus.REJECTED_RESIDENT ? managerId : null;
 
                 _unitOfWork.Residents.Update(resident);
 

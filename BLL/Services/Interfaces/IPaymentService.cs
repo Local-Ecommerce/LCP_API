@@ -31,5 +31,13 @@ namespace BLL.Services.Interfaces
             string paymentMethodId, DateTime date,
             int?[] status, int? limit,
             int? page, string sort);
+
+
+        /// <summary>
+        /// Create Payment For Guest
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="orderId"></param>
+        void CreatePaymentForGuest(double? amount, string orderId);
     }
 }

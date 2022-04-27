@@ -263,6 +263,8 @@ namespace BLL.Services
                 .FindListAsync(p => (ids.Contains(p.ProductId) || ids.Contains(p.BelongTo))
                                         && p.ResidentId.Equals(residentId));
 
+                List<string> deletedProductId = new();
+
                 //delete product
                 products.ForEach(product =>
                             {
@@ -271,10 +273,13 @@ namespace BLL.Services
                                 product.ApproveBy = "";
 
                                 _unitOfWork.Products.Update(product);
+                                deletedProductId.Add(product.ProductId);
                             });
 
                 //delete products in menu
-                List<ProductInMenu> productInMenus = await _unitOfWork.ProductInMenus.FindListAsync(p => ids.Contains(p.ProductId));
+                List<ProductInMenu> productInMenus = await _unitOfWork.ProductInMenus
+                                        .FindListAsync(p => deletedProductId.Contains(p.ProductId));
+
                 foreach (var productInMenu in productInMenus)
                 {
                     productInMenu.Status = (int)ProductInMenuStatus.DELETED_PRODUCT_IN_MENU;
