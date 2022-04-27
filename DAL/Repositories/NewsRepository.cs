@@ -42,19 +42,19 @@ namespace DAL.Repositories
 
             //filter by status
             if (status != null && status.Length != 0)
-                query = query.Where(news => status.Contains(news.Status) || news.ResidentId == null);
+                query = query.Where(news => status.Contains(news.Status));
 
             //filter by apartmentId
             if (!string.IsNullOrEmpty(apartmentId))
-                query = query.Where(news => news.ApartmentId.Equals(apartmentId) || news.ResidentId == null);
+                query = query.Where(news => news.ApartmentId.Equals(apartmentId));
 
             //filter by date
             if (date != null)
-                query = query.Where(news => news.ReleaseDate.Equals(date.Value.Date) || news.ResidentId == null);
+                query = query.Where(news => news.ReleaseDate.Equals(date.Value.Date));
 
             //filter by type
             if (!string.IsNullOrEmpty(type))
-                query = query.Where(news => news.Type.Equals(type) || news.ResidentId == null);
+                query = query.Where(news => news.Type.Equals(type));
 
             //search contains
             if (!string.IsNullOrEmpty(search))
