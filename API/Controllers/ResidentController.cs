@@ -89,8 +89,15 @@ namespace API.Controllers
             Stopwatch watch = new();
             watch.Start();
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get role from token
+            string claimRole = claim.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault().ToString();
+            string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
+
             //update Resident
-            ResidentResponse response = await _residentService.UpdateResidentById(id, residentUpdateRequest);
+            ResidentResponse response = await _residentService.UpdateResidentById(id, residentUpdateRequest, role);
 
             string json = JsonSerializer.Serialize(ApiResponse<ResidentResponse>.Success(response));
 

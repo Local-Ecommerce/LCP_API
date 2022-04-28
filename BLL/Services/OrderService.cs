@@ -68,6 +68,10 @@ namespace BLL.Services
                 resident = resident == null ?
                     await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId)) : resident;
 
+                //check if resident is verified
+                if (resident.Status != (int)ResidentStatus.VERIFIED_RESIDENT)
+                    throw new BusinessException("Người dùng chưa được xác thực");
+
                 //create new  orders and order details
                 foreach (OrderDetailRequest orderDetailRequest in orderDetailRequests)
                 {

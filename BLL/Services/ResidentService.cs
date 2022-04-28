@@ -76,8 +76,9 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="residentUpdateRequest"></param>
+        /// <param name="role"></param>
         /// <returns></returns>
-        public async Task<ResidentResponse> UpdateResidentById(string id, ResidentUpdateRequest residentUpdateRequest)
+        public async Task<ResidentResponse> UpdateResidentById(string id, ResidentUpdateRequest residentUpdateRequest, string role)
         {
             Resident resident;
             Account account;
@@ -108,6 +109,8 @@ namespace BLL.Services
             {
                 resident = _mapper.Map(residentUpdateRequest, resident);
                 resident.UpdatedDate = _utilService.CurrentTimeInVietnam();
+                if (role.Equals(ResidentType.CUSTOMER))
+                    resident.Status = (int)ResidentStatus.UNVERIFIED_RESIDENT;
 
                 _unitOfWork.Residents.Update(resident);
 

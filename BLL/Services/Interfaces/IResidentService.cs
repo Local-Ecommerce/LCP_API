@@ -29,8 +29,9 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="residentRequest"></param>
+        /// <param name="role"></param>
         /// <returns></returns>
-        Task<ResidentResponse> UpdateResidentById(string id, ResidentUpdateRequest residentRequest);
+        Task<ResidentResponse> UpdateResidentById(string id, ResidentUpdateRequest residentRequest, string role);
 
 
         /// <summary>
