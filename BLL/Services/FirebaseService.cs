@@ -205,7 +205,7 @@ namespace BLL.Services
 
             JObject jObject = new()
             {
-                {"createdDate" , (long)((DateTimeOffset)currentTime).ToUnixTimeSeconds()},
+                {"createdDate" , (long)((DateTimeOffset)currentTime).ToUnixTimeMilliseconds()},
                 {"data", new JObject() { { "image", $"{image}"}, { "name", ""}, { "id", ""} }
     },
                 {"read", 0},
