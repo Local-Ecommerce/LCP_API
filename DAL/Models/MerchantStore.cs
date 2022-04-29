@@ -18,6 +18,7 @@ namespace DAL.Models
         public DateTime? CreatedDate { get; set; }
         public string StoreImage { get; set; }
         public int? Status { get; set; }
+        public int? Warned { get; set; }
         public string ResidentId { get; set; }
         public string ApartmentId { get; set; }
 
