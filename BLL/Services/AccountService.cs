@@ -168,7 +168,11 @@ namespace BLL.Services
                         {
                             resident = residents.FirstOrDefault();
                             if (resident.Type.Equals(ResidentType.CUSTOMER))
+                            {
                                 resident = await _residentService.CreateMerchant(resident.ResidentId);
+                                residents.Add(resident);
+                                account.Residents = residents;
+                            }
                         }
                     }
 
