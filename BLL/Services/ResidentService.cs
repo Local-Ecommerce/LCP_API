@@ -63,8 +63,7 @@ namespace BLL.Services
                 DateOfBirth = resident.DateOfBirth,
                 Gender = resident.Gender,
                 ApartmentId = resident.ApartmentId,
-                ResidentName = resident.ResidentName,
-
+                ResidentName = resident.ResidentName
             };
 
             return residentMerchant;

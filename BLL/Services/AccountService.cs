@@ -134,6 +134,7 @@ namespace BLL.Services
             Account account;
             bool isCreate = false;
             DateTime accessTokenExpiredDate = DateTime.MinValue;
+            Resident resident = null;
 
             //check valid user
             string uid = await _firebaseService.GetUIDByToken(accountRequest.FirebaseToken);
@@ -156,7 +157,6 @@ namespace BLL.Services
                 if (!account.RoleId.Equals(RoleId.ADMIN))
                 {
                     List<Resident> residents = account.Residents.ToList();
-                    Resident resident = null;
 
                     if (accountRequest.Role.Equals(ResidentType.CUSTOMER))
                         resident = residents.Where(r => r.Type.Equals(ResidentType.CUSTOMER)).FirstOrDefault();
@@ -195,7 +195,7 @@ namespace BLL.Services
                 else
                     //revoke old refresh token
                     foreach (RefreshToken rt in refreshTokens)
-                        if (rt.Token.EndsWith(accountRequest.Role))
+                        if (rt.Token.EndsWith(resident.Type))
                             rt.IsRevoked = true;
 
                 refreshTokens.Add(refreshToken);
@@ -220,9 +220,12 @@ namespace BLL.Services
                 throw new UnauthorizedAccessException();
             }
 
-            account.RefreshTokens = account.RefreshTokens.Where(rt => rt.IsRevoked == false)
-                                                            .OrderByDescending(rt => rt.CreatedDate)
-                                                            .ToList();
+            account.RefreshTokens = account.RefreshTokens
+                                        .Where(rt => rt.IsRevoked == false && rt.Token.EndsWith((resident.Type)))
+                                        .OrderByDescending(rt => rt.CreatedDate)
+                                        .ToList();
+
+            account.Residents = new List<Resident>() { resident };
 
             //create response
             ExtendAccountResponse response = _mapper.Map<ExtendAccountResponse>(account);
