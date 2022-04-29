@@ -49,7 +49,7 @@ namespace BLL.Services
             string accountId = residentId.Substring(0, residentId.IndexOf("_"));
 
             //Store Resident To Database
-            Resident resident = await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId));
+            Resident resident = await _unitOfWork.Residents.FindAsync(r => r.AccountId.Equals(accountId));
 
             Resident residentMerchant = new()
             {
