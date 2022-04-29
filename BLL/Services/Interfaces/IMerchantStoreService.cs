@@ -71,6 +71,15 @@ namespace BLL.Services.Interfaces
         /// <param name="residentId"></param>
         /// <returns></returns>
         Task<ExtendMerchantStoreResponse> VerifyMerchantStore(string id, bool isApprove, string residentId);
+
+
+        /// <summary>
+        /// Warning
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="residendId"></param>
+        /// <returns></returns>
+        Task<ExtendMerchantStoreResponse> Warning(string id, string residendId);
     }
 
 }

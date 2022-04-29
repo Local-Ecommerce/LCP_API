@@ -270,6 +270,42 @@ namespace API.Controllers
 
 
         /// <summary>
+        /// Reject MerchantStore With ID (Market Manager)
+        /// </summary>
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [HttpPut("warning")]
+        public async Task<IActionResult> Warning([FromQuery] string id)
+        {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
+            _logger.Information($"PUT api/stores/warning?id={id} START");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+
+            //get resident id from token
+            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+            string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
+
+            //reject MerchantStore
+            ExtendMerchantStoreResponse response = await _merchantStoreService.Warning(id, residentId);
+
+            string json = JsonSerializer.Serialize(ApiResponse<ExtendMerchantStoreResponse>.Success(response));
+
+            watch.Stop();
+
+            _logger.Information($"PUT api/stores/warning?id={id} END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
         /// Get Unverified Merchant Stores (Market Manager)
         /// </summary>
         /// <returns></returns>

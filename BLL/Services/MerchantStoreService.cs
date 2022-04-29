@@ -345,5 +345,44 @@ namespace BLL.Services
 
             return responses;
         }
+
+
+        /// <summary>
+        /// Warning
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="residendId"></param>
+        /// <returns></returns>
+        public async Task<ExtendMerchantStoreResponse> Warning(string id, string residendId)
+        {
+            ExtendMerchantStoreResponse merchantStoreResponse = null;
+
+            try
+            {
+                //check market manager's permission
+                Resident resident = await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residendId));
+
+                MerchantStore merchantStore = await _unitOfWork.MerchantStores.FindAsync(ms => ms.MerchantStoreId.Equals(id)
+                                                                                    && ms.ApartmentId.Equals(resident.ApartmentId));
+
+                if (merchantStore is null)
+                    throw new BusinessException($"Quản lý chung cư không có quyền xét duyệt cửa hàng này.");
+
+                merchantStore.Warned++;
+
+                _unitOfWork.MerchantStores.Update(merchantStore);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                merchantStoreResponse = _mapper.Map(merchantStore, merchantStoreResponse);
+            }
+            catch (Exception e)
+            {
+                _logger.Error($"[MerchantStoreService.Warning()] " + e.Message);
+                throw;
+            }
+
+            return merchantStoreResponse;
+        }
     }
 }
