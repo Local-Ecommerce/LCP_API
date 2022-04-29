@@ -62,7 +62,9 @@ namespace BLL.Services
                 PhoneNumber = resident.PhoneNumber,
                 DateOfBirth = resident.DateOfBirth,
                 Gender = resident.Gender,
-                ApartmentId = resident.ApartmentId
+                ApartmentId = resident.ApartmentId,
+                ResidentName = resident.ResidentName,
+
             };
 
             return residentMerchant;
