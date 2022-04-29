@@ -195,7 +195,8 @@ namespace BLL.Services
         /// <param name="senderId"></param>
         /// <param name="receiverId"></param>
         /// <param name="image"></param>
-        public async Task PushNotification(string senderId, string receiverId, string image)
+        /// <param name="code"></param>
+        public async Task PushNotification(string senderId, string receiverId, string image, string code)
         {
             var firebaseClient = new FirebaseClient(
                     "https://lcp-mobile-8c400-default-rtdb.asia-southeast1.firebasedatabase.app/",

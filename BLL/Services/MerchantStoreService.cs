@@ -352,8 +352,9 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="residendId"></param>
+        /// <param name="isWarning"></param>
         /// <returns></returns>
-        public async Task<ExtendMerchantStoreResponse> Warning(string id, string residendId)
+        public async Task<ExtendMerchantStoreResponse> Warning(string id, string residendId, bool isWarning)
         {
             ExtendMerchantStoreResponse merchantStoreResponse = null;
 
@@ -362,19 +363,27 @@ namespace BLL.Services
                 //check market manager's permission
                 Resident resident = await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residendId));
 
-                MerchantStore merchantStore = await _unitOfWork.MerchantStores.FindAsync(ms => ms.MerchantStoreId.Equals(id)
-                                                                                    && ms.ApartmentId.Equals(resident.ApartmentId));
+                MerchantStore merchantStore = (await _unitOfWork.MerchantStores.GetMerchantStore(id, resident.ApartmentId
+                , null, null, null, null, null, false, null, new string[] { "menu" })).List.FirstOrDefault();
 
                 if (merchantStore is null)
                     throw new BusinessException($"Quản lý chung cư không có quyền xét duyệt cửa hàng này.");
 
-                merchantStore.Warned++;
+                merchantStore.Warned = isWarning ? merchantStore.Warned++ : merchantStore.Warned--;
+
+                if (merchantStore.Warned == 3)
+                {
+                    merchantStore.Status = (int)MerchantStoreStatus.DELETED_MERCHANT_STORE;
+                    foreach (var menu in merchantStore.Menus)
+                        menu.Status = (int)MenuStatus.DELETED_MENU;
+                }
 
                 _unitOfWork.MerchantStores.Update(merchantStore);
 
                 await _unitOfWork.SaveChangesAsync();
 
                 merchantStoreResponse = _mapper.Map(merchantStore, merchantStoreResponse);
+                await _firebaseService.PushNotification(residendId, merchantStore.ResidentId, "", $"{(int)NotificationCode.WARNING}");
             }
             catch (Exception e)
             {

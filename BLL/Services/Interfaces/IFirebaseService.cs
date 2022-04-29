@@ -50,7 +50,8 @@ namespace BLL.Services.Interfaces
         /// <param name="senderId"></param>
         /// <param name="receiverId"></param>
         /// <param name="image"></param>
+        /// <param name="code"></param>
         /// <returns></returns>
-        Task PushNotification(string senderId, string receiverId, string image);
+        Task PushNotification(string senderId, string receiverId, string image, string code);
     }
 }

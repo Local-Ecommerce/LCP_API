@@ -78,8 +78,9 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="residendId"></param>
+        /// <param name="isWarning"></param>
         /// <returns></returns>
-        Task<ExtendMerchantStoreResponse> Warning(string id, string residendId);
+        Task<ExtendMerchantStoreResponse> Warning(string id, string residendId, bool isWarning);
     }
 
 }

@@ -131,4 +131,10 @@
         INACTIVE_RESIDENT = 14005,
         INVALID_DATE_OF_BIRTH_RESIDENT = 14009
     }
+
+    public enum NotificationCode
+    {
+        PAYMENT = 301,
+        WARNING = 103
+    }
 }

@@ -274,12 +274,12 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = ResidentType.MARKET_MANAGER)]
         [HttpPut("warning")]
-        public async Task<IActionResult> Warning([FromQuery] string id)
+        public async Task<IActionResult> Warning([FromQuery] string id, [FromQuery] bool isWarning)
         {
             //check token expired
             _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
-            _logger.Information($"PUT api/stores/warning?id={id} START");
+            _logger.Information($"PUT api/stores/warning?id={id}&isWarning={isWarning} START");
 
             Stopwatch watch = new();
             watch.Start();
@@ -292,13 +292,13 @@ namespace API.Controllers
             string residentId = claimName.Substring(claimName.LastIndexOf(':') + 2);
 
             //reject MerchantStore
-            ExtendMerchantStoreResponse response = await _merchantStoreService.Warning(id, residentId);
+            ExtendMerchantStoreResponse response = await _merchantStoreService.Warning(id, residentId, isWarning);
 
             string json = JsonSerializer.Serialize(ApiResponse<ExtendMerchantStoreResponse>.Success(response));
 
             watch.Stop();
 
-            _logger.Information($"PUT api/stores/warning?id={id} END duration: " +
+            _logger.Information($"PUT api/stores/warning?id={id}&isWarning={isWarning} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
