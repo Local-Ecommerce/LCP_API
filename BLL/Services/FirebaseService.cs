@@ -201,13 +201,10 @@ namespace BLL.Services
                     "https://lcp-mobile-8c400-default-rtdb.asia-southeast1.firebasedatabase.app/",
             new FirebaseOptions { AuthTokenAsyncFactory = () => Task.FromResult(auth) });
 
-            DateTime currentTime = _utilService.CurrentTimeInVietnam();
-
             JObject jObject = new()
             {
-                {"createdDate" , (long)((DateTimeOffset)currentTime).ToUnixTimeMilliseconds()},
-                {"data", new JObject() { { "image", $"{image}"}, { "name", ""}, { "id", ""} }
-    },
+                {"createdDate" , (long)((DateTimeOffset)DateTime.UtcNow).ToUnixTimeMilliseconds()},
+                {"data", new JObject() { { "image", $"{image}"}, { "name", ""}, { "id", ""} }},
                 {"read", 0},
                 { "receiverId", receiverId},
                 { "senderId", senderId},
