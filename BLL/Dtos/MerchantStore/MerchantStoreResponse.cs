@@ -13,6 +13,7 @@ namespace BLL.Dtos.MerchantStore
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public DateTime? UpdatedDate { get; set; }
+        public int? Warned { get; set; }
         public int? Status { get; set; }
         public string ResidentId { get; set; }
         public string ApartmentId { get; set; }
