@@ -65,8 +65,6 @@ namespace BLL.Services
                 ApartmentId = resident.ApartmentId
             };
 
-            _unitOfWork.Residents.Add(resident);
-
             return residentMerchant;
         }
 
