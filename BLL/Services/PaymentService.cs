@@ -115,7 +115,7 @@ namespace BLL.Services
                     .ProductInMenu
                     .Product;
 
-                await _firebaseService.PushNotification(order.ResidentId, product.ResidentId, product.Image);
+                await _firebaseService.PushNotification(order.ResidentId, product.ResidentId, product.Image, $"{(int)NotificationCode.PAYMENT}");
             }
             catch (Exception e)
             {
