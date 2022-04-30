@@ -64,7 +64,9 @@ namespace DAL.Repositories
                 case ResidentType.MARKET_MANAGER:
                     query = query.Include(fb => fb.Product)
                                     .ThenInclude(p => p.Resident)
-                                    .Where(fb => fb.Product.Resident.ApartmentId.Equals(apartmentId));
+                                    .ThenInclude(r => r.MerchantStores)
+                                    .Where(fb => fb.Product.Resident.ApartmentId.Equals(apartmentId))
+                                .Include(fb => fb.Resident);
                     break;
             }
 
@@ -74,9 +76,7 @@ namespace DAL.Repositories
                 foreach (var item in include)
                 {
                     if (item.Equals(nameof(Feedback.Product)))
-                        query = query.Include(fb => fb.Product)
-                                    .ThenInclude(p => p.Resident)
-                                    .ThenInclude(r => r.MerchantStores);
+                        query = query.Include(fb => fb.Product);
                     if (item.Equals(nameof(Feedback.Resident)))
                         query = query.Include(fb => fb.Resident);
                 }
