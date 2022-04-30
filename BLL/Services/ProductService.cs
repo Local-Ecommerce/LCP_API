@@ -510,8 +510,7 @@ namespace BLL.Services
         {
             List<BaseProductResponse> responses = new();
             List<UpdateProductResponse> allProducts = new();
-            TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-            DateTime vnTime = TimeZoneInfo.ConvertTime(_utilService.CurrentTimeInVietnam(), vnZone);
+            DateTime vnTime = _utilService.CurrentTimeInVietnam();
             try
             {
                 //get all category belong to syscateId

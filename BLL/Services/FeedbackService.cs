@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using BLL.Dtos.Feedback;
+using BLL.Dtos.MerchantStore;
 using BLL.Services.Interfaces;
 using DAL.Constants;
 using DAL.Models;
@@ -91,10 +93,11 @@ namespace BLL.Services
             string role, double? rating, DateTime? date,
             int? limit, int? page, string sort, string[] include)
         {
-            PagingModel<Feedback> feedback;
+            PagingModel<Feedback> feedbacks;
             string propertyName = default;
             bool isAsc = false;
             string apartmentId = null;
+            List<FeedbackResponse> feedbackResponses = new();
 
             if (role.Equals(ResidentType.CUSTOMER))
                 residentId = residentSendRequest;
@@ -119,9 +122,34 @@ namespace BLL.Services
 
             try
             {
-                feedback = await _unitOfWork.Feedbacks
+                feedbacks = await _unitOfWork.Feedbacks
                     .GetFeedback(id, productId, residentId, residentSendRequest,
                         role, apartmentId, rating, date, limit, page, isAsc, propertyName, include);
+                List<Feedback> listFeedback = feedbacks.List;
+
+                //get extra info
+                if (Array.Exists(include, e => e == nameof(Feedback.Product)))
+                {
+                    foreach (var feedback in listFeedback)
+                    {
+                        Product product = feedback.Product;
+                        if (product.BelongTo != null)
+                        {
+                            product.BelongToNavigation = await _unitOfWork.Products.FindAsync(p => p.ProductId.Equals(product.BelongTo));
+                        }
+                    }
+                }
+
+                foreach (var feedback in listFeedback)
+                {
+                    FeedbackResponse response = _mapper.Map<FeedbackResponse>(feedback);
+                    if (feedback.Product != null)
+                    {
+                        response.MerchantStore =
+                            _mapper.Map<MerchantStoreResponse>(feedback.Product.Resident.MerchantStores.First());
+                    }
+                    feedbackResponses.Add(response);
+                }
             }
             catch (Exception e)
             {
@@ -131,10 +159,10 @@ namespace BLL.Services
 
             return new PagingModel<FeedbackResponse>
             {
-                List = _mapper.Map<List<FeedbackResponse>>(feedback.List),
-                Page = feedback.Page,
-                LastPage = feedback.LastPage,
-                Total = feedback.Total,
+                List = feedbackResponses,
+                Page = feedbacks.Page,
+                LastPage = feedbacks.LastPage,
+                Total = feedbacks.Total,
             };
         }
 
