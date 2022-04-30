@@ -108,8 +108,13 @@ namespace BLL.Services
 
                     //update quantity to Redis
                     _redisService.StoreToList(QUANTITY_CACHE_KEY,
-                    new ProductQuantityDto(orderDetailRequest.ProductId, currentQuantity - orderDetailRequest.Quantity.Value, vnTime),
-                    new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(orderDetailRequest.ProductId)));
+                            new ProductQuantityDto()
+                            {
+                                ProductId = productInMenu.ProductId,
+                                Quantity = productInMenu.Quantity.Value,
+                                UpdatedDate = vnTime
+                            },
+                            new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(orderDetailRequest.ProductId)));
 
                     Order order = orders.Find(o => o.MerchantStoreId.Equals(productInMenu.Menu.MerchantStoreId));
 

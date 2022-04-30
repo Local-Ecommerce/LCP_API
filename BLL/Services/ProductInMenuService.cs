@@ -61,7 +61,12 @@ namespace BLL.Services
                     _unitOfWork.ProductInMenus.Add(productInMenu);
 
                     _redisService.StoreToList(CACHE_KEY,
-                        new ProductQuantityDto(productInMenu.ProductId, productInMenu.Quantity.Value, vnTime),
+                        new ProductQuantityDto()
+                        {
+                            ProductId = productInMenu.ProductId,
+                            Quantity = productInMenu.Quantity.Value,
+                            UpdatedDate = vnTime
+                        },
                         new Predicate<ProductQuantityDto>(p => p.ProductId.Equals(productInMenu.ProductId)));
                 });
 
@@ -244,12 +249,19 @@ namespace BLL.Services
                             productInMenu.Status = pimUpdate.Status;
                             productInMenu.Price = pimUpdate.Price;
                             productInMenu.UpdatedDate = vnTime;
+                            productInMenu.Quantity = pimUpdate.Quantity;
+                            productInMenu.MaxBuy = pimUpdate.MaxBuy;
 
                             _unitOfWork.ProductInMenus.Update(productInMenu);
 
                             //update quantity in Redis
                             _redisService.StoreToList(CACHE_KEY,
-                            new ProductQuantityDto(productInMenu.ProductId, productInMenu.Quantity.Value, vnTime),
+                            new ProductQuantityDto()
+                            {
+                                ProductId = productInMenu.ProductId,
+                                Quantity = productInMenu.Quantity.Value,
+                                UpdatedDate = vnTime
+                            },
                             new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(productInMenu.ProductId)));
                         }
                     }

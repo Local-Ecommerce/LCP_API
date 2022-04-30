@@ -74,7 +74,9 @@ namespace DAL.Repositories
                 foreach (var item in include)
                 {
                     if (item.Equals(nameof(Feedback.Product)))
-                        query = query.Include(fb => fb.Product);
+                        query = query.Include(fb => fb.Product)
+                                    .ThenInclude(p => p.Resident)
+                                    .ThenInclude(r => r.MerchantStores);
                     if (item.Equals(nameof(Feedback.Resident)))
                         query = query.Include(fb => fb.Resident);
                 }
