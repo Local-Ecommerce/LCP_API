@@ -38,7 +38,7 @@ namespace API.Controllers
         /// </summary>
         [Authorize(Roles = ResidentType.CUSTOMER)]
         [HttpPost]
-        public async Task<IActionResult> CreateMenu([FromBody] FeedbackRequest feedbackRequest)
+        public async Task<IActionResult> CreateFeedback([FromBody] FeedbackRequest feedbackRequest)
         {
             //check token expired
             _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
@@ -63,7 +63,7 @@ namespace API.Controllers
 
             watch.Stop();
 
-            _logger.Information("POST api/feedback END duration: " +
+            _logger.Information("POST api/feedbacks END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);
@@ -75,7 +75,7 @@ namespace API.Controllers
         /// </summary>
         [AuthorizeRoles(ResidentType.CUSTOMER, ResidentType.MARKET_MANAGER, ResidentType.MERCHANT)]
         [HttpGet]
-        public async Task<IActionResult> GetMenu(
+        public async Task<IActionResult> GetFeedback(
             [FromQuery] string id,
             [FromQuery] string residentid,
             [FromQuery] string productid,
@@ -120,6 +120,35 @@ namespace API.Controllers
                 $"&residentid={residentid}&rating={rating}&date={date}" +
                 $"&limit={limit}&page={page}&sort={sort}&include="
                 + string.Join("include=", include) + " END duration: " +
+                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+            return Ok(json);
+        }
+
+
+        /// <summary>
+        /// Read Feedback (Market Manager)
+        /// </summary>
+        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
+        [HttpPut]
+        public async Task<IActionResult> ReadFeedback([FromQuery] string id)
+        {
+            //check token expired
+            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
+            _logger.Information($"PUT api/feedbacks?id={id} START Request: ");
+
+            Stopwatch watch = new();
+            watch.Start();
+
+            //Read Feedback
+            FeedbackResponse response = await _feedbackService.ReadFeedback(id);
+
+            string json = JsonSerializer.Serialize(ApiResponse<FeedbackResponse>.Success(response));
+
+            watch.Stop();
+
+            _logger.Information($"PUT api/feedbacks?id={id} END duration: " +
                 $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
             return Ok(json);

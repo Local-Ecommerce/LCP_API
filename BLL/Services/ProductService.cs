@@ -522,6 +522,14 @@ namespace BLL.Services
                     foreach (Menu menu in baseMenus)
                         allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, categoryIds, menu, allProducts));
 
+                //customer cannot get product from his/her store
+                string accountId = residentId.Substring(0, residentId.IndexOf("_"));
+                List<UpdateProductResponse> ownProduct = allProducts.Where(p => p.ResidentId.Contains(accountId)).ToList();
+                foreach (var product in ownProduct)
+                {
+                    allProducts.Remove(product);
+                }
+
                 //create response
                 foreach (var product in allProducts)
                 {

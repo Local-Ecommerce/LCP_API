@@ -35,5 +35,13 @@ namespace BLL.Services.Interfaces
             string id, string productId, string residentId, string residenSendRequest,
             string role, double? rating, DateTime? date,
             int? limit, int? page, string sort, string[] include);
+
+
+        /// <summary>
+        /// Read Feedback
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<FeedbackResponse> ReadFeedback(string id);
     }
 }
