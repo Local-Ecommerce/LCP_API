@@ -128,15 +128,13 @@ namespace BLL.Services
                 List<Feedback> listFeedback = feedbacks.List;
 
                 //get extra info
-                if (Array.Exists(include, e => e == nameof(Feedback.Product)))
+
+                foreach (var feedback in listFeedback)
                 {
-                    foreach (var feedback in listFeedback)
+                    Product product = feedback.Product;
+                    if (product.BelongTo != null)
                     {
-                        Product product = feedback.Product;
-                        if (product.BelongTo != null)
-                        {
-                            product.BelongToNavigation = await _unitOfWork.Products.FindAsync(p => p.ProductId.Equals(product.BelongTo));
-                        }
+                        product.BelongToNavigation = await _unitOfWork.Products.FindAsync(p => p.ProductId.Equals(product.BelongTo));
                     }
                 }
 
