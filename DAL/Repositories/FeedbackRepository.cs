@@ -75,6 +75,8 @@ namespace DAL.Repositories
                 {
                     if (item.Equals(nameof(Feedback.Product)))
                         query = query.Include(fb => fb.Product);
+                    if (item.Equals(nameof(Feedback.Resident)))
+                        query = query.Include(fb => fb.Resident);
                 }
             }
 

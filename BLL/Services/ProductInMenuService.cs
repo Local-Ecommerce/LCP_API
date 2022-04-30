@@ -18,17 +18,21 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
+        private readonly IRedisService _redisService;
         private const string PREFIX = "PIM_";
+        private const string CACHE_KEY = "Quantity";
 
         public ProductInMenuService(IUnitOfWork unitOfWork,
             ILogger logger,
             IMapper mapper,
-            IUtilService utilService)
+            IUtilService utilService,
+            IRedisService redisService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
+            _redisService = redisService;
         }
 
 
@@ -45,15 +49,20 @@ namespace BLL.Services
 
             try
             {
+                DateTime vnTime = _utilService.CurrentTimeInVietnam();
                 productInMenus.ForEach(productInMenu =>
                 {
                     productInMenu.ProductInMenuId = _utilService.CreateId(PREFIX);
                     productInMenu.MenuId = menuId;
-                    productInMenu.CreatedDate = _utilService.CurrentTimeInVietnam();
-                    productInMenu.UpdatedDate = _utilService.CurrentTimeInVietnam();
+                    productInMenu.CreatedDate = vnTime;
+                    productInMenu.UpdatedDate = vnTime;
                     productInMenu.Status = (int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU;
 
                     _unitOfWork.ProductInMenus.Add(productInMenu);
+
+                    _redisService.StoreToList(CACHE_KEY,
+                        new ProductQuantityDto(productInMenu.ProductId, productInMenu.Quantity.Value, vnTime),
+                        new Predicate<ProductQuantityDto>(p => p.ProductId.Equals(productInMenu.ProductId)));
                 });
 
                 await _unitOfWork.SaveChangesAsync();
@@ -205,6 +214,8 @@ namespace BLL.Services
         public async Task<List<ExtendProductInMenuResponse>> UpdateProductsInMenu(
             ListProductInMenuUpdateRequest productInMenuUpdateRequests)
         {
+            DateTime vnTime = _utilService.CurrentTimeInVietnam();
+
             //get list Product In Menu Id
             List<string> productInMenuIds = productInMenuUpdateRequests.ProductInMenus
                                                 .Select(pim => pim.ProductInMenuId).ToList();
@@ -232,9 +243,14 @@ namespace BLL.Services
                         {
                             productInMenu.Status = pimUpdate.Status;
                             productInMenu.Price = pimUpdate.Price;
-                            productInMenu.UpdatedDate = _utilService.CurrentTimeInVietnam();
+                            productInMenu.UpdatedDate = vnTime;
 
                             _unitOfWork.ProductInMenus.Update(productInMenu);
+
+                            //update quantity in Redis
+                            _redisService.StoreToList(CACHE_KEY,
+                            new ProductQuantityDto(productInMenu.ProductId, productInMenu.Quantity.Value, vnTime),
+                            new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(productInMenu.ProductId)));
                         }
                     }
                 }
@@ -248,6 +264,50 @@ namespace BLL.Services
             }
 
             return _mapper.Map<List<ExtendProductInMenuResponse>>(productInMenus);
+        }
+
+
+        /// <summary>
+        /// Get Product In Menu For Order
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public async Task<ProductInMenu> GetProductInMenuForOrder(string productId)
+        {
+            DateTime vnTime = _utilService.CurrentTimeInVietnam();
+            try
+            {
+                Product product = (await _unitOfWork.Products
+                                    .GetProduct(id: productId, include: new string[] { "menu" }))
+                                    .List
+                                    .First();
+
+                //get pim not in base menu
+                List<ProductInMenu> pdNotInBaseMenu = product.ProductInMenus.Where(pim => !(bool)pim.Menu.BaseMenu).ToList();
+                if (!_utilService.IsNullOrEmpty(pdNotInBaseMenu))
+                    foreach (ProductInMenu pim in pdNotInBaseMenu)
+                    {
+                        //get active menu
+                        if (TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeStart) > 0 &&
+                                TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeEnd) < 0 &&
+                                pim.Menu.Status.Equals((int)MenuStatus.ACTIVE_MENU) &&
+                                pim.Menu.RepeatDate.Contains($"{(int)vnTime.DayOfWeek}"))
+
+                            return pim;
+                    }
+
+                //get base menu
+                ProductInMenu pdInBaseMenu = product.ProductInMenus.Where(pim => (bool)pim.Menu.BaseMenu).FirstOrDefault();
+                if (pdInBaseMenu != null)
+                    return pdInBaseMenu;
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[ProductInMenuService.GetProductInMenuForOrder()]: " + e.Message);
+                throw;
+            }
+
+            return null;
         }
     }
 }

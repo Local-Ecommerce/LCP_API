@@ -1,4 +1,5 @@
-﻿using BLL.Dtos.Product;
+﻿using BLL.Dtos.OrderDetail;
+using BLL.Dtos.Product;
 using DAL.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -105,13 +106,5 @@ namespace BLL.Services.Interfaces
         List<UpdateProductResponse> GetProductFromMenuBySysCateIdAndProductId(string productId,
             List<string> sysCateIds, Menu menu,
             List<UpdateProductResponse> products);
-
-
-        /// <summary>
-        /// Get Product Price For Order
-        /// </summary>
-        /// <param name="productId"></param>
-        /// <returns></returns>
-        Task<ProductInfoForOrder> GetProductPriceForOrder(string productId);
     }
 }

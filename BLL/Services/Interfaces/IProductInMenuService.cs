@@ -1,4 +1,5 @@
 ﻿using BLL.Dtos.ProductInMenu;
+using DAL.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -46,5 +47,14 @@ namespace BLL.Services.Interfaces
         /// <param name="productInMenuIds"></param>
         /// <returns></returns>
         Task DeleteProductInMenu(List<string> productInMenuIds);
+
+
+        /// <summary>
+        /// Get Product In Menu For Order
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="merchantStoreId"></param>
+        /// <returns></returns>
+        Task<ProductInMenu> GetProductInMenuForOrder(string productId);
     }
 }

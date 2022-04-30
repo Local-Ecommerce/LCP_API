@@ -7,6 +7,8 @@ namespace BLL.Dtos.Product
     public class BaseProductRequest : ProductRequest
     {
         public bool ToBaseMenu { get; set; }
+        public int? Quantity { get; set; }
+        public int? MaxBuy { get; set; }
         public Collection<ProductRequest> RelatedProducts { get; set; }
     }
 }

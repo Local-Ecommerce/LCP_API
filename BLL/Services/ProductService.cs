@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using BLL.Dtos.ProductInMenu;
+using BLL.Dtos.OrderDetail;
 
 namespace BLL.Services
 {
@@ -27,6 +28,7 @@ namespace BLL.Services
         private const string PREFIX = "PD_";
         private const string TYPE = "Product";
         private const string CACHE_KEY = "Product";
+        private const string QUANTITY_CACHE_KEY = "Quantity";
         private const string CACHE_KEY_FOR_UPDATE = "Product Before Update";
 
 
@@ -80,7 +82,13 @@ namespace BLL.Services
                 product.ResidentId = residentId;
                 product.InverseBelongToNavigation = new Collection<Product>();
 
-                pimRequest.Add(new ProductInMenuRequest { ProductId = product.ProductId, Price = product.DefaultPrice });
+                pimRequest.Add(new ProductInMenuRequest
+                {
+                    ProductId = product.ProductId,
+                    Price = product.DefaultPrice,
+                    Quantity = baseProductRequest.Quantity,
+                    MaxBuy = baseProductRequest.MaxBuy
+                });
 
                 //create related product
                 foreach (ProductRequest relatedProductRequest in baseProductRequest.RelatedProducts)
@@ -99,7 +107,12 @@ namespace BLL.Services
                     product.InverseBelongToNavigation.Add(relatedProduct);
 
                     pimRequest.Add(new ProductInMenuRequest
-                    { ProductId = relatedProduct.ProductId, Price = relatedProduct.DefaultPrice });
+                    {
+                        ProductId = relatedProduct.ProductId,
+                        Price = relatedProduct.DefaultPrice,
+                        Quantity = baseProductRequest.Quantity,
+                        MaxBuy = baseProductRequest.MaxBuy
+                    });
 
                 }
 
@@ -109,8 +122,10 @@ namespace BLL.Services
                 string baseMenu = await _unitOfWork.Menus.GetBaseMenuId(residentId);
 
                 if (baseProductRequest.ToBaseMenu)
+                {
                     //store product into base menu
                     await _productInMenuService.AddProductsToMenu(baseMenu, pimRequest);
+                }
                 else
                     await _unitOfWork.SaveChangesAsync();
 
@@ -137,6 +152,7 @@ namespace BLL.Services
             List<ProductRequest> productRequests)
         {
             List<ProductInMenuRequest> pimRequest = new();
+            List<Product> relatedProducts = new();
             try
             {
                 //get base product
@@ -157,7 +173,8 @@ namespace BLL.Services
                     product.ResidentId = residentId;
                     product.BelongTo = baseProductId;
                     product.SystemCategoryId = baseProduct.SystemCategoryId;
-                    pimRequest.Add(new ProductInMenuRequest { ProductId = product.ProductId, Price = product.DefaultPrice });
+
+                    relatedProducts.Add(product);
 
                     _unitOfWork.Products.Add(product);
                 });
@@ -169,10 +186,26 @@ namespace BLL.Services
                 string baseMenu = await _unitOfWork.Menus.GetBaseMenuId(residentId);
 
                 //check if base product in base menu
-                if ((await _unitOfWork.ProductInMenus
-                        .FindAsync(pim => pim.ProductId.Equals(baseProductId) && pim.MenuId.Equals(baseMenu))) != null)
+                ProductInMenu basePIM = await _unitOfWork.ProductInMenus
+                        .FindAsync(pim => pim.ProductId.Equals(baseProductId) && pim.MenuId.Equals(baseMenu));
+
+                if (basePIM != null)
+                {
+                    foreach (var product in relatedProducts)
+                    {
+                        pimRequest.Add(new ProductInMenuRequest
+                        {
+                            ProductId = product.ProductId,
+                            Price = product.DefaultPrice,
+                            Quantity = basePIM.Quantity,
+                            MaxBuy = basePIM.MaxBuy
+                        });
+                    }
+
                     //store product into base menu
                     await _productInMenuService.AddProductsToMenu(baseMenu, pimRequest);
+                }
+
                 else
                     await _unitOfWork.SaveChangesAsync();
             }
@@ -601,63 +634,6 @@ namespace BLL.Services
                 }
             }
             return responses;
-        }
-
-
-        /// <summary>
-        /// Get Product Price For Order
-        /// </summary>
-        /// <param name="productId"></param>
-        /// <returns></returns>
-        public async Task<ProductInfoForOrder> GetProductPriceForOrder(string productId)
-        {
-            TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-            DateTime vnTime = TimeZoneInfo.ConvertTime(_utilService.CurrentTimeInVietnam(), vnZone);
-
-            try
-            {
-                Product product = (await _unitOfWork.Products.GetProduct(id: productId, include: new string[] { "menu" }))
-                                    .List
-                                    .First();
-
-                //get price not in base menu
-                List<ProductInMenu> pdNotInBaseMenu = product.ProductInMenus.Where(pim => !(bool)pim.Menu.BaseMenu).ToList();
-                if (!_utilService.IsNullOrEmpty(pdNotInBaseMenu))
-                    foreach (ProductInMenu pim in pdNotInBaseMenu)
-                    {
-                        //get active menu
-                        if (TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeStart) > 0 &&
-                                TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeEnd) < 0 &&
-                                pim.Menu.Status.Equals((int)MenuStatus.ACTIVE_MENU) &&
-                                pim.Menu.RepeatDate.Contains($"{(int)vnTime.DayOfWeek}"))
-                        {
-                            return new ProductInfoForOrder
-                            {
-                                MerchantStoreId = pim.Menu.MerchantStoreId,
-                                Price = (double)pim.Price,
-                                ProductInMenuId = pim.ProductInMenuId
-                            };
-                        }
-                    }
-
-                //get base menu
-                ProductInMenu pdInBaseMenu = product.ProductInMenus.Where(pim => (bool)pim.Menu.BaseMenu).FirstOrDefault();
-                if (pdInBaseMenu != null)
-                {
-                    return new ProductInfoForOrder
-                    {
-                        MerchantStoreId = pdInBaseMenu.Menu.MerchantStoreId,
-                        Price = (double)pdInBaseMenu.Price,
-                        ProductInMenuId = pdInBaseMenu.ProductInMenuId
-                    };
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[ProductService.GetProductPriceForOrder()]: " + e.Message);
-                throw;
-            }
-            return null;
         }
     }
 }
