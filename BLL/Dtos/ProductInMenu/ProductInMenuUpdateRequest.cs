@@ -9,6 +9,8 @@ namespace BLL.Dtos.ProductInMenu
         public string ProductInMenuId { get; set; }
         public double Price { get; set; }
         public int Status { get; set; }
+        public int? Quantity { get; set; }
+        public int? MaxBuy { get; set; }
     }
 
 
