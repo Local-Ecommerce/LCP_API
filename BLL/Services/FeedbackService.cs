@@ -137,5 +137,34 @@ namespace BLL.Services
                 Total = feedback.Total,
             };
         }
+
+
+        /// <summary>
+        /// Read Feedback
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<FeedbackResponse> ReadFeedback(string id)
+        {
+            Feedback feedback = null;
+
+            try
+            {
+                feedback = await _unitOfWork.Feedbacks.FindAsync(fb => fb.FeedbackId.Equals(id));
+                feedback.IsRead = true;
+
+                _unitOfWork.Feedbacks.Update(feedback);
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("[FeedbackService.ReadFeedback()]: " + e.Message);
+
+                throw;
+            }
+
+            return _mapper.Map<FeedbackResponse>(feedback);
+        }
     }
 }
