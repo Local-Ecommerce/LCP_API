@@ -195,8 +195,11 @@ namespace BLL.Services
                 else
                     //revoke old refresh token
                     foreach (RefreshToken rt in refreshTokens)
-                        if (rt.Token.EndsWith(resident.Type))
+                    {
+                        if (account.RoleId.Equals(RoleId.ADMIN) || (resident != null && rt.Token.EndsWith(resident.Type)))
                             rt.IsRevoked = true;
+                    }
+
 
                 refreshTokens.Add(refreshToken);
 
@@ -220,10 +223,15 @@ namespace BLL.Services
                 throw new UnauthorizedAccessException();
             }
 
-            account.RefreshTokens = account.RefreshTokens
-                                        .Where(rt => rt.IsRevoked == false && rt.Token.EndsWith((resident.Type)))
-                                        .OrderByDescending(rt => rt.CreatedDate)
-                                        .ToList();
+            account.RefreshTokens = account.RoleId.Equals(RoleId.ADMIN) ?
+                                        account.RefreshTokens
+                                            .Where(rt => rt.IsRevoked == false)
+                                            .OrderByDescending(rt => rt.CreatedDate)
+                                            .ToList() :
+                                        account.RefreshTokens
+                                            .Where(rt => rt.IsRevoked == false && rt.Token.EndsWith((resident.Type)))
+                                            .OrderByDescending(rt => rt.CreatedDate)
+                                            .ToList();
 
             account.Residents = new List<Resident>() { resident };
 
