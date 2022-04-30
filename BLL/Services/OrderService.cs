@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BLL.Dtos.Product;
 using System.Collections.ObjectModel;
+using BLL.Dtos.ProductInMenu;
 
 namespace BLL.Services
 {
@@ -20,33 +21,34 @@ namespace BLL.Services
         private readonly ILogger _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRedisService _redisService;
-        private readonly IProductService _productService;
         private readonly IResidentService _residentService;
         private readonly IPaymentService _paymentService;
+        private readonly IProductInMenuService _productInMenuService;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
         private const string PREFIX = "OD_";
         private const string SUB_PREFIX = "ODD_";
         private const string CACHE_KEY = "Order";
+        private const string QUANTITY_CACHE_KEY = "Quantity";
 
 
         public OrderService(ILogger logger,
             IMapper mapper,
             IUtilService utilService,
             IRedisService redisService,
-            IProductService productService,
             IResidentService residentService,
             IUnitOfWork unitOfWork,
-            IPaymentService paymentService)
+            IPaymentService paymentService,
+            IProductInMenuService productInMenuService)
         {
             _logger = logger;
             _mapper = mapper;
             _utilService = utilService;
             _unitOfWork = unitOfWork;
             _redisService = redisService;
-            _productService = productService;
             _residentService = residentService;
             _paymentService = paymentService;
+            _productInMenuService = productInMenuService;
         }
 
 
@@ -63,6 +65,10 @@ namespace BLL.Services
         {
             List<Order> orders = new();
             List<ExtendOrderResponse> extendOrderResponses = new();
+            DateTime vnTime = _utilService.CurrentTimeInVietnam();
+            DateTime lastUpdatedPIM;
+            int currentQuantity;
+            List<ProductQuantityDto> oldQuantityFromRedis = new();
             try
             {
                 resident = resident == null ?
@@ -72,16 +78,40 @@ namespace BLL.Services
                 if (resident.Status != (int)ResidentStatus.VERIFIED_RESIDENT)
                     throw new BusinessException("Người dùng chưa được xác thực");
 
+                //get quantity from Redis
+                List<ProductQuantityDto> productQuantityDtos = _redisService.GetList<ProductQuantityDto>(QUANTITY_CACHE_KEY);
+
                 //create new  orders and order details
                 foreach (OrderDetailRequest orderDetailRequest in orderDetailRequests)
                 {
-                    ProductInfoForOrder productInfoForOrder = await _productService
-                                                .GetProductPriceForOrder(orderDetailRequest.ProductId);
+                    ProductInMenu productInMenu = await _productInMenuService
+                                    .GetProductInMenuForOrder(orderDetailRequest.ProductId);
 
-                    if (productInfoForOrder == null)
+                    if (productInMenu == null)
                         throw new EntityNotFoundException("Sản phẩm không khả dụng");
 
-                    Order order = orders.Find(o => o.MerchantStoreId.Equals(productInfoForOrder.MerchantStoreId));
+                    lastUpdatedPIM = productInMenu.UpdatedDate.Value;
+
+                    //check quantity database vs Redis
+                    ProductQuantityDto productQuantityDto = productQuantityDtos
+                            .Where(pqd => pqd.ProductId.Equals(orderDetailRequest.ProductId))
+                            .FirstOrDefault();
+                    oldQuantityFromRedis.Add(productQuantityDto);
+
+                    currentQuantity = productQuantityDto.UpdatedDate.Equals(productInMenu.UpdatedDate.Value) ?
+                                        productInMenu.Quantity.Value : productQuantityDto.Quantity;
+
+                    //check quantity vs order.quantity
+                    if (orderDetailRequest.Quantity > currentQuantity ||
+                        orderDetailRequest.Quantity > productInMenu.MaxBuy)
+                        throw new BusinessException("Số lượng sản phẩm vượt quá số lượng tối đa có thể mua");
+
+                    //update quantity to Redis
+                    _redisService.StoreToList(QUANTITY_CACHE_KEY,
+                    new ProductQuantityDto(orderDetailRequest.ProductId, currentQuantity - orderDetailRequest.Quantity.Value, vnTime),
+                    new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(orderDetailRequest.ProductId)));
+
+                    Order order = orders.Find(o => o.MerchantStoreId.Equals(productInMenu.Menu.MerchantStoreId));
 
                     Collection<OrderDetail> details = order == null ? new Collection<OrderDetail>()
                         : (Collection<OrderDetail>)order.OrderDetails;
@@ -92,12 +122,12 @@ namespace BLL.Services
                     OrderDetail orderDetail = _mapper.Map<OrderDetail>(orderDetailRequest);
                     orderDetail.OrderDetailId = _utilService.CreateId(SUB_PREFIX);
                     orderDetail.OrderId = orderId;
-                    orderDetail.UnitPrice = productInfoForOrder.Price;
+                    orderDetail.UnitPrice = productInMenu.Price;
                     orderDetail.FinalAmount =
                         CaculateOrderDetailFinalAmount(orderDetail.UnitPrice, orderDetail.Quantity);
-                    orderDetail.OrderDate = _utilService.CurrentTimeInVietnam();
+                    orderDetail.OrderDate = vnTime;
                     orderDetail.Status = (int)OrderStatus.OPEN;
-                    orderDetail.ProductInMenuId = productInfoForOrder.ProductInMenuId;
+                    orderDetail.ProductInMenuId = productInMenu.ProductInMenuId;
 
                     details.Add(orderDetail);
 
@@ -108,12 +138,12 @@ namespace BLL.Services
                         {
                             OrderId = orderId,
                             DeliveryAddress = resident.DeliveryAddress,
-                            CreatedDate = _utilService.CurrentTimeInVietnam(),
-                            UpdatedDate = _utilService.CurrentTimeInVietnam(),
+                            CreatedDate = vnTime,
+                            UpdatedDate = vnTime,
                             TotalAmount = 0,
                             Status = orderDetail.Status,
                             ResidentId = residentId,
-                            MerchantStoreId = productInfoForOrder.MerchantStoreId,
+                            MerchantStoreId = productInMenu.Menu.MerchantStoreId
                         };
 
                         order.OrderDetails = details;
@@ -125,7 +155,13 @@ namespace BLL.Services
                         orders.Remove(order);
                         orders.Add(order);
                     }
+
+                    //update quantity
+                    productInMenu.Quantity = currentQuantity - orderDetailRequest.Quantity.Value;
+                    productInMenu.UpdatedDate = vnTime;
+                    _unitOfWork.ProductInMenus.Update(productInMenu);
                 }
+
                 //add to db
                 foreach (var order in orders)
                 {
@@ -145,6 +181,14 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[OrderService.CreateOrder()]: " + e.Message);
+
+                //restore old data from Redis
+                // foreach (var productQuantity in oldQuantityFromRedis)
+                // {
+                //     _redisService.StoreToList(QUANTITY_CACHE_KEY, productQuantity,
+                //         new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(productQuantity.ProductId)));
+                // }
+
                 throw;
             }
 
