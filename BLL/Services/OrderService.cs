@@ -111,7 +111,7 @@ namespace BLL.Services
                             new ProductQuantityDto()
                             {
                                 ProductId = productInMenu.ProductId,
-                                Quantity = productInMenu.Quantity.Value,
+                                Quantity = currentQuantity - orderDetailRequest.Quantity.Value,
                                 UpdatedDate = vnTime
                             },
                             new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(orderDetailRequest.ProductId)));
