@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using RedLockNet.SERedis;
 
 namespace BLL.Services.Interfaces
 {
@@ -55,5 +57,11 @@ namespace BLL.Services.Interfaces
         /// <param name="predicate"></param>
         void DeleteFromList<T>(string listKey, Predicate<T> predicate);
 
+
+        /// <summary>
+        /// Get RedLockFactory
+        /// </summary>
+        /// <returns></returns>
+        RedLockFactory GetRedLockFactory();
     }
 }

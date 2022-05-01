@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using BLL.Dtos.Product;
 using System.Collections.ObjectModel;
 using BLL.Dtos.ProductInMenu;
+using RedLockNet.SERedis;
 
 namespace BLL.Services
 {
@@ -67,7 +68,7 @@ namespace BLL.Services
             List<ExtendOrderResponse> extendOrderResponses = new();
             DateTime vnTime = _utilService.CurrentTimeInVietnam();
             DateTime lastUpdatedPIM;
-            int currentQuantity;
+            int currentQuantity = 0;
             List<ProductQuantityDto> oldQuantityFromRedis = new();
             try
             {
@@ -89,32 +90,45 @@ namespace BLL.Services
 
                     lastUpdatedPIM = productInMenu.UpdatedDate.Value;
 
-                    //get quantity from Redis
-                    List<ProductQuantityDto> productQuantityDtos = _redisService.GetList<ProductQuantityDto>(QUANTITY_CACHE_KEY);
+                    var expiry = TimeSpan.FromMilliseconds(300);
+                    var wait = TimeSpan.FromMilliseconds(100);
+                    var retry = TimeSpan.FromMilliseconds(50);
 
-                    //check quantity database vs Redis
-                    ProductQuantityDto productQuantityDto = productQuantityDtos
-                            .Where(pqd => pqd.ProductId.Equals(orderDetailRequest.ProductId))
-                            .FirstOrDefault();
-                    oldQuantityFromRedis.Add(productQuantityDto);
+                    RedLockFactory redLockFactory = _redisService.GetRedLockFactory();
 
-                    currentQuantity = DateTime.Compare(productQuantityDto.UpdatedDate, productInMenu.UpdatedDate.Value) == 0 ?
-                                        productInMenu.Quantity.Value : productQuantityDto.Quantity;
+                    await using (var redLock = await redLockFactory.CreateLockAsync(QUANTITY_CACHE_KEY, expiry, wait, retry))
+                    {
+                        if (redLock.IsAcquired)
+                        {
+                            //get quantity from Redis
+                            List<ProductQuantityDto> productQuantityDtos = _redisService.GetList<ProductQuantityDto>(QUANTITY_CACHE_KEY);
+                            //check quantity database vs Redis
+                            ProductQuantityDto productQuantityDto = productQuantityDtos
+                                    .Where(pqd => pqd.ProductId.Equals(orderDetailRequest.ProductId))
+                                    .FirstOrDefault();
+                            oldQuantityFromRedis.Add(productQuantityDto);
 
-                    //check quantity vs order.quantity
-                    if (orderDetailRequest.Quantity > currentQuantity ||
-                        orderDetailRequest.Quantity > productInMenu.MaxBuy)
-                        throw new BusinessException("Số lượng sản phẩm vượt quá số lượng tối đa có thể mua");
+                            currentQuantity =
+                                DateTime.Compare(productQuantityDto.UpdatedDate, productInMenu.UpdatedDate.Value) == 0 ?
+                                                productInMenu.Quantity.Value : productQuantityDto.Quantity;
 
-                    //update quantity to Redis
-                    _redisService.StoreToList(QUANTITY_CACHE_KEY,
-                            new ProductQuantityDto()
+                            //check quantity vs order.quantity
+                            if (orderDetailRequest.Quantity > currentQuantity ||
+                                orderDetailRequest.Quantity > productInMenu.MaxBuy)
+                                throw new BusinessException("Số lượng sản phẩm vượt quá số lượng tối đa có thể mua");
+
+                            //update quantity to Redis
+                            productQuantityDtos.Remove(productQuantityDto);
+                            productQuantityDtos.Add(new ProductQuantityDto()
                             {
                                 ProductId = productInMenu.ProductId,
                                 Quantity = currentQuantity - orderDetailRequest.Quantity.Value,
                                 UpdatedDate = vnTime
-                            },
-                            new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(orderDetailRequest.ProductId)));
+                            });
+
+                            _redisService.StoreList(QUANTITY_CACHE_KEY, productQuantityDtos);
+                        }
+                    }
 
                     Order order = orders.Find(o => o.MerchantStoreId.Equals(productInMenu.Menu.MerchantStoreId));
 
