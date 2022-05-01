@@ -16,6 +16,12 @@ namespace BLL.Dtos.Product
     public class UpdateProductResponse : ProductResponse
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int? MaxBuy { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int? Quantity { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public ProductResponse CurrentProduct { get; set; }
     }
 }

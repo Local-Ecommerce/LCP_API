@@ -643,6 +643,8 @@ namespace BLL.Services
                     UpdateProductResponse product = products.Where(p => p.ProductId.Equals(response.ProductId)).FirstOrDefault();
                     if (product == null)
                     {
+                        response.Quantity = pim.Quantity.Value;
+                        response.MaxBuy = pim.MaxBuy.Value;
                         response.DefaultPrice = pim.Price;
                         responses.Add(response);
                     }

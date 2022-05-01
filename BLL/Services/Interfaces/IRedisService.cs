@@ -59,6 +59,13 @@ namespace BLL.Services.Interfaces
 
 
         /// <summary>
+        /// Remove List
+        /// </summary>
+        /// <param name="listKey"></param>
+        void RemoveList(string listKey);
+
+
+        /// <summary>
         /// Get RedLockFactory
         /// </summary>
         /// <returns></returns>

@@ -26,18 +26,21 @@ namespace BLL.Services
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IRedisService _redisService;
 
         public MoMoService(ILogger logger,
             ISecurityService securityService,
             IConfiguration configuration,
             IMapper mapper,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IRedisService redisService)
         {
             _logger = logger;
             _securityService = securityService;
             _configuration = configuration;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _redisService = redisService;
         }
 
 
@@ -135,14 +138,21 @@ namespace BLL.Services
         {
             try
             {
-                Payment payment = await _unitOfWork.Payments.FindAsync(p => p.OrderId.Equals(momoIPNRequest.OrderId));
-                payment.TransactionId = momoIPNRequest.TransId;
-                payment.ResultCode = momoIPNRequest.ResultCode;
-                payment.Status = momoIPNRequest.ResultCode == 0 ? (int)PaymentStatus.PAID : (int)PaymentStatus.FAILED;
+                List<string> orderIds = _redisService.GetList<string>(momoIPNRequest.OrderId);
+                foreach (var orderId in orderIds)
+                {
+                    Payment payment = await _unitOfWork.Payments.FindAsync(p => p.OrderId.Equals(orderId));
+                    payment.TransactionId = momoIPNRequest.TransId;
+                    payment.ResultCode = momoIPNRequest.ResultCode;
+                    payment.Status = momoIPNRequest.ResultCode == 0 ? (int)PaymentStatus.PAID : (int)PaymentStatus.FAILED;
 
-                _unitOfWork.Payments.Update(payment);
+                    _unitOfWork.Payments.Update(payment);
+                }
+
                 await _unitOfWork.SaveChangesAsync();
 
+                //delete from Redis
+                _redisService.RemoveList(momoIPNRequest.OrderId);
             }
             catch (Exception e)
             {

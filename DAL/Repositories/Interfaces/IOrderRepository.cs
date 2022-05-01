@@ -33,5 +33,13 @@ namespace DAL.Repositories.Interfaces
         /// <param name="apartmentId"></param>
         /// <returns></returns>
         Task<List<Order>> GetOrderByApartmentId(string apartmentId);
+
+
+        /// <summary>
+        /// Get Order By Order Ids
+        /// </summary>
+        /// <param name="orderIds"></param>
+        /// <returns></returns>
+        Task<List<Order>> GetOrderByOrderIds(List<string> orderIds);
     }
 }
