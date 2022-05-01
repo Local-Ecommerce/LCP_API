@@ -362,7 +362,7 @@ namespace BLL.Services
             try
             {
                 Order order =
-                    (await _unitOfWork.Orders.GetOrder(id, null, null, null, null, null, false, null, new string[] { "payment" }))
+                    (await _unitOfWork.Orders.GetOrder(id, null, null, null, null, null, false, null, new string[] { "payment", "product" }))
                         .List
                         .FirstOrDefault();
 
@@ -391,6 +391,27 @@ namespace BLL.Services
                 {
                     Payment payment = order.Payments.Where(p => p.PaymentMethodId.Equals("PM_CASH")).FirstOrDefault();
                     payment.Status = (int)PaymentStatus.PAID;
+                }
+
+                if (status.Equals((int)OrderStatus.CANCELED_ORDER))
+                {
+                    foreach (var orderDetail in order.OrderDetails)
+                    {
+                        DateTime vnTime = _utilService.CurrentTimeInVietnam();
+                        ProductInMenu pim = orderDetail.ProductInMenu;
+                        pim.Quantity = pim.Quantity + orderDetail.Quantity;
+                        pim.UpdatedDate = vnTime;
+
+                        _unitOfWork.ProductInMenus.Update(pim);
+
+                        //update Redis
+                        _redisService.StoreToList(QUANTITY_CACHE_KEY, new ProductQuantityDto
+                        {
+                            ProductId = pim.ProductId,
+                            Quantity = pim.Quantity.Value,
+                            UpdatedDate = vnTime
+                        }, new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(pim.ProductId)));
+                    }
                 }
 
                 _unitOfWork.Orders.Update(order);
