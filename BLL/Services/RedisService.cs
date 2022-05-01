@@ -4,6 +4,11 @@ using System.Text;
 using System.Text.Json;
 using BLL.Services.Interfaces;
 using System;
+using Microsoft.Extensions.Configuration;
+using StackExchange.Redis;
+using RedLockNet.SERedis;
+using RedLockNet.SERedis.Configuration;
+using System.Threading.Tasks;
 
 namespace BLL.Services
 {
@@ -11,11 +16,14 @@ namespace BLL.Services
     {
         private readonly IDistributedCache _distributedCache;
         private readonly ILogger _logger;
+        private readonly IConfiguration _configuration;
 
-        public RedisService(IDistributedCache distributedCache, ILogger logger)
+        public RedisService(IDistributedCache distributedCache, ILogger logger,
+                    IConfiguration configuration)
         {
             _distributedCache = distributedCache;
             _logger = logger;
+            _configuration = configuration;
         }
 
         public void DeleteFromList<T>(string listKey, Predicate<T> predicate)
@@ -52,6 +60,20 @@ namespace BLL.Services
 
             return JsonSerializer.Deserialize<List<T>>(cache);
         }
+
+
+        /// <summary>
+        /// Get RedLockFactory
+        /// </summary>
+        /// <returns></returns>
+        public RedLockFactory GetRedLockFactory()
+        {
+            ConnectionMultiplexer connection = ConnectionMultiplexer
+                .Connect(_configuration.GetValue<string>("CacheSettings:ConnectionString"));
+
+            return RedLockFactory.Create(new List<RedLockMultiplexer> { connection });
+        }
+
 
         /// <summary>
         /// Get String by key
