@@ -107,9 +107,11 @@ namespace DAL.Repositories
         /// <returns></returns>
         public async Task<List<Order>> GetOrderByApartmentId(string apartmentId)
         {
-            return await _context.Orders.Include(o => o.Resident)
-                                        .Where(o => o.Resident.ApartmentId.Equals(apartmentId))
-                                        .ToListAsync();
+            return apartmentId != null ? await _context.Orders.Include(o => o.Resident)
+                                                .Where(o => o.Resident.ApartmentId.Equals(apartmentId))
+                                                .ToListAsync() :
+                                        await _context.Orders.Include(o => o.Resident)
+                                                .ToListAsync();
         }
 
 
