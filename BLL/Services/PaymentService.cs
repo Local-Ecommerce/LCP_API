@@ -108,19 +108,21 @@ namespace BLL.Services
                     response = new PaymentLinkResponse { PayUrl = momoResponse.payUrl };
                 }
 
-                Payment payment = _mapper.Map<Payment>(paymentRequest);
-
-                payment.PaymentId = _utilService.CreateId(PREFIX);
-                payment.DateTime = _utilService.CurrentTimeInVietnam();
-                payment.Status = (int)PaymentStatus.UNPAID;
-
-                _unitOfWork.Payments.Add(payment);
-
-                await _unitOfWork.SaveChangesAsync();
-
                 //push notification
                 foreach (var order in orders)
                 {
+                    Payment payment = new()
+                    {
+                        OrderId = order.OrderId,
+                        PaymentId = _utilService.CreateId(PREFIX),
+                        DateTime = _utilService.CurrentTimeInVietnam(),
+                        Status = (int)PaymentStatus.UNPAID,
+                        PaymentAmount = order.TotalAmount,
+                        PaymentMethodId = paymentRequest.PaymentMethodId
+                    };
+
+                    _unitOfWork.Payments.Add(payment);
+
                     Product product = order.OrderDetails
                                             .First()
                                             .ProductInMenu
@@ -128,6 +130,8 @@ namespace BLL.Services
 
                     await _firebaseService.PushNotification(order.ResidentId, product.ResidentId, product.Image, $"{(int)NotificationCode.PAYMENT}");
                 }
+
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception e)
             {
