@@ -24,7 +24,9 @@ namespace BLL.Services
         private readonly ISecurityService _securityService;
         private readonly IFirebaseService _firebaseService;
         private readonly IMoMoService _moMoService;
+        private readonly IRedisService _redisService;
         private const string PREFIX = "PM_";
+        private const string ORDER_PREFIX = "OD_";
         private const string MOMO = "PM_MOMO";
         private const string CASH = "PM_CASH";
 
@@ -35,7 +37,8 @@ namespace BLL.Services
             IConfiguration configuration,
             ISecurityService securityService,
             IMoMoService moMoService,
-            IFirebaseService firebaseService
+            IFirebaseService firebaseService,
+            IRedisService redisService
             )
         {
             _unitOfWork = unitOfWork;
@@ -46,6 +49,7 @@ namespace BLL.Services
             _securityService = securityService;
             _firebaseService = firebaseService;
             _moMoService = moMoService;
+            _redisService = redisService;
         }
 
 
@@ -61,26 +65,31 @@ namespace BLL.Services
             try
             {
                 //check payment amount
-                Order order = (await _unitOfWork.Orders.GetOrder(paymentRequest.OrderId, null, null, null, null, null, false, null, new string[] { "product" }))
-                    .List
-                    .First();
+                List<Order> orders = await _unitOfWork.Orders.GetOrderByOrderIds(paymentRequest.OrderIds);
 
-                if (order.TotalAmount != paymentRequest.PaymentAmount)
+                double totalAmount = orders.Sum(o => o.TotalAmount.Value);
+
+                if (totalAmount != paymentRequest.PaymentAmount)
                     throw new BusinessException("Số tiền thanh toán không trùng khớp với giá trị đơn hàng");
 
                 //if payment method is MoMo
                 if (paymentRequest.PaymentMethodId.Equals(MOMO))
                 {
+                    //generate composite orderId
+                    string compositeOrderId = _utilService.CreateId(ORDER_PREFIX);
+
+                    //store to Redis
+                    _redisService.StoreList(compositeOrderId, paymentRequest.OrderIds);
+
                     MoMoCaptureWalletRequest momoRequest = new MoMoCaptureWalletRequest
                     {
                         PartnerCode = _configuration.GetValue<string>("MoMo:PartnerCode"),
                         RequestId = Guid.NewGuid().ToString(),
                         Amount = Convert.ToInt64(paymentRequest.PaymentAmount),
-                        OrderId = paymentRequest.OrderId,
-                        OrderInfo = $"Thanh toán đơn hàng {paymentRequest.OrderId} từ LCP",
+                        OrderId = compositeOrderId,
+                        OrderInfo = $"Thanh toán đơn hàng " + string.Join(", ", paymentRequest.OrderIds) + " từ LCP",
                         RedirectUrl = paymentRequest.RedirectUrl,
-                        // IpnUrl = "https://localcommercialplatform-api.azurewebsites.net/api/ipn",
-                        IpnUrl = "https://eeb8-171-240-159-178.ap.ngrok.io/api/ipn",
+                        IpnUrl = "https://localcommercialplatform-api.azurewebsites.net/api/ipn",
                         RequestType = "captureWallet",
                         ExtraData = "",
                         StoreId = "Test_01"
@@ -110,12 +119,15 @@ namespace BLL.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 //push notification
-                Product product = order.OrderDetails
-                    .First()
-                    .ProductInMenu
-                    .Product;
+                foreach (var order in orders)
+                {
+                    Product product = order.OrderDetails
+                                            .First()
+                                            .ProductInMenu
+                                            .Product;
 
-                await _firebaseService.PushNotification(order.ResidentId, product.ResidentId, product.Image, $"{(int)NotificationCode.PAYMENT}");
+                    await _firebaseService.PushNotification(order.ResidentId, product.ResidentId, product.Image, $"{(int)NotificationCode.PAYMENT}");
+                }
             }
             catch (Exception e)
             {

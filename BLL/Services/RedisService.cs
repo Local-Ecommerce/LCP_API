@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using StackExchange.Redis;
 using RedLockNet.SERedis;
 using RedLockNet.SERedis.Configuration;
-using System.Threading.Tasks;
 
 namespace BLL.Services
 {
@@ -38,6 +37,7 @@ namespace BLL.Services
 
             StoreList(listKey, list);
         }
+
 
         /// <summary>
         /// Get List of <T> from Redis by key
@@ -95,6 +95,17 @@ namespace BLL.Services
             return default;
         }
 
+
+        /// <summary>
+        /// Remove List
+        /// </summary>
+        /// <param name="listKey"></param>
+        public void RemoveList(string listKey)
+        {
+            _distributedCache.Remove(listKey);
+        }
+
+
         /// <summary>
         /// Store string to Redis
         /// </summary>
@@ -106,6 +117,7 @@ namespace BLL.Services
 
             _distributedCache.SetString(key, value);
         }
+
 
         /// <summary>
         /// Store list of <T> to Redis
@@ -122,6 +134,7 @@ namespace BLL.Services
 
             _distributedCache.SetString(key, cache);
         }
+
 
         /// <summary>
         /// Store T to list

@@ -111,5 +111,21 @@ namespace DAL.Repositories
                                         .Where(o => o.Resident.ApartmentId.Equals(apartmentId))
                                         .ToListAsync();
         }
+
+
+        /// <summary>
+        /// Get Order By Order Ids
+        /// </summary>
+        /// <param name="orderIds"></param>
+        /// <returns></returns>
+        public async Task<List<Order>> GetOrderByOrderIds(List<string> orderIds)
+        {
+            return await _context.Orders.Include(o => o.OrderDetails)
+                                            .ThenInclude(od => od.ProductInMenu)
+                                            .ThenInclude(pim => pim.Product)
+                                            .ThenInclude(p => p.BelongToNavigation)
+                                            .Where(o => orderIds.Contains(o.OrderId))
+                                            .ToListAsync();
+        }
     }
 }
