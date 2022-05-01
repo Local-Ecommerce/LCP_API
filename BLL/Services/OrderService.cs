@@ -98,7 +98,7 @@ namespace BLL.Services
                             .FirstOrDefault();
                     oldQuantityFromRedis.Add(productQuantityDto);
 
-                    currentQuantity = productQuantityDto.UpdatedDate.Equals(productInMenu.UpdatedDate.Value) ?
+                    currentQuantity = DateTime.Compare(productQuantityDto.UpdatedDate, productInMenu.UpdatedDate.Value) != 0 ?
                                         productInMenu.Quantity.Value : productQuantityDto.Quantity;
 
                     //check quantity vs order.quantity
