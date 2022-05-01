@@ -415,7 +415,7 @@ namespace BLL.Services
                 if (id != null && status.Contains((int)ProductStatus.UNVERIFIED_PRODUCT))
                     return await GetUnverifiedProductForMarketManager(id);
                 else if (!status.Contains((int)ProductStatus.UNVERIFIED_PRODUCT))
-                    return await GetProductForCustomer(id, residentId, sysCateId, search);
+                    return await GetProductForCustomer(id, residentId, sysCateId, search, limit, page);
             }
 
             PagingModel<Product> products;
@@ -504,13 +504,18 @@ namespace BLL.Services
         /// <param name="residentId"></param>
         /// <param name="sysCateId"></param>
         /// <param name="search"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
         /// <returns></returns>
         public async Task<PagingModel<BaseProductResponse>> GetProductForCustomer(
-            string id, string residentId, string sysCateId, string search)
+            string id, string residentId, string sysCateId, string search, int? limit, int? page)
         {
             List<BaseProductResponse> responses = new();
             List<UpdateProductResponse> allProducts = new();
             DateTime vnTime = _utilService.CurrentTimeInVietnam();
+            int perPage = limit.GetValueOrDefault(Int32.MaxValue);
+            page = page.GetValueOrDefault(1);
+
             try
             {
                 //get all category belong to syscateId
@@ -532,7 +537,7 @@ namespace BLL.Services
                 if (!_utilService.IsNullOrEmpty(menus))
                     foreach (Menu menu in menus)
                     {
-                        allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, categoryIds, menu, allProducts));
+                        allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, categoryIds, menu, allProducts, search));
 
                         //check if menu includes base menu
                         if ((bool)menu.IncludeBaseMenu)
@@ -544,7 +549,7 @@ namespace BLL.Services
                                 baseMenus.Remove(baseMenu);
 
                                 //add product from this base menu
-                                allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, categoryIds, baseMenu, allProducts));
+                                allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, categoryIds, baseMenu, allProducts, search));
                             }
                         }
                     }
@@ -552,7 +557,7 @@ namespace BLL.Services
                 //add products from the remaining base menus
                 if (!_utilService.IsNullOrEmpty(baseMenus))
                     foreach (Menu menu in baseMenus)
-                        allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, categoryIds, menu, allProducts));
+                        allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, categoryIds, menu, allProducts, search));
 
                 //customer cannot get product from his/her store
                 string accountId = residentId.Substring(0, residentId.IndexOf("_"));
@@ -582,9 +587,9 @@ namespace BLL.Services
             }
             return new PagingModel<BaseProductResponse>
             {
-                List = responses,
-                Page = 1,
-                LastPage = 1,
+                List = responses.Skip((page.Value - 1) * perPage).Take(perPage).ToList(),
+                Page = page.Value,
+                LastPage = (int)Math.Ceiling(responses.Count / (double)perPage),
                 Total = responses.Count,
             };
         }
@@ -597,15 +602,26 @@ namespace BLL.Services
         /// <param name="sysCateIds"></param>
         /// <param name="menu"></param>
         /// <param name="products"></param>
+        /// <param name="search"></param>
         /// <returns></returns>
         public List<UpdateProductResponse> GetProductFromMenuBySysCateIdAndProductId(
             string productId, List<string> sysCateIds, Menu menu,
-            List<UpdateProductResponse> products)
+            List<UpdateProductResponse> products, string search)
         {
             List<UpdateProductResponse> responses = new();
-            List<ProductInMenu> pims = !_utilService.IsNullOrEmpty(sysCateIds) ? menu.ProductInMenus
+            List<ProductInMenu> pims;
+
+            if (!_utilService.IsNullOrEmpty(sysCateIds))
+                pims = menu.ProductInMenus
                             .Where(pim => sysCateIds.Contains(pim.Product.SystemCategoryId))
-                            .ToList() : menu.ProductInMenus.ToList();
+                            .ToList();
+            else if (search != null)
+                pims = menu.ProductInMenus
+                            .Where(pim => pim.Product.ProductName.ToLower().Contains(search.ToLower()) ||
+                                pim.Product.SystemCategory.SysCategoryName.ToLower().Contains(search.ToLower()))
+                            .ToList();
+            else
+                pims = menu.ProductInMenus.ToList();
 
             if (!_utilService.IsNullOrEmpty(pims))
             {

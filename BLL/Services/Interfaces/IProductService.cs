@@ -71,9 +71,12 @@ namespace BLL.Services.Interfaces
         /// <param name="residentId"></param>
         /// <param name="sysCateId"></param>
         /// <param name="search"></param>
+        /// <param name="limit"></param>
+        /// <param name="page"></param>
         /// <returns></returns>
         Task<PagingModel<BaseProductResponse>> GetProductForCustomer(
-            string id, string residentId, string sysCateId, string search);
+            string id, string residentId, string sysCateId, string search,
+            int? limit, int? page);
 
 
         /// <summary>
@@ -102,9 +105,10 @@ namespace BLL.Services.Interfaces
         /// <param name="sysCateIds"></param>
         /// <param name="menu"></param>
         /// <param name="products"></param>
+        /// <param name="search"></param>
         /// <returns></returns>
         List<UpdateProductResponse> GetProductFromMenuBySysCateIdAndProductId(string productId,
             List<string> sysCateIds, Menu menu,
-            List<UpdateProductResponse> products);
+            List<UpdateProductResponse> products, string search);
     }
 }

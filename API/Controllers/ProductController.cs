@@ -149,7 +149,7 @@ namespace API.Controllers
             switch (role)
             {
                 case "Customer":
-                    response = await _productService.GetProductForCustomer(id, residentId, categoryid, search);
+                    response = await _productService.GetProductForCustomer(id, residentId, categoryid, search, limit, page);
                     break;
                 default:
                     response = await _productService.GetProduct(id, status, apartmentid,
