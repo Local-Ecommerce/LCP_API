@@ -369,7 +369,7 @@ namespace BLL.Services
                 if (merchantStore is null)
                     throw new BusinessException($"Quản lý chung cư không có quyền xét duyệt cửa hàng này.");
 
-                merchantStore.Warned = isWarning ? merchantStore.Warned++ : merchantStore.Warned--;
+                merchantStore.Warned = isWarning ? ++merchantStore.Warned : --merchantStore.Warned;
 
                 if (merchantStore.Warned == 3)
                 {
