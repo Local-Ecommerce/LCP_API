@@ -41,31 +41,32 @@ namespace BLL.Services
                 DateTime currentDate = _utilService.CurrentTimeInVietnam();
                 DateTime previousDate = currentDate.Subtract(new TimeSpan(days, 0, 0, 0));
 
-                string storeId = (await _unitOfWork.MerchantStores.FindAsync(ms => ms.ResidentId.Equals(residentId)))
-                                    .MerchantStoreId;
-
-                List<Order> orders = await _unitOfWork.Orders.FindListAsync(o => o.MerchantStoreId.Equals(storeId)
-                    && o.UpdatedDate.Value.Date <= currentDate.Date && o.UpdatedDate.Value.Date >= previousDate.Date);
-
-                if (!_utilService.IsNullOrEmpty(orders))
+                MerchantStore store = await _unitOfWork.MerchantStores.FindAsync(ms => ms.ResidentId.Equals(residentId));
+                if (store != null)
                 {
-                    dashboardForMerchant.TotalOrder = orders.Count;
+                    List<Order> orders = await _unitOfWork.Orders
+                        .FindListAsync(o => o.MerchantStoreId.Equals(store.MerchantStoreId)
+                        && o.UpdatedDate.Value.Date <= currentDate.Date && o.UpdatedDate.Value.Date >= previousDate.Date);
 
-                    foreach (var order in orders)
+                    if (!_utilService.IsNullOrEmpty(orders))
                     {
-                        switch (order.Status)
+                        dashboardForMerchant.TotalOrder = orders.Count;
+
+                        foreach (var order in orders)
                         {
-                            case (int)OrderStatus.COMPLETED:
-                                dashboardForMerchant.CompletedOrder++;
-                                dashboardForMerchant.TotalRevenue += order.TotalAmount.Value;
-                                break;
-                            case (int)OrderStatus.CANCELED_ORDER:
-                                dashboardForMerchant.CanceledOrder++;
-                                break;
+                            switch (order.Status)
+                            {
+                                case (int)OrderStatus.COMPLETED:
+                                    dashboardForMerchant.CompletedOrder++;
+                                    dashboardForMerchant.TotalRevenue += order.TotalAmount.Value;
+                                    break;
+                                case (int)OrderStatus.CANCELED_ORDER:
+                                    dashboardForMerchant.CanceledOrder++;
+                                    break;
+                            }
                         }
                     }
                 }
-
             }
             catch (Exception e)
             {
