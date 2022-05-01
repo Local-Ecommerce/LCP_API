@@ -103,19 +103,20 @@ namespace BLL.Services
                     throw new BusinessException("Định dạng thời gian không hợp lệ");
 
                 //check if another menu use that time
-                if (menuUpdateRequest.TimeStart != null || menuUpdateRequest.TimeEnd != null)
-                {
-                    TimeSpan timeStart = menuUpdateRequest.TimeStart != null ?
-                        TimeSpan.Parse(menuUpdateRequest.TimeStart) : (TimeSpan)menu.TimeStart;
+                if (!menu.BaseMenu.Value)
+                    if (menuUpdateRequest.TimeStart != null || menuUpdateRequest.TimeEnd != null)
+                    {
+                        TimeSpan timeStart = menuUpdateRequest.TimeStart != null ?
+                            TimeSpan.Parse(menuUpdateRequest.TimeStart) : (TimeSpan)menu.TimeStart;
 
-                    TimeSpan timeEnd = menuUpdateRequest.TimeEnd != null ?
-                        TimeSpan.Parse(menuUpdateRequest.TimeEnd) : (TimeSpan)menu.TimeEnd;
+                        TimeSpan timeEnd = menuUpdateRequest.TimeEnd != null ?
+                            TimeSpan.Parse(menuUpdateRequest.TimeEnd) : (TimeSpan)menu.TimeEnd;
 
-                    string menuName = await GetOtherMenuHasSameTime(id, timeStart, timeEnd, menuUpdateRequest.RepeatDate, residentId);
+                        string menuName = await GetOtherMenuHasSameTime(id, timeStart, timeEnd, menuUpdateRequest.RepeatDate, residentId);
 
-                    if (menuName != null)
-                        throw new BusinessException($"Đã có menu {menuName} sử dụng khung giờ đó");
-                }
+                        if (menuName != null)
+                            throw new BusinessException($"Đã có menu {menuName} sử dụng khung giờ đó");
+                    }
 
                 menu = _mapper.Map(menuUpdateRequest, menu);
                 menu.UpdatedDate = _utilService.CurrentTimeInVietnam();
