@@ -78,9 +78,6 @@ namespace BLL.Services
                 if (resident.Status != (int)ResidentStatus.VERIFIED_RESIDENT)
                     throw new BusinessException("Người dùng chưa được xác thực");
 
-                //get quantity from Redis
-                List<ProductQuantityDto> productQuantityDtos = _redisService.GetList<ProductQuantityDto>(QUANTITY_CACHE_KEY);
-
                 //create new  orders and order details
                 foreach (OrderDetailRequest orderDetailRequest in orderDetailRequests)
                 {
@@ -91,6 +88,9 @@ namespace BLL.Services
                         throw new EntityNotFoundException("Sản phẩm không khả dụng");
 
                     lastUpdatedPIM = productInMenu.UpdatedDate.Value;
+
+                    //get quantity from Redis
+                    List<ProductQuantityDto> productQuantityDtos = _redisService.GetList<ProductQuantityDto>(QUANTITY_CACHE_KEY);
 
                     //check quantity database vs Redis
                     ProductQuantityDto productQuantityDto = productQuantityDtos
