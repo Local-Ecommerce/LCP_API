@@ -76,7 +76,7 @@ namespace BLL.Services
                 if (paymentRequest.PaymentMethodId.Equals(MOMO))
                 {
                     //generate composite orderId
-                    string compositeOrderId = _utilService.CreateId(ORDER_PREFIX);
+                    string compositeOrderId = paymentRequest.OrderIds.First();
 
                     //store to Redis
                     _redisService.StoreList(compositeOrderId, paymentRequest.OrderIds);
