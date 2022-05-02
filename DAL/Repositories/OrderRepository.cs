@@ -101,21 +101,6 @@ namespace DAL.Repositories
 
 
         /// <summary>
-        /// Get Order By Apartment Id
-        /// </summary>
-        /// <param name="apartmentId"></param>
-        /// <returns></returns>
-        public async Task<List<Order>> GetOrderByApartmentId(string apartmentId)
-        {
-            return apartmentId != null ? await _context.Orders.Include(o => o.Resident)
-                                                .Where(o => o.Resident.ApartmentId.Equals(apartmentId))
-                                                .ToListAsync() :
-                                        await _context.Orders.Include(o => o.Resident)
-                                                .ToListAsync();
-        }
-
-
-        /// <summary>
         /// Get Order By Order Ids
         /// </summary>
         /// <param name="orderIds"></param>
@@ -128,6 +113,43 @@ namespace DAL.Repositories
                                             .ThenInclude(p => p.BelongToNavigation)
                                             .Where(o => orderIds.Contains(o.OrderId))
                                             .ToListAsync();
+        }
+
+
+        /// <summary>
+        /// Get Order For Dashboard
+        /// </summary>
+        /// <param name="days"></param>
+        /// <param name="residentId"></param>
+        /// <param name="apartmentId"></param>
+        /// <returns></returns>
+        public async Task<List<Order>> GetOrderForDashboard(int days, string residentId, string apartmentId)
+        {
+            TimeZoneInfo vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            DateTime currentDate = TimeZoneInfo.ConvertTime(DateTime.Now, vnZone);
+            DateTime previousDate = currentDate.Subtract(new TimeSpan(days, 0, 0, 0));
+
+            IQueryable<Order> query = _context.Orders.Where(o => o.OrderId != null);
+
+            //get by days
+            query = query
+                .Where(o => o.UpdatedDate.Value.Date <= currentDate.Date && o.UpdatedDate.Value.Date >= previousDate.Date);
+
+            //get by residentId
+            if (residentId != null)
+                query = query.Include(o => o.MerchantStore).Where(o => o.MerchantStore.ResidentId.Equals(residentId));
+
+            //get by apartmentId
+            if (apartmentId != null)
+            {
+                query = apartmentId != "" ? query.Include(o => o.Resident)
+                                                .Where(o => o.Resident.ApartmentId.Equals(apartmentId)) :
+                                        query.Include(o => o.Resident);
+            }
+
+            query = query.Include(o => o.Payments).Where(o => o.Payments.Any());
+
+            return await query.ToListAsync();
         }
     }
 }

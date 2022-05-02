@@ -28,18 +28,20 @@ namespace DAL.Repositories.Interfaces
 
 
         /// <summary>
-        /// Get Order By Apartment Id
-        /// </summary>
-        /// <param name="apartmentId"></param>
-        /// <returns></returns>
-        Task<List<Order>> GetOrderByApartmentId(string apartmentId);
-
-
-        /// <summary>
         /// Get Order By Order Ids
         /// </summary>
         /// <param name="orderIds"></param>
         /// <returns></returns>
         Task<List<Order>> GetOrderByOrderIds(List<string> orderIds);
+
+
+        /// <summary>
+        /// Get Order For Dashboard
+        /// </summary>
+        /// <param name="days"></param>
+        /// <param name="residentId"></param>
+        /// <param name="apartmentId"></param>
+        /// <returns></returns>
+        Task<List<Order>> GetOrderForDashboard(int days, string residentId, string apartmentId);
     }
 }
