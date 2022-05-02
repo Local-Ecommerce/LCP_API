@@ -317,6 +317,15 @@ namespace BLL.Services
                         responses.Add(response);
                     }
                 }
+
+                if (include.Contains("payment"))
+                {
+                    foreach (var order in orders.List)
+                    {
+                        if (_utilService.IsNullOrEmpty(order.Payments))
+                            responses.Remove(responses.Find(o => o.OrderId.Equals(order.OrderId)));
+                    }
+                }
             }
             catch (Exception e)
             {

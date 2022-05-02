@@ -41,29 +41,23 @@ namespace BLL.Services
                 DateTime currentDate = _utilService.CurrentTimeInVietnam();
                 DateTime previousDate = currentDate.Subtract(new TimeSpan(days, 0, 0, 0));
 
-                MerchantStore store = await _unitOfWork.MerchantStores.FindAsync(ms => ms.ResidentId.Equals(residentId));
-                if (store != null)
+                List<Order> orders = await _unitOfWork.Orders.GetOrderForDashboard(days, residentId, null);
+
+                if (!_utilService.IsNullOrEmpty(orders))
                 {
-                    List<Order> orders = await _unitOfWork.Orders
-                        .FindListAsync(o => o.MerchantStoreId.Equals(store.MerchantStoreId)
-                        && o.UpdatedDate.Value.Date <= currentDate.Date && o.UpdatedDate.Value.Date >= previousDate.Date);
+                    dashboardForMerchant.TotalOrder = orders.Count;
 
-                    if (!_utilService.IsNullOrEmpty(orders))
+                    foreach (var order in orders)
                     {
-                        dashboardForMerchant.TotalOrder = orders.Count;
-
-                        foreach (var order in orders)
+                        switch (order.Status)
                         {
-                            switch (order.Status)
-                            {
-                                case (int)OrderStatus.COMPLETED:
-                                    dashboardForMerchant.CompletedOrder++;
-                                    dashboardForMerchant.TotalRevenue += order.TotalAmount.Value;
-                                    break;
-                                case (int)OrderStatus.CANCELED_ORDER:
-                                    dashboardForMerchant.CanceledOrder++;
-                                    break;
-                            }
+                            case (int)OrderStatus.COMPLETED:
+                                dashboardForMerchant.CompletedOrder++;
+                                dashboardForMerchant.TotalRevenue += order.TotalAmount.Value;
+                                break;
+                            case (int)OrderStatus.CANCELED_ORDER:
+                                dashboardForMerchant.CanceledOrder++;
+                                break;
                         }
                     }
                 }
@@ -93,9 +87,9 @@ namespace BLL.Services
                 DateTime currentDate = _utilService.CurrentTimeInVietnam();
                 DateTime previousDate = currentDate.Subtract(new TimeSpan(days, 0, 0, 0));
 
-                string apartmentId = role.Equals(ResidentType.MARKET_MANAGER) ? (await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId))).ApartmentId : null;
+                string apartmentId = role.Equals(ResidentType.MARKET_MANAGER) ? (await _unitOfWork.Residents.FindAsync(r => r.ResidentId.Equals(residentId))).ApartmentId : "";
 
-                List<Order> orders = await _unitOfWork.Orders.GetOrderByApartmentId(apartmentId);
+                List<Order> orders = await _unitOfWork.Orders.GetOrderForDashboard(days, null, apartmentId);
 
                 //get total completed and canceled order
                 foreach (var order in orders)
