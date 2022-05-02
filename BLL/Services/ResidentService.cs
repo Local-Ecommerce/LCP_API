@@ -88,17 +88,19 @@ namespace BLL.Services
 
             try
             {
-                //check valid phone number
-                if (_validateDataService.IsVietnamesePhoneNumber(residentUpdateRequest.PhoneNumber))
-                {
-                    Resident residentCheck = await _unitOfWork.Residents.FindAsync(r => r.PhoneNumber.Equals(residentUpdateRequest.PhoneNumber));
-                    if (residentCheck != null)
-                        throw new BusinessException("Đã có cư dân sử dụng số điện thoại này");
-                }
-                else
-                    throw new BusinessException("Số điện thoại không hợp lệ");
-
                 resident = await _unitOfWork.Residents.FindAsync(resident => resident.ResidentId.Equals(id));
+
+                //check valid phone number
+                if (residentUpdateRequest.PhoneNumber != null && residentUpdateRequest.PhoneNumber != resident.PhoneNumber)
+                    if (_validateDataService.IsVietnamesePhoneNumber(residentUpdateRequest.PhoneNumber))
+                    {
+                        Resident residentCheck = await _unitOfWork.Residents.FindAsync(r => r.PhoneNumber.Equals(residentUpdateRequest.PhoneNumber));
+                        if (residentCheck != null)
+                            throw new BusinessException("Đã có cư dân sử dụng số điện thoại này");
+                    }
+                    else
+                        throw new BusinessException("Số điện thoại không hợp lệ");
+
                 account = await _unitOfWork.Accounts.FindAsync(a => a.AccountId.Equals(resident.AccountId));
             }
             catch (Exception e)
