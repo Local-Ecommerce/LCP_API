@@ -60,8 +60,9 @@ namespace DAL.Repositories
             //filter by search
             if (!string.IsNullOrEmpty(search))
                 query = query.Where(p => p.ProductName.ToLower().Contains(search.ToLower()) ||
-                                            p.BriefDescription.Contains(search.ToLower()) ||
-                                            p.Description.Contains(search.ToLower()));
+                                            p.BriefDescription.ToLower().Contains(search.ToLower()) ||
+                                            p.Description.ToLower().Contains(search.ToLower()) ||
+                                            p.ProductCode.ToLower().Contains(search.ToLower()));
 
             //add include
             if (include != null && include.Length > 0)

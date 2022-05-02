@@ -63,10 +63,11 @@ namespace BLL.Services
                     throw new BusinessException($"Cư dân này không phải là thương nhân.");
 
                 merchantStore.MerchantStoreId = _utilService.CreateId(PREFIX);
-                merchantStore.Status = (int)MerchantStoreStatus.UNVERIFIED_MERCHANT_STORE;
+                merchantStore.Status = (int)MerchantStoreStatus.VERIFIED_MERCHANT_STORE;
                 merchantStore.CreatedDate = _utilService.CurrentTimeInVietnam();
                 merchantStore.ResidentId = residentId;
                 merchantStore.ApartmentId = resident.ApartmentId;
+                merchantStore.Warned = 0;
                 merchantStore.StoreImage = _firebaseService
                                 .UploadFileToFirebase(merchantStoreRequest.StoreImage, TYPE, merchantStore.MerchantStoreId, "Image")
                                 .Result;
