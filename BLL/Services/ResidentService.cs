@@ -84,15 +84,20 @@ namespace BLL.Services
 
             //check valid dob
             if (!_validateDataService.IsLaterThanPresent(residentUpdateRequest.DateOfBirth))
-            {
-                _logger.Error($"[Invalid Date Of Birth : '{residentUpdateRequest.DateOfBirth}']");
+                throw new BusinessException("Ngày sinh không hợp lệ");
 
-                throw new BusinessException(ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT.ToString(), (int)ResidentStatus.INVALID_DATE_OF_BIRTH_RESIDENT);
-            }
-
-            //Check id
             try
             {
+                //check valid phone number
+                if (_validateDataService.IsVietnamesePhoneNumber(residentUpdateRequest.PhoneNumber))
+                {
+                    Resident residentCheck = await _unitOfWork.Residents.FindAsync(r => r.PhoneNumber.Equals(residentUpdateRequest.PhoneNumber));
+                    if (residentCheck != null)
+                        throw new BusinessException("Đã có cư dân sử dụng số điện thoại này");
+                }
+                else
+                    throw new BusinessException("Số điện thoại không hợp lệ");
+
                 resident = await _unitOfWork.Residents.FindAsync(resident => resident.ResidentId.Equals(id));
                 account = await _unitOfWork.Accounts.FindAsync(a => a.AccountId.Equals(resident.AccountId));
             }
@@ -291,6 +296,8 @@ namespace BLL.Services
                     if (resident != null)
                         throw new BusinessException("Đã có cư dân sử dụng số điện thoại này");
                 }
+                else
+                    throw new BusinessException("Số điện thoại không hợp lệ");
 
                 resident = new Resident
                 {
