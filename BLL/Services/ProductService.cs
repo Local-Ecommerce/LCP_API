@@ -627,6 +627,9 @@ namespace BLL.Services
             {
                 foreach (var pim in pims)
                 {
+                    if (pim.Product.Resident.Status != (int)ResidentStatus.VERIFIED_RESIDENT)
+                        continue;
+
                     UpdateProductResponse response = _mapper.Map<UpdateProductResponse>(pim.Product);
                     if (productId != null)
                     {
@@ -638,10 +641,6 @@ namespace BLL.Services
                     //check status
                     if (!pim.Status.Equals((int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU) ||
                         !response.Status.Equals((int)ProductStatus.VERIFIED_PRODUCT))
-                        continue;
-
-                    //check quantity
-                    if (pim.Quantity == 0)
                         continue;
 
                     //check if it was already in list

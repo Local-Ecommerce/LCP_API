@@ -310,7 +310,7 @@ namespace BLL.Services
                     }
 
                 //get base menu
-                ProductInMenu pdInBaseMenu = product.ProductInMenus.Where(pim => (bool)pim.Menu.BaseMenu).FirstOrDefault();
+                ProductInMenu pdInBaseMenu = product.ProductInMenus.Where(pim => (bool)pim.Menu.BaseMenu && pim.Status.Equals((int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU)).FirstOrDefault();
                 if (pdInBaseMenu != null)
                     return pdInBaseMenu;
             }
