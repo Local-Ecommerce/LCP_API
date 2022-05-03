@@ -560,23 +560,26 @@ namespace BLL.Services
                         allProducts.AddRange(GetProductFromMenuBySysCateIdAndProductId(id, categoryIds, menu, allProducts, search));
 
                 //customer cannot get product from his/her store
-                string accountId = residentId.Substring(0, residentId.IndexOf("_"));
-                List<UpdateProductResponse> ownProduct = allProducts.Where(p => p.ResidentId.Contains(accountId)).ToList();
-                foreach (var product in ownProduct)
+                if (!_utilService.IsNullOrEmpty(allProducts))
                 {
-                    allProducts.Remove(product);
-                }
-
-                //create response
-                foreach (var product in allProducts)
-                {
-                    if (product.BelongTo == null)
+                    string accountId = residentId.Substring(0, residentId.IndexOf("_"));
+                    List<UpdateProductResponse> ownProduct = allProducts.Where(p => p.ResidentId.Contains(accountId)).ToList();
+                    foreach (var product in ownProduct)
                     {
-                        BaseProductResponse response = _mapper.Map<BaseProductResponse>(product);
-                        List<UpdateProductResponse> rP = allProducts.Where(p => p.BelongTo != null && p.BelongTo.Equals(product.ProductId)).ToList();
-                        response.RelatedProducts = new Collection<UpdateProductResponse>(rP);
+                        allProducts.Remove(product);
+                    }
 
-                        responses.Add(response);
+                    //create response
+                    foreach (var product in allProducts)
+                    {
+                        if (product.BelongTo == null)
+                        {
+                            BaseProductResponse response = _mapper.Map<BaseProductResponse>(product);
+                            List<UpdateProductResponse> rP = allProducts.Where(p => p.BelongTo != null && p.BelongTo.Equals(product.ProductId)).ToList();
+                            response.RelatedProducts = new Collection<UpdateProductResponse>(rP);
+
+                            responses.Add(response);
+                        }
                     }
                 }
             }
@@ -587,9 +590,9 @@ namespace BLL.Services
             }
             return new PagingModel<BaseProductResponse>
             {
-                List = responses.Skip((page.Value - 1) * perPage).Take(perPage).ToList(),
+                List = !_utilService.IsNullOrEmpty(responses) ? responses.Skip((page.Value - 1) * perPage).Take(perPage).ToList() : responses,
                 Page = page.Value,
-                LastPage = (int)Math.Ceiling(responses.Count / (double)perPage),
+                LastPage = !_utilService.IsNullOrEmpty(responses) ? (int)Math.Ceiling(responses.Count / (double)perPage) : 1,
                 Total = responses.Count,
             };
         }
@@ -609,16 +612,16 @@ namespace BLL.Services
             List<UpdateProductResponse> products, string search)
         {
             List<UpdateProductResponse> responses = new();
-            List<ProductInMenu> pims;
+            List<ProductInMenu> pims = new();
 
             if (!_utilService.IsNullOrEmpty(sysCateIds))
                 pims = menu.ProductInMenus
                             .Where(pim => sysCateIds.Contains(pim.Product.SystemCategoryId))
                             .ToList();
-            else if (search != null)
+            else if (search != null && !_utilService.IsNullOrEmpty(menu.ProductInMenus))
                 pims = menu.ProductInMenus
-                            .Where(pim => pim.Product.ProductName.ToLower().Contains(search.ToLower()) ||
-                                pim.Product.SystemCategory.SysCategoryName.ToLower().Contains(search.ToLower()))
+                            .Where(pim => (!string.IsNullOrEmpty(pim.Product.ProductName) && pim.Product.ProductName.ToLower().Contains(search.ToLower())) ||
+                                (!string.IsNullOrEmpty(pim.Product.SystemCategory.SysCategoryName) && pim.Product.SystemCategory.SysCategoryName.ToLower().Contains(search.ToLower())))
                             .ToList();
             else
                 pims = menu.ProductInMenus.ToList();
