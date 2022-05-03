@@ -245,6 +245,7 @@ namespace BLL.Services
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
         /// <param name="residentId"></param>
+        /// <param name="merchantId"></param>
         /// <param name="role"></param>
         /// <param name="status"></param>
         /// <param name="search"></param>
@@ -254,7 +255,7 @@ namespace BLL.Services
         /// <param name="include"></param>
         /// <returns></returns>
         public async Task<object> GetMerchantStores(
-            string id, string apartmentId, string residentId,
+            string id, string apartmentId, string residentId, string merchantId,
             string role, int?[] status, string search, int? limit,
             int? page, string sort,
             string[] include)
@@ -263,7 +264,7 @@ namespace BLL.Services
             string propertyName = default;
             bool isAsc = false;
 
-            residentId = role.Equals(ResidentType.MERCHANT) ? residentId : null;
+            residentId = role.Equals(ResidentType.MERCHANT) ? merchantId : residentId;
 
             if (!string.IsNullOrEmpty(sort))
             {

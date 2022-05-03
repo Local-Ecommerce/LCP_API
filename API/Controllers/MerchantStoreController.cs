@@ -109,7 +109,7 @@ namespace API.Controllers
 
             //Get MerchantStore
             object response = await _merchantStoreService
-                .GetMerchantStores(id, apartmentid, residentId, role, status, search, limit, page, sort, include);
+                .GetMerchantStores(id, apartmentid, residendid, residentId, role, status, search, limit, page, sort, include);
 
             string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
