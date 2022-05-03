@@ -301,9 +301,10 @@ namespace BLL.Services
                         //get active menu
                         if (TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeStart) > 0 &&
                                 TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeEnd) < 0 &&
+                                pim.Status.Equals((int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU) &&
                                 pim.Menu.Status.Equals((int)MenuStatus.ACTIVE_MENU) &&
                                 pim.Menu.RepeatDate.Contains($"{(int)vnTime.DayOfWeek}") &&
-                                pim.Quantity != 0)
+                                pim.Quantity.Value > 0)
 
                             return pim;
                     }

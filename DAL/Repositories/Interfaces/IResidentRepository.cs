@@ -10,6 +10,7 @@ namespace DAL.Repositories.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
+        /// <param name="phoneNumber"></param>
         /// <param name="accountId"></param>
         /// <param name="status"></param>
         /// <param name="type"></param>
@@ -19,7 +20,7 @@ namespace DAL.Repositories.Interfaces
         /// <param name="propertyName"></param>
         /// <returns></returns>
         Task<PagingModel<Resident>> GetResident(
-            string id, string apartmentId, string accountId,
+            string id, string apartmentId, string phoneNumber, string accountId,
             int?[] status, string type, int? limit,
             int? queryPage, bool isAsc, string propertyName);
     }

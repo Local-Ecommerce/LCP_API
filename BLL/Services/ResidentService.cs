@@ -186,6 +186,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="apartmentId"></param>
+        /// <param name="phoneNumber"></param>
         /// <param name="accountId"></param>
         /// <param name="status"></param>
         /// <param name="type"></param>
@@ -194,7 +195,7 @@ namespace BLL.Services
         /// <param name="sort"></param>
         /// <returns></returns>
         public async Task<object> GetResident(
-            string id, string apartmentId,
+            string id, string apartmentId, string phoneNumber,
             string accountId, int?[] status, string type, int? limit,
             int? page, string sort)
         {
@@ -211,7 +212,7 @@ namespace BLL.Services
             try
             {
                 residents = await _unitOfWork.Residents
-                    .GetResident(id, apartmentId, accountId, status, type, limit, page, isAsc, propertyName);
+                    .GetResident(id, apartmentId, phoneNumber, accountId, status, type, limit, page, isAsc, propertyName);
             }
             catch (Exception e)
             {
