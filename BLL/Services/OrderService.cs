@@ -108,7 +108,7 @@ namespace BLL.Services
                             List<ProductQuantityDto> productQuantityDtos = _redisService.GetList<ProductQuantityDto>(QUANTITY_CACHE_KEY);
                             //check quantity database vs Redis
                             ProductQuantityDto productQuantityDto = productQuantityDtos
-                                    .Where(pqd => pqd.ProductId.Equals(orderDetailRequest.ProductId))
+                                    .Where(pqd => pqd.ProductId.Equals(orderDetailRequest.ProductId) && pqd.ProductInMenuId.Equals(productInMenu.ProductInMenuId))
                                     .FirstOrDefault();
                             oldQuantityFromRedis.Add(productQuantityDto);
 
@@ -127,6 +127,7 @@ namespace BLL.Services
                             {
                                 ProductId = productInMenu.ProductId,
                                 Quantity = currentQuantity - orderDetailRequest.Quantity.Value,
+                                ProductInMenuId = productInMenu.ProductInMenuId,
                                 UpdatedDate = vnTime
                             });
 
@@ -302,7 +303,7 @@ namespace BLL.Services
             try
             {
                 orders = await _unitOfWork.Orders.GetOrder
-                        (id, residentId, status, merchantStoreId, limit, page, isAsc, propertyName, include);
+                        (id, residentId, status, merchantStoreId, null, page, isAsc, propertyName, include);
 
                 if (include.Contains("product"))
                 {
@@ -343,7 +344,7 @@ namespace BLL.Services
 
             return new PagingModel<ExtendOrderResponse>
             {
-                List = responses,
+                List = responses.Take(limit.GetValueOrDefault(Int32.MaxValue)).ToList(),
                 Page = orders.Page,
                 LastPage = orders.LastPage,
                 Total = orders.Total,
@@ -440,6 +441,7 @@ namespace BLL.Services
                         {
                             ProductId = pim.ProductId,
                             Quantity = pim.Quantity.Value,
+                            ProductInMenuId = pim.ProductInMenuId,
                             UpdatedDate = vnTime
                         }, new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(pim.ProductId)));
                     }

@@ -64,6 +64,7 @@ namespace BLL.Services
                         new ProductQuantityDto()
                         {
                             ProductId = productInMenu.ProductId,
+                            ProductInMenuId = productInMenu.ProductInMenuId,
                             Quantity = productInMenu.Quantity.Value,
                             UpdatedDate = vnTime
                         },
@@ -260,6 +261,7 @@ namespace BLL.Services
                             {
                                 ProductId = productInMenu.ProductId,
                                 Quantity = productInMenu.Quantity.Value,
+                                ProductInMenuId = productInMenu.ProductInMenuId,
                                 UpdatedDate = vnTime
                             },
                             new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(productInMenu.ProductId)));
@@ -300,7 +302,8 @@ namespace BLL.Services
                         if (TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeStart) > 0 &&
                                 TimeSpan.Compare(vnTime.TimeOfDay, (TimeSpan)pim.Menu.TimeEnd) < 0 &&
                                 pim.Menu.Status.Equals((int)MenuStatus.ACTIVE_MENU) &&
-                                pim.Menu.RepeatDate.Contains($"{(int)vnTime.DayOfWeek}"))
+                                pim.Menu.RepeatDate.Contains($"{(int)vnTime.DayOfWeek}") &&
+                                pim.Quantity != 0)
 
                             return pim;
                     }
