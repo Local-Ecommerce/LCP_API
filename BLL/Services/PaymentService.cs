@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using BLL.Dtos.MoMo.CaptureWallet;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace BLL.Services
 {
@@ -128,7 +129,9 @@ namespace BLL.Services
                                             .ProductInMenu
                                             .Product;
 
-                    await _firebaseService.PushNotification(order.ResidentId, product.ResidentId, product.Image, $"{(int)NotificationCode.PAYMENT}");
+                    await _firebaseService.PushNotification(order.ResidentId, product.ResidentId,
+                        new JObject() { { "image", $"{product.Image}" }, { "name", "" }, { "id", "" } },
+                        $"{(int)NotificationCode.PAYMENT}");
                 }
 
                 await _unitOfWork.SaveChangesAsync();

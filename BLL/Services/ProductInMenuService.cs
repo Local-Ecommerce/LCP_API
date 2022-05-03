@@ -289,10 +289,7 @@ namespace BLL.Services
             DateTime vnTime = _utilService.CurrentTimeInVietnam();
             try
             {
-                Product product = (await _unitOfWork.Products
-                                    .GetProduct(id: productId, include: new string[] { "menu" }))
-                                    .List
-                                    .First();
+                Product product = await _unitOfWork.Products.GetProductIncludeStore(productId);
 
                 //get pim not in base menu
                 List<ProductInMenu> pdNotInBaseMenu = product.ProductInMenus.Where(pim => !(bool)pim.Menu.BaseMenu).ToList();

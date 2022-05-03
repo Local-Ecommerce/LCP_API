@@ -635,8 +635,13 @@ namespace BLL.Services
                             continue;
                     }
 
+                    //check status
                     if (!pim.Status.Equals((int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU) ||
                         !response.Status.Equals((int)ProductStatus.VERIFIED_PRODUCT))
+                        continue;
+
+                    //check quantity
+                    if (pim.Quantity == 0)
                         continue;
 
                     //check if it was already in list

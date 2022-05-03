@@ -1,4 +1,5 @@
 ﻿using BLL.Dtos.Account;
+using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Interfaces
@@ -49,9 +50,9 @@ namespace BLL.Services.Interfaces
         /// </summary>
         /// <param name="senderId"></param>
         /// <param name="receiverId"></param>
-        /// <param name="image"></param>
+        /// <param name="data"></param>
         /// <param name="code"></param>
         /// <returns></returns>
-        Task PushNotification(string senderId, string receiverId, string image, string code);
+        Task PushNotification(string senderId, string receiverId, JObject data, string code);
     }
 }

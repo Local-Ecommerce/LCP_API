@@ -194,9 +194,9 @@ namespace BLL.Services
         /// </summary>
         /// <param name="senderId"></param>
         /// <param name="receiverId"></param>
-        /// <param name="image"></param>
+        /// <param name="data"></param>
         /// <param name="code"></param>
-        public async Task PushNotification(string senderId, string receiverId, string image, string code)
+        public async Task PushNotification(string senderId, string receiverId, JObject data, string code)
         {
             var firebaseClient = new FirebaseClient(
                     "https://lcp-mobile-8c400-default-rtdb.asia-southeast1.firebasedatabase.app/",
@@ -205,11 +205,11 @@ namespace BLL.Services
             JObject jObject = new()
             {
                 {"createdDate" , (long)((DateTimeOffset)DateTime.UtcNow).ToUnixTimeMilliseconds()},
-                {"data", new JObject() { { "image", $"{image}"}, { "name", ""}, { "id", ""} }},
+                {"data", data},
                 {"read", 0},
                 { "receiverId", receiverId},
                 { "senderId", senderId},
-                { "type", "301"}
+                { "type", code}
             };
 
             var post = await firebaseClient.Child("Notification")

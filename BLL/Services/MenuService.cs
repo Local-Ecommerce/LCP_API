@@ -46,6 +46,13 @@ namespace BLL.Services
             Menu menu = _mapper.Map<Menu>(menuRequest);
             try
             {
+                //get store by residentId
+                MerchantStore store = await _unitOfWork.MerchantStores.FindAsync(ms => ms.ResidentId.Equals(residentId));
+
+                //check if store has 3 warning
+                if (store.Warned.Value == 3)
+                    throw new BusinessException("Cửa hàng không thể tạo menu mới");
+
                 //check if another menu use that time
                 string menuName = await GetOtherMenuHasSameTime(null, TimeSpan.Parse(menuRequest.TimeStart),
                     TimeSpan.Parse(menuRequest.TimeEnd), menuRequest.RepeatDate, residentId);

@@ -111,6 +111,21 @@ namespace DAL.Repositories
 
 
         /// <summary>
+        /// Get Product Include Store
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Product> GetProductIncludeStore(string id)
+        {
+            return (await _context.Products.Where(p => p.ProductId.Equals(id))
+                                            .Include(p => p.ProductInMenus)
+                                            .ThenInclude(pim => pim.Menu)
+                                            .ThenInclude(m => m.MerchantStore)
+                                            .ToListAsync()).First();
+        }
+
+
+        /// <summary>
         /// Get Products By Id
         /// </summary>
         /// <param name="id"></param>
