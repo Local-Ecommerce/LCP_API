@@ -116,9 +116,12 @@ namespace DAL.Repositories
                     if (item.Equals("product"))
                     {
                         query = query.Include(menu => menu.ProductInMenus
-                                        .Where(pim => pim.Status.Equals((int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU)))
-                                    .ThenInclude(pim => pim.Product)
-                                    .ThenInclude(p => p.SystemCategory);
+                                            .Where(pim => pim.Status.Equals((int)ProductInMenuStatus.ACTIVE_PRODUCT_IN_MENU)))
+                                        .ThenInclude(pim => pim.Product)
+                                        .ThenInclude(p => p.SystemCategory)
+                                    .Include(menu => menu.ProductInMenus)
+                                        .ThenInclude(pim => pim.Product)
+                                        .ThenInclude(p => p.Resident);
                     }
                 }
             }
