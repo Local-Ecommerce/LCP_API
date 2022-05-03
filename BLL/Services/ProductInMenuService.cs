@@ -68,7 +68,7 @@ namespace BLL.Services
                             Quantity = productInMenu.Quantity.Value,
                             UpdatedDate = vnTime
                         },
-                        new Predicate<ProductQuantityDto>(p => p.ProductId.Equals(productInMenu.ProductId)));
+                        new Predicate<ProductQuantityDto>(p => p.ProductId.Equals(productInMenu.ProductId) && p.ProductInMenuId.Equals(productInMenu.ProductInMenuId)));
                 });
 
                 await _unitOfWork.SaveChangesAsync();
@@ -264,7 +264,7 @@ namespace BLL.Services
                                 ProductInMenuId = productInMenu.ProductInMenuId,
                                 UpdatedDate = vnTime
                             },
-                            new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(productInMenu.ProductId)));
+                            new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(productInMenu.ProductId) && pqd.ProductInMenuId.Equals(productInMenu.ProductInMenuId)));
                         }
                     }
                 }

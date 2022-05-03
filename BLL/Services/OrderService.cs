@@ -186,15 +186,15 @@ namespace BLL.Services
                     _unitOfWork.ProductInMenus.Update(productInMenu);
 
                     //push notification
-                    // if (productInMenu.Quantity <= productInMenu.MaxBuy)
-                    // {
-                    //     if (productInMenu.Quantity > 0)
-                    //         await _firebaseService.PushNotification(null, productInMenu.Menu.MerchantStore.ResidentId,
-                    //         new JObject() { { "menuId", productInMenu.Menu.MenuId }, { "menuName", productInMenu.Menu.MenuName } }, $"{(int)NotificationCode.NEARLY_SOLD_OUT}");
-                    //     else
-                    //         await _firebaseService.PushNotification(null, productInMenu.Menu.MerchantStore.ResidentId,
-                    //         new JObject() { { "menuId", productInMenu.Menu.MenuId }, { "menuName", productInMenu.Menu.MenuName } }, $"{(int)NotificationCode.SOLD_OUT}");
-                    // }
+                    if (productInMenu.Quantity <= productInMenu.MaxBuy)
+                    {
+                        if (productInMenu.Quantity > 0)
+                            await _firebaseService.PushNotification(null, productInMenu.Menu.MerchantStore.ResidentId,
+                            new JObject() { { "menuId", productInMenu.Menu.MenuId }, { "menuName", productInMenu.Menu.MenuName } }, $"{(int)NotificationCode.NEARLY_SOLD_OUT}");
+                        else
+                            await _firebaseService.PushNotification(null, productInMenu.Menu.MerchantStore.ResidentId,
+                            new JObject() { { "menuId", productInMenu.Menu.MenuId }, { "menuName", productInMenu.Menu.MenuName } }, $"{(int)NotificationCode.SOLD_OUT}");
+                    }
                 }
 
                 //add to db
@@ -443,7 +443,7 @@ namespace BLL.Services
                             Quantity = pim.Quantity.Value,
                             ProductInMenuId = pim.ProductInMenuId,
                             UpdatedDate = vnTime
-                        }, new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(pim.ProductId)));
+                        }, new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(pim.ProductId) && pqd.ProductInMenuId.Equals(pim.ProductInMenuId)));
                     }
                 }
 
