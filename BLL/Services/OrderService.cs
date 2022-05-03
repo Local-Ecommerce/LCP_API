@@ -443,7 +443,7 @@ namespace BLL.Services
                             Quantity = pim.Quantity.Value,
                             ProductInMenuId = pim.ProductInMenuId,
                             UpdatedDate = vnTime
-                        }, new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(pim.ProductId)));
+                        }, new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(pim.ProductId) && pqd.ProductInMenuId.Equals(pim.ProductInMenuId)));
                     }
                 }
 
