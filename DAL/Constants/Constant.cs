@@ -135,6 +135,7 @@
     public enum NotificationCode
     {
         PAYMENT = 301,
-        WARNING = 103
+        SOLD_OUT = 003,
+        NEARLY_SOLD_OUT = 004
     }
 }

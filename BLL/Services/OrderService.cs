@@ -14,6 +14,7 @@ using BLL.Dtos.Product;
 using System.Collections.ObjectModel;
 using BLL.Dtos.ProductInMenu;
 using RedLockNet.SERedis;
+using Newtonsoft.Json.Linq;
 
 namespace BLL.Services
 {
@@ -25,6 +26,7 @@ namespace BLL.Services
         private readonly IResidentService _residentService;
         private readonly IPaymentService _paymentService;
         private readonly IProductInMenuService _productInMenuService;
+        private readonly IFirebaseService _firebaseService;
         private readonly IMapper _mapper;
         private readonly IUtilService _utilService;
         private const string PREFIX = "OD_";
@@ -40,7 +42,8 @@ namespace BLL.Services
             IResidentService residentService,
             IUnitOfWork unitOfWork,
             IPaymentService paymentService,
-            IProductInMenuService productInMenuService)
+            IProductInMenuService productInMenuService,
+            IFirebaseService firebaseService)
         {
             _logger = logger;
             _mapper = mapper;
@@ -50,6 +53,7 @@ namespace BLL.Services
             _residentService = residentService;
             _paymentService = paymentService;
             _productInMenuService = productInMenuService;
+            _firebaseService = firebaseService;
         }
 
 
@@ -179,6 +183,17 @@ namespace BLL.Services
                     productInMenu.Quantity = currentQuantity - orderDetailRequest.Quantity.Value;
                     productInMenu.UpdatedDate = vnTime;
                     _unitOfWork.ProductInMenus.Update(productInMenu);
+
+                    //push notification
+                    if (productInMenu.Quantity <= productInMenu.MaxBuy)
+                    {
+                        if (productInMenu.Quantity > 0)
+                            await _firebaseService.PushNotification(null, productInMenu.Menu.MerchantStore.ResidentId,
+                            new JObject() { { "menuId", productInMenu.Menu.MenuId }, { "menuName", productInMenu.Menu.MenuName } }, $"{(int)NotificationCode.NEARLY_SOLD_OUT}");
+                        else
+                            await _firebaseService.PushNotification(null, productInMenu.Menu.MerchantStore.ResidentId,
+                            new JObject() { { "menuId", productInMenu.Menu.MenuId }, { "menuName", productInMenu.Menu.MenuName } }, $"{(int)NotificationCode.SOLD_OUT}");
+                    }
                 }
 
                 //add to db
@@ -200,13 +215,6 @@ namespace BLL.Services
             catch (Exception e)
             {
                 _logger.Error("[OrderService.CreateOrder()]: " + e.Message);
-
-                //restore old data from Redis
-                // foreach (var productQuantity in oldQuantityFromRedis)
-                // {
-                //     _redisService.StoreToList(QUANTITY_CACHE_KEY, productQuantity,
-                //         new Predicate<ProductQuantityDto>(pqd => pqd.ProductId.Equals(productQuantity.ProductId)));
-                // }
 
                 throw;
             }

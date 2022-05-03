@@ -33,5 +33,13 @@ namespace DAL.Repositories.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<List<Product>> GetProductsById(string id);
+
+
+        /// <summary>
+        /// Get Product Include Store
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Product> GetProductIncludeStore(string id);
     }
 }
