@@ -128,7 +128,6 @@ namespace BLL.Services
                 List<Feedback> listFeedback = feedbacks.List;
 
                 //get extra info
-
                 foreach (var feedback in listFeedback)
                 {
                     Product product = feedback.Product;

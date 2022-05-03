@@ -385,7 +385,6 @@ namespace BLL.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 merchantStoreResponse = _mapper.Map(merchantStore, merchantStoreResponse);
-                await _firebaseService.PushNotification(residendId, merchantStore.ResidentId, "", $"{(int)NotificationCode.WARNING}");
             }
             catch (Exception e)
             {
