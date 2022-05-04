@@ -580,6 +580,8 @@ namespace BLL.Services
 
                             responses.Add(response);
                         }
+                        else if (product.BelongTo != null && id != null)
+                            responses.Add(_mapper.Map<BaseProductResponse>(product));
                     }
                 }
             }
