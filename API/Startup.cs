@@ -44,7 +44,10 @@ namespace API
                     builder.WithOrigins(Configuration.GetValue<string>("CorsOrigin:Backend"),
                         Configuration.GetValue<string>("CorsOrigin:Frontend"),
                         Configuration.GetValue<string>("CorsOrigin:Admin"),
-                        Configuration.GetValue<string>("CorsOrigin:Merchant"))
+                        Configuration.GetValue<string>("CorsOrigin:Admin2"),
+                        Configuration.GetValue<string>("CorsOrigin:Merchant"),
+                        Configuration.GetValue<string>("CorsOrigin:Merchant2")
+                        )
                            .AllowAnyHeader()
                            .AllowAnyMethod();
                 });
