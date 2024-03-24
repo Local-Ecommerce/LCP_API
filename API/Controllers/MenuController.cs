@@ -13,183 +13,175 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Net.Http.Headers;
 
-namespace API.Controllers
-{
-    [EnableCors("MyPolicy")]
-    [ApiController]
-    [Route("api/menus")]
-    public class MenuController : ControllerBase
-    {
-        private readonly ILogger _logger;
-        private readonly IMenuService _menuService;
-        private readonly ITokenService _tokenService;
+namespace API.Controllers {
+	[EnableCors("MyPolicy")]
+	[ApiController]
+	[Route("api/menus")]
+	public class MenuController : ControllerBase {
+		private readonly ILogger _logger;
+		private readonly IMenuService _menuService;
+		private readonly ITokenService _tokenService;
 
-        public MenuController(ILogger logger, IMenuService menuService, ITokenService tokenService)
-        {
-            _logger = logger;
-            _menuService = menuService;
-            _tokenService = tokenService;
-        }
+		public MenuController(ILogger logger, IMenuService menuService, ITokenService tokenService) {
+			_logger = logger;
+			_menuService = menuService;
+			_tokenService = tokenService;
+		}
 
-        /// <summary>
-        /// Create menu (Merchant)
-        /// </summary>
-        [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpPost]
-        public async Task<IActionResult> CreateMenu([FromBody] MenuRequest menuRequest)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+		/// <summary>
+		/// Create menu (Merchant)
+		/// </summary>
+		[Authorize(Roles = ResidentType.MERCHANT)]
+		[HttpPost]
+		public async Task<IActionResult> CreateMenu([FromBody] MenuRequest menuRequest) {
+			//check token expired
+			_tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
-            _logger.Information($"POST api/menus START Request: " +
-                $"{JsonSerializer.Serialize(menuRequest)}");
+			_logger.Information($"POST api/menus START Request: " +
+					$"{JsonSerializer.Serialize(menuRequest)}");
 
-            Stopwatch watch = new();
-            watch.Start();
+			Stopwatch watch = new();
+			watch.Start();
 
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            IEnumerable<Claim> claim = identity.Claims;
+			var identity = HttpContext.User.Identity as ClaimsIdentity;
+			IEnumerable<Claim> claim = identity.Claims;
 
-            //get resident id from token
-            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
-            string residentId = claimName[(claimName.LastIndexOf(':') + 2)..];
+			//get resident id from token
+			string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+			string residentId = claimName[(claimName.LastIndexOf(':') + 2)..];
 
-            //Create Menu
-            MenuResponse response = await _menuService.CreateMenu(residentId, menuRequest);
+			//Create Menu
+			MenuResponse response = await _menuService.CreateMenu(residentId, menuRequest);
 
-            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
+			string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
 
-            watch.Stop();
+			watch.Stop();
 
-            _logger.Information("POST api/menus END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+			_logger.Information("POST api/menus END duration: " +
+					$"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
-            return Ok(json);
-        }
+			return Ok(json);
+		}
 
+		/// <summary>
+		/// Get menu (Authentication required)
+		/// </summary>
+		[Authorize]
+		[HttpGet]
+		public async Task<IActionResult> GetMenu(
+				[FromQuery] string id,
+				[FromQuery] int?[] status,
+				[FromQuery] string apartmentid,
+				[FromQuery] string storeid,
+				[FromQuery] string productid,
+				[FromQuery] string search,
+				[FromQuery] bool? isActive,
+				[FromQuery] int? limit,
+				[FromQuery] int? page,
+				[FromQuery] string sort,
+				[FromQuery] string[] include) {
+			//check token expired
+			_tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
-        /// <summary>
-        /// Get menu (Authentication required)
-        /// </summary>
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> GetMenu(
-            [FromQuery] string id,
-            [FromQuery] int?[] status,
-            [FromQuery] string apartmentid,
-            [FromQuery] string storeid,
-            [FromQuery] string productid,
-            [FromQuery] string search,
-            [FromQuery] bool? isActive,
-            [FromQuery] int? limit,
-            [FromQuery] int? page,
-            [FromQuery] string sort,
-            [FromQuery] string[] include)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+			_logger.Information($"GET api/menus?id={id}&status=" + string.Join("status=", status) +
+					$"&apartmentid={apartmentid}&storeid={storeid}&productid={productid}" +
+					$"&search={search}&isActive={isActive}&limit={limit}&page={page}&sort={sort}&include="
+					+ string.Join("include=", include) + " START");
 
-            _logger.Information($"GET api/menus?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&storeid={storeid}&productid={productid}" +
-                $"&search={search}&isActive={isActive}&limit={limit}&page={page}&sort={sort}&include="
-                + string.Join("include=", include) + " START");
+			Stopwatch watch = new();
+			watch.Start();
 
-            Stopwatch watch = new();
-            watch.Start();
+			var identity = HttpContext.User.Identity as ClaimsIdentity;
+			IEnumerable<Claim> claim = identity.Claims;
 
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            IEnumerable<Claim> claim = identity.Claims;
+			//get resident id from token
+			string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+			string residentId = claimName[(claimName.LastIndexOf(':') + 2)..];
 
-            //get resident id from token
-            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
-            string residentId = claimName[(claimName.LastIndexOf(':') + 2)..];
+			//get role from token
+			string claimRole = claim.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault().ToString();
+			string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
 
-            //get role from token
-            string claimRole = claim.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault().ToString();
-            string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
+			//get Menu
+			object responses = await _menuService
+					.GetMenus(id, status, residentId, apartmentid, storeid,
+							productid, search, isActive, limit, page, sort, include, role);
 
-            //get Menu
-            object responses = await _menuService
-                .GetMenus(id, status, residentId, apartmentid, storeid,
-                    productid, search, isActive, limit, page, sort, include, role);
+			string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
+			watch.Stop();
 
-            watch.Stop();
+			_logger.Information($"GET api/menus?id={id}&status=" + string.Join("status=", status) +
+					$"&apartmentid={apartmentid}&storeid={storeid}&productid={productid}" +
+					$"&search={search}&isActive={isActive}&limit={limit}&page={page}&sort={sort}&include="
+					+ string.Join("include=", include) + " END duration: " +
+					$"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
-            _logger.Information($"GET api/menus?id={id}&status=" + string.Join("status=", status) +
-                $"&apartmentid={apartmentid}&storeid={storeid}&productid={productid}" +
-                $"&search={search}&isActive={isActive}&limit={limit}&page={page}&sort={sort}&include="
-                + string.Join("include=", include) + " END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
+			return Ok(json);
+		}
 
 
-        /// <summary>
-        /// Update menu (Merchant)
-        /// </summary>
-        [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpPut]
-        public async Task<IActionResult> UpdateMenuById([FromQuery] string id, [FromBody] MenuUpdateRequest menuRequest)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+		/// <summary>
+		/// Update menu (Merchant)
+		/// </summary>
+		[Authorize(Roles = ResidentType.MERCHANT)]
+		[HttpPut]
+		public async Task<IActionResult> UpdateMenuById([FromQuery] string id, [FromBody] MenuUpdateRequest menuRequest) {
+			//check token expired
+			_tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
-            _logger.Information($"PUT api/menus?id={id} START Request: " +
-                $"{JsonSerializer.Serialize(menuRequest)}");
+			_logger.Information($"PUT api/menus?id={id} START Request: " +
+					$"{JsonSerializer.Serialize(menuRequest)}");
 
-            Stopwatch watch = new();
-            watch.Start();
+			Stopwatch watch = new();
+			watch.Start();
 
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            IEnumerable<Claim> claim = identity.Claims;
+			var identity = HttpContext.User.Identity as ClaimsIdentity;
+			IEnumerable<Claim> claim = identity.Claims;
 
-            //get resident id from token
-            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
-            string residentId = claimName[(claimName.LastIndexOf(':') + 2)..];
+			//get resident id from token
+			string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
+			string residentId = claimName[(claimName.LastIndexOf(':') + 2)..];
 
-            //Update Menu
-            MenuResponse response = await _menuService.UpdateMenuById(id, menuRequest, residentId);
+			//Update Menu
+			MenuResponse response = await _menuService.UpdateMenuById(id, menuRequest, residentId);
 
-            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
+			string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success(response));
 
-            watch.Stop();
+			watch.Stop();
 
-            _logger.Information($"PUT api/menus?id={id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+			_logger.Information($"PUT api/menus?id={id} END duration: " +
+					$"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
-            return Ok(json);
-        }
+			return Ok(json);
+		}
 
 
-        /// <summary>
-        /// Delete menu (Merchant)
-        /// </summary>
-        [Authorize(Roles = ResidentType.MERCHANT)]
-        [HttpDelete]
-        public async Task<IActionResult> DeleteMenuById([FromQuery] string id)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+		/// <summary>
+		/// Delete menu (Merchant)
+		/// </summary>
+		[Authorize(Roles = ResidentType.MERCHANT)]
+		[HttpDelete]
+		public async Task<IActionResult> DeleteMenuById([FromQuery] string id) {
+			//check token expired
+			_tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
-            _logger.Information($"DELETE api/menus?id={id} START");
+			_logger.Information($"DELETE api/menus?id={id} START");
 
-            Stopwatch watch = new();
-            watch.Start();
+			Stopwatch watch = new();
+			watch.Start();
 
-            //Delete Menu
-            await _menuService.DeleteMenuById(id);
+			//Delete Menu
+			await _menuService.DeleteMenuById(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success());
+			string json = JsonSerializer.Serialize(ApiResponse<MenuResponse>.Success());
 
-            watch.Stop();
+			watch.Stop();
 
-            _logger.Information($"DELETE api/menus?id={id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+			_logger.Information($"DELETE api/menus?id={id} END duration: " +
+					$"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
-            return Ok(json);
-        }
-    }
+			return Ok(json);
+		}
+	}
 }

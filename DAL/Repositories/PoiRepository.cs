@@ -4,7 +4,6 @@ using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
-using System.Linq.Dynamic.Core;
 using System.Collections.Generic;
 
 namespace DAL.Repositories
@@ -76,10 +75,10 @@ namespace DAL.Repositories
             //sort
             if (sort != null)
             {
-                var result = query.OrderBy(sort.First());
+                var result = query.OrderBy(c => sort.First());
 
                 foreach (var property in sort.Skip(1))
-                    result = result.ThenBy(property);
+                    result = result.ThenBy(c => property);
 
                 query = result;
             }

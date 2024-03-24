@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Dynamic.Core;
 using DAL.Constants;
 
 namespace DAL.Repositories
@@ -85,7 +84,7 @@ namespace DAL.Repositories
             //sort
             if (!string.IsNullOrEmpty(propertyName))
             {
-                query = (bool)isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
+                query = (bool)isAsc ? query.OrderBy(c => propertyName) : query.OrderBy(c => propertyName + " descending");
             }
 
             //paging

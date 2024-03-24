@@ -1,15 +1,12 @@
-namespace DAL.Constants
-{
-    public class ResidentType
-    {
-        public const string CUSTOMER = "Customer";
-        public const string MARKET_MANAGER = "MarketManager";
-        public const string MERCHANT = "Merchant";
-    }
+namespace DAL.Constants {
+	public class ResidentType {
+		public const string CUSTOMER = "Customer";
+		public const string MARKET_MANAGER = "MarketManager";
+		public const string MERCHANT = "Merchant";
+	}
 
-    public class RoleId
-    {
-        public const string ADMIN = "R002";
-        public const string APARTMENT = "R001";
-    }
+	public class RoleId {
+		public const string ADMIN = "R002";
+		public const string APARTMENT = "R001";
+	}
 }

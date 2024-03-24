@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using DAL.Constants;
 using DAL.Models;
@@ -93,7 +92,7 @@ namespace DAL.Repositories
 
             //sort
             if (!string.IsNullOrEmpty(propertyName))
-                query = isAsc ? query.OrderBy(propertyName) : query.OrderBy(propertyName + " descending");
+                query = isAsc ? query.OrderBy(c => propertyName) : query.OrderByDescending(c => propertyName);
 
             //paging
             int perPage = limit.GetValueOrDefault(Int32.MaxValue);

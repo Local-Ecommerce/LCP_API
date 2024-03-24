@@ -11,167 +11,159 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace API.Controllers
-{
-    [EnableCors("MyPolicy")]
-    [ApiController]
-    [Route("api/accounts")]
-    public class AccountController : ControllerBase
-    {
-        private readonly ILogger _logger;
-        private readonly IAccountService _accountService;
-        private readonly ITokenService _tokenService;
+namespace API.Controllers {
+	[EnableCors("MyPolicy")]
+	[ApiController]
+	[Route("api/accounts")]
+	public class AccountController : ControllerBase {
+		private readonly ILogger _logger;
+		private readonly IAccountService _accountService;
+		private readonly ITokenService _tokenService;
 
-        public AccountController(ILogger logger,
-            IAccountService accountService, ITokenService tokenService)
-        {
-            _logger = logger;
-            _accountService = accountService;
-            _tokenService = tokenService;
-        }
+		public AccountController(ILogger logger,
+				IAccountService accountService, ITokenService tokenService) {
+			_logger = logger;
+			_accountService = accountService;
+			_tokenService = tokenService;
+		}
 
 
-        /// <summary>
-        /// Login
-        /// </summary>
-        [AllowAnonymous]
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] AccountRequest accountRequest)
-        {
-            _logger.Information($"GET api/acccount/login START Request: {JsonSerializer.Serialize(accountRequest)}");
+		/// <summary>
+		/// Login
+		/// </summary>
+		[AllowAnonymous]
+		[HttpPost("login")]
+		public async Task<IActionResult> Login([FromBody] AccountRequest accountRequest) {
+			_logger.Information($"GET api/acccount/login START Request: {JsonSerializer.Serialize(accountRequest)}");
 
-            Stopwatch watch = new();
-            watch.Start();
+			Stopwatch watch = new();
+			watch.Start();
 
-            //Login
-            ExtendAccountResponse response = await _accountService.Login(accountRequest);
+			//Login
+			ExtendAccountResponse response = await _accountService.Login(accountRequest);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendAccountResponse>.Success(response));
+			string json = JsonSerializer.Serialize(ApiResponse<ExtendAccountResponse>.Success(response));
 
-            watch.Stop();
+			watch.Stop();
 
-            _logger.Information("GET api/accounts/login END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+			_logger.Information("GET api/accounts/login END duration: " +
+					$"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
-            return Ok(json);
-        }
-
-
-        /// <summary>
-        /// Refresh Token
-        /// </summary>
-        [AllowAnonymous]
-        [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
-        {
-            _logger.Information($"POST api/acccount/refresh-token START Request: {JsonSerializer.Serialize(refreshTokenDto)}");
-
-            Stopwatch watch = new();
-            watch.Start();
-
-            //Refresh Token
-            object response = await _accountService.RefreshToken(refreshTokenDto);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
-
-            watch.Stop();
-
-            _logger.Information("POST api/accounts/refresh-token END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
+			return Ok(json);
+		}
 
 
-        /// <summary>
-        /// Logout
-        /// </summary>
-        [Authorize]
-        [HttpPut("logout")]
-        public async Task<IActionResult> Logout()
-        {
-            _logger.Information($"PUT api/acccount/logout START Request:");
+		/// <summary>
+		/// Refresh Token
+		/// </summary>
+		[AllowAnonymous]
+		[HttpPost("refresh-token")]
+		public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto) {
+			_logger.Information($"POST api/acccount/refresh-token START Request: {JsonSerializer.Serialize(refreshTokenDto)}");
 
-            Stopwatch watch = new();
-            watch.Start();
+			Stopwatch watch = new();
+			watch.Start();
 
-            string JWTtoken = Request.Headers[HeaderNames.Authorization];
+			//Refresh Token
+			object response = await _accountService.RefreshToken(refreshTokenDto);
 
-            // string JWTtoken = context.Request.Headers["Authorization"];
-            string token = JWTtoken?[7..];
-            Console.WriteLine(token);
+			string json = JsonSerializer.Serialize(ApiResponse<object>.Success(response));
 
-            //Refresh Token
-            string response = await _accountService.Logout(token);
+			watch.Stop();
 
-            string json = JsonSerializer.Serialize(ApiResponse<string>.Success(response));
+			_logger.Information("POST api/accounts/refresh-token END duration: " +
+					$"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
-            watch.Stop();
-
-            _logger.Information("PUT api/accounts/logout END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
+			return Ok(json);
+		}
 
 
-        /// <summary>
-        /// Get Account By Id (Authentication required)
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> GetAccountById([FromQuery] string id)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+		/// <summary>
+		/// Logout
+		/// </summary>
+		[Authorize]
+		[HttpPut("logout")]
+		public async Task<IActionResult> Logout() {
+			_logger.Information($"PUT api/acccount/logout START Request:");
 
-            _logger.Information($"GET api/accounts?id={id} START");
+			Stopwatch watch = new();
+			watch.Start();
 
-            Stopwatch watch = new();
-            watch.Start();
+			string JWTtoken = Request.Headers[HeaderNames.Authorization];
 
-            //get account
-            ExtendAccountResponse response = await _accountService.GetAccountById(id);
+			// string JWTtoken = context.Request.Headers["Authorization"];
+			string token = JWTtoken?[7..];
+			Console.WriteLine(token);
 
-            string json = JsonSerializer.Serialize(ApiResponse<ExtendAccountResponse>.Success(response));
+			//Refresh Token
+			string response = await _accountService.Logout(token);
 
-            watch.Stop();
+			string json = JsonSerializer.Serialize(ApiResponse<string>.Success(response));
 
-            _logger.Information($"GET api/accounts?id={id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+			watch.Stop();
 
-            return Ok(json);
-        }
+			_logger.Information("PUT api/accounts/logout END duration: " +
+					$"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+			return Ok(json);
+		}
 
 
-        /// <summary>
-        /// Delete Account (Authentication required)
-        /// </summary>
-        [Authorize]
-        [HttpDelete]
-        public async Task<IActionResult> DeleteAccount([FromQuery] string id)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+		/// <summary>
+		/// Get Account By Id (Authentication required)
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		[Authorize]
+		[HttpGet]
+		public async Task<IActionResult> GetAccountById([FromQuery] string id) {
+			//check token expired
+			_tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
-            _logger.Information($"DELETE api/accounts?id={id} START");
+			_logger.Information($"GET api/accounts?id={id} START");
 
-            Stopwatch watch = new();
-            watch.Start();
+			Stopwatch watch = new();
+			watch.Start();
 
-            //delete account
-            await _accountService.DeleteAccount(id);
+			//get account
+			ExtendAccountResponse response = await _accountService.GetAccountById(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<AccountResponse>.Success());
+			string json = JsonSerializer.Serialize(ApiResponse<ExtendAccountResponse>.Success(response));
 
-            watch.Stop();
+			watch.Stop();
 
-            _logger.Information($"DELETE api/accounts?id={id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+			_logger.Information($"GET api/accounts?id={id} END duration: " +
+					$"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
-            return Ok(json);
-        }
-    }
+			return Ok(json);
+		}
+
+
+		/// <summary>
+		/// Delete Account (Authentication required)
+		/// </summary>
+		[Authorize]
+		[HttpDelete]
+		public async Task<IActionResult> DeleteAccount([FromQuery] string id) {
+			//check token expired
+			_tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+
+			_logger.Information($"DELETE api/accounts?id={id} START");
+
+			Stopwatch watch = new();
+			watch.Start();
+
+			//delete account
+			await _accountService.DeleteAccount(id);
+
+			string json = JsonSerializer.Serialize(ApiResponse<AccountResponse>.Success());
+
+			watch.Stop();
+
+			_logger.Information($"DELETE api/accounts?id={id} END duration: " +
+					$"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+
+			return Ok(json);
+		}
+	}
 }

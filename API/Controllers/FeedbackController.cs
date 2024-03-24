@@ -15,143 +15,108 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 
-namespace API.Controllers
-{
-    [EnableCors("MyPolicy")]
-    [ApiController]
-    [Route("api/feedbacks")]
-    public class FeedbackController : ControllerBase
-    {
-        private readonly ILogger _logger;
-        private readonly IFeedbackService _feedbackService;
-        private readonly ITokenService _tokenService;
+namespace API.Controllers {
+	[EnableCors("MyPolicy")]
+	[ApiController]
+	[Route("api/feedbacks")]
+	public class FeedbackController : ControllerBase {
+		private readonly ILogger _logger;
+		private readonly IFeedbackService _feedbackService;
+		private readonly ITokenService _tokenService;
 
-        public FeedbackController(ILogger logger, IFeedbackService feedbackService, ITokenService tokenService)
-        {
-            _logger = logger;
-            _feedbackService = feedbackService;
-            _tokenService = tokenService;
-        }
+		public FeedbackController(ILogger logger, IFeedbackService feedbackService, ITokenService tokenService) {
+			_logger = logger;
+			_feedbackService = feedbackService;
+			_tokenService = tokenService;
+		}
 
-        /// <summary>
-        /// Send feedback (Customer)
-        /// </summary>
-        [Authorize(Roles = ResidentType.CUSTOMER)]
-        [HttpPost]
-        public async Task<IActionResult> CreateFeedback([FromBody] FeedbackRequest feedbackRequest)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+		/// <summary>
+		/// Send feedback (Customer)
+		/// </summary>
+		[Authorize(Roles = ResidentType.CUSTOMER)]
+		[HttpPost]
+		public async Task<IActionResult> CreateFeedback([FromBody] FeedbackRequest feedbackRequest) {
+			//check token expired
+			_tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
-            _logger.Information($"POST api/feedbacks START Request: " +
-                $"{JsonSerializer.Serialize(feedbackRequest)}");
+			_logger.Information($"POST api/feedbacks START Request: " +
+					$"{JsonSerializer.Serialize(feedbackRequest)}");
 
-            Stopwatch watch = new();
-            watch.Start();
+			Stopwatch watch = new();
+			watch.Start();
 
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            IEnumerable<Claim> claim = identity.Claims;
+			var identity = HttpContext.User.Identity as ClaimsIdentity;
+			(string residentId, _) = _tokenService.GetResidentIdAndRole(identity);
 
-            //get resident id from token
-            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
-            string residentId = claimName[(claimName.LastIndexOf(':') + 2)..];
+			//Create Feedback
+			FeedbackResponse response = await _feedbackService.CreateFeedback(feedbackRequest, residentId);
 
-            //Create Feedback
-            FeedbackResponse response = await _feedbackService.CreateFeedback(feedbackRequest, residentId);
+			string json = JsonSerializer.Serialize(ApiResponse<FeedbackResponse>.Success(response));
 
-            string json = JsonSerializer.Serialize(ApiResponse<FeedbackResponse>.Success(response));
+			watch.Stop();
 
-            watch.Stop();
+			_logger.Information("POST api/feedbacks END duration: " +
+					$"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
-            _logger.Information("POST api/feedbacks END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+			return Ok(json);
+		}
 
-            return Ok(json);
-        }
+		/// <summary>
+		/// Get Feedback (Market Manager, Customer, Merchant)
+		/// </summary>
+		[AuthorizeRoles(ResidentType.CUSTOMER, ResidentType.MARKET_MANAGER, ResidentType.MERCHANT)]
+		[HttpGet]
+		public async Task<IActionResult> GetFeedback(GetFeedbackRequest request) {
+			//check token expired
+			_tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
+			_logger.Information($"GET api/feedbacks START. Params: {request}");
 
-        /// <summary>
-        /// Get Feedback (Market Manager, Customer, Merchant)
-        /// </summary>
-        [AuthorizeRoles(ResidentType.CUSTOMER, ResidentType.MARKET_MANAGER, ResidentType.MERCHANT)]
-        [HttpGet]
-        public async Task<IActionResult> GetFeedback(
-            [FromQuery] string id,
-            [FromQuery] string residentid,
-            [FromQuery] string productid,
-            [FromQuery] double? rating,
-            [FromQuery] DateTime? date,
-            [FromQuery] int? limit,
-            [FromQuery] int? page,
-            [FromQuery] string sort,
-            [FromQuery] string[] include)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+			Stopwatch watch = new();
+			watch.Start();
 
-            _logger.Information($"GET api/feedbacks?id={id}&productid={productid}" +
-                $"&residentid={residentid}&rating={rating}&date={date}" +
-                $"&limit={limit}&page={page}&sort={sort}&include="
-                + string.Join("include=", include) + " START");
+			var identity = HttpContext.User.Identity as ClaimsIdentity;
+			(string residentSendRequest, string role) = _tokenService.GetResidentIdAndRole(identity);
 
-            Stopwatch watch = new();
-            watch.Start();
+			//get Feedback
+			object responses = await _feedbackService.GetFeedback(request, role, residentSendRequest);
 
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            IEnumerable<Claim> claim = identity.Claims;
+			string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
 
-            //get resident id from token
-            string claimName = claim.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().ToString();
-            string residentSendRequest = claimName[(claimName.LastIndexOf(':') + 2)..];
+			watch.Stop();
 
-            //get role from token
-            string claimRole = claim.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault().ToString();
-            string role = claimRole.Substring(claimRole.LastIndexOf(':') + 2);
+			_logger.Information($"GET api/feedbacks END duration: " +
+					$"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
-            //get Feedback
-            object responses = await _feedbackService
-                .GetFeedback(id, productid, residentid, residentSendRequest, role, rating, date, limit, page, sort, include);
-
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success(responses));
-
-            watch.Stop();
-
-            _logger.Information($"GET api/feedbacks?id={id}&productid={productid}" +
-                $"&residentid={residentid}&rating={rating}&date={date}" +
-                $"&limit={limit}&page={page}&sort={sort}&include="
-                + string.Join("include=", include) + " END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
-
-            return Ok(json);
-        }
+			return Ok(json);
+		}
 
 
-        /// <summary>
-        /// Read Feedback (Market Manager)
-        /// </summary>
-        [Authorize(Roles = ResidentType.MARKET_MANAGER)]
-        [HttpPut]
-        public async Task<IActionResult> ReadFeedback([FromQuery] string id)
-        {
-            //check token expired
-            _tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
+		/// <summary>
+		/// Read Feedback (Market Manager)
+		/// </summary>
+		[Authorize(Roles = ResidentType.MARKET_MANAGER)]
+		[HttpPut]
+		public async Task<IActionResult> ReadFeedback([FromQuery] string id) {
+			//check token expired
+			_tokenService.CheckTokenExpired(Request.Headers[HeaderNames.Authorization]);
 
-            _logger.Information($"PUT api/feedbacks?id={id} START Request: ");
+			_logger.Information($"PUT api/feedbacks?id={id} START Request: ");
 
-            Stopwatch watch = new();
-            watch.Start();
+			Stopwatch watch = new();
+			watch.Start();
 
-            //Read Feedback
-            FeedbackResponse response = await _feedbackService.ReadFeedback(id);
+			//Read Feedback
+			FeedbackResponse response = await _feedbackService.ReadFeedback(id);
 
-            string json = JsonSerializer.Serialize(ApiResponse<FeedbackResponse>.Success(response));
+			string json = JsonSerializer.Serialize(ApiResponse<FeedbackResponse>.Success(response));
 
-            watch.Stop();
+			watch.Stop();
 
-            _logger.Information($"PUT api/feedbacks?id={id} END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+			_logger.Information($"PUT api/feedbacks?id={id} END duration: " +
+					$"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
-            return Ok(json);
-        }
-    }
+			return Ok(json);
+		}
+	}
 }

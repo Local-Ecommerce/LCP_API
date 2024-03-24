@@ -7,45 +7,41 @@ using BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
-{
-    [EnableCors("MyPolicy")]
-    [ApiController]
-    [Route("api/ipn")]
-    public class IPNController : ControllerBase
-    {
-        private readonly ILogger _logger;
-        private readonly IMoMoService _momoService;
+namespace API.Controllers {
+	[EnableCors("MyPolicy")]
+	[ApiController]
+	[Route("api/ipn")]
+	public class IPNController : ControllerBase {
+		private readonly ILogger _logger;
+		private readonly IMoMoService _momoService;
 
-        public IPNController(ILogger logger, IMoMoService moMoService)
-        {
-            _logger = logger;
-            _momoService = moMoService;
-        }
+		public IPNController(ILogger logger, IMoMoService moMoService) {
+			_logger = logger;
+			_momoService = moMoService;
+		}
 
-        /// <summary>
-        /// Receive response from MoMo
-        /// </summary>
-        [HttpPost]
-        public async Task<IActionResult> ReceiveIPN([FromBody] MoMoIPNRequest momoIPNRequest)
-        {
+		/// <summary>
+		/// Receive response from MoMo
+		/// </summary>
+		[HttpPost]
+		public async Task<IActionResult> ReceiveIPN([FromBody] MoMoIPNRequest momoIPNRequest) {
 
-            _logger.Information($"POST api/ipn START Request: " +
-                $"{JsonSerializer.Serialize(momoIPNRequest)}");
+			_logger.Information($"POST api/ipn START Request: " +
+					$"{JsonSerializer.Serialize(momoIPNRequest)}");
 
-            Stopwatch watch = new();
-            watch.Start();
+			Stopwatch watch = new();
+			watch.Start();
 
-            await _momoService.ProcessIPN(momoIPNRequest);
+			await _momoService.ProcessIPN(momoIPNRequest);
 
-            string json = JsonSerializer.Serialize(ApiResponse<object>.Success());
+			string json = JsonSerializer.Serialize(ApiResponse<object>.Success());
 
-            watch.Stop();
+			watch.Stop();
 
-            _logger.Information("POST api/ipn END duration: " +
-                $"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
+			_logger.Information("POST api/ipn END duration: " +
+					$"{watch.ElapsedMilliseconds} ms -----------Response: " + json);
 
-            return Ok(json);
-        }
-    }
+			return Ok(json);
+		}
+	}
 }

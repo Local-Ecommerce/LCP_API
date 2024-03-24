@@ -14,151 +14,120 @@ using BLL.Dtos.Exception;
 using System;
 using DAL.Models;
 using System.Threading.Tasks;
+using System.Net.Http;
 
-namespace BLL.Services
-{
-    public class MoMoService : IMoMoService
-    {
-        private HttpWebRequest request;
-        private HttpWebResponse response;
-        private readonly ILogger _logger;
-        private readonly ISecurityService _securityService;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IRedisService _redisService;
+namespace BLL.Services {
+	public class MoMoService(ILogger logger,
+				ISecurityService securityService,
+				IConfiguration configuration,
+				IUnitOfWork unitOfWork,
+				IRedisService redisService) : IMoMoService {
 
-        public MoMoService(ILogger logger,
-            ISecurityService securityService,
-            IConfiguration configuration,
-            IMapper mapper,
-            IUnitOfWork unitOfWork,
-            IRedisService redisService)
-        {
-            _logger = logger;
-            _securityService = securityService;
-            _configuration = configuration;
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
-            _redisService = redisService;
-        }
+		private HttpRequestMessage request;
+		private HttpResponseMessage response;
 
+		private readonly ILogger _logger = logger;
+		private readonly ISecurityService _securityService = securityService;
+		private readonly IConfiguration _configuration = configuration;
+		private readonly IUnitOfWork _unitOfWork = unitOfWork;
+		private readonly IRedisService _redisService = redisService;
 
-        /// <summary>
-        /// Create Capture Wallet
-        /// </summary>
-        /// <param name="requestData"></param>
-        /// <returns></returns>
-        public MoMoCaptureWalletResponse CreateCaptureWallet(MoMoCaptureWalletRequest requestData)
-        {
-            MoMoCaptureWalletResponse result;
-            //try
-            //{
-            // Convert object to json string
-            string jsonData = requestData.ToJson.ToString();
+		/// <summary>
+		/// Create Capture Wallet
+		/// </summary>
+		/// <param name="requestData"></param>
+		/// <returns></returns>
+		public async Task<MoMoCaptureWalletResponse> CreateCaptureWalletAsync(MoMoCaptureWalletRequest requestData) {
+			MoMoCaptureWalletResponse result;
+			//try
+			//{
+			// Convert object to json string
+			string jsonData = requestData.ToJson.ToString();
 
-            // Encoding to UTF8 before pass params
-            byte[] byteData = Encoding.UTF8.GetBytes(jsonData);
+			// Encoding to UTF8 before pass params
+			byte[] byteData = Encoding.UTF8.GetBytes(jsonData);
 
-            request = (HttpWebRequest)WebRequest.Create(Endpoint.MOMO_TEST + Endpoint.MOMO_CREATE_PAYMENT);
-            request.ProtocolVersion = HttpVersion.Version11;
-            request.Method = "POST";
-            request.ContentType = "application/json";
-            request.ContentLength = byteData.Length;
-            request.Timeout = (int)TimeUnit.TIMEOUT_20_SEC;
-            request.ReadWriteTimeout = (int)TimeUnit.READ_WRITE_TIMEOUT;
+			// Create request
+			HttpClient client = new() {
+				Timeout = TimeSpan.FromSeconds(20),
+				BaseAddress = new Uri(Endpoint.MOMO_TEST + Endpoint.MOMO_CREATE_PAYMENT),
+				DefaultRequestHeaders = {
+								{ "Accept", "application/json" },
+								{ "Content-Type", "application/json" }
+							}
+			};
 
-            _logger.Information($"[MoMoService.CreateCaptureWallet] Start request with data: {jsonData}");
+			request = new HttpRequestMessage(HttpMethod.Post, Endpoint.MOMO_TEST + Endpoint.MOMO_CREATE_PAYMENT) {
+				Content = new ByteArrayContent(byteData),
+				Version = HttpVersion.Version11,
+			};
 
-            // Open request stream to send data
-            Stream requestStream = request.GetRequestStream();
-            requestStream.Write(byteData, 0, byteData.Length);
+			_logger.Information($"[MoMoService.CreateCaptureWallet] Start request with data: {jsonData}");
 
-            // Must close stream after write data
-            requestStream.Close();
+			response = await client.SendAsync(request);
 
-            // Open response
-            response = (HttpWebResponse)request.GetResponse();
+			string responseString = await response.Content.ReadAsStringAsync();
 
-            // Open response stream to receive data
-            Stream responseStream = response.GetResponseStream();
+			_logger.Information($"[MoMoService.CreateCaptureWallet] End request with data: {responseString}");
 
-            string responseString;
-            using (StreamReader streamReader = new(responseStream, Encoding.UTF8))
-            {
-                responseString = streamReader.ReadToEnd();
-            }
+			result = JsonSerializer.Deserialize<MoMoCaptureWalletResponse>(responseString);
 
-            // Must close response and its stream after receive data
-            response.Close();
-            responseStream.Close();
-
-            _logger.Information($"[MoMoService.CreateCaptureWallet] End request with data: {responseString}");
-
-            result = JsonSerializer.Deserialize<MoMoCaptureWalletResponse>(responseString);
-
-            return result;
-        }
+			return result;
+		}
 
 
-        /// <summary>
-        /// Process IPN
-        /// </summary>
-        /// <param name="momoIPNRequest"></param>
-        /// <returns></returns>
-        public async Task ProcessIPN(MoMoIPNRequest momoIPNRequest)
-        {
-            // Validate signature
-            List<string> ignoreFields = new List<string>() { "Signature", "PartnerName", "StoreId", "Lang" };
+		/// <summary>
+		/// Process IPN
+		/// </summary>
+		/// <param name="momoIPNRequest"></param>
+		/// <returns></returns>
+		public async Task ProcessIPN(MoMoIPNRequest momoIPNRequest) {
+			// Validate signature
+			List<string> ignoreFields = new List<string>() { "Signature", "PartnerName", "StoreId", "Lang" };
 
-            string merchantSignature = _securityService.GetSignature(momoIPNRequest, ignoreFields,
-                _configuration.GetValue<string>("MoMo:AccessKey"), _configuration.GetValue<string>("MoMo:SecretKey"));
+			string merchantSignature = _securityService.GetSignature(momoIPNRequest, ignoreFields,
+					_configuration.GetValue<string>("MoMo:AccessKey"), _configuration.GetValue<string>("MoMo:SecretKey"));
 
-            _logger.Information("[MoMoService.ProcessIPN] MoMo - Merchant signature: " +
-                $"{momoIPNRequest.Signature} - {merchantSignature}");
+			_logger.Information("[MoMoService.ProcessIPN] MoMo - Merchant signature: " +
+					$"{momoIPNRequest.Signature} - {merchantSignature}");
 
-            if (!merchantSignature.Equals(momoIPNRequest.Signature))
-            {
-                _logger.Error("[MoMoService.ProcessIPN] Signature not match!");
+			if (!merchantSignature.Equals(momoIPNRequest.Signature)) {
+				_logger.Error("[MoMoService.ProcessIPN] Signature not match!");
 
-                throw new BusinessException(MoMoStatus.MOMO_IPN_SIGNATURE_NOT_MATCH.ToString(), (int)MoMoStatus.MOMO_IPN_SIGNATURE_NOT_MATCH);
+				throw new BusinessException(MoMoStatus.MOMO_IPN_SIGNATURE_NOT_MATCH.ToString(), (int)MoMoStatus.MOMO_IPN_SIGNATURE_NOT_MATCH);
 
-            }
+			}
 
-            // update payment
-            await UpdatePaymentResult(momoIPNRequest);
-        }
+			// update payment
+			await UpdatePaymentResult(momoIPNRequest);
+		}
 
 
-        /// <summary>
-        /// Update Payment Result
-        /// </summary>
-        /// <param name="momoIPNRequest"></param>
-        public async Task UpdatePaymentResult(MoMoIPNRequest momoIPNRequest)
-        {
-            try
-            {
-                List<string> orderIds = _redisService.GetList<string>(momoIPNRequest.OrderId);
-                foreach (var orderId in orderIds)
-                {
-                    Payment payment = await _unitOfWork.Payments.FindAsync(p => p.OrderId.Equals(orderId));
-                    payment.TransactionId = momoIPNRequest.TransId;
-                    payment.ResultCode = momoIPNRequest.ResultCode;
-                    payment.Status = momoIPNRequest.ResultCode == 0 ? (int)PaymentStatus.PAID : (int)PaymentStatus.FAILED;
+		/// <summary>
+		/// Update Payment Result
+		/// </summary>
+		/// <param name="momoIPNRequest"></param>
+		public async Task UpdatePaymentResult(MoMoIPNRequest momoIPNRequest) {
+			try {
+				List<string> orderIds = _redisService.GetList<string>(momoIPNRequest.OrderId);
+				foreach (var orderId in orderIds) {
+					Payment payment = await _unitOfWork.Payments.FindAsync(p => p.OrderId.Equals(orderId));
+					payment.TransactionId = momoIPNRequest.TransId;
+					payment.ResultCode = momoIPNRequest.ResultCode;
+					payment.Status = momoIPNRequest.ResultCode == 0 ? (int)PaymentStatus.PAID : (int)PaymentStatus.FAILED;
 
-                    _unitOfWork.Payments.Update(payment);
-                }
+					_unitOfWork.Payments.Update(payment);
+				}
 
-                await _unitOfWork.SaveChangesAsync();
+				await _unitOfWork.SaveChangesAsync();
 
-                //delete from Redis
-                _redisService.RemoveList(momoIPNRequest.OrderId);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("[MoMoService.UpdatePaymentResult()]: " + e.Message);
-                throw;
-            }
-        }
-    }
+				//delete from Redis
+				_redisService.RemoveList(momoIPNRequest.OrderId);
+			}
+			catch (Exception e) {
+				_logger.Error("[MoMoService.UpdatePaymentResult()]: " + e.Message);
+				throw;
+			}
+		}
+	}
 }
